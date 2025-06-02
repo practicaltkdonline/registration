@@ -33,12 +33,12 @@
       <p class="text-gray-600 text-center mt-4 font-semibold">✨ 課程重點  ✨</p>
       <ul class="text-gray-600 text-center list-none">
         <li class="ml-4"><strong>適合初級者</strong></li>
-        <li class="ml-4">一步一步教授比賽技巧，為未來參賽奠定堅實基礎！！📈</li>     
+        <li class="ml-4">一步一步教授比賽技巧，為未來參賽奠定堅實基礎！！📈</li>
         <li class="ml-4"><strong>全面身心發展</strong></li>
         <li class="ml-4">專業技術指導，體能訓練，突破自我，塑造更強大的自信心！💪</li>
         <li class="ml-4"><strong>比賽與交流機會</strong></li>
         <li class="ml-4">表現優秀的學員可優先代表本會參加全港跆拳道公開賽</li>
-        <li class="ml-4">中小學學界比賽，甚至海外比賽與集訓！🏆</li>
+        <li class="ml-4">中小學學界賽，甚至海外比賽與集訓！🏆</li>
       </ul>
       
       <p class="text-gray-600 text-center mt-4 font-semibold">課堂資訊 📝</p>
@@ -341,21 +341,21 @@
               </tr>
               <tr class="course-row">
                 <td class="p-2">20/8 <span class="text-sm">(三)</span></td>
-                <td class="p-2">考試與踢腳班</td>
+                <td class="p-2">考試預備班</td>
                 <td class="p-2">$300</td>
-                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="考試與踢腳班 (20/8 三)"></td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="考試預備班 (20/8 三)"></td>
               </tr>
               <tr class="course-row">
                 <td class="p-2">21/8 <span class="text-sm">(四)</span></td>
-                <td class="p-2">考試與踢腳班</td>
+                <td class="p-2">考試預備班</td>
                 <td class="p-2">$300</td>
-                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="考試與踢腳班 (21/8 四)"></td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="考試預備班 (21/8 四)"></td>
               </tr>
               <tr class="course-row">
                 <td class="p-2">22/8 <span class="text-sm">(五)</span></td>
-                <td class="p-2">考試與踢腳班</td>
+                <td class="p-2">考試預備班</td>
                 <td class="p-2">$300</td>
-                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="考試與踢腳班 (22/8 五)"></td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="考試預備班 (22/8 五)"></td>
               </tr>
             </tbody>
           </table>
@@ -430,7 +430,7 @@
       '品勢A班 (30/7-1/8 三至五)': ['30/7', '31/7', '1/8'],
       '搏擊B班 (6/8-8/8 三至五)': ['6/8', '7/8', '8/8'],
       '品勢B班 (13/8-15/8 三至五)': ['13/8', '14/8', '15/8'],
-      '考試與踢腳班 (20/8-22/8 三至五)': ['20/8', '21/8', '22/8']
+      '考試預備班 (20/8-22/8 三至五)': ['20/8', '21/8', '22/8']
     };
 
     function toggleSingleSession() {
@@ -589,8 +589,8 @@
       formData.append('entry.441270855', [...courses, ...singleSessions].join(', '));
       formData.append('entry.739006543', `$${totalCost}`);
 
-      // 提交到 Google Form（請將URL替換為實際的 Google Form 網址）
-      fetch('https://docs.google.com/forms/d/e/[YOUR_FORM_ID]/formResponse', {
+      // 提交到 Google Form
+      fetch('https://docs.google.com/forms/d/e/1FAIpQLSeGaBwmbrPmEovI0x4oPh0YytgWMgpqWksYg9bqDQawtwLp6Q/formResponse', {
         method: 'POST',
         body: formData,
         mode: 'no-cors'
