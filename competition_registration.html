@@ -457,13 +457,14 @@
       categoryTitle.textContent = `選擇 ${eventName} 的項目`;
       categoryGroup.innerHTML = '';
 
-      const currentCategories = selectedCategories[eventName] ? [...selectedCategories[eventName]] : [];
+      // 使用深拷貝初始化 tempCategories
+      tempCategories[eventName] = selectedCategories[eventName] ? [...selectedCategories[eventName]] : [];
       eventCategories[eventName].forEach(category => {
         const label = document.createElement('label');
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.value = category;
-        checkbox.checked = currentCategories.includes(category);
+        checkbox.checked = tempCategories[eventName].includes(category);
         checkbox.onchange = () => updateTempCategories(eventName, checkbox.checked, category);
         label.appendChild(checkbox);
         label.appendChild(document.createTextNode(category));
@@ -491,18 +492,21 @@
     }
 
     function confirmCategorySelection() {
-      Object.keys(tempCategories).forEach(eventName => {
-        selectedCategories[eventName] = tempCategories[eventName].length > 0 ? [...tempCategories[eventName]] : null;
-        if (!selectedCategories[eventName]) delete selectedCategories[eventName];
-      });
+      const eventName = document.getElementById('categoryTitle').textContent.replace('選擇 ', '').replace(' 的項目', '');
+      if (tempCategories[eventName] && tempCategories[eventName].length > 0) {
+        // 合併更新 selectedCategories，保留未修改的項目
+        selectedCategories[eventName] = [...tempCategories[eventName]];
+      } else {
+        delete selectedCategories[eventName];
+      }
       updateSelectedEvents();
       closeCategoryModal();
 
       // 更新按鈕標示
       const buttons = document.querySelectorAll('#eventList button');
       buttons.forEach(button => {
-        const eventName = button.textContent;
-        if (selectedCategories[eventName] && selectedCategories[eventName].length > 0) {
+        const btnEventName = button.textContent;
+        if (selectedCategories[btnEventName] && selectedCategories[btnEventName].length > 0) {
           button.classList.add('selected');
         } else {
           button.classList.remove('selected');
