@@ -1,43 +1,4 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
@@ -103,6 +64,11 @@
       border: none;
       cursor: pointer;
       margin-bottom: 8px;
+      position: relative;
+    }
+    .event-list button.selected {
+      background-color: #bbdefb;
+      border: 2px solid #1976D2;
     }
     .event-list button:hover {
       background-color: #bbdefb;
@@ -406,6 +372,9 @@
             button.type = 'button';
             button.textContent = eventName;
             button.onclick = () => showCategoriesModal(eventName);
+            if (selectedCategories[eventName] && selectedCategories[eventName].length > 0) {
+              button.classList.add('selected');
+            }
             eventList.appendChild(button);
           }
         });
@@ -488,15 +457,14 @@
       categoryTitle.textContent = `選擇 ${eventName} 的項目`;
       categoryGroup.innerHTML = '';
 
+      const currentCategories = selectedCategories[eventName] ? [...selectedCategories[eventName]] : [];
       eventCategories[eventName].forEach(category => {
         const label = document.createElement('label');
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.value = category;
-        checkbox.onchange = () => updateSelectedCategories(eventName);
-        if (selectedCategories[eventName] && selectedCategories[eventName].includes(category)) {
-          checkbox.checked = true;
-        }
+        checkbox.checked = currentCategories.includes(category);
+        checkbox.onchange = () => updateTempCategories(eventName, checkbox.checked, category);
         label.appendChild(checkbox);
         label.appendChild(document.createTextNode(category));
         categoryGroup.appendChild(label);
@@ -505,24 +473,41 @@
       categoryModal.style.display = 'flex';
     }
 
+    let tempCategories = {};
+    function updateTempCategories(eventName, checked, category) {
+      if (!tempCategories[eventName]) tempCategories[eventName] = [];
+      if (checked) {
+        if (!tempCategories[eventName].includes(category)) tempCategories[eventName].push(category);
+      } else {
+        tempCategories[eventName] = tempCategories[eventName].filter(c => c !== category);
+      }
+    }
+
     function closeCategoryModal() {
       const categoryModal = document.getElementById('categoryModal');
       categoryModal.style.display = 'none';
+      // 清除臨時選擇，恢復到上一次確認狀態
+      tempCategories = {};
     }
 
     function confirmCategorySelection() {
+      Object.keys(tempCategories).forEach(eventName => {
+        selectedCategories[eventName] = tempCategories[eventName].length > 0 ? [...tempCategories[eventName]] : null;
+        if (!selectedCategories[eventName]) delete selectedCategories[eventName];
+      });
       updateSelectedEvents();
       closeCategoryModal();
-    }
 
-    function updateSelectedCategories(eventName) {
-      const checkboxes = document.querySelectorAll('#categoryGroup input[type="checkbox"]');
-      selectedCategories[eventName] = Array.from(checkboxes)
-        .filter(cb => cb.checked)
-        .map(cb => cb.value);
-      if (selectedCategories[eventName].length === 0) {
-        delete selectedCategories[eventName];
-      }
+      // 更新按鈕標示
+      const buttons = document.querySelectorAll('#eventList button');
+      buttons.forEach(button => {
+        const eventName = button.textContent;
+        if (selectedCategories[eventName] && selectedCategories[eventName].length > 0) {
+          button.classList.add('selected');
+        } else {
+          button.classList.remove('selected');
+        }
+      });
     }
 
     function updateSelectedEvents() {
