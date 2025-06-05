@@ -18,7 +18,7 @@
     <!-- 表單部分 -->
     <div id="form-section" class="bg-white p-6 rounded-lg shadow-md">
       <h1 class="text-2xl font-bold text-center text-gray-800">2025年暑期跆拳道訓練班</h1>
-      <h2 class="text-lg font-semibold text-center text-gray-600 mt-2">報名表格v3</h2>
+      <h2 class="text-lg font-semibold text-center text-gray-600 mt-2">報名表格4</h2>
       
       <!-- 學員資訊 -->
       <div class="mb-6 mt-6">
@@ -56,12 +56,13 @@
     
     <!-- 提交成功 -->
     <div id="success" class="bg-white p-4 rounded-md shadow-md mt-4 hidden">
-      <h2 class="text-lg font-semibold text-center text-gray-700">報名成功提交！</h2>
-      <p class="text-gray-600 text-center mt-4">感謝您的報名！</p>
-      <div class="text-center mt-4">
-        <button onclick="resetForm()" class="btn bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">重新報名</button>
+      <h2 class="text-lg font-semibold text-center text-gray-700">報名成功！</h2>
+      <p class="text-center mt-4 text-gray-600">感謝您！</p>
+      
+      <div class="text-center">
+        <button onclick="resetForm()" class="btn btn-blue-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">重新提交</button>
+        
       </div>
-    </div>
   </div>
 
   <script>
@@ -102,7 +103,7 @@
 
         if (!course) {
           console.log('Validation failed: No course selected');
-          alert('請選擇課程！');
+          alert('Please select a course!');
           return;
         }
 
@@ -115,9 +116,9 @@
         console.log('Submitting data:', JSON.stringify(data));
 
         // 提交到 Google Apps Script
-        fetch('https://script.google.com/macros/s/AKfycbxE8yoxHrtLA3gRi7MzCfxeXVRTrCtLmFWvcopmFlMaUJgJ0cp1Dy_dvdm7i9U5yfvv/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbw_xuZi4mmr1XAZ92-MdHafFwSM5xGPU7-s7pToK3Bve8h_X1rXCrOpvQoxsxBnCyRS/exec', {
           method: 'POST',
-          mode: 'cors', // 恢復 cors 模式以檢查回應
+          mode: 'cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
           redirect: 'follow'
