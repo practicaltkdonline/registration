@@ -18,7 +18,7 @@
     <!-- 表單部分 -->
     <div id="form-section" class="bg-white p-6 rounded-lg shadow-md">
       <h1 class="text-2xl font-bold text-center text-gray-800">2025年暑期跆拳道訓練班</h1>
-      <h2 class="text-lg font-semibold text-center text-gray-600 mt-2">報名表格5</h2>
+      <h2 class="text-lg font-semibold text-center text-gray-600 mt-2">報名表格6</h2>
       
       <!-- 學員資訊 -->
       <div class="mb-6 mt-6">
@@ -115,9 +115,9 @@
         console.log('Submitting data:', JSON.stringify(data));
 
         // 提交到 Google Apps Script
-        fetch('https://script.google.com/macros/s/AKfycbw_xuZi4mmr1XAZ92-MdHafFwSM5xGPU7-s7pToK3Bve8h_X1rXcrOpvQOxsxBnCyRS/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbx-5qqDGi0QqwWjxgHPbFKFffplm1xd50sgQaLAyu6iqPpxanq52fgAUd2dX4OH-76i/exec', {
           method: 'POST',
-          mode: 'cors', // 先嘗試 cors，若失敗可改為 no-cors
+          mode: 'cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
           redirect: 'follow'
@@ -138,7 +138,7 @@
             
             document.getElementById('loading').style.display = 'none';
             
-            if (data.status === 'success') {
+            if (data.status === 'success') { // 修正為小寫 'success'
               document.getElementById('success').classList.remove('hidden');
               console.log('submitForm: Success');
             } else {
