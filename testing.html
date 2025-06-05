@@ -8,11 +8,10 @@
   <style>
     .error { border-color: #ef4444; }
     .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem; }
-    .course-row:hover { background-color: #f3f4f6; transition: background-color: 0.2s; }
+    .course-row:hover { background-color: #f3f4f6; transition: background-color 0.2s; }
     .btn { transition: transform 0.2s, background-color: 0.2s; }
     .btn:hover { transform: scale(1.05); }
     .success-icon { font-size: 2rem; }
-    .loading { display: none; text-align: center; margin-top: 1rem; }
     @media (max-width: 640px) {
       h1 { font-size: 1.5rem; }
       h2 { font-size: 1.25rem; }
@@ -22,15 +21,16 @@
 </head>
 <body class="bg-gray-100 font-sans">
   <div class="container mx-auto p-4 max-w-2xl">
+    
     <!-- 表單部分 -->
     <div id="form-section" class="bg-white p-6 rounded-lg shadow-md">
       <h1 class="text-2xl font-bold text-center text-gray-800">2025年暑期跆拳道訓練班</h1>
-      <h2 class="text-xl font-semibold text-center text-gray-600 mt-2">報名表格v3</h2>
+      <h2 class="text-xl font-semibold text-center text-gray-600 mt-2">報名表格1</h2>
       
       <p class="text-gray-600 text-center mt-4">家長您好！👋</p>
       <p class="text-gray-600 text-center">歡迎參加2025年暑期跆拳道訓練班！📝</p>
       <p class="text-gray-600 text-center">讓學員有個充實的暑假！🔥</p>
-      <p class="text-gray-600 text-center mt-4 font-semibold">✨ 課程重點 ✨</p>
+      <p class="text-gray-600 text-center mt-4 font-semibold">✨ 課程重點  ✨</p>
       <ul class="text-gray-600 text-center list-none">
         <li class="ml-4"><strong>適合初級者</strong></li>
         <li class="ml-4">一步一步教授比賽技巧，為未來參賽奠定堅實基礎！！📈</li>
@@ -382,13 +382,8 @@
       
       <!-- 按鈕 -->
       <div class="flex justify-between items-center">
-        <button onclick="clearForm()" class="btn bg-gray-600 text-white px-6 py-2 rounded-md hover:bg-gray-700">清除表單</button>
+        <button onclick="clearForm()" class="btn bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600">清除表單</button>
         <button onclick="displayConfirm()" class="btn bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">下一步</button>
-      </div>
-      
-      <!-- 提交狀態 -->
-      <div id="loading" class="loading">
-        <p class="text-gray-600 text-center">正在提交，請稍候...</p>
       </div>
       
       <!-- 聯繫資訊 -->
@@ -398,7 +393,7 @@
     </div>
     
     <!-- 確認資料頁面 -->
-    <div id="confirmation" class="bg-white p-6 rounded-lg shadow-md mt-10 hidden">
+    <div id="confirm-section" class="bg-white p-6 rounded-lg shadow-md mt-4 hidden">
       <h2 class="text-lg font-semibold text-center text-gray-700">請確認您的報名資料</h2>
       <div class="text-gray-600 space-y-2 mt-4">
         <p><strong>學員中文姓名：</strong><span id="confirm-name"></span></p>
@@ -411,18 +406,18 @@
         <p class="text-sm"><strong>費用計算：</strong><span id="confirm-formula" class="font-bold"></span></p>
       </div>
       <div class="flex justify-between mt-4">
-        <button onclick="returnToForm()" class="btn bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700">返回</button>
+        <button onclick="returnToForm()" class="btn bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">返回</button>
         <button onclick="submitForm()" class="btn bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">提交</button>
       </div>
     </div>
     
     <!-- 提交成功 -->
-    <div id="success" class="bg-white p-4 rounded-md shadow-md mt-4 hidden">
-      <h2 class="text-lg font-semibold text-center text-gray-700">報名成功提交！</h2>
-      <p class="text-center text-4xl mt-4 success-icon">✅</p>
-      <p class="text-gray-600 text-center mt-4">您將透過WhatsApp收到確認訊息及付款詳情。</p>
-      <p class="text-gray-600 text-center">完成付款後，報名將正式確認！</p>
-      <div class="text-center mt-4">
+    <div id="thankyou-section" class="bg-white p-4 rounded-md shadow-md text-center mt-6 hidden">
+      <h2 class="text-lg font-semibold text-gray-700">報名成功提交！</h2>
+      <p class="text-4xl mt-2 success-icon">✅</p>
+      <p class="text-gray-600 mt-2">您將透過WhatsApp收到確認訊息及付款詳情。</p>
+      <p class="text-gray-600">完成付款後，報名將正式確認！</p>
+      <div class="mt-4">
         <button onclick="clearForm()" class="btn bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">重新報名</button>
       </div>
     </div>
@@ -439,15 +434,10 @@
     };
 
     function toggleSingleSession() {
-      console.log('toggleSingleSession: Toggling section');
       const section = document.getElementById('single-session-section');
       const icon = document.getElementById('toggle-icon');
-      if (section && icon) {
-        section.classList.toggle('hidden');
-        icon.textContent = section.classList.contains('hidden') ? '▼' : '▲';
-      } else {
-        console.error('toggleSingleSession: Section or icon not found');
-      }
+      section.classList.toggle('hidden');
+      icon.textContent = section.classList.contains('hidden') ? '▼' : '▲';
     }
 
     function isValidDate(year, month, day) {
@@ -459,47 +449,21 @@
       console.log('displayConfirm: Function started');
       
       try {
-        // 获取输入值
+        // 獲取輸入值
         const nameInput = document.getElementById('student-name');
-        if (!nameInput) throw new Error('student-name input not found');
         const name = nameInput.value.trim();
-        console.log('Name:', name);
-        
         const birthYearInput = document.getElementById('birth-year');
-        if (!birthYearInput) throw new Error('birth-year input not found');
         const birthYear = birthYearInput.value;
-        console.log('Birth Year:', birthYear);
-        
         const birthMonthInput = document.getElementById('birth-month');
-        if (!birthMonthInput) throw new Error('birth-month input not found');
         const birthMonth = birthMonthInput.value;
-        console.log('Birth Month:', birthMonth);
-        
         const birthDayInput = document.getElementById('birth-day');
-        if (!birthDayInput) throw new Error('birth-day input not found');
         const birthDay = birthDayInput.value;
-        console.log('Birth Day:', birthDay);
-        
-        const beltLevelInput = document.getElementById('belt-level');
-        if (!beltLevelInput) throw new Error('belt-level input not found');
-        const beltLevel = beltLevelInput.value;
-        console.log('Belt Level:', beltLevel);
-        
+        const beltLevel = document.getElementById('belt-level').value;
         const phoneInput = document.getElementById('contact-phone');
-        if (!phoneInput) throw new Error('contact-phone input not found');
         const phone = phoneInput.value.trim();
-        console.log('Phone:', phone);
-        
         const courses = Array.from(document.querySelectorAll('input[name="course"]:checked')).map(input => input.value);
-        console.log('Courses:', courses);
-        
         const singleSessions = Array.from(document.querySelectorAll('input[name="single-session"]:checked')).map(s => s.value);
-        console.log('Single Sessions:', singleSessions);
-        
-        const agreeTermsInput = document.getElementById('agree-terms');
-        if (!agreeTermsInput) throw new Error('agree-terms input not found');
-        const agreeTerms = agreeTermsInput.checked;
-        console.log('Agree Terms:', agreeTerms);
+        const agreeTerms = document.getElementById('agree-terms').checked;
 
         // 重置錯誤狀態
         nameInput.classList.remove('error');
@@ -511,39 +475,36 @@
         phoneInput.classList.remove('error');
         document.getElementById('phone-error').classList.add('hidden');
 
-        // 驗證名稱
+        // 驗證姓名
         if (!name) {
           console.log('Validation failed: Name is empty');
           nameInput.classList.add('error');
           document.getElementById('name-error').classList.remove('hidden');
-          alert('請輸入學員中文姓名！');
           return;
         }
 
         // 驗證出生日期
         if (!birthYear || !birthMonth || !birthDay || !isValidDate(birthYear, birthMonth, birthDay)) {
-          console.log('Validation failed: Invalid birth date');
+          console.log('Validation failed: Invalid date');
           birthYearInput.classList.add('error');
           birthMonthInput.classList.add('error');
           birthDayInput.classList.add('error');
           document.getElementById('date-error').classList.remove('hidden');
-          alert('請輸入有效的出生日期！');
           return;
         }
 
         // 驗證電話
-        const phoneRegex = /^[0-9]{8}$/;
+        const phoneRegex = /^\d{8}$/;
         if (!phoneRegex.test(phone)) {
           console.log('Validation failed: Invalid phone number');
           phoneInput.classList.add('error');
           document.getElementById('phone-error').classList.remove('hidden');
-          alert('請輸入有效的8位電話號碼！');
           return;
         }
 
         // 驗證必填欄位
         if (!beltLevel || (courses.length === 0 && singleSessions.length === 0) || !agreeTerms) {
-          console.log('Validation failed: Missing required fields');
+          console.log('Validation failed: Missing required fields or terms');
           alert('請填寫所有必填欄位，選擇至少一個課程或一堂，並同意條款！');
           return;
         }
@@ -555,7 +516,7 @@
             const sessionDayMatch = session.match(/\((\d+\/\d+)\s/);
             const sessionDay = sessionDayMatch ? sessionDayMatch[1] : null;
             if (sessionDay && courseDays.includes(sessionDay)) {
-              console.log(`Validation failed: Course overlap - ${session} with ${course}`);
+              console.log(`Validation error: Date conflict between ${course} and ${session}`);
               alert(`錯誤：單堂課程 ${session} 與整班課程 ${course} 的日期重疊！`);
               return;
             }
@@ -588,29 +549,17 @@
         }
 
         const formulaText = formula.length > 0 ? formula.join(' + ') + ` = $${totalCost}` : `$${totalCost}`;
-        console.log('Total Cost:', totalCost, 'Formula:', formulaText);
 
-        // 更新確認頁
-        const confirmName = document.getElementById('confirm-name');
-        const confirmDate = document.getElementById('confirm-date');
-        const confirmBelt = document.getElementById('confirm-belt');
-        const confirmPhone = document.getElementById('confirm-phone');
-        const confirmClasses = document.getElementById('confirm-classes');
-        const confirmTotal = document.getElementById('confirm-total');
-        const confirmFormula = document.getElementById('confirm-formula');
-
-        if (!confirmName || !confirmDate || !confirmBelt || !confirmPhone || !confirmClasses || !confirmTotal || !confirmFormula) {
-          throw new Error('Confirmation page elements not found');
-        }
-
-        confirmName.textContent = name;
-        confirmDate.textContent = `${birthYear}年${birthMonth}月${birthDay}日`;
-        confirmBelt.textContent = beltLevel;
-        confirmPhone.textContent = phone;
+        // 更新確認頁面
+        document.getElementById('confirm-name').textContent = name;
+        document.getElementById('confirm-date').textContent = `${birthYear}年${birthMonth}月${birthDay}日`;
+        document.getElementById('confirm-belt').textContent = beltLevel;
+        document.getElementById('confirm-phone').textContent = phone;
+        const classesList = document.getElementById('confirm-classes');
         const allSelections = [...courses, ...singleSessions];
-        confirmClasses.innerHTML = allSelections.map(selection => `<li>${selection}</li>`).join('');
-        confirmTotal.textContent = `$${totalCost}`;
-        confirmFormula.textContent = formulaText;
+        classesList.innerHTML = allSelections.map(selection => `<li>${selection}</li>`).join('');
+        document.getElementById('confirm-total').textContent = `$${totalCost}`;
+        document.getElementById('confirm-formula').textContent = formulaText;
 
         // 儲存數據
         window.formData = {
@@ -624,136 +573,96 @@
           singleSessions,
           totalCost
         };
-        console.log('Form Data:', window.formData);
 
-        // 切換到確認頁
-        const formSection = document.getElementById('form-section');
-        const confirmationSection = document.getElementById('confirmation');
-        if (!formSection || !confirmationSection) {
-          throw new Error('Form or confirmation section not found');
-        }
-        formSection.classList.add('hidden');
-        confirmationSection.classList.remove('hidden');
-        console.log('displayConfirm: Completed');
+        console.log('displayConfirm: Confirmation page displayed');
+        document.getElementById('form-section').classList.add('hidden');
+        document.getElementById('confirm-section').classList.remove('hidden');
       } catch (error) {
-        console.error('Error in displayConfirm:', error);
-        alert('發生錯誤，請檢查表單並重試！錯誤訊息：' + error.message);
+        console.error('displayConfirm: Unexpected error:', error);
+        alert('顯示確認資料時發生錯誤，請重試！');
       }
     }
 
     function returnToForm() {
-      console.log('returnToForm: Returning to form');
-      const formSection = document.getElementById('form-section');
-      const confirmationSection = document.getElementById('confirmation');
-      if (formSection && confirmationSection) {
-        confirmationSection.classList.add('hidden');
-        formSection.classList.remove('hidden');
-      } else {
-        console.error('returnToForm: Form or confirmation section not found');
-      }
+      console.log('returnToForm: Returning to form section');
+      document.getElementById('confirm-section').classList.add('hidden');
+      document.getElementById('form-section').classList.remove('hidden');
     }
 
     function submitForm() {
       console.log('submitForm: Function started');
-      if (!window.formData) {
-        console.error('submitForm: Form data not found');
-        alert('表單數據遺失，請重新填寫！');
-        return;
+      
+      try {
+        const { name, birthYear, birthMonth, birthDay, beltLevel, phone, courses, singleSessions, totalCost } = window.formData;
+
+        // 準備提交數據
+        const data = {
+          name,
+          birthYear,
+          birthMonth,
+          beltLevel,
+          phone,
+          courses,
+          singleSessions,
+          totalCost
+        };
+        console.log('Submitting data:', JSON.stringify(data));
+
+        // 提交到 Google Apps Script
+        fetch('https://script.google.com/macros/s/AKfycbxEGB28SPD3QT5u9s5UK3ysFPs4iOkXg2vAHGPty18vprmqIEqm6ooPhRmoCOTJpaBg/exec', { // 在此替換為您的 Web App URL
+          method: 'POST',
+          mode: 'no-cors', // 沿用 no-cors 模式
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        })
+        .then(response => {
+          console.log('Response type:', response.type); // no-cors 下為 opaque
+          console.log('submitForm: Assuming success (no-cors)');
+          document.getElementById('confirm-section').classList.add('hidden');
+          document.getElementById('thankyou-section').classList.remove('hidden');
+          alert('提交成功！請檢查 Google Sheet 是否更新。');
+        })
+        .catch(error => {
+          console.error('submitForm: Fetch error:', error.message);
+          document.getElementById('confirm-section').classList.remove('removeClass');
+          document.getElementById('thankyou-section').classList.add('hidden');
+          alert('提交失敗：' + error.message + '\n請檢查 Google Sheet 和控制台錯誤訊息。');
+        });
+      } catch (error) {
+        console.error('submitForm: Unexpected error:', error);
+        document.getElementById('confirm-section').classList.remove('hidden');
+        document.getElementById('thankyou-section').classList.add('hidden');
+        alert('提交表單時發生錯誤，請重試！');
       }
-
-      const { name, birthYear, birthMonth, birthDay, beltLevel, phone, courses, singleSessions, totalCost } = window.formData;
-
-      // 顯示正在提交的提示
-      const confirmationSection = document.getElementById('confirmation');
-      const loadingSection = document.getElementById('loading');
-      if (confirmationSection && loadingSection) {
-        confirmationSection.classList.add('hidden');
-        loadingSection.style.display = 'block';
-      }
-
-      // 準備發送到 Google Apps Script 的資料
-      const data = {
-        name,
-        birthYear,
-        birthMonth,
-        birthDay,
-        beltLevel,
-        phone,
-        courses,
-        singleSessions,
-        totalCost
-      };
-
-      // 提交到 Google Apps Script Web App
-      fetch('https://script.google.com/macros/s/AKfycbxOnOPgR7x1589m8fv0Kj4v-tvv02r_ckNb-hdvj8NaQK7ZXDyoj6a9QFO-EHUfdHty/exec', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      })
-      .then(response => response.json())
-      .then(data => {
-        console.log('submitForm: Response received', data);
-        const loadingSection = document.getElementById('loading');
-        if (loadingSection) loadingSection.style.display = 'none';
-        
-        if (data.status === 'success') {
-          const successSection = document.getElementById('success');
-          if (successSection) {
-            successSection.classList.remove('hidden');
-            const thankYouMessage = document.createElement('p');
-            thankYouMessage.className = 'text-gray-600 text-center mt-2';
-            thankYouMessage.textContent = '報名資料已成功記錄到 Google Sheet！';
-            successSection.appendChild(thankYouMessage);
-          }
-        } else {
-          console.error('submitForm: Server error', data.message);
-          alert('提交失敗：' + data.message);
-          const formSection = document.getElementById('form-section');
-          if (formSection) formSection.classList.remove('hidden');
-        }
-      })
-      .catch(error => {
-        console.error('submitForm: Fetch error', error);
-        const loadingSection = document.getElementById('loading');
-        if (loadingSection) loadingSection.style.display = 'none';
-        alert('提交表單時發生錯誤，請稍後重試！');
-        const formSection = document.getElementById('form-section');
-        if (formSection) formSection.classList.remove('hidden');
-      });
     }
 
     function clearForm() {
-      console.log('clearForm: Clearing form');
-      const inputs = [
-        'student-name', 'birth-year', 'birth-month', 'birth-day', 'belt-level', 'contact-phone'
-      ];
-      inputs.forEach(id => {
-        const input = document.getElementById(id);
-        if (input) {
-          input.value = '';
-          input.classList.remove('error');
-        }
-        const error = document.getElementById(id + '-error');
-        if (error) error.classList.add('hidden');
-      });
-
-      const agreeTerms = document.getElementById('agree-terms');
-      if (agreeTerms) agreeTerms.checked = false;
-
+      console.log('clearForm: Resetting form');
+      document.getElementById('student-name').value = '';
+      document.getElementById('student-name').classList.remove('error');
+      document.getElementById('name-error').classList.add('hidden');
+      document.getElementById('birth-year').value = '';
+      document.getElementById('birth-year').value.classList.remove('error');
+      document.getElementById('birth-month').value = '';
+      document.getElementById('birth-month').value.classList.remove('error');
+      document.getElementById('birth-day').value = '';
+      document.getElementById('birth-day').value.classList.remove('error');
+      document.getElementById('date-error').value.classList.add('hidden');
+      document.getElementById('belt-level').value = '';
+      document.getElementById('contact-phone').value = '';
+      document.getElementById('contact-phone').value.classList.remove('error');
+      document.getElementById('phone-error').value.classList.add('hidden');
+      document.getElementById('agree-terms').value.checked = false;
       document.querySelectorAll('input[name="course"]').forEach(input => input.checked = false);
       document.querySelectorAll('input[name="single-session"]').forEach(input => input.checked = false);
-
-      const successSection = document.getElementById('success');
-      const formSection = document.getElementById('form-section');
+      document.getElementById('thankyou-section').classList.add('hidden');
+      document.getElementById('form-section').classList.remove('hidden');
       const singleSessionSection = document.getElementById('single-session-section');
       const icon = document.getElementById('toggle-icon');
-
-      if (successSection) successSection.classList.add('hidden');
-      if (formSection) formSection.classList.remove('hidden');
-      if (singleSessionSection) singleSessionSection.classList.add('hidden');
-      if (icon) icon.textContent = '▼';
-
+      singleSessionSection.classList.add('hidden');
+      icon.textContent = '▼';
       window.formData = null;
+      console.log('clearForm: Form reset successfully');
     }
   </script>
 </body>
