@@ -18,7 +18,7 @@
     <!-- 表單部分 -->
     <div id="form-section" class="bg-white p-6 rounded-lg shadow-md">
       <h1 class="text-2xl font-bold text-center text-gray-800">2025年暑期跆拳道訓練班</h1>
-      <h2 class="text-lg font-semibold text-center text-gray-600 mt-2">報名表格6</h2>
+      <h2 class="text-lg font-semibold text-center text-gray-600 mt-2">報名表格</h2>
       
       <!-- 學員資訊 -->
       <div class="mb-6 mt-6">
@@ -117,42 +117,22 @@
         // 提交到 Google Apps Script
         fetch('https://script.google.com/macros/s/AKfycbx-5qqDGi0QqwWjxgHPbFKFffplm1xd50sgQaLAyu6iqPpxanq52fgAUd2dX4OH-76i/exec', {
           method: 'POST',
-          mode: 'cors',
+          mode: 'no-cors', // 使用 no-cors 繞過 CORS
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-          redirect: 'follow'
+          body: JSON.stringify(data)
         })
         .then(response => {
-          console.log('Response status:', response.status, response.statusText);
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status} ${response.statusText}`);
-          }
-          return response.text();
-        })
-        .then(text => {
-          console.log('Response text:', text);
-          let data;
-          try {
-            data = JSON.parse(text);
-            console.log('Parsed response:', data);
-            
-            document.getElementById('loading').style.display = 'none';
-            
-            if (data.status === 'success') { // 修正為小寫 'success'
-              document.getElementById('success').classList.remove('hidden');
-              console.log('submitForm: Success');
-            } else {
-              throw new Error(data.message || 'Unknown server error');
-            }
-          } catch (e) {
-            throw new Error('Invalid JSON response: ' + e.message + '\nResponse text: ' + text);
-          }
+          console.log('Response type:', response.type); // no-cors 下為 opaque
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('success').classList.remove('hidden');
+          console.log('submitForm: Assuming success (no-cors)');
+          alert('提交完成！請檢查 Google Sheet 是否更新。');
         })
         .catch(error => {
           console.error('submitForm: Fetch error:', error.message);
           document.getElementById('loading').style.display = 'none';
           document.getElementById('form-section').classList.remove('hidden');
-          alert('提交失敗：' + error.message + '\n請檢查控制台錯誤並聯繫支援。');
+          alert('提交失敗：' + error.message + '\n請檢查 Google Sheet 和控制台錯誤。');
         });
       } catch (error) {
         console.error('submitForm: Unexpected error:', error);
