@@ -1,0 +1,208 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2025年暑期跆拳道訓練班 - 報名表格</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .error { border-color: #ef4444; }
+    .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem; }
+    .btn { transition: transform 0.2s, background-color: 0.2s; }
+    .btn:hover { transform: scale(1.05); }
+    .loading { display: none; text-align: center; margin-top: 1rem; }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="container mx-auto p-4 max-w-lg">
+    <!-- 表單部分 -->
+    <div id="form-section" class="bg-white p-6 rounded-lg shadow-md">
+      <h1 class="text-2xl font-bold text-center text-gray-800">2025年暑期跆拳道訓練班</h1>
+      <h2 class="text-lg font-semibold text-center text-gray-600 mt-2">報名表格</h2>
+      
+      <!-- 學員資訊 -->
+      <div class="mb-6 mt-6">
+        <div class="mt-4">
+          <label class="block text-gray-700">學員中文姓名 *</label>
+          <input type="text" id="student-name" placeholder="請輸入姓名" class="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          <p id="name-error" class="error-message hidden">請輸入姓名！</p>
+        </div>
+        <div class="mt-4">
+          <label class="block text-gray-700">聯絡電話 *</label>
+          <input type="tel" id="contact-phone" placeholder="請輸入8位電話號碼" class="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          <p id="phone-error" class="error-message hidden">請輸入有效的8位電話號碼！</p>
+        </div>
+        <div class="mt-4">
+          <label class="block text-gray-700">課程選擇 *</label>
+          <select id="course" class="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            <option value="" disabled selected>請選擇課程</option>
+            <option value="搏擊A班 (23/7-25/7)">搏擊A班 (23/7-25/7)</option>
+            <option value="品勢A班 (30/7-1/8)">品勢A班 (30/7-1/8)</option>
+            <option value="搏擊B班 (6/8-8/8)">搏擊B班 (6/8-8/8)</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- 按鈕 -->
+      <div class="flex justify-center">
+        <button onclick="submitForm()" class="btn bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">提交</button>
+      </div>
+      
+      <!-- 提交狀態 -->
+      <div id="loading" class="loading">
+        <p class="text-gray-600">正在提交，請稍候...</p>
+      </div>
+    </div>
+    
+    <!-- 提交成功 -->
+    <div id="success" class="bg-white p-4 rounded-md shadow-md mt-4 hidden">
+      <h2 class="text-lg font-semibold text-center text-gray-700">報名成功提交！</h2>
+      <p class="text-gray-600 text-center mt-4">感謝您的報名！</p>
+      <div class="text-center mt-4">
+        <button onclick="resetForm()" class="btn bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">重新報名</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function submitForm() {
+      console.log('submitForm: Function started');
+      
+      try {
+        // 獲取輸入值
+        const nameInput = document.getElementById('student-name');
+        const phoneInput = document.getElementById('contact-phone');
+        const courseInput = document.getElementById('course');
+        
+        const name = nameInput.value.trim();
+        const phone = phoneInput.value.trim();
+        const course = courseInput.value;
+
+        // 重置錯誤狀態
+        nameInput.classList.remove('error');
+        document.getElementById('name-error').classList.add('hidden');
+        phoneInput.classList.remove('error');
+        document.getElementById('phone-error').classList.add('hidden');
+
+        // 驗證輸入
+        if (!name) {
+          console.log('Validation failed: Name is empty');
+          nameInput.classList.add('error');
+          document.getElementById('name-error').classList.remove('hidden');
+          return;
+        }
+
+        const phoneRegex = /^\d{8}$/;
+        if (!phoneRegex.test(phone)) {
+          console.log('Validation failed: Invalid phone number');
+          phoneInput.classList.add('error');
+          document.getElementById('phone-error').classList.remove('hidden');
+          return;
+        }
+
+        if (!course) {
+          console.log('Validation failed: No course selected');
+          alert('請選擇課程！');
+          return;
+        }
+
+        // 顯示載入狀態
+        document.getElementById('form-section').classList.add('hidden');
+        document.getElementById('loading').style.display = 'block';
+
+        // 準備資料
+        const data = { name, phone, course };
+        console.log('Submitting data:', data);
+
+        // 提交到 Google Apps Script
+        fetch('[YOUR_WEB_APP_URL]', {
+          method: 'POST',
+          mode: 'cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+          redirect: 'follow'
+        })
+        .then(response => {
+          console.log('Raw response:', response);
+          return response.text(); // 先獲取原始回應
+        })
+        .then(text => {
+          console.log('Response text:', text);
+          try {
+            const data = JSON.parse(text);
+            console.log('Parsed response:', data);
+            
+            document.getElementById('loading').style.display = 'none';
+            
+            if (data.status === 'success') {
+              document.getElementById('success').classList.remove('hidden');
+              console.log('submitForm: Success');
+            } else {
+              throw new Error(data.message || 'Unknown server error');
+            }
+          } catch (e) {
+            throw new Error('Invalid JSON response: ' + e.message + '\nResponse text: ' + text);
+          }
+        })
+        .catch(error => {
+          console.error('submitForm: Error:', error);
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('form-section').classList.remove('hidden');
+          alert('提交失敗：' + error.message);
+        });
+      } catch (error) {
+        console.error('submitForm: Unexpected error:', error);
+        alert('提交表單時發生錯誤，請重試！');
+      }
+    }
+
+    function resetForm() {
+      console.log('resetForm: Resetting form');
+      document.getElementById('student-name').value = '';
+      document.getElementById('contact-phone').value = '';
+      document.getElementById('course').value = '';
+      document.getElementById('success').classList.add('hidden');
+      document.getElementById('form-section').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
