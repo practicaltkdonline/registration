@@ -1,0 +1,699 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2025年暑期跆拳道訓練班 - 報名表格</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .error { border-color: #ef4444; }
+    .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem; }
+    .course-row:hover { background-color: #f3f4f6; transition: background-color 0.2s; }
+    .btn { transition: transform 0.2s, background-color 0.2s; }
+    .btn:hover { transform: scale(1.05); }
+    .success-icon { font-size: 2rem; }
+    .loading { display: none; text-align: center; margin-top: 1rem; }
+    @media (max-width: 640px) {
+      h1 { font-size: 1.5rem; }
+      h2 { font-size: 1.25rem; }
+      .container { padding: 0.5rem; }
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="container mx-auto p-4 max-w-2xl">
+    
+    <!-- 表單部分 -->
+    <div id="form-section" class="bg-white p-6 rounded-lg shadow-md">
+      <h1 class="text-2xl font-bold text-center text-gray-800">2025年暑期跆拳道訓練班</h1>
+      <h2 class="text-xl font-semibold text-center text-gray-600 mt-2">報名表格</h2>
+      
+      <p class="text-gray-600 text-center mt-4">家長您好！👋</p>
+      <p class="text-gray-600 text-center">歡迎參加2025年暑期跆拳道訓練班！📝</p>
+      <p class="text-gray-600 text-center">讓學員有個充實的暑假！🔥</p>
+      <p class="text-gray-600 text-center mt-4 font-semibold">✨ 課程重點  ✨</p>
+      <ul class="text-gray-600 text-center list-none">
+        <li class="ml-4"><strong>適合初級者</strong></li>
+        <li class="ml-4">一步一步教授比賽技巧，為未來參賽奠定堅實基礎！！📈</li>
+        <li class="ml-4"><strong>全面身心發展</strong></li>
+        <li class="ml-4">專業技術指導，體能訓練，突破自我，塑造更強大的自信心！💪</li>
+        <li class="ml-4"><strong>比賽與交流機會</strong></li>
+        <li class="ml-4">表現優秀的學員可優先代表本會參加全港跆拳道公開賽</li>
+        <li class="ml-4">中小學學界賽，甚至海外比賽與集訓！🏆</li>
+      </ul>
+      
+      <p class="text-gray-600 text-center mt-4 font-semibold">課堂資訊 📝</p>
+      <p class="text-gray-600 text-center">日期：由 23/7 開始到 22/8</p>
+      <p class="text-gray-600 text-center">時間：下午 3:00pm - 5:00pm</p>
+      <p class="text-gray-600 text-center">地點：觀塘總館</p>
+      
+      <p class="text-gray-600 text-center mt-4 font-semibold">暑期優惠，立刻報名！🔥</p>
+      <p class="text-gray-600 text-center font-semibold">報讀整班課程：</p>
+      <p class="text-gray-600 text-center ml-4">- 報讀 1 班，每班 $750</p>
+      <p class="text-gray-600 text-center ml-4">- 報讀 2 班，每班 $660</p>
+      <p class="text-gray-600 text-center ml-4">- 報讀 3 班或以上，每班 $600</p>
+      <p class="text-gray-600 text-center font-semibold mt-2">報讀單堂課程：</p>
+      <p class="text-gray-600 text-center ml-4">- 每堂 $300</p>
+      <p class="text-gray-600 text-center ml-4">- 報讀 1 班後，每堂 $250</p>
+      <p class="text-gray-600 text-center ml-4">- 報讀 2 班或以上後，每堂 $220</p>
+      
+      <p class="text-gray-600 text-center mt-4">報名後，將透過WhatsApp收到確認訊息及付款詳情💬</p>
+      
+      <!-- 學員資訊 -->
+      <div class="mb-6 mt-6">
+        <h3 class="text-lg font-semibold text-gray-700">學員資訊</h3>
+        <div class="mt-4">
+          <label class="block text-gray-700">學員中文姓名 *</label>
+          <input type="text" id="student-name" name="student-name" placeholder="請輸入學員中文姓名" class="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          <p id="name-error" class="error-message hidden">請輸入學員中文姓名！</p>
+        </div>
+        <div class="mt-4">
+          <label class="block text-gray-700">出生日期 *</label>
+          <div class="flex space-x-2 mt-1">
+            <select id="birth-year" name="birth-year" class="w-1/3 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+              <option value="" disabled selected>年</option>
+              <option value="2020">2020</option>
+              <option value="2019">2019</option>
+              <option value="2018">2018</option>
+              <option value="2017">2017</option>
+              <option value="2016">2016</option>
+              <option value="2015">2015</option>
+              <option value="2014">2014</option>
+              <option value="2013">2013</option>
+              <option value="2012">2012</option>
+              <option value="2011">2011</option>
+              <option value="2010">2010</option>
+              <option value="2009">2009</option>
+              <option value="2008">2008</option>
+              <option value="2007">2007</option>
+              <option value="2006">2006</option>
+              <option value="2005">2005</option>
+              <option value="2004">2004</option>
+              <option value="2003">2003</option>
+              <option value="2002">2002</option>
+              <option value="2001">2001</option>
+              <option value="2000">2000</option>
+            </select>
+            <select id="birth-month" name="birth-month" class="w-1/3 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+              <option value="" disabled selected>月</option>
+              <option value="01">1</option>
+              <option value="02">2</option>
+              <option value="03">3</option>
+              <option value="04">4</option>
+              <option value="05">5</option>
+              <option value="06">6</option>
+              <option value="07">7</option>
+              <option value="08">8</option>
+              <option value="09">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+            </select>
+            <select id="birth-day" name="birth-day" class="w-1/3 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+              <option value="" disabled selected>日</option>
+              <option value="01">1</option>
+              <option value="02">2</option>
+              <option value="03">3</option>
+              <option value="04">4</option>
+              <option value="05">5</option>
+              <option value="06">6</option>
+              <option value="07">7</option>
+              <option value="08">8</option>
+              <option value="09">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+              <option value="13">13</option>
+              <option value="14">14</option>
+              <option value="15">15</option>
+              <option value="16">16</option>
+              <option value="17">17</option>
+              <option value="18">18</option>
+              <option value="19">19</option>
+              <option value="20">20</option>
+              <option value="21">21</option>
+              <option value="22">22</option>
+              <option value="23">23</option>
+              <option value="24">24</option>
+              <option value="25">25</option>
+              <option value="26">26</option>
+              <option value="27">27</option>
+              <option value="28">28</option>
+              <option value="29">29</option>
+              <option value="30">30</option>
+              <option value="31">31</option>
+            </select>
+          </div>
+          <p id="date-error" class="error-message hidden">請輸入有效的出生日期！</p>
+        </div>
+        <div class="mt-4">
+          <label class="block text-gray-700">現有級別 *</label>
+          <select id="belt-level" name="belt-level" class="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            <option value="" disabled selected>請選擇級別</option>
+            <option value="白帶">白帶</option>
+            <option value="黃帶">黃帶</option>
+            <option value="黃綠帶">黃綠帶</option>
+            <option value="綠帶">綠帶</option>
+            <option value="綠藍帶">綠藍帶</option>
+            <option value="藍帶">藍帶</option>
+            <option value="藍紅帶">藍紅帶</option>
+            <option value="紅帶">紅帶</option>
+            <option value="紅黑帶">紅黑帶</option>
+            <option value="黑帶/品段">黑帶/品段</option>
+          </select>
+        </div>
+        <div class="mt-4">
+          <label class="block text-gray-700">聯絡電話（需接收WhatsApp訊息） *</label>
+          <input type="tel" id="contact-phone" name="contact-phone" placeholder="請輸入有效的電話號碼" class="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          <p id="phone-error" class="error-message hidden">請輸入有效的8位電話號碼！</p>
+        </div>
+      </div>
+      
+      <!-- 整班課程選擇 -->
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold text-gray-700">整班課程選擇</h3>
+        <div class="mt-4">
+          <p class="text-gray-600">報名整班課程</p>
+          <p class="text-gray-600">每班課程為3天，每天3:00-5:00pm</p>
+          <p class="text-gray-600 text-sm">（報讀1班每班$750，報讀2班每班$660，報讀3班或以上每班$600）</p>
+          <table class="w-full mt-2 border-collapse">
+            <thead>
+              <tr class="bg-gray-200">
+                <th class="p-2 text-left">日期</th>
+                <th class="p-2 text-left">項目</th>
+                <th class="p-2 text-left">費用</th>
+                <th class="p-2 text-center">選擇</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="course-row">
+                <td class="py-1 px-2"><div>23/7-25/7</div><span class="text-sm block">(三至五)</span></td>
+                <td class="py-1 px-2">搏擊A班</td>
+                <td class="py-1 px-2">$750</td>
+                <td class="py-1 px-2 text-center"><input type="checkbox" class="form-checkbox" name="course" value="搏擊A班 (23/7-25/7 三至五)"></td>
+              </tr>
+              <tr>
+                <td class="py-1 px-2" colspan="4"><p class="text-gray-600 text-sm">課堂內容：搏擊步法，得分技巧，戰術運用。</p></td>
+              </tr>
+              <tr>
+                <td class="py-1 px-2" colspan="4"><hr class="my-1 border-gray-300"></td>
+              </tr>
+              <tr class="course-row">
+                <td class="py-1 px-2"><div>30/7-1/8</div><span class="text-sm block">(三至五)</span></td>
+                <td class="py-1 px-2">品勢A班</td>
+                <td class="py-1 px-2">$750</td>
+                <td class="py-1 px-2 text-center"><input type="checkbox" class="form-checkbox" name="course" value="品勢A班 (30/7-1/8 三至五)"></td>
+              </tr>
+              <tr>
+                <td class="py-1 px-2" colspan="4"><p class="text-gray-600 text-sm">課堂內容：手部單式動作及馬步的正確性，前踢及側踢練習，發力技巧。</p></td>
+              </tr>
+              <tr>
+                <td class="py-1 px-2" colspan="4"><hr class="my-1 border-gray-300"></td>
+              </tr>
+              <tr class="course-row">
+                <td class="py-1 px-2"><div>6/8-8/8</div><span class="text-sm block">(三至五)</span></td>
+                <td class="py-1 px-2">搏擊B班</td>
+                <td class="py-1 px-2">$750</td>
+                <td class="py-1 px-2 text-center"><input type="checkbox" class="form-checkbox" name="course" value="搏擊B班 (6/8-8/8 三至五)"></td>
+              </tr>
+              <tr>
+                <td class="py-1 px-2" colspan="4"><p class="text-gray-600 text-sm">課堂內容：前腳踢擊技巧，防守動作，正拳得分重點。</p></td>
+              </tr>
+              <tr>
+                <td class="py-1 px-2" colspan="4"><hr class="my-1 border-gray-300"></td>
+              </tr>
+              <tr class="course-row">
+                <td class="py-1 px-2"><div>13/8-15/8</div><span class="text-sm block">(三至五)</span></td>
+                <td class="py-1 px-2">品勢B班</td>
+                <td class="py-1 px-2">$750</td>
+                <td class="py-1 px-2 text-center"><input type="checkbox" class="form-checkbox" name="course" value="品勢B班 (13/8-15/8 三至五)"></td>
+              </tr>
+              <tr>
+                <td class="py-1 px-2" colspan="4"><p class="text-gray-600 text-sm">課堂內容：不同品勢的節奏，如何提升力量及表現性。</p></td>
+              </tr>
+              <tr>
+                <td class="py-1 px-2" colspan="4"><hr class="my-1 border-gray-300"></td>
+              </tr>
+              <tr class="course-row">
+                <td class="py-1 px-2"><div>20/8-22/8</div><span class="text-sm block">(三至五)</span></td>
+                <td class="py-1 px-2">考試預備班</td>
+                <td class="py-1 px-2">$750</td>
+                <td class="py-1 px-2 text-center"><input type="checkbox" class="form-checkbox" name="course" value="考試預備班 (20/8-22/8 三至五)"></td>
+              </tr>
+              <tr>
+                <td class="py-1 px-2" colspan="4"><p class="text-gray-600 text-sm">課堂內容：為準備考升級試的學員加強練習，重點訓練考試內容。</p></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- 單堂課程選擇 -->
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold text-gray-700 cursor-pointer flex items-center" onclick="toggleSingleSession()">
+          單堂課程選擇
+          <span id="toggle-icon" class="ml-2">▼</span>
+        </h3>
+        <div id="single-session-section" class="mt-4 hidden">
+          <p class="text-gray-600">報名單堂課程</p>
+          <p class="text-gray-600 text-sm">（每堂$300，報讀1班後每堂$250，報讀2班或以上後每堂$220）</p>
+          <p class="text-gray-500 text-sm leading-tight mt-2">請至少選擇1個課程或1堂。</p>
+          <table class="w-full mt-2 border-collapse">
+            <thead>
+              <tr class="bg-gray-200">
+                <th class="p-2 text-left">日期</th>
+                <th class="p-2 text-left">項目</th>
+                <th class="p-2 text-left">費用</th>
+                <th class="p-2 text-center">選擇</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="course-row">
+                <td class="p-2">23/7 <span class="text-sm">(三)</span></td>
+                <td class="p-2">搏擊A班</td>
+                <td class="p-2">$300</td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="搏擊A班 (23/7 三)"></td>
+              </tr>
+              <tr class="course-row">
+                <td class="p-2">24/7 <span class="text-sm">(四)</span></td>
+                <td class="p-2">搏擊A班</td>
+                <td class="p-2">$300</td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="搏擊A班 (24/7 四)"></td>
+              </tr>
+              <tr class="course-row">
+                <td class="p-2">25/7 <span class="text-sm">(五)</span></td>
+                <td class="p-2">搏擊A班</td>
+                <td class="p-2">$300</td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="搏擊A班 (25/7 五)"></td>
+              </tr>
+              <tr class="course-row">
+                <td class="p-2">30/7 <span class="text-sm">(三)</span></td>
+                <td class="p-2">品勢A班</td>
+                <td class="p-2">$300</td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="品勢A班 (30/7 三)"></td>
+              </tr>
+              <tr class="course-row">
+                <td class="p-2">31/7 <span class="text-sm">(四)</span></td>
+                <td class="p-2">品勢A班</td>
+                <td class="p-2">$300</td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="品勢A班 (31/7 四)"></td>
+              </tr>
+              <tr class="course-row">
+                <td class="p-2">1/8 <span class="text-sm">(五)</span></td>
+                <td class="p-2">品勢A班</td>
+                <td class="p-2">$300</td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="品勢A班 (1/8 五)"></td>
+              </tr>
+              <tr class="course-row">
+                <td class="p-2">6/8 <span class="text-sm">(三)</span></td>
+                <td class="p-2">搏擊B班</td>
+                <td class="p-2">$300</td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="搏擊B班 (6/8 三)"></td>
+              </tr>
+              <tr class="course-row">
+                <td class="p-2">7/8 <span class="text-sm">(四)</span></td>
+                <td class="p-2">搏擊B班</td>
+                <td class="p-2">$300</td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="搏擊B班 (7/8 四)"></td>
+              </tr>
+              <tr class="course-row">
+                <td class="p-2">8/8 <span class="text-sm">(五)</span></td>
+                <td class="p-2">搏擊B班</td>
+                <td class="p-2">$300</td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="搏擊B班 (8/8 五)"></td>
+              </tr>
+              <tr class="course-row">
+                <td class="p-2">13/8 <span class="text-sm">(三)</span></td>
+                <td class="p-2">品勢B班</td>
+                <td class="p-2">$300</td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="品勢B班 (13/8 三)"></td>
+              </tr>
+              <tr class="course-row">
+                <td class="p-2">14/8 <span class="text-sm">(四)</span></td>
+                <td class="p-2">品勢B班</td>
+                <td class="p-2">$300</td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="品勢B班 (14/8 四)"></td>
+              </tr>
+              <tr class="course-row">
+                <td class="p-2">15/8 <span class="text-sm">(五)</span></td>
+                <td class="p-2">品勢B班</td>
+                <td class="p-2">$300</td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="品勢B班 (15/8 五)"></td>
+              </tr>
+              <tr class="course-row">
+                <td class="p-2">20/8 <span class="text-sm">(三)</span></td>
+                <td class="p-2">考試預備班</td>
+                <td class="p-2">$300</td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="考試預備班 (20/8 三)"></td>
+              </tr>
+              <tr class="course-row">
+                <td class="p-2">21/8 <span class="text-sm">(四)</span></td>
+                <td class="p-2">考試預備班</td>
+                <td class="p-2">$300</td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="考試預備班 (21/8 四)"></td>
+              </tr>
+              <tr class="course-row">
+                <td class="p-2">22/8 <span class="text-sm">(五)</span></td>
+                <td class="p-2">考試預備班</td>
+                <td class="p-2">$300</td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="考試預備班 (22/8 五)"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- 同意條款 -->
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold text-gray-700">同意條款</h3>
+        <div class="mt-4">
+          <p class="text-gray-600">請閱讀以下條款並同意：</p>
+          <ol class="list-decimal text-gray-600 ml-4">
+            <li class="mt-2">課程名額有限，若報名人數過多，教練將根據報名或學員水平進行篩選。</li>
+            <li class="mt-2">課程內容可能因學員水平作出調整。</li>
+            <li class="mt-2">若天文台懸掛八號或以上颱風或黑色暴雨警告，當天課程將取消。紅雨或黃雨則課程照常進行。教練會透過WhatsApp通知進一步安排。</li>
+            <li class="mt-2">為確保安全，參加者必須遵守教練指示。違反守則者，教練保留權利要求其立即退出課程，所繳費用不予退還。參加者亦需確認自身健康狀況適合參與。</li>
+          </ol>
+          <div class="mt-2 flex items-center">
+            <input type="checkbox" id="agree-terms" name="agree-terms" class="form-checkbox mr-2" required>
+            <label for="agree-terms" class="text-gray-700">我已閱讀並同意上述條款</label>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 按鈕 -->
+      <div class="flex justify-between items-center">
+        <button onclick="clearForm()" class="btn bg-gray-600 text-white px-6 py-2 rounded-md hover:bg-gray-700">清除表單</button>
+        <button onclick="displayConfirm()" class="btn bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">下一步</button>
+      </div>
+      
+      <!-- 提交狀態 -->
+      <div id="loading" class="loading">
+        <p class="text-gray-600 text-center">正在提交，請稍候...</p>
+      </div>
+      
+      <!-- 聯繫資訊 -->
+      <div class="text-center mt-4">
+        <p class="text-gray-600">如有查詢，請聯繫歐其揚教練 WhatsApp <a href="https://wa.me/85261504221?text=你好！想查詢觀塘暑期訓練班！" target="_blank" class="text-blue-600 hover:underline">61504221</a>。</p>
+      </div>
+    </div>
+    
+    <!-- 確認資料頁面 -->
+    <div id="confirm-section" class="bg-white p-6 rounded-lg shadow-md mt-10 hidden">
+      <h2 class="text-lg font-semibold text-center text-gray-700">請確認您的報名資料</h2>
+      <div class="text-gray-600 space-y-2 mt-4">
+        <p><strong>學員中文姓名：</strong><span id="confirm-name"></span></p>
+        <p><strong>出生日期：</strong><span id="confirm-date"></span></p>
+        <p><strong>現有級別：</strong><span id="confirm-belt"></span></p>
+        <p><strong>聯絡電話：</strong><span id="confirm-phone"></span></p>
+        <p><strong>報名課程：</strong></p>
+        <ul id="confirm-classes" class="list-disc text-gray-600 ml-6"></ul>
+        <p><strong>總費用：</strong><span id="confirm-total" class="font-bold"></span></p>
+        <p class="text-sm"><strong>費用計算：</strong><span id="confirm-formula" class="font-bold"></span></p>
+      </div>
+      <div class="flex justify-between mt-4">
+        <button onclick="returnToForm()" class="btn bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700">返回</button>
+        <button onclick="submitForm()" class="btn bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">提交</button>
+      </div>
+    </div>
+    
+    <!-- 提交成功 -->
+    <div id="thankyou-section" class="bg-white p-4 rounded-md shadow-md mt-4 hidden">
+      <h2 class="text-lg font-semibold text-center text-gray-700">報名成功提交！</h2>
+      <p class="text-center text-4xl mt-4 success-icon">✅</p>
+      <p class="text-gray-600 text-center mt-4">您將透過WhatsApp收到確認訊息及付款詳情。</p>
+      <p class="text-gray-600 text-center">完成付款後，報名將正式確認！</p>
+      <div class="text-center mt-4">
+        <button onclick="clearForm()" class="btn bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">重新報名</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 定義課程日期對應
+    const courseDates = {
+      '搏擊A班 (23/7-25/7 三至五)': ['23/7', '24/7', '25/7'],
+      '品勢A班 (30/7-1/8 三至五)': ['30/7', '31/7', '1/8'],
+      '搏擊B班 (6/8-8/8 三至五)': ['6/8', '7/8', '8/8'],
+      '品勢B班 (13/8-15/8 三至五)': ['13/8', '14/8', '15/8'],
+      '考試預備班 (20/8-22/8 三至五)': ['20/8', '21/8', '22/8']
+    };
+
+    function toggleSingleSession() {
+      const section = document.getElementById('single-session-section');
+      const icon = document.getElementById('toggle-icon');
+      section.classList.toggle('hidden');
+      icon.textContent = section.classList.contains('hidden') ? '▼' : '▲';
+    }
+
+    function isValidDate(year, month, day) {
+      const date = new Date(year, month - 1, day);
+      return date.getFullYear() === parseInt(year) && date.getMonth() + 1 === parseInt(month) && date.getDate() === parseInt(day);
+    }
+
+    function displayConfirm() {
+      // 獲取輸入值
+      const nameInput = document.getElementById('student-name');
+      const name = nameInput.value.trim();
+      const birthYearInput = document.getElementById('birth-year');
+      const birthYear = birthYearInput.value;
+      const birthMonthInput = document.getElementById('birth-month');
+      const birthMonth = birthMonthInput.value;
+      const birthDayInput = document.getElementById('birth-day');
+      const birthDay = birthDayInput.value;
+      const beltLevel = document.getElementById('belt-level').value;
+      const phoneInput = document.getElementById('contact-phone');
+      const phone = phoneInput.value.trim();
+      const courses = Array.from(document.querySelectorAll('input[name="course"]:checked')).map(input => input.value);
+      const singleSessions = Array.from(document.querySelectorAll('input[name="single-session"]:checked')).map(s => s.value);
+      const agreeTerms = document.getElementById('agree-terms').checked;
+
+      // 重置錯誤狀態
+      nameInput.classList.remove('error');
+      document.getElementById('name-error').classList.add('hidden');
+      birthYearInput.classList.remove('error');
+      birthMonthInput.classList.remove('error');
+      birthDayInput.classList.remove('error');
+      document.getElementById('date-error').classList.add('hidden');
+      phoneInput.classList.remove('error');
+      document.getElementById('phone-error').classList.add('hidden');
+
+      // 驗證姓名
+      if (!name) {
+        nameInput.classList.add('error');
+        document.getElementById('name-error').classList.remove('hidden');
+        return;
+      }
+
+      // 驗證出生日期
+      if (!birthYear || !birthMonth || !birthDay || !isValidDate(birthYear, birthMonth, birthDay)) {
+        birthYearInput.classList.add('error');
+        birthMonthInput.classList.add('error');
+        birthDayInput.classList.add('error');
+        document.getElementById('date-error').classList.remove('hidden');
+        return;
+      }
+
+      // 驗證電話
+      const phoneRegex = /^[0-9]{8}$/;
+      if (!phoneRegex.test(phone)) {
+        phoneInput.classList.add('error');
+        document.getElementById('phone-error').classList.remove('hidden');
+        return;
+      }
+
+      // 驗證必填欄位
+      if (!beltLevel || (courses.length === 0 && singleSessions.length === 0) || !agreeTerms) {
+        alert('請填寫所有必填欄位，選擇至少一個課程或一堂，並同意條款！');
+        return;
+      }
+
+      // 檢查課程重疊
+      for (const course of courses) {
+        const courseDays = courseDates[course];
+        for (const session of singleSessions) {
+          const sessionDayMatch = session.match(/\((\d+\/\d+)\s/);
+          const sessionDay = sessionDayMatch ? sessionDayMatch[1] : null;
+          if (sessionDay && courseDays.includes(sessionDay)) {
+            alert(`錯誤：單堂課程 ${session} 與整班課程 ${course} 的日期重疊！`);
+            return;
+          }
+        }
+      }
+
+      // 計算費用
+      let totalCost = 0;
+      let formula = [];
+      const numCourses = courses.length;
+      let singleSessionCost = 300;
+
+      if (numCourses === 1) {
+        totalCost += 750;
+        singleSessionCost = 250;
+        formula.push(`${numCourses} 班 × $750`);
+      } else if (numCourses === 2) {
+        totalCost += 2 * 660;
+        singleSessionCost = 220;
+        formula.push(`${numCourses} 班 × $660`);
+      } else if (numCourses >= 3) {
+        totalCost += numCourses * 600;
+        singleSessionCost = 220;
+        formula.push(`${numCourses} 班 × $600`);
+      }
+
+      if (singleSessions.length > 0) {
+        totalCost += singleSessions.length * singleSessionCost;
+        formula.push(`${singleSessions.length} 單堂 × $${singleSessionCost}`);
+      }
+
+      const formulaText = formula.length > 0 ? formula.join(' + ') + ` = $${totalCost}` : `$${totalCost}`;
+
+      // 更新確認頁
+      document.getElementById('confirm-name').textContent = name;
+      document.getElementById('confirm-date').textContent = `${birthYear}年${birthMonth}月${birthDay}日`;
+      document.getElementById('confirm-belt').textContent = beltLevel;
+      document.getElementById('confirm-phone').textContent = phone;
+      const classesList = document.getElementById('confirm-classes');
+      const allSelections = [...courses, ...singleSessions];
+      classesList.innerHTML = allSelections.map(selection => `<li>${selection}</li>`).join('');
+      document.getElementById('confirm-total').textContent = `$${totalCost}`;
+      document.getElementById('confirm-formula').textContent = formulaText;
+
+      // 儲存數據
+      window.formData = {
+        name,
+        birthYear,
+        birthMonth,
+        birthDay,
+        beltLevel,
+        phone,
+        courses,
+        singleSessions,
+        totalCost
+      };
+
+      document.getElementById('form-section').classList.add('hidden');
+      document.getElementById('confirm-section').classList.remove('hidden');
+    }
+
+    function returnToForm() {
+      document.getElementById('confirm-section').classList.add('hidden');
+      document.getElementById('form-section').classList.remove('hidden');
+    }
+
+    function submitForm() {
+      const { name, birthYear, birthMonth, birthDay, beltLevel, phone, courses, singleSessions, totalCost } = window.formData;
+
+      // 顯示正在提交的提示
+      document.getElementById('confirm-section').classList.add('hidden');
+      document.getElementById('loading').style.display = 'block';
+
+      // 準備發送到 Google Apps Script 的資料
+      const data = {
+        name,
+        birthYear,
+        birthMonth,
+        birthDay,
+        beltLevel,
+        phone,
+        courses,
+        singleSessions,
+        totalCost
+      };
+
+      // 提交到 Google Apps Script Web App
+      fetch('https://script.google.com/macros/s/AKfycbxXHx_cKzuRR7RRxrVwADYgq7USEz8tGy1NdfNIlbIyfwegNq4YKfJq0JbjIYh4qJQ1/exec', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('loading').style.display = 'none';
+        if (data.status === 'success') {
+          document.getElementById('thankyou-section').classList.remove('hidden');
+          const thankYouMessage = document.createElement('p');
+          thankYouMessage.className = 'text-gray-600 text-center mt-2';
+          thankYouMessage.textContent = '報名資料已成功記錄到 Google Sheet！';
+          document.getElementById('thankyou-section').appendChild(thankYouMessage);
+        } else {
+          alert('提交失敗：' + data.message);
+          document.getElementById('form-section').classList.remove('hidden');
+        }
+      })
+      .catch(error => {
+        document.getElementById('loading').style.display = 'none';
+        console.error('提交失敗:', error);
+        alert('提交表單時發生錯誤，請稍後重試！');
+        document.getElementById('form-section').classList.remove('hidden');
+      });
+    }
+
+    function clearForm() {
+      document.getElementById('student-name').value = '';
+      document.getElementById('student-name').classList.remove('error');
+      document.getElementById('name-error').classList.add('hidden');
+      document.getElementById('birth-year').value = '';
+      document.getElementById('birth-year').classList.remove('error');
+      document.getElementById('birth-month').value = '';
+      document.getElementById('birth-month').classList.remove('error');
+      document.getElementById('birth-day').value = '';
+      document.getElementById('birth-day').classList.remove('error');
+      document.getElementById('date-error').classList.add('hidden');
+      document.getElementById('belt-level').value = '';
+      document.getElementById('contact-phone').value = '';
+      document.getElementById('contact-phone').classList.remove('error');
+      document.getElementById('phone-error').classList.add('hidden');
+      document.getElementById('agree-terms').checked = false;
+      document.querySelectorAll('input[name="course"]').forEach(input => input.checked = false);
+      document.querySelectorAll('input[name="single-session"]').forEach(input => input.checked = false);
+      document.getElementById('thankyou-section').classList.add('hidden');
+      document.getElementById('form-section').classList.remove('hidden');
+      const singleSessionSection = document.getElementById('single-session-section');
+      const icon = document.getElementById('toggle-icon');
+      singleSessionSection.classList.add('hidden');
+      icon.textContent = '▼';
+      window.formData = null;
+    }
+  </script>
+</body>
+</html>
