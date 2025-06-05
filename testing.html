@@ -1,43 +1,4 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-HK">
 <head>
   <meta charset="UTF-8">
@@ -47,8 +8,8 @@
   <style>
     .error { border-color: #ef4444; }
     .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem; }
-    .course-row:hover { background-color: #f3f4f6; transition: background-color 0.2s; }
-    .btn { transition: transform 0.2s, background-color 0.2s; }
+    .course-row:hover { background-color: #f3f4f6; transition: background-color: 0.2s; }
+    .btn { transition: transform 0.2s, background-color: #0a0; }
     .btn:hover { transform: scale(1.05); }
     .success-icon { font-size: 2rem; }
     .loading { display: none; text-align: center; margin-top: 1rem; }
@@ -359,7 +320,7 @@
                 <td class="p-2">8/8 <span class="text-sm">(五)</span></td>
                 <td class="p-2">搏擊B班</td>
                 <td class="p-2">$300</td>
-                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="搏擊B班 (8/8 五)"></td>
+                <td class="p-2 text-center"><input type="checkbox" class="form-checkbox" name="single-session" value="搏擊B班 (8/8 三)"></td>
               </tr>
               <tr class="course-row">
                 <td class="p-2">13/8 <span class="text-sm">(三)</span></td>
@@ -423,47 +384,47 @@
       <!-- 按鈕 -->
       <div class="flex justify-between items-center">
         <button onclick="clearForm()" class="btn bg-gray-600 text-white px-6 py-2 rounded-md hover:bg-gray-700">清除表單</button>
-        <button onclick="displayConfirm()" class="btn bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">下一步</button>
+        <button onclick="displayConfirm()" class="btn bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">下一步</button>
       </div>
       
       <!-- 提交狀態 -->
-      <div id="loading" class="loading">
-        <p class="text-gray-600 text-center">正在提交，請稍候...</p>
+      <div id="progress" class="mt-4 hidden">
+        <p class="text-gray-600 text-center">正在提交...</p>
       </div>
       
       <!-- 聯繫資訊 -->
       <div class="text-center mt-4">
-        <p class="text-gray-600">如有查詢，請聯繫歐其揚教練 WhatsApp <a href="https://wa.me/85261504221?text=你好！想查詢觀塘暑期訓練班！" target="_blank" class="text-blue-600 hover:underline">61504221</a>。</p>
+        <p class="text-gray-600">如有查詢，請聯繫歐其揚教練 WhatsApp <a href="https://wa.me/85261504261?text=你好！想查詢觀塘暑期訓練班！" target="_blank" class="text-blue-600 hover:underline">61504261</a>。</p>
       </div>
     </div>
     
     <!-- 確認資料頁面 -->
-    <div id="confirm-section" class="bg-white p-6 rounded-lg shadow-md mt-10 hidden">
+    <div id="confirmation" class="bg-white p-6 rounded-lg shadow-md mt-10 hidden">
       <h2 class="text-lg font-semibold text-center text-gray-700">請確認您的報名資料</h2>
       <div class="text-gray-600 space-y-2 mt-4">
-        <p><strong>學員中文姓名：</strong><span id="confirm-name"></span></p>
+        <p><strong>姓名：</strong><span id="confirm-name"></span></p>
         <p><strong>出生日期：</strong><span id="confirm-date"></span></p>
-        <p><strong>現有級別：</strong><span id="confirm-belt"></span></p>
-        <p><strong>聯絡電話：</strong><span id="confirm-phone"></span></p>
-        <p><strong>報名課程：</strong></p>
-        <ul id="confirm-classes" class="list-disc text-gray-600 ml-6"></ul>
-        <p><strong>總費用：</strong><span id="confirm-total" class="font-bold"></span></p>
-        <p class="text-sm"><strong>費用計算：</strong><span id="confirm-formula" class="font-bold"></span></p>
+        <p><strong>現有級別碼:</strong><span id="confirm-belt-level"></span></p>
+        <p><strong>電話號碼：</strong><span id="confirm-phone"></span></p>
+        <p><strong>科目：</strong></p>
+        <ul id="confirm-classes" class="list-disc ml-6"></ul>
+        <p><strong>總計費用:</strong><span id="total-cost" class="font-bold"></span></p>
+        <p class="text-sm"><strong>費用計算:</strong><span id="cost-calculation" class="font-bold"></span></p>
       </div>
-      <div class="flex justify-between mt-4">
-        <button onclick="returnToForm()" class="btn bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700">返回</button>
-        <button onclick="submitForm()" class="btn bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">提交</button>
+      <div class="mt-4 flex justify-between">
+        <button onclick="returnToForm()" class="btn bg-gray-600 text-white px-4 py-2 rounded-md">返回</button>
+        <button onclick="submitForm()" class="btn bg-blue-600 text-white px-4 py-2 rounded-md">提交</button>
       </div>
     </div>
     
     <!-- 提交成功 -->
-    <div id="thankyou-section" class="bg-white p-4 rounded-md shadow-md mt-4 hidden">
-      <h2 class="text-lg font-semibold text-center text-gray-700">報名成功提交！</h2>
-      <p class="text-center text-4xl mt-4 success-icon">✅</p>
+    <div id="success" class="bg-white p-4 rounded mt-4 hidden">
+      <h2 class="text-lg font-semibold text-center">提交成功！</h2>
+      <p class="text-center text-4xl mt-4">✅</p>
       <p class="text-gray-600 text-center mt-4">您將透過WhatsApp收到確認訊息及付款詳情。</p>
       <p class="text-gray-600 text-center">完成付款後，報名將正式確認！</p>
       <div class="text-center mt-4">
-        <button onclick="clearForm()" class="btn bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">重新報名</button>
+        <button onclick="clearForm()" class="btn bg-blue-600 text-white px-4 py-2 rounded-md">重新報名</button>
       </div>
     </div>
   </div>
@@ -641,7 +602,7 @@
       };
 
       // 提交到 Google Apps Script Web App
-      fetch('https://script.google.com/macros/s/AKfycbxXHx_cKzuRR7RRxrVwADYgq7USEz8tGy1NdfNIlbIyfwegNq4YKfJq0JbjIYh4qJQ1/exec', {
+      fetch('https://script.google.com/macros/s/AKfycbxOnOPgR7x1589m8fv0Kj4v-tvv02r_ckNb-hdvj8NaQK7ZXDyoj6a9QFO-EHUfdHty/exec', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
