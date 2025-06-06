@@ -25,7 +25,7 @@
     <!-- 表單部分 -->
     <div id="form-section" class="bg-white p-6 rounded-lg shadow-md">
       <h1 class="text-2xl font-bold text-center text-gray-800">2025年暑期跆拳道訓練班</h1>
-      <h2 class="text-xl font-semibold text-center text-gray-600 mt-2">報名表格1</h2>
+      <h2 class="text-xl font-semibold text-center text-gray-600 mt-2">報名表格</h2>
       
       <p class="text-gray-600 text-center mt-4">家長您好！👋</p>
       <p class="text-gray-600 text-center">歡迎參加2025年暑期跆拳道訓練班！📝</p>
@@ -593,6 +593,15 @@
       console.log('submitForm: Function started');
       
       try {
+        const confirmSection = document.getElementById('confirm-section');
+        const thankyouSection = document.getElementById('thankyou-section');
+
+        if (!confirmSection || !thankyouSection) {
+          console.error('submitForm: Missing DOM elements', { confirmSection, thankyouSection });
+          alert('頁面元素未正確加載，請刷新頁面後重試！');
+          return;
+        }
+
         const { name, birthYear, birthMonth, birthDay, beltLevel, phone, courses, singleSessions, totalCost } = window.formData;
 
         // 準備提交數據
@@ -600,69 +609,91 @@
           name,
           birthYear,
           birthMonth,
+          birthDay,
           beltLevel,
           phone,
           courses,
           singleSessions,
           totalCost
         };
+        
         console.log('Submitting data:', JSON.stringify(data));
 
         // 提交到 Google Apps Script
-        fetch('https://script.google.com/macros/s/AKfycbxEGB28SPD3QT5u9s5UK3ysFPs4iOkXg2vAHGPty18vprmqIEqm6ooPhRmoCOTJpaBg/exec', { // 在此替換為您的 Web App URL
+        fetch('https://script.google.com/macros/s/AKfycbxEGB28SPD3QT5u9s5UK3ysFPs4iOkXg2vAHGPty18vprmqIEqm6ooPhRmoCOTJpaBg/exec', {
           method: 'POST',
-          mode: 'no-cors', // 沿用 no-cors 模式
+          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         })
         .then(response => {
-          console.log('Response type:', response.type); // no-cors 下為 opaque
+          console.log('Response type:', response.type); // Expected: opaque (due to no-cors)
           console.log('submitForm: Assuming success (no-cors)');
-          document.getElementById('confirm-section').classList.add('hidden');
-          document.getElementById('thankyou-section').classList.remove('hidden');
-          alert('提交成功！請檢查 Google Sheet 是否更新。');
+          confirmSection.classList.add('hidden');
+          thankyouSection.classList.remove('hidden');
         })
         .catch(error => {
-          console.error('submitForm: Fetch error:', error.message);
-          document.getElementById('confirm-section').classList.remove('removeClass');
-          document.getElementById('thankyou-section').classList.add('hidden');
-          alert('提交失敗：' + error.message + '\n請檢查 Google Sheet 和控制台錯誤訊息。');
+          console.error('submitForm: Fetch error:', error);
+          confirmSection.classList.remove('hidden');
+          thankyouSection.classList.add('hidden');
+          alert(`提交失敗：${error.message}\n請檢查控制台錯誤訊息並聯繫支援。`);
         });
       } catch (error) {
         console.error('submitForm: Unexpected error:', error);
-        document.getElementById('confirm-section').classList.remove('hidden');
-        document.getElementById('thankyou-section').classList.add('hidden');
-        alert('提交表單時發生錯誤，請重試！');
+        const confirmSection = document.getElementById('confirm-section');
+        const thankyouSection = document.getElementById('thankyou-section');
+        if (confirmSection && thankyouSection) {
+          confirmSection.classList.remove('hidden');
+          thankyouSection.classList.add('hidden');
+        }
+        alert('提交表單時發生未知錯誤，請聯繫支援並提供錯誤詳情！');
       }
     }
 
     function clearForm() {
-      console.log('clearForm: Resetting form');
-      document.getElementById('student-name').value = '';
-      document.getElementById('student-name').classList.remove('error');
-      document.getElementById('name-error').classList.add('hidden');
-      document.getElementById('birth-year').value = '';
-      document.getElementById('birth-year').value.classList.remove('error');
-      document.getElementById('birth-month').value = '';
-      document.getElementById('birth-month').value.classList.remove('error');
-      document.getElementById('birth-day').value = '';
-      document.getElementById('birth-day').value.classList.remove('error');
-      document.getElementById('date-error').value.classList.add('hidden');
-      document.getElementById('belt-level').value = '';
-      document.getElementById('contact-phone').value = '';
-      document.getElementById('contact-phone').value.classList.remove('error');
-      document.getElementById('phone-error').value.classList.add('hidden');
-      document.getElementById('agree-terms').value.checked = false;
-      document.querySelectorAll('input[name="course"]').forEach(input => input.checked = false);
-      document.querySelectorAll('input[name="single-session"]').forEach(input => input.checked = false);
-      document.getElementById('thankyou-section').classList.add('hidden');
-      document.getElementById('form-section').classList.remove('hidden');
-      const singleSessionSection = document.getElementById('single-session-section');
-      const icon = document.getElementById('toggle-icon');
-      singleSessionSection.classList.add('hidden');
-      icon.textContent = '▼';
-      window.formData = null;
-      console.log('clearForm: Form reset successfully');
+      console.log('clearForm: Starting form reset');
+      
+      try {
+        document.getElementById('student-name').value = '';
+        document.getElementById('student-name').classList.remove('error');
+        document.getElementById('name-error').classList.add('hidden');
+        
+        document.getElementById('birth-year').value = '';
+        document.getElementById('birth-month').value = '';
+        document.getElementById('birth-day').value = '';
+        document.getElementById('birth-year').classList.remove('error');
+        document.getElementById('birth-month').classList.remove('error');
+        document.getElementById('birth-day').classList.remove('error');
+        document.getElementById('date-error').classList.add('hidden');
+        
+        document.getElementById('belt-level').value = '';
+        
+        document.getElementById('contact-phone').value = '';
+        document.getElementById('contact-phone').classList.remove('error');
+        document.getElementById('phone-error').classList.add('hidden');
+        
+        document.getElementById('agree-terms').checked = false;
+        
+        document.querySelectorAll('input[name="course"]').forEach(input => input.checked = false);
+        document.querySelectorAll('input[name="single-session"]').forEach(input => input.checked = false);
+        
+        document.getElementById('thankyou-section').classList.add('hidden');
+        document.getElementById('confirm-section').classList.add('hidden');
+        document.getElementById('form-section').classList.remove('hidden');
+        
+        const singleSessionSection = document.getElementById('single-session-section');
+        const icon = document.getElementById('toggle-icon');
+        if (singleSessionSection && icon) {
+          singleSessionSection.classList.add('hidden');
+          icon.textContent = '▼';
+        }
+        
+        window.formData = null;
+        console.log('clearForm: Form reset successfully');
+      } catch (error) {
+        console.error('clearForm: Unexpected error:', error);
+        alert('清空表單時發生錯誤，請重試！');
+      }
     }
   </script>
 </body>
