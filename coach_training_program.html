@@ -3,206 +3,169 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>報名表單</title>
+  <title>教練培訓班(第三期)報名表單</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Noto Sans TC', Arial, sans-serif;
-      max-width: 800px;
+      max-width: 900px;
       margin: 40px auto;
       padding: 20px;
-      background-color: #f5f5f5;
-      color: #333;
+      background: linear-gradient(135deg, #e6f0fa 0%, #f5f5f5 100%);
+      color: #2d3748;
     }
     .form-container {
       background: white;
-      padding: 32px;
-      border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+      margin-bottom: 40px;
+    }
+    .form-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .form-header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a4971;
+      margin-bottom: 12px;
+    }
+    .form-header p {
+      font-size: 16px;
+      color: #4a5568;
+      line-height: 1.6;
+      max-width: 600px;
+      margin: 8px auto;
     }
     .form-group {
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
     label {
-      display: block;
-      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
       font-weight: 500;
       font-size: 16px;
-      color: #333;
+      color: #2d3748;
+    }
+    label::before {
+      content: '*';
+      color: #e53e3e;
+      margin-right: 6px;
+      font-size: 16px;
+      display: inline-block;
+    }
+    label.no-asterisk::before {
+      content: none;
     }
     input, select {
       width: 100%;
-      padding: 12px;
-      border: 1px solid #B0BEC5;
+      padding: 12px 16px;
+      border: 1px solid #cbd5e0;
       border-radius: 8px;
       box-sizing: border-box;
       font-size: 16px;
-      transition: border-color 0.3s, box-shadow 0.3s;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
     input:focus, select:focus {
       outline: none;
-      border-color: #1976D2;
-      box-shadow: 0 0 6px rgba(25, 118, 210, 0.3);
+      border-color: #3182ce;
+      box-shadow: 0 0 8px rgba(49, 130, 206, 0.3);
     }
-    .date-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .date-group select {
-      width: 120px;
-    }
-    .date-group select#birthYear {
-      width: 160px;
-    }
-    .date-group span {
-      font-size: 16px;
-      color: #333;
-    }
-    .checkbox-group {
+    .checkbox-group, .radio-group {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
+      padding: 12px;
+      background: #f7fafc;
+      border-radius: 8px;
     }
-    .checkbox-group label {
+    .checkbox-group label, .radio-group label {
       display: flex;
       align-items: center;
       font-weight: normal;
       font-size: 16px;
       margin-bottom: 0;
     }
-    .checkbox-group input[type="checkbox"] {
+    .checkbox-group input[type="checkbox"], .radio-group input[type="radio"] {
       width: auto;
       margin-right: 12px;
+      accent-color: #3182ce;
     }
     .error {
-      color: #D32F2F;
+      color: #e53e3e;
       font-size: 14px;
-      margin-top: 6px;
+      margin-top: 8px;
       display: none;
     }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .modal-content {
-      background-color: white;
-      padding: 32px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 600px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    }
-    .modal-content p {
-      font-size: 16px;
-      margin: 12px 0;
-    }
-    button {
-      padding: 12px 24px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 500;
-      transition: background-color 0.3s, transform 0.2s;
-    }
-    button[type="submit"], button.confirm, button.return-button {
-      background-color: #1976D2;
-      color: white;
-    }
-    button[type="submit"]:hover, button.confirm:hover, button.return-button:hover {
-      background-color: #1565C0;
-      transform: translateY(-2px);
-    }
-    button.cancel {
-      background-color: #B0BEC5;
-      color: #333;
-    }
-    button.cancel:hover {
-      background-color: #90A4AE;
-      transform: translateY(-2px);
-    }
-    #customDojo {
+    #customDojo, #customChallenge, #customLearning {
       margin-top: 12px;
       display: none;
     }
     #thankYouPage {
       display: none;
       background: white;
-      padding: 32px;
-      border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
       text-align: center;
     }
     #thankYouPage h2 {
-      font-size: 24px;
-      margin-bottom: 16px;
-      color: #333;
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #1a4971;
     }
     #thankYouPage p {
       font-size: 16px;
-      margin: 16px 0;
-      color: #155724;
+      margin: 8px 0;
+      color: #2d3748;
+      line-height: 1.6;
+    }
+    button {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    button[type="submit"], button.return-button {
+      background-color: #3182ce;
+      color: white;
+    }
+    button[type="submit"]:hover, button.return-button:hover {
+      background-color: #2b6cb0;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(49, 130, 206, 0.4);
     }
     @media (max-width: 600px) {
       .form-container, #thankYouPage {
         padding: 24px;
       }
-      .modal-content {
-        width: 95%;
-        padding: 24px;
+      .form-header h1 {
+        font-size: 24px;
       }
-      .date-group {
-        gap: 8px;
-      }
-      .date-group select {
-        width: 70px;
-      }
-      .date-group select#birthYear {
-        width: 110px;
+      .form-header p {
+        font-size: 14px;
       }
     }
   </style>
 </head>
 <body>
   <div class="form-container" id="formContainer">
+    <div class="form-header">
+      <h1>教練培訓班(第三期)報名表單</h1>
+      <p>歡迎報名參加香港實用跆拳道協會舉辦的教練培訓班（第三期）！</p>
+      <p>本表單旨在收集您的基本資訊、參加目的及學習期望，</p>
+      <p>以便我們設計更符合需求的課程內容。</p>
+    </div>
     <form id="registrationForm">
       <div class="form-group">
-        <label for="name">學員姓名</label>
+        <label for="name">姓名</label>
         <input type="text" id="name" name="entry.1702329531" required>
-        <span id="nameError" class="error">請輸入學員姓名</span>
-      </div>
-
-      <div class="form-group">
-        <label for="phone">聯絡電話</label>
-        <input type="tel" id="phone" name="entry.1541580542" pattern="\d{8}" required>
-        <span id="phoneError" class="error">請輸入有效的8位電話號碼</span>
-      </div>
-
-      <div class="form-group">
-        <label for="birthYear">出生日期</label>
-        <div class="date-group">
-          <select id="birthYear" name="entry.1919065731_year" required>
-            <option value="">年</option>
-          </select>
-          <span>/</span>
-          <select id="birthMonth" name="entry.1919065731_month" required>
-            <option value="">月</option>
-          </select>
-          <span>/</span>
-          <select id="birthDay" name="entry.1919065731_day" required>
-            <option value="">日</option>
-          </select>
-        </div>
-        <span id="birthdateError" class="error">請選擇有效的出生日期（不得晚於今日）</span>
+        <span id="nameError" class="error">請輸入姓名</span>
       </div>
 
       <div class="form-group">
@@ -210,11 +173,12 @@
         <select id="dojo" name="entry.1923170591" required onchange="toggleCustomDojo()">
           <option value="">請選擇道場</option>
           <option value="觀塘總館">觀塘總館</option>
-          <option value="紅磡-培匠道場">紅磡-培匠道場</option>
+          <option value="筲箕灣道場">筲箕灣道場</option>
+          <option value="長沙灣道場">長沙灣道場</option>
+          <option value="炮台山道場">炮台山道場</option>
+          <option value="元朗道場">元朗道場</option>
           <option value="鰂魚涌體育館">鰂魚涌體育館</option>
-          <option value="北角官立小學">北角官立小學</option>
-          <option value="大角嘴天主教小學">大角嘴天主教小學</option>
-          <option value="佛教林金殿紀念小學">佛教林金殿紀念小學</option>
+          <option value="荔枝角體育館">荔枝角體育館</option>
           <option value="其他">其他（請手動輸入）</option>
         </select>
         <input type="text" id="customDojo" placeholder="請輸入道場名稱" style="display: none;">
@@ -222,114 +186,69 @@
       </div>
 
       <div class="form-group">
-        <label>報名賽事（可複選）</label>
+        <label>參加教練班的目的</label>
         <div class="checkbox-group">
-          <label><input type="checkbox" value="2025年度國際會小學跆拳道邀請賽" onchange="updateEvents()"> 2025年度國際會小學跆拳道邀請賽</label>
-          <label><input type="checkbox" value="香港男子青少年跆拳道比賽2025" onchange="updateEvents()"> 香港男子青少年跆拳道比賽2025</label>
-          <label><input type="checkbox" value="精英跆拳道品勢比賽2025" onchange="updateEvents()"> 精英跆拳道品勢比賽2025</label>
-          <label><input type="checkbox" value="第四屆初衷盃品勢及電子競速比賽2025" onchange="updateEvents()"> 第四屆初衷盃品勢及電子競速比賽2025</label>
-          <label><input type="checkbox" value="香港智道跆拳大賽 2025–夏令盃" onchange="updateEvents()"> 香港智道跆拳大賽 2025–夏令盃</label>
+          <label class="no-asterisk"><input type="checkbox" value="因為有負責教班" onchange="updatePurpose()"> 因為有負責教班</label>
+          <label class="no-asterisk"><input type="checkbox" value="沒有教班但想增值自己" onchange="updatePurpose()"> 沒有教班但想增值自己</label>
         </div>
-        <input type="hidden" id="event" name="entry.1287068960">
-        <span id="eventError" class="error">請至少選擇一項報名賽事</span>
+        <input type="hidden" id="purpose" name="entry.1287068960">
+        <span id="purposeError" class="error">請至少選擇一項參加目的</span>
       </div>
 
       <div class="form-group">
-        <label>報名項目（可複選）</label>
+        <label>教學上遇到的困難</label>
         <div class="checkbox-group">
-          <label><input type="checkbox" value="搏擊" onchange="updateCategories()"> 搏擊</label>
-          <label><input type="checkbox" value="品勢(個人)" onchange="updateCategories()"> 品勢(個人)</label>
-          <label><input type="checkbox" value="品勢(雙人)" onchange="updateCategories()"> 品勢(雙人)</label>
-          <label><input type="checkbox" value="品勢(團體)" onchange="updateCategories()"> 品勢(團體)</label>
-          <label><input type="checkbox" value="競速" onchange="updateCategories()"> 競速</label>
+          <label class="no-asterisk"><input type="checkbox" value="突發情況處理" onchange="updateChallenges()"> 突發情況處理</label>
+          <label class="no-asterisk"><input type="checkbox" value="小朋友唔聽話" onchange="updateChallenges()"> 小朋友唔聽話</label>
+          <label class="no-asterisk"><input type="checkbox" value="教極都唔識" onchange="updateChallenges()"> 教極都唔識</label>
+          <label class="no-asterisk"><input type="checkbox" value="家長嘅查詢" onchange="updateChallenges()"> 家長嘅查詢</label>
+          <label class="no-asterisk"><input type="checkbox" value="其他" onchange="updateChallenges()"> 其他（請手動輸入）</label>
+          <input type="text" id="customChallenge" placeholder="100" maxlength="100">
         </div>
-        <input type="hidden" id="category" name="entry.1317768085">
-        <span id="categoryError" class="error">請至少選擇一項報名項目</span>
+        <input type="hidden" id="challenge" name="entry.1317769951">
+        <span id="challengeError" class="error">請至少選擇一項</span>
+      </div>
+
+      <div class="form-group">
+        <label for="learning">想於教練班中學到什麼</label>
+        <div class="checkbox-group">
+          <label class="no-asterisk"><input type="checkbox" value="踢腳的技巧" onchange="updateLearning()"> 踢腳的技巧</label>
+          <label class="no-asterisk"><input type="checkbox" value="教學流程" onchange="updateLearning()"> 教學流程</label>
+          <label class="no-asterisk"><input type="checkbox" value="搏擊" onchange="updateLearning()"> 搏擊</label>
+          <label class="no-asterisk"><input type="checkbox" value="品勢" onchange="updateLearning()"> 品勢</label>
+          <label class="no-asterisk"><input type="checkbox" value="體能訓練" onchange="updateLearning()"> 體能訓練</label>
+          <label class="no-asterisk"><input type="checkbox" value="其他" onchange="updateLearning()"> 其他（請手動輸入）</label>
+          <input type="text" id="customLearning" placeholder="100" maxlength="100">
+        </div>
+        <input type="hidden" id="learning" name="entry.9876543210">
+        <span id="learningError" class="error">請至少選擇一項</span>
+      </div>
+
+      <div class="form-group">
+        <label>會否抽空參加教練培訓班</label>
+        <div class="radio-group">
+          <label class="no-asterisk"><input type="radio" name="attend" value="會" required> 會</label>
+          <label class="no-asterisk"><input type="radio" name="attend" value="否"> 否</label>
+        </div>
+        <input type="hidden" id="attend" name="entry.5432109876">
+        <span id="attendError" class="error">請選擇是否參加</span>
       </div>
 
       <button type="submit">提交表單</button>
     </form>
   </div>
 
-  <div id="confirmModal" class="modal">
-    <div class="modal-content">
-      <h2>請確認您的報名資料</h2>
-      <p><strong>學員姓名：</strong> <span id="confirmName"></span></p>
-      <p><strong>聯絡電話：</strong> <span id="confirmPhone"></span></p>
-      <p><strong>出生日期：</strong> <span id="confirmBirthdate"></span></p>
-      <p><strong>所屬道場：</strong> <span id="confirmDojo"></span></p>
-      <p><strong>報名賽事：</strong> <span id="confirmEvent"></span></p>
-      <p><strong>報名項目：</strong> <span id="confirmCategory"></span></p>
-      <button class="cancel" onclick="cancelSubmission()">取消</button>
-      <button class="confirm" onclick="confirmSubmission()">確認提交</button>
-    </div>
-  </div>
-
   <div id="thankYouPage">
-    <h2>感謝您的報名！</h2>
-    <p>確認後教練將盡快與您聯繫</p>
+    <h2>感謝您的回覆！</h2>
+    <p id="thankYouMessage1"></p>
+    <p id="thankYouMessage2"></p>
     <button class="return-button" onclick="restartForm()">重新報名</button>
   </div>
 
   <script>
-    // Populate birthdate dropdowns
-    const yearSelect = document.getElementById('birthYear');
-    const monthSelect = document.getElementById('birthMonth');
-    const daySelect = document.getElementById('birthDay');
-    const currentYear = new Date().getFullYear();
-
-    // Populate years
-    for (let year = currentYear; year >= 1900; year--) {
-      let option = document.createElement('option');
-      option.value = year;
-      option.text = year;
-      yearSelect.appendChild(option);
-    }
-
-    // Populate months
-    for (let month = 1; month <= 12; month++) {
-      let option = document.createElement('option');
-      option.value = month;
-      option.text = month.toString().padStart(2, '0');
-      monthSelect.appendChild(option);
-    }
-
-    // Function to check if a year is a leap year
-    function isLeapYear(year) {
-      return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
-    }
-
-    // Function to update days based on selected year and month
-    function updateDays() {
-      const year = parseInt(yearSelect.value);
-      const month = parseInt(monthSelect.value);
-      daySelect.innerHTML = '<option value="">日</option>';
-
-      if (year && month) {
-        let daysInMonth;
-        if (month === 2) {
-          daysInMonth = isLeapYear(year) ? 29 : 28;
-        } else {
-          daysInMonth = [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
-        }
-        for (let day = 1; day <= daysInMonth; day++) {
-          let option = document.createElement('option');
-          option.value = day;
-          option.text = day.toString().padStart(2, '0');
-          daySelect.appendChild(option);
-        }
-      }
-    }
-
-    // Initialize days on load
-    updateDays();
-    yearSelect.addEventListener('change', updateDays);
-    monthSelect.addEventListener('change', updateDays);
-
     // Handle custom dojo input
     const dojoSelect = document.getElementById('dojo');
     const customDojoInput = document.getElementById('customDojo');
-
     function toggleCustomDojo() {
       if (dojoSelect.value === '其他') {
         customDojoInput.style.display = 'block';
@@ -341,83 +260,90 @@
       }
     }
 
-    // Handle event checkboxes
-    const eventInput = document.getElementById('event');
-    function updateEvents() {
-      const checkboxes = document.querySelectorAll('input[type="checkbox"][value*="比賽"], input[type="checkbox"][value*="大賽"]');
+    // Handle purpose checkboxes
+    const purposeInput = document.getElementById('purpose');
+    function updatePurpose() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"][value*="負責教班"], input[type="checkbox"][value*="沒有教班但想增值自己"]');
       const selected = Array.from(checkboxes)
         .filter(cb => cb.checked)
         .map(cb => cb.value);
-      eventInput.value = selected.join(', ');
+      purposeInput.value = selected.join(', ');
     }
 
-    // Handle category checkboxes
-    const categoryInput = document.getElementById('category');
-    function updateCategories() {
-      const validCategories = ['搏擊', '品勢(個人)', '品勢(雙人)', '品勢(團體)', '競速'];
-      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    // Handle challenge checkboxes
+    const challengeInput = document.getElementById('challenge');
+    const customChallengeInput = document.getElementById('customChallenge');
+    function updateChallenges() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"][value*="突發情況處理"], input[type="checkbox"][value*="小朋友唔聽話"], input[type="checkbox"][value*="教極都唔識"], input[type="checkbox"][value*="家長嘅查詢"], input[type="checkbox"][value="其他"]');
       const selected = Array.from(checkboxes)
-        .filter(cb => cb.checked && validCategories.includes(cb.value))
-        .map(cb => cb.value);
-      categoryInput.value = selected.join(', ');
+        .filter(cb => cb.checked)
+        .map(cb => cb.value === '其他' ? customChallengeInput.value : cb.value)
+        .filter(val => val);
+      challengeInput.value = selected.join(', ');
+      customChallengeInput.style.display = Array.from(checkboxes).some(cb => cb.value === '其他' && cb.checked) ? 'block' : 'none';
     }
 
-    // Attach event listeners to all checkboxes
+    // Handle learning checkboxes
+    const learningInput = document.getElementById('learning');
+    const customLearningInput = document.getElementById('customLearning');
+    function updateLearning() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"][value*="踢腳的技巧"], input[type="checkbox"][value*="教學流程"], input[type="checkbox"][value*="搏擊"], input[type="checkbox"][value*="品勢"], input[type="checkbox"][value*="體能訓練"], input[type="checkbox"][value="其他"]');
+      const selected = Array.from(checkboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value === '其他' ? customLearningInput.value : cb.value)
+        .filter(val => val);
+      learningInput.value = selected.join(', ');
+      customLearningInput.style.display = Array.from(checkboxes).some(cb => cb.value === '其他' && cb.checked) ? 'block' : 'none';
+    }
+
+    // Handle attend radio buttons
+    const attendInput = document.getElementById('attend');
+    function updateAttend() {
+      const selected = document.querySelector('input[name="attend"]:checked');
+      attendInput.value = selected ? selected.value : '';
+    }
+
+    // Attach event listeners
     document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
       checkbox.addEventListener('change', () => {
-        updateEvents();
-        updateCategories();
+        updatePurpose();
+        updateChallenges();
+        updateLearning();
       });
+    });
+    document.querySelectorAll('input[name="attend"]').forEach(radio => {
+      radio.addEventListener('change', updateAttend);
     });
 
     // Form validation and submission
     const form = document.getElementById('registrationForm');
-    const phoneInput = document.getElementById('phone');
     const nameInput = document.getElementById('name');
-    const phoneError = document.getElementById('phoneError');
     const nameError = document.getElementById('nameError');
-    const birthdateError = document.getElementById('birthdateError');
     const dojoError = document.getElementById('dojoError');
-    const eventError = document.getElementById('eventError');
-    const categoryError = document.getElementById('categoryError');
-    const confirmModal = document.getElementById('confirmModal');
+    const purposeError = document.getElementById('purposeError');
+    const challengeError = document.getElementById('challengeError');
+    const learningError = document.getElementById('learningError');
+    const attendError = document.getElementById('attendError');
     const formContainer = document.getElementById('formContainer');
     const thankYouPage = document.getElementById('thankYouPage');
+    const thankYouMessage1 = document.getElementById('thankYouMessage1');
+    const thankYouMessage2 = document.getElementById('thankYouMessage2');
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       let isValid = true;
 
       // Reset all error messages
       nameError.style.display = 'none';
-      phoneError.style.display = 'none';
-      birthdateError.style.display = 'none';
       dojoError.style.display = 'none';
-      eventError.style.display = 'none';
-      categoryError.style.display = 'none';
+      purposeError.style.display = 'none';
+      challengeError.style.display = 'none';
+      learningError.style.display = 'none';
+      attendError.style.display = 'none';
 
       // Validate name
       if (!nameInput.value.trim()) {
         nameError.style.display = 'block';
-        isValid = false;
-      }
-
-      // Validate phone
-      if (!phoneInput.value.match(/^\d{8}$/)) {
-        phoneError.style.display = 'block';
-        isValid = false;
-      }
-
-      // Validate birthdate
-      const year = parseInt(yearSelect.value);
-      const month = parseInt(monthSelect.value);
-      const day = parseInt(daySelect.value);
-      const selectedDate = new Date(year, month - 1, day);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      if (!year || !month || !day || isNaN(selectedDate) || selectedDate > today) {
-        birthdateError.style.display = 'block';
         isValid = false;
       }
 
@@ -427,78 +353,94 @@
         isValid = false;
       }
 
-      // Validate events
-      if (!eventInput.value) {
-        eventError.style.display = 'block';
+      // Validate purpose
+      if (!purposeInput.value) {
+        purposeError.style.display = 'block';
         isValid = false;
       }
 
-      // Validate categories
-      if (!categoryInput.value) {
-        categoryError.style.display = 'block';
+      // Validate challenges
+      if (!challengeInput.value) {
+        challengeError.style.display = 'block';
+        isValid = false;
+      }
+
+      // Validate learning
+      if (!learningInput.value) {
+        learningError.style.display = 'block';
+        isValid = false;
+      }
+
+      // Validate attend
+      if (!attendInput.value) {
+        attendError.style.display = 'block';
         isValid = false;
       }
 
       if (isValid) {
-        // Populate confirmation modal
-        document.getElementById('confirmName').textContent = nameInput.value;
-        document.getElementById('confirmPhone').textContent = phoneInput.value;
-        document.getElementById('confirmBirthdate').textContent = `${year}/${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}`;
-        document.getElementById('confirmDojo').textContent = dojoSelect.value === '其他' ? customDojoInput.value : dojoSelect.value;
-        document.getElementById('confirmEvent').textContent = eventInput.value || '無';
-        document.getElementById('confirmCategory').textContent = categoryInput.value || '無';
-        confirmModal.style.display = 'flex';
+        // Prepare form data for submission
+        const formData = new FormData(form);
+        if (dojoSelect.value === '其他') {
+          formData.set('entry.1923170591', customDojoInput.value);
+        }
+        if (document.querySelector('input[value="其他"][onchange="updateChallenges()"]:checked')) {
+          formData.set('entry.1317769951', challengeInput.value);
+        }
+        if (document.querySelector('input[value="其他"][onchange="updateLearning()"]:checked')) {
+          formData.set('entry.9876543210', learningInput.value);
+        }
+
+        // Set thank you message based on attendance
+        if (attendInput.value === '會') {
+          thankYouMessage1.textContent = '感謝您報名參加教練培訓班（第三期）！';
+          thankYouMessage2.textContent = '您的寶貴意見將幫助我們設計出更優質的課程內容。';
+        } else {
+          thankYouMessage1.textContent = '感謝您的寶貴意見，這將幫助我們設計出更優質的課程內容。';
+          thankYouMessage2.textContent = '期待您下次有空參加培訓課程。';
+        }
+
+        // Submit to Google Form
+        try {
+          await fetch('https://docs.google.com/forms/d/e/1FAIpQLSd9pOv3srI-e_Pn-zijtiVtZiTwncE3xNbNJjKOMRCcxuu2nQ/formResponse', {
+            method: 'POST',
+            body: formData,
+            mode: 'no-cors'
+          });
+          console.log('表單提交成功');
+          // Hide form and show thank you page
+          formContainer.style.display = 'none';
+          thankYouPage.style.display = 'block';
+        } catch (error) {
+          console.error('提交失敗:', error);
+          alert('表單提交失敗，請稍後再試。');
+        }
+
+        // Reset form to initial state
+        resetForm();
       }
     });
-
-    function cancelSubmission() {
-      confirmModal.style.display = 'none';
-    }
-
-    async function confirmSubmission() {
-      confirmModal.style.display = 'none';
-
-      // Prepare form data for submission
-      const formData = new FormData(form);
-      if (dojoSelect.value === '其他') {
-        formData.set('entry.1923170591', customDojoInput.value);
-      }
-
-      // Submit to Google Form using fetch
-      try {
-        await fetch('https://docs.google.com/forms/d/e/1FAIpQLSd9pOv3srI-e_Pn-zijtiVtZiTwncE3xNbNJjKOMRCcxuu2nQ/formResponse', {
-          method: 'POST',
-          body: formData,
-          mode: 'no-cors'
-        });
-        console.log('表單提交成功');
-        // Hide form and show thank you page
-        formContainer.style.display = 'none';
-        thankYouPage.style.display = 'block';
-      } catch (error) {
-        console.error('提交失敗:', error);
-        alert('表單提交失敗，請稍後再試。');
-      }
-
-      // Reset form to initial state
-      resetForm();
-    }
 
     function resetForm() {
       form.reset();
       form.style.display = 'block';
       nameError.style.display = 'none';
-      phoneError.style.display = 'none';
-      birthdateError.style.display = 'none';
       dojoError.style.display = 'none';
-      eventError.style.display = 'none';
-      categoryError.style.display = 'none';
+      purposeError.style.display = 'none';
+      challengeError.style.display = 'none';
+      learningError.style.display = 'none';
+      attendError.style.display = 'none';
       customDojoInput.style.display = 'none';
       customDojoInput.value = '';
-      eventInput.value = '';
-      categoryInput.value = '';
+      customChallengeInput.style.display = 'none';
+      customChallengeInput.value = '';
+      customLearningInput.style.display = 'none';
+      customLearningInput.value = '';
+      purposeInput.value = '';
+      challengeInput.value = '';
+      learningInput.value = '';
+      attendInput.value = '';
       document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-      updateDays(); // Ensure day dropdown is reset correctly
+      document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
     }
 
     function restartForm() {
