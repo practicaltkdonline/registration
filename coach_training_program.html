@@ -173,10 +173,12 @@
         <select id="dojo" name="entry.1923170591" required onchange="toggleCustomDojo()">
           <option value="">請選擇道場</option>
           <option value="觀塘總館">觀塘總館</option>
+          <option value="九龍灣 - 啟駿道場">九龍灣 - 啟駿道場</option>
           <option value="筲箕灣道場">筲箕灣道場</option>
-          <option value="長沙灣道場">長沙灣道場</option>
           <option value="炮台山道場">炮台山道場</option>
           <option value="元朗道場">元朗道場</option>
+          <option value="長沙灣道場">長沙灣道場</option>
+          <option value="紅磡 - 培匠道場">紅磡 - 培匠跆拳道訓練中心</option>
           <option value="鰂魚涌體育館">鰂魚涌體育館</option>
           <option value="荔枝角體育館">荔枝角體育館</option>
           <option value="其他">其他（請手動輸入）</option>
@@ -203,14 +205,14 @@
           <label class="no-asterisk"><input type="checkbox" value="教極都唔識" onchange="updateChallenges()"> 教極都唔識</label>
           <label class="no-asterisk"><input type="checkbox" value="家長嘅查詢" onchange="updateChallenges()"> 家長嘅查詢</label>
           <label class="no-asterisk"><input type="checkbox" value="其他" onchange="updateChallenges()"> 其他（請手動輸入）</label>
-          <input type="text" id="customChallenge" placeholder="100" maxlength="100">
+          <input type="text" id="customChallenge" placeholder="請輸入其他困難" style="display: none;">
         </div>
-        <input type="hidden" id="challenge" name="entry.1317769951">
-        <span id="challengeError" class="error">請至少選擇一項</span>
+        <input type="hidden" id="challenge" name="entry.1317768085">
+        <span id="challengeError" class="error">請至少選擇一項教學困難</span>
       </div>
 
       <div class="form-group">
-        <label for="learning">想於教練班中學到什麼</label>
+        <label>想於教練班中學到什麼</label>
         <div class="checkbox-group">
           <label class="no-asterisk"><input type="checkbox" value="踢腳的技巧" onchange="updateLearning()"> 踢腳的技巧</label>
           <label class="no-asterisk"><input type="checkbox" value="教學流程" onchange="updateLearning()"> 教學流程</label>
@@ -218,10 +220,10 @@
           <label class="no-asterisk"><input type="checkbox" value="品勢" onchange="updateLearning()"> 品勢</label>
           <label class="no-asterisk"><input type="checkbox" value="體能訓練" onchange="updateLearning()"> 體能訓練</label>
           <label class="no-asterisk"><input type="checkbox" value="其他" onchange="updateLearning()"> 其他（請手動輸入）</label>
-          <input type="text" id="customLearning" placeholder="100" maxlength="100">
+          <input type="text" id="customLearning" placeholder="請輸入其他學習內容" style="display: none;">
         </div>
         <input type="hidden" id="learning" name="entry.9876543210">
-        <span id="learningError" class="error">請至少選擇一項</span>
+        <span id="learningError" class="error">請至少選擇一項學習內容</span>
       </div>
 
       <div class="form-group">
@@ -384,7 +386,7 @@
           formData.set('entry.1923170591', customDojoInput.value);
         }
         if (document.querySelector('input[value="其他"][onchange="updateChallenges()"]:checked')) {
-          formData.set('entry.1317769951', challengeInput.value);
+          formData.set('entry.1317768085', challengeInput.value);
         }
         if (document.querySelector('input[value="其他"][onchange="updateLearning()"]:checked')) {
           formData.set('entry.9876543210', learningInput.value);
