@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>報名表單</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans TC', Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    .form-container {
+      background: white;
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+      margin-bottom: 24px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 16px;
+      color: #333;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #B0BEC5;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 16px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #1976D2;
+      box-shadow: 0 0 6px rgba(25, 118, 210, 0.3);
+    }
+    .date-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .date-group select {
+      width: 120px;
+    }
+    .date-group select#birthYear {
+      width: 160px;
+    }
+    .date-group span {
+      font-size: 16px;
+      color: #333;
+    }
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      font-weight: normal;
+      font-size: 16px;
+      margin-bottom: 0;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+      margin-right: 12px;
+    }
+    .error {
+      color: #D32F2F;
+      font-size: 14px;
+      margin-top: 6px;
+      display: none;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 32px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+    .modal-content p {
+      font-size: 16px;
+      margin: 12px 0;
+    }
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    button[type="submit"], button.confirm, button.return-button {
+      background-color: #1976D2;
+      color: white;
+    }
+    button[type="submit"]:hover, button.confirm:hover, button.return-button:hover {
+      background-color: #1565C0;
+      transform: translateY(-2px);
+    }
+    button.cancel {
+      background-color: #B0BEC5;
+      color: #333;
+    }
+    button.cancel:hover {
+      background-color: #90A4AE;
+      transform: translateY(-2px);
+    }
+    #customDojo {
+      margin-top: 12px;
+      display: none;
+    }
+    #thankYouPage {
+      display: none;
+      background: white;
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    #thankYouPage h2 {
+      font-size: 24px;
+      margin-bottom: 16px;
+      color: #333;
+    }
+    #thankYouPage p {
+      font-size: 16px;
+      margin: 16px 0;
+      color: #155724;
+    }
+    @media (max-width: 600px) {
+      .form-container, #thankYouPage {
+        padding: 24px;
+      }
+      .modal-content {
+        width: 95%;
+        padding: 24px;
+      }
+      .date-group {
+        gap: 8px;
+      }
+      .date-group select {
+        width: 70px;
+      }
+      .date-group select#birthYear {
+        width: 110px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container" id="formContainer">
+    <form id="registrationForm">
+      <div class="form-group">
+        <label for="name">學員姓名</label>
+        <input type="text" id="name" name="entry.1702329531" required>
+        <span id="nameError" class="error">請輸入學員姓名</span>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">聯絡電話</label>
+        <input type="tel" id="phone" name="entry.1541580542" pattern="\d{8}" required>
+        <span id="phoneError" class="error">請輸入有效的8位電話號碼</span>
+      </div>
+
+      <div class="form-group">
+        <label for="birthYear">出生日期</label>
+        <div class="date-group">
+          <select id="birthYear" name="entry.1919065731_year" required>
+            <option value="">年</option>
+          </select>
+          <span>/</span>
+          <select id="birthMonth" name="entry.1919065731_month" required>
+            <option value="">月</option>
+          </select>
+          <span>/</span>
+          <select id="birthDay" name="entry.1919065731_day" required>
+            <option value="">日</option>
+          </select>
+        </div>
+        <span id="birthdateError" class="error">請選擇有效的出生日期（不得晚於今日）</span>
+      </div>
+
+      <div class="form-group">
+        <label for="dojo">所屬道場</label>
+        <select id="dojo" name="entry.1923170591" required onchange="toggleCustomDojo()">
+          <option value="">請選擇道場</option>
+          <option value="觀塘總館">觀塘總館</option>
+          <option value="紅磡-培匠道場">紅磡-培匠道場</option>
+          <option value="鰂魚涌體育館">鰂魚涌體育館</option>
+          <option value="北角官立小學">北角官立小學</option>
+          <option value="大角嘴天主教小學">大角嘴天主教小學</option>
+          <option value="佛教林金殿紀念小學">佛教林金殿紀念小學</option>
+          <option value="其他">其他（請手動輸入）</option>
+        </select>
+        <input type="text" id="customDojo" placeholder="請輸入道場名稱" style="display: none;">
+        <span id="dojoError" class="error">請選擇或輸入道場</span>
+      </div>
+
+      <div class="form-group">
+        <label>報名賽事（可複選）</label>
+        <div class="checkbox-group">
+          <label><input type="checkbox" value="2025年度國際會小學跆拳道邀請賽" onchange="updateEvents()"> 2025年度國際會小學跆拳道邀請賽</label>
+          <label><input type="checkbox" value="香港男子青少年跆拳道比賽2025" onchange="updateEvents()"> 香港男子青少年跆拳道比賽2025</label>
+          <label><input type="checkbox" value="精英跆拳道品勢比賽2025" onchange="updateEvents()"> 精英跆拳道品勢比賽2025</label>
+          <label><input type="checkbox" value="第四屆初衷盃品勢及電子競速比賽2025" onchange="updateEvents()"> 第四屆初衷盃品勢及電子競速比賽2025</label>
+          <label><input type="checkbox" value="香港智道跆拳大賽 2025–夏令盃" onchange="updateEvents()"> 香港智道跆拳大賽 2025–夏令盃</label>
+        </div>
+        <input type="hidden" id="event" name="entry.1287068960">
+        <span id="eventError" class="error">請至少選擇一項報名賽事</span>
+      </div>
+
+      <div class="form-group">
+        <label>報名項目（可複選）</label>
+        <div class="checkbox-group">
+          <label><input type="checkbox" value="搏擊" onchange="updateCategories()"> 搏擊</label>
+          <label><input type="checkbox" value="品勢(個人)" onchange="updateCategories()"> 品勢(個人)</label>
+          <label><input type="checkbox" value="品勢(雙人)" onchange="updateCategories()"> 品勢(雙人)</label>
+          <label><input type="checkbox" value="品勢(團體)" onchange="updateCategories()"> 品勢(團體)</label>
+          <label><input type="checkbox" value="競速" onchange="updateCategories()"> 競速</label>
+        </div>
+        <input type="hidden" id="category" name="entry.1317768085">
+        <span id="categoryError" class="error">請至少選擇一項報名項目</span>
+      </div>
+
+      <button type="submit">提交表單</button>
+    </form>
+  </div>
+
+  <div id="confirmModal" class="modal">
+    <div class="modal-content">
+      <h2>請確認您的報名資料</h2>
+      <p><strong>學員姓名：</strong> <span id="confirmName"></span></p>
+      <p><strong>聯絡電話：</strong> <span id="confirmPhone"></span></p>
+      <p><strong>出生日期：</strong> <span id="confirmBirthdate"></span></p>
+      <p><strong>所屬道場：</strong> <span id="confirmDojo"></span></p>
+      <p><strong>報名賽事：</strong> <span id="confirmEvent"></span></p>
+      <p><strong>報名項目：</strong> <span id="confirmCategory"></span></p>
+      <button class="cancel" onclick="cancelSubmission()">取消</button>
+      <button class="confirm" onclick="confirmSubmission()">確認提交</button>
+    </div>
+  </div>
+
+  <div id="thankYouPage">
+    <h2>感謝您的報名！</h2>
+    <p>確認後教練將盡快與您聯繫</p>
+    <button class="return-button" onclick="restartForm()">重新報名</button>
+  </div>
+
+  <script>
+    // Populate birthdate dropdowns
+    const yearSelect = document.getElementById('birthYear');
+    const monthSelect = document.getElementById('birthMonth');
+    const daySelect = document.getElementById('birthDay');
+    const currentYear = new Date().getFullYear();
+
+    // Populate years
+    for (let year = currentYear; year >= 1900; year--) {
+      let option = document.createElement('option');
+      option.value = year;
+      option.text = year;
+      yearSelect.appendChild(option);
+    }
+
+    // Populate months
+    for (let month = 1; month <= 12; month++) {
+      let option = document.createElement('option');
+      option.value = month;
+      option.text = month.toString().padStart(2, '0');
+      monthSelect.appendChild(option);
+    }
+
+    // Function to check if a year is a leap year
+    function isLeapYear(year) {
+      return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+    }
+
+    // Function to update days based on selected year and month
+    function updateDays() {
+      const year = parseInt(yearSelect.value);
+      const month = parseInt(monthSelect.value);
+      daySelect.innerHTML = '<option value="">日</option>';
+
+      if (year && month) {
+        let daysInMonth;
+        if (month === 2) {
+          daysInMonth = isLeapYear(year) ? 29 : 28;
+        } else {
+          daysInMonth = [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
+        }
+        for (let day = 1; day <= daysInMonth; day++) {
+          let option = document.createElement('option');
+          option.value = day;
+          option.text = day.toString().padStart(2, '0');
+          daySelect.appendChild(option);
+        }
+      }
+    }
+
+    // Initialize days on load
+    updateDays();
+    yearSelect.addEventListener('change', updateDays);
+    monthSelect.addEventListener('change', updateDays);
+
+    // Handle custom dojo input
+    const dojoSelect = document.getElementById('dojo');
+    const customDojoInput = document.getElementById('customDojo');
+
+    function toggleCustomDojo() {
+      if (dojoSelect.value === '其他') {
+        customDojoInput.style.display = 'block';
+        customDojoInput.required = true;
+      } else {
+        customDojoInput.style.display = 'none';
+        customDojoInput.required = false;
+        customDojoInput.value = '';
+      }
+    }
+
+    // Handle event checkboxes
+    const eventInput = document.getElementById('event');
+    function updateEvents() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"][value*="比賽"], input[type="checkbox"][value*="大賽"]');
+      const selected = Array.from(checkboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+      eventInput.value = selected.join(', ');
+    }
+
+    // Handle category checkboxes
+    const categoryInput = document.getElementById('category');
+    function updateCategories() {
+      const validCategories = ['搏擊', '品勢(個人)', '品勢(雙人)', '品勢(團體)', '競速'];
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      const selected = Array.from(checkboxes)
+        .filter(cb => cb.checked && validCategories.includes(cb.value))
+        .map(cb => cb.value);
+      categoryInput.value = selected.join(', ');
+    }
+
+    // Attach event listeners to all checkboxes
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        updateEvents();
+        updateCategories();
+      });
+    });
+
+    // Form validation and submission
+    const form = document.getElementById('registrationForm');
+    const phoneInput = document.getElementById('phone');
+    const nameInput = document.getElementById('name');
+    const phoneError = document.getElementById('phoneError');
+    const nameError = document.getElementById('nameError');
+    const birthdateError = document.getElementById('birthdateError');
+    const dojoError = document.getElementById('dojoError');
+    const eventError = document.getElementById('eventError');
+    const categoryError = document.getElementById('categoryError');
+    const confirmModal = document.getElementById('confirmModal');
+    const formContainer = document.getElementById('formContainer');
+    const thankYouPage = document.getElementById('thankYouPage');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let isValid = true;
+
+      // Reset all error messages
+      nameError.style.display = 'none';
+      phoneError.style.display = 'none';
+      birthdateError.style.display = 'none';
+      dojoError.style.display = 'none';
+      eventError.style.display = 'none';
+      categoryError.style.display = 'none';
+
+      // Validate name
+      if (!nameInput.value.trim()) {
+        nameError.style.display = 'block';
+        isValid = false;
+      }
+
+      // Validate phone
+      if (!phoneInput.value.match(/^\d{8}$/)) {
+        phoneError.style.display = 'block';
+        isValid = false;
+      }
+
+      // Validate birthdate
+      const year = parseInt(yearSelect.value);
+      const month = parseInt(monthSelect.value);
+      const day = parseInt(daySelect.value);
+      const selectedDate = new Date(year, month - 1, day);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (!year || !month || !day || isNaN(selectedDate) || selectedDate > today) {
+        birthdateError.style.display = 'block';
+        isValid = false;
+      }
+
+      // Validate dojo
+      if (!dojoSelect.value || (dojoSelect.value === '其他' && !customDojoInput.value.trim())) {
+        dojoError.style.display = 'block';
+        isValid = false;
+      }
+
+      // Validate events
+      if (!eventInput.value) {
+        eventError.style.display = 'block';
+        isValid = false;
+      }
+
+      // Validate categories
+      if (!categoryInput.value) {
+        categoryError.style.display = 'block';
+        isValid = false;
+      }
+
+      if (isValid) {
+        // Populate confirmation modal
+        document.getElementById('confirmName').textContent = nameInput.value;
+        document.getElementById('confirmPhone').textContent = phoneInput.value;
+        document.getElementById('confirmBirthdate').textContent = `${year}/${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}`;
+        document.getElementById('confirmDojo').textContent = dojoSelect.value === '其他' ? customDojoInput.value : dojoSelect.value;
+        document.getElementById('confirmEvent').textContent = eventInput.value || '無';
+        document.getElementById('confirmCategory').textContent = categoryInput.value || '無';
+        confirmModal.style.display = 'flex';
+      }
+    });
+
+    function cancelSubmission() {
+      confirmModal.style.display = 'none';
+    }
+
+    async function confirmSubmission() {
+      confirmModal.style.display = 'none';
+
+      // Prepare form data for submission
+      const formData = new FormData(form);
+      if (dojoSelect.value === '其他') {
+        formData.set('entry.1923170591', customDojoInput.value);
+      }
+
+      // Submit to Google Form using fetch
+      try {
+        await fetch('https://docs.google.com/forms/d/e/1FAIpQLSd9pOv3srI-e_Pn-zijtiVtZiTwncE3xNbNJjKOMRCcxuu2nQ/formResponse', {
+          method: 'POST',
+          body: formData,
+          mode: 'no-cors'
+        });
+        console.log('表單提交成功');
+        // Hide form and show thank you page
+        formContainer.style.display = 'none';
+        thankYouPage.style.display = 'block';
+      } catch (error) {
+        console.error('提交失敗:', error);
+        alert('表單提交失敗，請稍後再試。');
+      }
+
+      // Reset form to initial state
+      resetForm();
+    }
+
+    function resetForm() {
+      form.reset();
+      form.style.display = 'block';
+      nameError.style.display = 'none';
+      phoneError.style.display = 'none';
+      birthdateError.style.display = 'none';
+      dojoError.style.display = 'none';
+      eventError.style.display = 'none';
+      categoryError.style.display = 'none';
+      customDojoInput.style.display = 'none';
+      customDojoInput.value = '';
+      eventInput.value = '';
+      categoryInput.value = '';
+      document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+      updateDays(); // Ensure day dropdown is reset correctly
+    }
+
+    function restartForm() {
+      thankYouPage.style.display = 'none';
+      formContainer.style.display = 'block';
+      resetForm();
+    }
+  </script>
+</body>
+</html>
