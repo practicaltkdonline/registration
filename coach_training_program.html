@@ -199,29 +199,29 @@
         <span id="purposeError" class="error">請選擇一項參加目的</span>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" id="challengeGroup">
         <label>教學上遇到的困難</label>
         <div class="checkbox-group">
-          <label class="no-asterisk"><input type="checkbox" value="突發情況處理" onchange="updateChallenges()"> 突發情況處理</label>
-          <label class="no-asterisk"><input type="checkbox" value="小朋友唔聽話" onchange="updateChallenges()"> 小朋友唔聽話</label>
-          <label class="no-asterisk"><input type="checkbox" value="教極都唔識" onchange="updateChallenges()"> 教極都唔識</label>
-          <label class="no-asterisk"><input type="checkbox" value="家長嘅查詢" onchange="updateChallenges()"> 家長嘅查詢</label>
-          <label class="no-asterisk"><input type="checkbox" value="其他" onchange="updateChallenges()"> 其他（請手動輸入）</label>
+          <label class="no-asterisk"><input type="checkbox" value="突發情況處理"> 突發情況處理</label>
+          <label class="no-asterisk"><input type="checkbox" value="小朋友唔聽話"> 小朋友唔聽話</label>
+          <label class="no-asterisk"><input type="checkbox" value="教極都唔識"> 教極都唔識</label>
+          <label class="no-asterisk"><input type="checkbox" value="家長嘅查詢"> 家長嘅查詢</label>
+          <label class="no-asterisk"><input type="checkbox" value="其他"> 其他（請手動輸入）</label>
           <input type="text" id="customChallenge" placeholder="請輸入其他困難" style="display: none;">
         </div>
         <input type="hidden" id="challenge" name="entry.1952138955">
         <span id="challengeError" class="error">請至少選擇一項教學困難</span>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" id="learningGroup">
         <label>想於教練班中學到什麼</label>
         <div class="checkbox-group">
-          <label class="no-asterisk"><input type="checkbox" value="踢腳的技巧" onchange="updateLearning()"> 踢腳的技巧</label>
-          <label class="no-asterisk"><input type="checkbox" value="教學流程" onchange="updateLearning()"> 教學流程</label>
-          <label class="no-asterisk"><input type="checkbox" value="搏擊" onchange="updateLearning()"> 搏擊</label>
-          <label class="no-asterisk"><input type="checkbox" value="品勢" onchange="updateLearning()"> 品勢</label>
-          <label class="no-asterisk"><input type="checkbox" value="體能訓練" onchange="updateLearning()"> 體能訓練</label>
-          <label class="no-asterisk"><input type="checkbox" value="其他" onchange="updateLearning()"> 其他（請手動輸入）</label>
+          <label class="no-asterisk"><input type="checkbox" value="踢腳的技巧"> 踢腳的技巧</label>
+          <label class="no-asterisk"><input type="checkbox" value="教學流程"> 教學流程</label>
+          <label class="no-asterisk"><input type="checkbox" value="搏擊"> 搏擊</label>
+          <label class="no-asterisk"><input type="checkbox" value="品勢"> 品勢</label>
+          <label class="no-asterisk"><input type="checkbox" value="體能訓練"> 體能訓練</label>
+          <label class="no-asterisk"><input type="checkbox" value="其他"> 其他（請手動輸入）</label>
           <input type="text" id="customLearning" placeholder="請輸入其他學習內容" style="display: none;">
         </div>
         <input type="hidden" id="learning" name="entry.991224280">
@@ -292,26 +292,42 @@
     const challengeInput = document.getElementById('challenge');
     const customChallengeInput = document.getElementById('customChallenge');
     function updateChallenges() {
-      const checkboxes = document.querySelectorAll('input[type="checkbox"][value*="突發情況處理"], input[type="checkbox"][value*="小朋友唔聽話"], input[type="checkbox"][value*="教極都唔識"], input[type="checkbox"][value*="家長嘅查詢"], input[type="checkbox"][value="其他"]');
-      const selected = Array.from(checkboxes)
-        .filter(cb => cb.checked)
-        .map(cb => cb.value === '其他' ? customChallengeInput.value : cb.value)
-        .filter(val => val);
-      challengeInput.value = selected.join(', ');
-      customChallengeInput.style.display = Array.from(checkboxes).some(cb => cb.value === '其他' && cb.checked) ? 'block' : 'none';
+      const checkboxes = document.querySelectorAll('#challengeGroup input[type="checkbox"]');
+      const selected = new Set();
+      let isOtherChecked = false;
+      checkboxes.forEach(cb => {
+        if (cb.checked && cb.value !== '其他') {
+          selected.add(cb.value);
+        } else if (cb.value === '其他' && cb.checked) {
+          isOtherChecked = true;
+          if (customChallengeInput.value.trim()) {
+            selected.add(customChallengeInput.value.trim());
+          }
+        }
+      });
+      challengeInput.value = Array.from(selected).join(', ');
+      customChallengeInput.style.display = isOtherChecked ? 'block' : 'none';
     }
 
     // Handle learning checkboxes
     const learningInput = document.getElementById('learning');
     const customLearningInput = document.getElementById('customLearning');
     function updateLearning() {
-      const checkboxes = document.querySelectorAll('input[type="checkbox"][value*="踢腳的技巧"], input[type="checkbox"][value*="教學流程"], input[type="checkbox"][value*="搏擊"], input[type="checkbox"][value*="品勢"], input[type="checkbox"][value*="體能訓練"], input[type="checkbox"][value="其他"]');
-      const selected = Array.from(checkboxes)
-        .filter(cb => cb.checked)
-        .map(cb => cb.value === '其他' ? customLearningInput.value : cb.value)
-        .filter(val => val);
-      learningInput.value = selected.join(', ');
-      customLearningInput.style.display = Array.from(checkboxes).some(cb => cb.value === '其他' && cb.checked) ? 'block' : 'none';
+      const checkboxes = document.querySelectorAll('#learningGroup input[type="checkbox"]');
+      const selected = new Set();
+      let isOtherChecked = false;
+      checkboxes.forEach(cb => {
+        if (cb.checked && cb.value !== '其他') {
+          selected.add(cb.value);
+        } else if (cb.value === '其他' && cb.checked) {
+          isOtherChecked = true;
+          if (customLearningInput.value.trim()) {
+            selected.add(customLearningInput.value.trim());
+          }
+        }
+      });
+      learningInput.value = Array.from(selected).join(', ');
+      customLearningInput.style.display = isOtherChecked ? 'block' : 'none';
     }
 
     // Handle attend radio buttons
@@ -325,16 +341,18 @@
     document.querySelectorAll('input[name="purpose"]').forEach(radio => {
       radio.addEventListener('change', updatePurpose);
     });
-    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-      checkbox.addEventListener('change', () => {
-        updateChallenges();
-        updateLearning();
-      });
+    document.querySelectorAll('#challengeGroup input[type="checkbox"]').forEach(checkbox => {
+      checkbox.addEventListener('change', updateChallenges);
+    });
+    document.querySelectorAll('#learningGroup input[type="checkbox"]').forEach(checkbox => {
+      checkbox.addEventListener('change', updateLearning);
     });
     document.querySelectorAll('input[name="attend"]').forEach(radio => {
       radio.addEventListener('change', updateAttend);
     });
     customPurposeInput.addEventListener('input', updatePurpose);
+    customChallengeInput.addEventListener('input', updateChallenges);
+    customLearningInput.addEventListener('input', updateLearning);
 
     // Form validation and submission
     const form = document.getElementById('registrationForm');
@@ -404,15 +422,9 @@
         if (dojoSelect.value === '其他') {
           formData.set('entry.1854538383', customDojoInput.value);
         }
-        if (document.querySelector('input[value="其他"][onchange="updateChallenges()"]:checked')) {
-          formData.set('entry.1952138955', challengeInput.value);
-        }
-        if (document.querySelector('input[value="其他"][onchange="updateLearning()"]:checked')) {
-          formData.set('entry.991224280', learningInput.value);
-        }
-        if (document.querySelector('input[name="purpose"][value="其他"]:checked')) {
-          formData.set('entry.467309351', purposeInput.value);
-        }
+        formData.set('entry.467309351', purposeInput.value);
+        formData.set('entry.1952138955', challengeInput.value);
+        formData.set('entry.991224280', learningInput.value);
 
         // Set thank you message based on attendance
         if (attendInput.value === '會') {
