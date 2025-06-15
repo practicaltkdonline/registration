@@ -99,7 +99,7 @@
       margin-top: 8px;
       display: none;
     }
-    #customDojo, #customChallenge, #customLearning {
+    #customDojo, #customChallenge, #customLearning, #customPurpose {
       margin-top: 12px;
       display: none;
     }
@@ -189,12 +189,14 @@
 
       <div class="form-group">
         <label>參加教練班的目的</label>
-        <div class="checkbox-group">
-          <label class="no-asterisk"><input type="checkbox" value="因為有負責教班" onchange="updatePurpose()"> 因為有負責教班</label>
-          <label class="no-asterisk"><input type="checkbox" value="沒有教班但想增值自己" onchange="updatePurpose()"> 沒有教班但想增值自己</label>
+        <div class="radio-group">
+          <label class="no-asterisk"><input type="radio" name="purpose" value="因為有負責教班" onchange="updatePurpose()"> 因為有負責教班</label>
+          <label class="no-asterisk"><input type="radio" name="purpose" value="沒有教班但想增值自己" onchange="updatePurpose()"> 沒有教班但想增值自己</label>
+          <label class="no-asterisk"><input type="radio" name="purpose" value="其他" onchange="updatePurpose()"> 其他（請手動輸入）</label>
+          <input type="text" id="customPurpose" placeholder="請輸入其他目的" style="display: none;">
         </div>
         <input type="hidden" id="purpose" name="entry.467309351">
-        <span id="purposeError" class="error">請至少選擇一項參加目的</span>
+        <span id="purposeError" class="error">請選擇一項參加目的</span>
       </div>
 
       <div class="form-group">
@@ -262,14 +264,28 @@
       }
     }
 
-    // Handle purpose checkboxes
+    // Handle purpose radio buttons
     const purposeInput = document.getElementById('purpose');
+    const customPurposeInput = document.getElementById('customPurpose');
     function updatePurpose() {
-      const checkboxes = document.querySelectorAll('input[type="checkbox"][value*="負責教班"], input[type="checkbox"][value*="沒有教班但想增值自己"]');
-      const selected = Array.from(checkboxes)
-        .filter(cb => cb.checked)
-        .map(cb => cb.value);
-      purposeInput.value = selected.join(', ');
+      const selected = document.querySelector('input[name="purpose"]:checked');
+      if (selected) {
+        if (selected.value === '其他') {
+          customPurposeInput.style.display = 'block';
+          customPurposeInput.required = true;
+          purposeInput.value = customPurposeInput.value.trim();
+        } else {
+          customPurposeInput.style.display = 'none';
+          customPurposeInput.required = false;
+          customPurposeInput.value = '';
+          purposeInput.value = selected.value;
+        }
+      } else {
+        purposeInput.value = '';
+        customPurposeInput.style.display = 'none';
+        customPurposeInput.required = false;
+        customPurposeInput.value = '';
+      }
     }
 
     // Handle challenge checkboxes
@@ -306,9 +322,11 @@
     }
 
     // Attach event listeners
+    document.querySelectorAll('input[name="purpose"]').forEach(radio => {
+      radio.addEventListener('change', updatePurpose);
+    });
     document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
       checkbox.addEventListener('change', () => {
-        updatePurpose();
         updateChallenges();
         updateLearning();
       });
@@ -316,6 +334,7 @@
     document.querySelectorAll('input[name="attend"]').forEach(radio => {
       radio.addEventListener('change', updateAttend);
     });
+    customPurposeInput.addEventListener('input', updatePurpose);
 
     // Form validation and submission
     const form = document.getElementById('registrationForm');
@@ -356,7 +375,7 @@
       }
 
       // Validate purpose
-      if (!purposeInput.value) {
+      if (!purposeInput.value || (document.querySelector('input[name="purpose"][value="其他"]:checked') && !customPurposeInput.value.trim())) {
         purposeError.style.display = 'block';
         isValid = false;
       }
@@ -390,6 +409,9 @@
         }
         if (document.querySelector('input[value="其他"][onchange="updateLearning()"]:checked')) {
           formData.set('entry.991224280', learningInput.value);
+        }
+        if (document.querySelector('input[name="purpose"][value="其他"]:checked')) {
+          formData.set('entry.467309351', purposeInput.value);
         }
 
         // Set thank you message based on attendance
@@ -437,6 +459,8 @@
       customChallengeInput.value = '';
       customLearningInput.style.display = 'none';
       customLearningInput.value = '';
+      customPurposeInput.style.display = 'none';
+      customPurposeInput.value = '';
       purposeInput.value = '';
       challengeInput.value = '';
       learningInput.value = '';
