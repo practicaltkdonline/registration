@@ -164,13 +164,13 @@
     <form id="registrationForm">
       <div class="form-group">
         <label for="name">姓名</label>
-        <input type="text" id="name" name="entry.1702329531" required>
+        <input type="text" id="name" name="entry.214935030" required>
         <span id="nameError" class="error">請輸入姓名</span>
       </div>
 
       <div class="form-group">
         <label for="dojo">所屬道場</label>
-        <select id="dojo" name="entry.1923170591" required onchange="toggleCustomDojo()">
+        <select id="dojo" name="entry.1854538383" required onchange="toggleCustomDojo()">
           <option value="">請選擇道場</option>
           <option value="觀塘總館">觀塘總館</option>
           <option value="九龍灣 - 啟駿道場">九龍灣 - 啟駿道場</option>
@@ -178,7 +178,7 @@
           <option value="炮台山道場">炮台山道場</option>
           <option value="元朗道場">元朗道場</option>
           <option value="長沙灣道場">長沙灣道場</option>
-          <option value="紅磡 - 培匠道場">紅磡 - 培匠跆拳道訓練中心</option>
+          <option value="紅磡 - 培匠道場">紅磡 - 培匠道場</option>
           <option value="鰂魚涌體育館">鰂魚涌體育館</option>
           <option value="荔枝角體育館">荔枝角體育館</option>
           <option value="其他">其他（請手動輸入）</option>
@@ -193,7 +193,7 @@
           <label class="no-asterisk"><input type="checkbox" value="因為有負責教班" onchange="updatePurpose()"> 因為有負責教班</label>
           <label class="no-asterisk"><input type="checkbox" value="沒有教班但想增值自己" onchange="updatePurpose()"> 沒有教班但想增值自己</label>
         </div>
-        <input type="hidden" id="purpose" name="entry.1287068960">
+        <input type="hidden" id="purpose" name="entry.467309351">
         <span id="purposeError" class="error">請至少選擇一項參加目的</span>
       </div>
 
@@ -207,7 +207,7 @@
           <label class="no-asterisk"><input type="checkbox" value="其他" onchange="updateChallenges()"> 其他（請手動輸入）</label>
           <input type="text" id="customChallenge" placeholder="請輸入其他困難" style="display: none;">
         </div>
-        <input type="hidden" id="challenge" name="entry.1317768085">
+        <input type="hidden" id="challenge" name="entry.1952138955">
         <span id="challengeError" class="error">請至少選擇一項教學困難</span>
       </div>
 
@@ -222,7 +222,7 @@
           <label class="no-asterisk"><input type="checkbox" value="其他" onchange="updateLearning()"> 其他（請手動輸入）</label>
           <input type="text" id="customLearning" placeholder="請輸入其他學習內容" style="display: none;">
         </div>
-        <input type="hidden" id="learning" name="entry.9876543210">
+        <input type="hidden" id="learning" name="entry.991224280">
         <span id="learningError" class="error">請至少選擇一項學習內容</span>
       </div>
 
@@ -232,7 +232,7 @@
           <label class="no-asterisk"><input type="radio" name="attend" value="會" required> 會</label>
           <label class="no-asterisk"><input type="radio" name="attend" value="否"> 否</label>
         </div>
-        <input type="hidden" id="attend" name="entry.5432109876">
+        <input type="hidden" id="attend" name="entry.673172076">
         <span id="attendError" class="error">請選擇是否參加</span>
       </div>
 
@@ -383,13 +383,13 @@
         // Prepare form data for submission
         const formData = new FormData(form);
         if (dojoSelect.value === '其他') {
-          formData.set('entry.1923170591', customDojoInput.value);
+          formData.set('entry.1854538383', customDojoInput.value);
         }
         if (document.querySelector('input[value="其他"][onchange="updateChallenges()"]:checked')) {
-          formData.set('entry.1317768085', challengeInput.value);
+          formData.set('entry.1952138955', challengeInput.value);
         }
         if (document.querySelector('input[value="其他"][onchange="updateLearning()"]:checked')) {
-          formData.set('entry.9876543210', learningInput.value);
+          formData.set('entry.991224280', learningInput.value);
         }
 
         // Set thank you message based on attendance
@@ -403,7 +403,7 @@
 
         // Submit to Google Form
         try {
-          await fetch('https://docs.google.com/forms/d/e/1FAIpQLSd9pOv3srI-e_Pn-zijtiVtZiTwncE3xNbNJjKOMRCcxuu2nQ/formResponse', {
+          await fetch('https://docs.google.com/forms/d/e/1FAIpQLSceQ2CSGBcu1cE6j_Mv4M-Vq9aFMmcdGA0JO8ULBMc_T0BgvA/formResponse', {
             method: 'POST',
             body: formData,
             mode: 'no-cors'
