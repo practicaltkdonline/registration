@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>鰂魚涌跆拳道班2025年報名表</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
@@ -13,6 +13,7 @@
       padding: 20px;
       background: linear-gradient(135deg, #e6f0fa 0%, #f5f5f5 100%);
       color: #2d3748;
+      touch-action: manipulation; /* Prevent pinch-zoom on iOS */
     }
     .form-container {
       background: white;
@@ -27,6 +28,9 @@
       max-width: 600px;
       margin-left: auto;
       margin-right: auto;
+    }
+    .form-header h1, .form-header h2 {
+      text-align: center;
     }
     .form-header h1 {
       font-size: 32px;
@@ -122,6 +126,30 @@
       margin-right: 12px;
       accent-color: #3182ce;
     }
+    .class-options {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .class-option {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid #cbd5e0;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 16px;
+      cursor: pointer;
+      transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    }
+    .class-option.selected {
+      border-color: #3182ce;
+      background-color: #e6f0fa;
+      color: #1a4971;
+      font-weight: 500;
+    }
+    .class-option:hover {
+      border-color: #3182ce;
+    }
     .number-input-group {
       display: flex;
       align-items: center;
@@ -142,6 +170,8 @@
       border-radius: 8px;
       cursor: pointer;
       transition: background-color 0.3s ease;
+      touch-action: manipulation; /* Prevent zoom on iOS */
+      -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
     }
     .number-input-group button:hover {
       background-color: #cbd5e0;
@@ -200,6 +230,13 @@
       .form-header p, .form-header ul li {
         font-size: 16px;
       }
+      .class-options {
+        flex-direction: column;
+        gap: 12px;
+      }
+      .class-option {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -250,12 +287,12 @@
       </div>
 
       <div class="form-group">
-        <label for="class">所選班別</label>
-        <select id="class" name="entry.XXXXXX" required>
-          <option value="">請選擇班別</option>
-          <option value="初級 3-7歲 白帶至綠帶">初級 3-7歲 白帶至綠帶</option>
-          <option value="進階 8歲或以上 綠帶或以上">進階 8歲或以上 綠帶或以上</option>
-        </select>
+        <label>所選班別</label>
+        <div class="class-options">
+          <div class="class-option" data-value="初級 3-7歲 白帶至綠帶">初級 3-7歲 白帶至綠帶</div>
+          <div class="class-option" data-value="進階 8歲或以上 綠帶或以上">進階 8歲或以上 綠帶或以上</div>
+        </div>
+        <input type="hidden" id="class" name="entry.XXXXXX">
         <span id="classError" class="error">請選擇班別</span>
       </div>
 
@@ -296,7 +333,7 @@
 
       <div class="form-group">
         <label class="no-asterisk" for="leaveDate">請假日期（如有）</label>
-        <input type="text" id="leaveDate" name="entry.XXXXXX" placeholder="請輸入日期（如 28/2、30/3、16/4/25……）">
+        <input type="text" id="leaveDate" name="entry.XXXXXX" placeholder="請輸入日期（如 28/2, 30/3, 16/4……）">
         <span id="leaveDateError" class="error">請輸入請假日期</span>
       </div>
 
@@ -321,6 +358,17 @@
   </div>
 
   <script>
+    // Handle class options
+    const classOptions = document.querySelectorAll('.class-option');
+    const classInput = document.getElementById('class');
+    classOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        classOptions.forEach(opt => opt.classList.remove('selected'));
+        option.classList.add('selected');
+        classInput.value = option.getAttribute('data-value');
+      });
+    });
+
     // Handle junior class checkboxes
     const juniorClassInput = document.getElementById('juniorClass');
     function updateJuniorClass() {
@@ -343,6 +391,19 @@
     // Attach event listeners
     document.querySelectorAll('#juniorClassGroup input[type="checkbox"]').forEach(checkbox => {
       checkbox.addEventListener('change', updateJuniorClass);
+    });
+
+    // Prevent zoom on rapid clicks for number buttons
+    const numberButtons = document.querySelectorAll('.number-input-group button');
+    let lastTouchTime = 0;
+    numberButtons.forEach(button => {
+      button.addEventListener('touchstart', (e) => {
+        const currentTime = new Date().getTime();
+        if (currentTime - lastTouchTime < 300) {
+          e.preventDefault();
+        }
+        lastTouchTime = currentTime;
+      });
     });
 
     // Form validation and submission
@@ -454,6 +515,8 @@
       previousDeductionError.style.display = 'none';
       juniorClassInput.value = '';
       previousDeductionInput.value = '0';
+      classInput.value = '';
+      document.querySelectorAll('.class-option').forEach(opt => opt.classList.remove('selected'));
       document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
       document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
     }
