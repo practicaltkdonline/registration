@@ -140,9 +140,13 @@
       font-size: 15px;
       cursor: pointer;
       transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
-      white-space: nowrap;
+      white-space: normal;
       overflow: hidden;
       text-overflow: ellipsis;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .class-option.selected {
       border-color: #3182ce;
@@ -199,6 +203,12 @@
       margin-top: 8px;
       display: none;
     }
+    .date-error {
+      color: #e53e3e;
+      font-size: 14px;
+      margin-bottom: 12px;
+      display: none;
+    }
     #thankYouPage {
       display: none;
       background: white;
@@ -253,8 +263,9 @@
       }
       .class-option {
         width: 100%;
-        font-size: 14px;
+        font-size: 13px;
         padding: 8px 10px;
+        min-height: 60px;
       }
     }
   </style>
@@ -308,8 +319,8 @@
       <div class="form-group">
         <label>所選班別</label>
         <div class="class-options">
-          <div class="class-option" data-value="初級 3-7歲 白帶至綠帶">初級班 (3-7歲)</div>
-          <div class="class-option" data-value="進階 8歲或以上 綠帶或以上">進階班 (8歲+)</div>
+          <div class="class-option" data-value="初級 3-7歲 白帶至綠帶">初級 3-7歲 白帶至綠帶</div>
+          <div class="class-option" data-value="進階 8歲或以上 綠帶或以上">進階 8歲或以上 綠帶或以上</div>
         </div>
         <input type="hidden" id="class" name="entry.XXXXXX">
         <span id="classError" class="error">請選擇班別</span>
@@ -317,21 +328,10 @@
 
       <div class="form-group" id="juniorClassGroup">
         <label>請選擇日期</label>
+        <span id="dateError" class="date-error">無法載入日期，請稍後重試或聯繫管理員</span>
         <button type="button" class="select-all-button" onclick="toggleSelectAll()">全選</button>
-        <div class="checkbox-group">
-          <label class="no-asterisk"><input type="checkbox" value="07月06日"> 07月06日</label>
-          <label class="no-asterisk"><input type="checkbox" value="07月13日"> 07月13日</label>
-          <label class="no-asterisk"><input type="checkbox" value="07月20日"> 07月20日</label>
-          <label class="no-asterisk"><input type="checkbox" value="07月27日"> 07月27日</label>
-          <label class="no-asterisk"><input type="checkbox" value="08月03日"> 08月03日</label>
-          <label class="no-asterisk"><input type="checkbox" value="08月10日"> 08月10日</label>
-          <label class="no-asterisk"><input type="checkbox" value="08月17日"> 08月17日</label>
-          <label class="no-asterisk"><input type="checkbox" value="08月24日"> 08月24日</label>
-          <label class="no-asterisk"><input type="checkbox" value="08月31日"> 08月31日</label>
-          <label class="no-asterisk"><input type="checkbox" value="09月07日"> 09月07日</label>
-          <label class="no-asterisk"><input type="checkbox" value="09月14日"> 09月14日</label>
-          <label class="no-asterisk"><input type="checkbox" value="09月21日"> 09月21日</label>
-          <label class="no-asterisk"><input type="checkbox" value="09月28日"> 09月28日</label>
+        <div class="checkbox-group" id="dateCheckboxes">
+          <!-- Checkboxes will be populated dynamically -->
         </div>
         <input type="hidden" id="juniorClass" name="entry.XXXXXX">
         <span id="juniorClassError" class="error">請至少選擇一項日期</span>
@@ -388,11 +388,95 @@
     const classError = document.getElementById('classError');
     const juniorClassError = document.getElementById('juniorClassError');
     const previousLeaveError = document.getElementById('previousLeaveError');
-    const leaveDateError = document.getElementById('previousDeductionError');
+    const leaveDateError = document.getElementById('leaveDateError');
     const previousDeductionError = document.getElementById('previousDeductionError');
     const formContainer = document.getElementById('formContainer');
     const thankYouPage = document.getElementById('thankYouPage');
     const numberButtons = document.querySelectorAll('.number-input-group button');
+    const dateCheckboxesContainer = document.getElementById('dateCheckboxes');
+    const dateError = document.getElementById('dateError');
+
+    // Fallback dates in case API fails
+    const fallbackDates = [
+      '07月06日', '07月13日', '07月20日', '07月27日',
+      '08月03日', '08月10日', '08月17日', '08月24日', '08月31日',
+      '09月07日', '09月14日', '09月21日', '09月28日'
+    ];
+
+    // Fetch dates from Google Sheets
+    async function loadDates() {
+      const spreadsheetId = '1IGczhrahIZF2W6_RUUU9ib5vQ1vkLVDIQEObWxEStgU';
+      const gid = '550660241';
+      const sheetName = 'QB';
+      const apiUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&tq=SELECT%20G&gid=${gid}`;
+      const fallbackUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&tq=SELECT%20G&sheet=${encodeURIComponent(sheetName)}`;
+
+      try {
+        // Try with GID first
+        let response = await fetch(apiUrl);
+        if (!response.ok) {
+          console.warn(`GID query failed: Status ${response.status}. Trying sheet name...`);
+          // Fallback to sheet name
+          response = await fetch(fallbackUrl);
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status} ${response.statusText}`);
+          }
+        }
+        const text = await response.text();
+        console.log('Raw API response:', text); // Log raw response
+        // Remove JSONP prefix and parse
+        let jsonText;
+        try {
+          jsonText = text.replace(/^google\.visualization\.Query\.setResponse\(/, '').replace(/\);$/, '');
+          const data = JSON.parse(jsonText);
+          console.log('Parsed API data:', data); // Log parsed data
+          // Extract dates from column G (index 0), skip header (row 0)
+          const dates = data.table.rows
+            .slice(1) // Skip G1 (header)
+            .map(row => row.c[0]?.v)
+            .filter(date => date && typeof date === 'string' && date.trim() !== '')
+            .map(date => date.trim());
+
+          if (dates.length === 0) {
+            throw new Error('No valid dates found in column G');
+          }
+
+          // Populate checkboxes
+          dateCheckboxesContainer.innerHTML = dates.map(date => `
+            <label class="no-asterisk"><input type="checkbox" value="${date}"> ${date}</label>
+          `).join('');
+          dateError.style.display = 'none';
+          attachCheckboxListeners();
+        } catch (parseError) {
+          throw new Error(`JSON parse error: ${parseError.message}`);
+        }
+      } catch (error) {
+        console.error('Failed to load dates:', error.message, error.stack);
+        // Use fallback dates
+        dateCheckboxesContainer.innerHTML = fallbackDates.map(date => `
+          <label class="no-asterisk"><input type="checkbox" value="${date}"> ${date}</label>
+        `).join('');
+        dateError.style.display = 'block';
+        attachCheckboxListeners();
+      }
+    }
+
+    // Attach checkbox event listeners
+    function attachCheckboxListeners() {
+      document.querySelectorAll('#juniorClassGroup input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+          updateJuniorClass();
+          const checkboxes = document.querySelectorAll('#juniorClassGroup input[type="checkbox"]');
+          const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+          const selectAllButton = document.querySelector('.select-all-button');
+          allSelected = allChecked;
+          selectAllButton.textContent = allChecked ? '取消全選' : '全選';
+        });
+      });
+    }
+
+    // Load dates on page load
+    window.onload = loadDates;
 
     // Handle class options
     classOptions.forEach(option => {
@@ -432,18 +516,6 @@
       value = Math.max(0, Math.min(13, value + change));
       previousDeductionInput.value = value;
     }
-
-    // Attach event listeners
-    document.querySelectorAll('#juniorClassGroup input[type="checkbox"]').forEach(checkbox => {
-      checkbox.addEventListener('change', () => {
-        updateJuniorClass();
-        const checkboxes = document.querySelectorAll('#juniorClassGroup input[type="checkbox"]');
-        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-        const selectAllButton = document.querySelector('.select-all-button');
-        allSelected = allChecked;
-        selectAllButton.textContent = allChecked ? '取消全選' : '全選';
-      });
-    });
 
     // Prevent zoom on rapid clicks for number buttons
     let lastTouchTime = 0;
