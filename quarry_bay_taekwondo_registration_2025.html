@@ -1,43 +1,4 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
@@ -68,6 +29,12 @@
       font-size: 32px;
       font-weight: 700;
       color: #1a4971;
+      margin-bottom: 4px;
+    }
+    .form-header h2 {
+      font-size: 24px;
+      font-weight: 500;
+      color: #1a4971;
       margin-bottom: 12px;
     }
     .form-header p {
@@ -90,6 +57,11 @@
       margin-bottom: 12px;
       font-size: 16px;
       color: #4a5568;
+    }
+    .form-header .left-align {
+      text-align: left;
+      max-width: 600px;
+      margin: 12px auto;
     }
     .form-group {
       margin-bottom: 28px;
@@ -218,6 +190,9 @@
       .form-header h1 {
         font-size: 24px;
       }
+      .form-header h2 {
+        font-size: 18px;
+      }
       .form-header p, .form-header ul li {
         font-size: 14px;
       }
@@ -227,15 +202,22 @@
 <body>
   <div class="form-container" id="formContainer">
     <div class="form-header">
-      <h1>鰂魚涌跆拳道班2025年報名表</h1>
+      <h1>鰂魚涌跆拳道班</h1>
+      <h2>2025年報名表</h2>
       <p><strong>家長你好！</strong></p>
       <p>鰂魚涌跆拳道班分2個時段，逢星期日上堂：</p>
-      <p><strong>初級 3-7歲 白帶至綠帶</strong> 12:00pm-1:00pm</p>
-      <p><strong>進階 8歲或以上 綠帶或以上</strong> 12:30pm-2:00pm</p>
+      <p><strong>初級 3-7歲 白帶至綠帶</strong></p>
+      <p>12:00pm-1:00pm</p>
+      <p><strong>進階 8歲或以上 綠帶或以上</strong></p>
+      <p>12:30pm-2:00pm</p>
       <p>每節課堂 <strong>$110元</strong></p>
-      <p>分4期收費 (1月-3月 / 4月-6月 / 7月-9月 / 10月-12月)</p>
+      <p><strong>分4期收費</strong></p>
+      <p>第1期 1月-3月</p>
+      <p>第2期 4月-6月</p>
+      <p>第3期 7月-9月</p>
+      <p>第4期 10月-12月</p>
       <p>如有需要請假，請提前 WhatsApp 通知教練，學費可於下期扣減。</p>
-      <p><strong>家長可用以下方式付款：</strong></p>
+      <p class="left-align"><strong>家長可用以下方式付款：</strong></p>
       <ul>
         <li><strong>FPS</strong><br>
           戶口編號: 163115645<br>
@@ -247,7 +229,7 @@
         <li><strong>現金</strong><br>
           第一堂上堂或之前交給教練</li>
       </ul>
-      <p>如有查詢，歡迎聯絡 <strong>歐 sir</strong>，謝謝！</p>
+      <p class="left-align">如有查詢，歡迎聯絡 <strong>歐 sir</strong>，謝謝！</p>
     </div>
     <form id="registrationForm">
       <div class="form-group">
@@ -308,8 +290,8 @@
       </div>
 
       <div class="form-group">
-        <label class="no-asterisk" for="leaveDate">請假日期</label>
-        <input type="text" id="leaveDate" name="entry.XXXXXX" placeholder="請輸入日期（如 2025-06-01）">
+        <label class="no-asterisk" for="leaveDate">請假日期（如有）</label>
+        <input type="text" id="leaveDate" name="entry.XXXXXX" placeholder="請輸入日期（如 28/2、30/3、16/4/25……）">
         <span id="leaveDateError" class="error">請輸入請假日期</span>
       </div>
 
