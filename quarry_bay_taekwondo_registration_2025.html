@@ -1,0 +1,481 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>鰂魚涌跆拳道班2025年報名表</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans TC', Arial, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #e6f0fa 0%, #f5f5f5 100%);
+      color: #2d3748;
+    }
+    .form-container {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+      margin-bottom: 40px;
+    }
+    .form-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .form-header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a4971;
+      margin-bottom: 12px;
+    }
+    .form-header p {
+      font-size: 16px;
+      color: #4a5568;
+      line-height: 1.6;
+      margin: 8px 0;
+    }
+    .form-header strong {
+      color: #2d3748;
+    }
+    .form-header ul {
+      list-style-type: decimal;
+      text-align: left;
+      max-width: 600px;
+      margin: 12px auto;
+      padding-left: 20px;
+    }
+    .form-header ul li {
+      margin-bottom: 12px;
+      font-size: 16px;
+      color: #4a5568;
+    }
+    .form-group {
+      margin-bottom: 28px;
+    }
+    label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      font-weight: 500;
+      font-size: 16px;
+      color: #2d3748;
+    }
+    label::before {
+      content: '*';
+      color: #e53e3e;
+      margin-right: 6px;
+      font-size: 16px;
+      display: inline-block;
+    }
+    label.no-asterisk::before {
+      content: none;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #cbd5e0;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 16px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #3182ce;
+      box-shadow: 0 0 8px rgba(49, 130, 206, 0.3);
+    }
+    .checkbox-group, .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 12px;
+      background: #f7fafc;
+      border-radius: 8px;
+    }
+    .checkbox-group label, .radio-group label {
+      display: flex;
+      align-items: center;
+      font-weight: normal;
+      font-size: 16px;
+      margin-bottom: 0;
+    }
+    .checkbox-group input[type="checkbox"], .radio-group input[type="radio"] {
+      width: auto;
+      margin-right: 12px;
+      accent-color: #3182ce;
+    }
+    .number-input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .number-input-group input[type="number"] {
+      width: 80px;
+      text-align: center;
+    }
+    .number-input-group button {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      font-size: 18px;
+      background-color: #e2e8f0;
+      color: #2d3748;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .number-input-group button:hover {
+      background-color: #cbd5e0;
+    }
+    .error {
+      color: #e53e3e;
+      font-size: 14px;
+      margin-top: 8px;
+      display: none;
+    }
+    #thankYouPage {
+      display: none;
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+      text-align: center;
+    }
+    #thankYouPage h2 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #1a4971;
+    }
+    #thankYouPage p {
+      font-size: 16px;
+      margin: 8px 0;
+      color: #2d3748;
+      line-height: 1.6;
+    }
+    button[type="submit"], button.return-button {
+      background-color: #3182ce;
+      color: white;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    button[type="submit"]:hover, button.return-button:hover {
+      background-color: #2b6cb0;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(49, 130, 206, 0.4);
+    }
+    @media (max-width: 600px) {
+      .form-container, #thankYouPage {
+        padding: 24px;
+      }
+      .form-header h1 {
+        font-size: 24px;
+      }
+      .form-header p, .form-header ul li {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container" id="formContainer">
+    <div class="form-header">
+      <h1>鰂魚涌跆拳道班2025年報名表</h1>
+      <p><strong>家長你好！</strong></p>
+      <p>鰂魚涌跆拳道班分2個時段，逢星期日上堂：</p>
+      <p><strong>初級 3-7歲 白帶至綠帶</strong> 12:00pm-1:00pm</p>
+      <p><strong>進階 8歲或以上 綠帶或以上</strong> 12:30pm-2:00pm</p>
+      <p>每節課堂 <strong>$110元</strong></p>
+      <p>分4期收費 (1月-3月 / 4月-6月 / 7月-9月 / 10月-12月)</p>
+      <p>如有需要請假，請提前 WhatsApp 通知教練，學費可於下期扣減。</p>
+      <p><strong>家長可用以下方式付款：</strong></p>
+      <ul>
+        <li><strong>FPS</strong><br>
+          戶口編號: 163115645<br>
+          名稱：Practical Club Consultants Company Limited<br>
+          付款訊息請寫上小朋友全名<br>
+          完成後截圖 WhatsApp 教練確認</li>
+        <li><strong>支票</strong><br>
+          支票抬頭寫: 香港實用跆拳道協會</li>
+        <li><strong>現金</strong><br>
+          第一堂上堂或之前交給教練</li>
+      </ul>
+      <p>如有查詢，歡迎聯絡 <strong>歐 sir</strong>，謝謝！</p>
+    </div>
+    <form id="registrationForm">
+      <div class="form-group">
+        <label for="name">學員姓名</label>
+        <input type="text" id="name" name="entry.XXXXXX" required>
+        <span id="nameError" class="error">請輸入學員姓名</span>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">聯絡電話</label>
+        <input type="tel" id="phone" name="entry.XXXXXX" required>
+        <span id="phoneError" class="error">請輸入聯絡電話</span>
+      </div>
+
+      <div class="form-group">
+        <label for="class">所選班別</label>
+        <select id="class" name="entry.XXXXXX" required>
+          <option value="">請選擇班別</option>
+          <option value="初級 3-7歲 白帶至綠帶">初級 3-7歲 白帶至綠帶</option>
+          <option value="進階 8歲或以上 綠帶或以上">進階 8歲或以上 綠帶或以上</option>
+        </select>
+        <span id="classError" class="error">請選擇班別</span>
+      </div>
+
+      <div class="form-group" id="juniorClassGroup">
+        <label>請選擇日期</label>
+        <div class="checkbox-group">
+          <label class="no-asterisk"><input type="checkbox" value="06月01日"> 06月01日</label>
+          <label class="no-asterisk"><input type="checkbox" value="06月08日"> 06月08日</label>
+          <label class="no-asterisk"><input type="checkbox" value="06月15日"> 06月15日</label>
+          <label class="no-asterisk"><input type="checkbox" value="06月22日"> 06月22日</label>
+          <label class="no-asterisk"><input type="checkbox" value="06月29日"> 06月29日</label>
+          <label class="no-asterisk"><input type="checkbox" value="07月06日"> 07月06日</label>
+          <label class="no-asterisk"><input type="checkbox" value="07月13日"> 07月13日</label>
+          <label class="no-asterisk"><input type="checkbox" value="07月20日"> 07月20日</label>
+          <label class="no-asterisk"><input type="checkbox" value="07月27日"> 07月27日</label>
+          <label class="no-asterisk"><input type="checkbox" value="08月03日"> 08月03日</label>
+          <label class="no-asterisk"><input type="checkbox" value="08月10日"> 08月10日</label>
+          <label class="no-asterisk"><input type="checkbox" value="08月17日"> 08月17日</label>
+          <label class="no-asterisk"><input type="checkbox" value="08月24日"> 08月24日</label>
+          <label class="no-asterisk"><input type="checkbox" value="08月31日"> 08月31日</label>
+          <label class="no-asterisk"><input type="checkbox" value="09月07日"> 09月07日</label>
+          <label class="no-asterisk"><input type="checkbox" value="09月14日"> 09月14日</label>
+          <label class="no-asterisk"><input type="checkbox" value="09月21日"> 09月21日</label>
+          <label class="no-asterisk"><input type="checkbox" value="09月28日"> 09月28日</label>
+        </div>
+        <input type="hidden" id="juniorClass" name="entry.XXXXXX">
+        <span id="juniorClassError" class="error">請至少選擇一項日期</span>
+      </div>
+
+      <div class="form-group">
+        <label>上期有否請假</label>
+        <div class="radio-group">
+          <label class="no-asterisk"><input type="radio" name="previousLeave" value="有" required> 有</label>
+          <label class="no-asterisk"><input type="radio" name="previousLeave" value="沒有" required> 沒有</label>
+        </div>
+        <span id="previousLeaveError" class="error">請選擇是否請假</span>
+      </div>
+
+      <div class="form-group">
+        <label class="no-asterisk" for="leaveDate">請假日期</label>
+        <input type="text" id="leaveDate" name="entry.XXXXXX" placeholder="請輸入日期（如 2025-06-01）">
+        <span id="leaveDateError" class="error">請輸入請假日期</span>
+      </div>
+
+      <div class="form-group">
+        <label>上期扣減 (堂)</label>
+        <div class="number-input-group">
+          <button type="button" onclick="adjustDeduction(-1)">-</button>
+          <input type="number" id="previousDeduction" name="entry.XXXXXX" value="0" min="0" max="13" step="1" required>
+          <button type="button" onclick="adjustDeduction(1)">+</button>
+        </div>
+        <span id="previousDeductionError" class="error">請輸入扣減堂數（0-13）</span>
+      </div>
+
+      <button type="submit">提交表單</button>
+    </form>
+  </div>
+
+  <div id="thankYouPage">
+    <h2>感謝您的回覆！</h2>
+    <p>已經收到您的報名，稍後會收到確認課堂訊息，確認後再付款。</p>
+    <button class="return-button" onclick="restartForm()">重新報名</button>
+  </div>
+
+  <script>
+    // Handle junior class checkboxes
+    const juniorClassInput = document.getElementById('juniorClass');
+    function updateJuniorClass() {
+      const checkboxes = document.querySelectorAll('#juniorClassGroup input[type="checkbox"]');
+      const selected = [];
+      checkboxes.forEach(cb => {
+        if (cb.checked) selected.push(cb.value);
+      });
+      juniorClassInput.value = selected.join(', ');
+    }
+
+    // Handle deduction input
+    function adjustDeduction(change) {
+      const input = document.getElementById('previousDeduction');
+      let value = parseInt(input.value) || 0;
+      value = Math.max(0, Math.min(13, value + change));
+      input.value = value;
+    }
+
+    // Attach event listeners
+    document.querySelectorAll('#juniorClassGroup input[type="checkbox"]').forEach(checkbox => {
+      checkbox.addEventListener('change', updateJuniorClass);
+    });
+
+    // Form validation and submission
+    const form = document.getElementById('registrationForm');
+    const nameInput = document.getElementById('name');
+    const phoneInput = document.getElementById('phone');
+    const classInput = document.getElementById('class');
+    const previousLeaveInputs = document.querySelectorAll('input[name="previousLeave"]');
+    const leaveDateInput = document.getElementById('leaveDate');
+    const previousDeductionInput = document.getElementById('previousDeduction');
+    const nameError = document.getElementById('nameError');
+    const phoneError = document.getElementById('phoneError');
+    const classError = document.getElementById('classError');
+    const juniorClassError = document.getElementById('juniorClassError');
+    const previousLeaveError = document.getElementById('previousLeaveError');
+    const leaveDateError = document.getElementById('leaveDateError');
+    const previousDeductionError = document.getElementById('previousDeductionError');
+    const formContainer = document.getElementById('formContainer');
+    const thankYouPage = document.getElementById('thankYouPage');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      let isValid = true;
+
+      // Reset all error messages
+      nameError.style.display = 'none';
+      phoneError.style.display = 'none';
+      classError.style.display = 'none';
+      juniorClassError.style.display = 'none';
+      previousLeaveError.style.display = 'none';
+      leaveDateError.style.display = 'none';
+      previousDeductionError.style.display = 'none';
+
+      // Validate name
+      if (!nameInput.value.trim()) {
+        nameError.style.display = 'block';
+        isValid = false;
+      }
+
+      // Validate phone
+      if (!phoneInput.value.trim()) {
+        phoneError.style.display = 'block';
+        isValid = false;
+      }
+
+      // Validate class
+      if (!classInput.value) {
+        classError.style.display = 'block';
+        isValid = false;
+      }
+
+      // Validate junior class (if selected)
+      if (classInput.value === '初級 3-7歲 白帶至綠帶' && !juniorClassInput.value) {
+        juniorClassError.style.display = 'block';
+        isValid = false;
+      }
+
+      // Validate previous leave
+      let previousLeaveSelected = false;
+      previousLeaveInputs.forEach(input => {
+        if (input.checked) previousLeaveSelected = true;
+      });
+      if (!previousLeaveSelected) {
+        previousLeaveError.style.display = 'block';
+        isValid = false;
+      }
+
+      // Validate previous deduction
+      const deductionValue = parseInt(previousDeductionInput.value) || 0;
+      if (isNaN(deductionValue) || deductionValue < 0 || deductionValue > 13) {
+        previousDeductionError.style.display = 'block';
+        isValid = false;
+      }
+
+      if (isValid) {
+        // Prepare form data for submission
+        const formData = new FormData(form);
+
+        // Submit to Google Form (placeholder URL, replace with actual)
+        try {
+          await fetch('https://docs.google.com/forms/d/e/PLACEHOLDER_FORM_ID/formResponse', {
+            method: 'POST',
+            body: formData,
+            mode: 'no-cors'
+          });
+          console.log('表單提交成功');
+          // Hide form and show thank you page
+          formContainer.style.display = 'none';
+          thankYouPage.style.display = 'block';
+        } catch (error) {
+          console.error('提交失敗:', error);
+          alert('表單提交失敗，請稍後再試。');
+        }
+
+        // Reset form to initial state
+        resetForm();
+      }
+    });
+
+    function resetForm() {
+      form.reset();
+      form.style.display = 'block';
+      nameError.style.display = 'none';
+      phoneError.style.display = 'none';
+      classError.style.display = 'none';
+      juniorClassError.style.display = 'none';
+      previousLeaveError.style.display = 'none';
+      leaveDateError.style.display = 'none';
+      previousDeductionError.style.display = 'none';
+      juniorClassInput.value = '';
+      previousDeductionInput.value = '0';
+      document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+      document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+    }
+
+    function restartForm() {
+      thankYouPage.style.display = 'none';
+      formContainer.style.display = 'block';
+      resetForm();
+    }
+  </script>
+</body>
+</html>
