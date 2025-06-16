@@ -128,18 +128,21 @@
     }
     .class-options {
       display: flex;
-      gap: 16px;
+      gap: 12px;
       flex-wrap: wrap;
     }
     .class-option {
       flex: 1;
-      padding: 12px 16px;
+      padding: 10px 12px;
       border: 2px solid #cbd5e0;
       border-radius: 8px;
       text-align: center;
-      font-size: 16px;
+      font-size: 15px;
       cursor: pointer;
       transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .class-option.selected {
       border-color: #3182ce;
@@ -250,6 +253,8 @@
       }
       .class-option {
         width: 100%;
+        font-size: 14px;
+        padding: 8px 10px;
       }
     }
   </style>
@@ -303,8 +308,8 @@
       <div class="form-group">
         <label>所選班別</label>
         <div class="class-options">
-          <div class="class-option" data-value="初級 3-7歲 白帶至綠帶">初級 3-7歲 白帶至綠帶</div>
-          <div class="class-option" data-value="進階 8歲或以上 綠帶或以上">進階 8歲或以上 綠帶或以上</div>
+          <div class="class-option" data-value="初級 3-7歲 白帶至綠帶">初級班 (3-7歲)</div>
+          <div class="class-option" data-value="進階 8歲或以上 綠帶或以上">進階班 (8歲+)</div>
         </div>
         <input type="hidden" id="class" name="entry.XXXXXX">
         <span id="classError" class="error">請選擇班別</span>
@@ -348,13 +353,13 @@
       </div>
 
       <div class="form-group">
-        <label>上期扣減 (堂)</label>
+        <label class="no-asterisk">上期扣減 (堂)</label>
         <div class="number-input-group">
           <button type="button" onclick="adjustDeduction(-1)">-</button>
-          <input type="number" id="previousDeduction" name="entry.XXXXXX" value="0" min="0" max="13" step="1" required>
+          <input type="number" id="previousDeduction" name="entry.XXXXXX" value="0" min="0" max="13" step="1">
           <button type="button" onclick="adjustDeduction(1)">+</button>
         </div>
-        <span id="previousDeductionError" class="error">請輸入扣減堂數（0-13）</span>
+        <span id="previousDeductionError" class="error">請輸入有效扣減堂數（0-13）</span>
       </div>
 
       <button type="submit">提交表單</button>
@@ -383,7 +388,7 @@
     const classError = document.getElementById('classError');
     const juniorClassError = document.getElementById('juniorClassError');
     const previousLeaveError = document.getElementById('previousLeaveError');
-    const leaveDateError = document.getElementById('leaveDateError');
+    const leaveDateError = document.getElementById('previousDeductionError');
     const previousDeductionError = document.getElementById('previousDeductionError');
     const formContainer = document.getElementById('formContainer');
     const thankYouPage = document.getElementById('thankYouPage');
@@ -432,7 +437,6 @@
     document.querySelectorAll('#juniorClassGroup input[type="checkbox"]').forEach(checkbox => {
       checkbox.addEventListener('change', () => {
         updateJuniorClass();
-        // Update select all button state
         const checkboxes = document.querySelectorAll('#juniorClassGroup input[type="checkbox"]');
         const allChecked = Array.from(checkboxes).every(cb => cb.checked);
         const selectAllButton = document.querySelector('.select-all-button');
@@ -501,11 +505,14 @@
         isValid = false;
       }
 
-      // Validate previous deduction
-      const deductionValue = parseInt(previousDeductionInput.value) || 0;
-      if (isNaN(deductionValue) || deductionValue < 0 || deductionValue > 13) {
-        previousDeductionError.style.display = 'block';
-        isValid = false;
+      // Validate previous deduction (if provided)
+      const deductionValue = previousDeductionInput.value.trim();
+      if (deductionValue !== '') {
+        const numValue = parseInt(deductionValue);
+        if (isNaN(numValue) || numValue < 0 || numValue > 13) {
+          previousDeductionError.style.display = 'block';
+          isValid = false;
+        }
       }
 
       if (isValid) {
@@ -544,7 +551,7 @@
       leaveDateError.style.display = 'none';
       previousDeductionError.style.display = 'none';
       juniorClassInput.value = '';
-      previousDeductionInput.value = '0';
+      previousDeductionInput.value = '';
       classInput.value = '';
       classOptions.forEach(opt => opt.classList.remove('selected'));
       document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
