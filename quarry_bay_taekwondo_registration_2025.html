@@ -13,7 +13,7 @@
       padding: 20px;
       background: linear-gradient(135deg, #e6f0fa 0%, #f5f5f5 100%);
       color: #2d3748;
-      touch-action: manipulation; /* Prevent pinch-zoom on iOS */
+      touch-action: manipulation;
     }
     .form-container {
       background: white;
@@ -170,10 +170,24 @@
       border-radius: 8px;
       cursor: pointer;
       transition: background-color 0.3s ease;
-      touch-action: manipulation; /* Prevent zoom on iOS */
-      -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     .number-input-group button:hover {
+      background-color: #cbd5e0;
+    }
+    .select-all-button {
+      background-color: #e2e8f0;
+      color: #2d3748;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 12px;
+      transition: background-color 0.3s ease;
+    }
+    .select-all-button:hover {
       background-color: #cbd5e0;
     }
     .error {
@@ -298,12 +312,8 @@
 
       <div class="form-group" id="juniorClassGroup">
         <label>請選擇日期</label>
+        <button type="button" class="select-all-button" onclick="toggleSelectAll()">全選</button>
         <div class="checkbox-group">
-          <label class="no-asterisk"><input type="checkbox" value="06月01日"> 06月01日</label>
-          <label class="no-asterisk"><input type="checkbox" value="06月08日"> 06月08日</label>
-          <label class="no-asterisk"><input type="checkbox" value="06月15日"> 06月15日</label>
-          <label class="no-asterisk"><input type="checkbox" value="06月22日"> 06月22日</label>
-          <label class="no-asterisk"><input type="checkbox" value="06月29日"> 06月29日</label>
           <label class="no-asterisk"><input type="checkbox" value="07月06日"> 07月06日</label>
           <label class="no-asterisk"><input type="checkbox" value="07月13日"> 07月13日</label>
           <label class="no-asterisk"><input type="checkbox" value="07月20日"> 07月20日</label>
@@ -398,6 +408,19 @@
       juniorClassInput.value = selected.join(', ');
     }
 
+    // Handle select all functionality
+    let allSelected = false;
+    function toggleSelectAll() {
+      const checkboxes = document.querySelectorAll('#juniorClassGroup input[type="checkbox"]');
+      allSelected = !allSelected;
+      checkboxes.forEach(cb => {
+        cb.checked = allSelected;
+      });
+      updateJuniorClass();
+      const selectAllButton = document.querySelector('.select-all-button');
+      selectAllButton.textContent = allSelected ? '取消全選' : '全選';
+    }
+
     // Handle deduction input
     function adjustDeduction(change) {
       let value = parseInt(previousDeductionInput.value) || 0;
@@ -407,7 +430,15 @@
 
     // Attach event listeners
     document.querySelectorAll('#juniorClassGroup input[type="checkbox"]').forEach(checkbox => {
-      checkbox.addEventListener('change', updateJuniorClass);
+      checkbox.addEventListener('change', () => {
+        updateJuniorClass();
+        // Update select all button state
+        const checkboxes = document.querySelectorAll('#juniorClassGroup input[type="checkbox"]');
+        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+        const selectAllButton = document.querySelector('.select-all-button');
+        allSelected = allChecked;
+        selectAllButton.textContent = allChecked ? '取消全選' : '全選';
+      });
     });
 
     // Prevent zoom on rapid clicks for number buttons
@@ -518,6 +549,9 @@
       classOptions.forEach(opt => opt.classList.remove('selected'));
       document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
       document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+      const selectAllButton = document.querySelector('.select-all-button');
+      allSelected = false;
+      selectAllButton.textContent = '全選';
     }
 
     function restartForm() {
