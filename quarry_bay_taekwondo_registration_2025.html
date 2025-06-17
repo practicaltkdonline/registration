@@ -9,17 +9,23 @@
     <style>
         body {
             font-family: 'Noto Sans TC', Arial, sans-serif;
-            max-width: 960px;
-            margin: 40px auto;
+            margin: 0; /* 移除預設 margin */
             padding: 20px;
             background: linear-gradient(135deg, #E0F2FE 0%, #F3F4F6 100%);
             color: #1F2937;
+            display: flex;
+            justify-content: center; /* 水平居中 */
+            align-items: flex-start; /* 垂直靠上 */
+            min-height: 100vh; /* 確保內容至少填滿視窗高度 */
         }
         .form-container {
             background: white;
             padding: 48px;
             border-radius: 16px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            max-width: 960px; /* 保持最大寬度 */
+            width: 100%; /* 確保容器適應父元素 */
+            margin: 40px 0; /* 上下間距，左右由 body 居中控制 */
         }
         .error { border-color: #ef4444; }
         .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem; }
@@ -50,14 +56,13 @@
         }
         @media (max-width: 600px) {
             body {
-                margin: 16px auto;
                 padding: 12px;
             }
             .form-container {
                 padding: 24px;
+                margin: 16px 0;
             }
             h1 { font-size: 1.5rem; }
-            .container { padding: 0.5rem; }
             .course-card {
                 padding: 12px;
             }
