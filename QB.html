@@ -1,43 +1,4 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
@@ -111,17 +72,11 @@
         }
         .date-table {
             width: 100%;
-            border-collapse: collapse;
             margin-top: 0.5rem;
         }
-        .date-table th, .date-table td {
-            border: 1px solid #D1D5DB;
+        .date-table td {
             padding: 8px;
             text-align: center;
-        }
-        .date-table th {
-            background-color: #F3F4F6;
-            font-weight: bold;
         }
         .date-table td input[type="checkbox"] {
             margin: 0;
@@ -308,24 +263,16 @@
             return div.innerHTML;
         }
 
-        // 後備日期（2025年1-3月星期日，格式為 MM月DD日）
+        // 後備日期（2025年6月星期日，格式為 dd/mm）
         const fallbackDates = [
-            { date: '5/1', display: '1月5日', month: 1 },
-            { date: '12/1', display: '1月12日', month: 1 },
-            { date: '19/1', display: '1月19日', month: 1 },
-            { date: '26/1', display: '1月26日', month: 1 },
-            { date: '2/2', display: '2月2日', month: 2 },
-            { date: '9/2', display: '2月9日', month: 2 },
-            { date: '16/2', display: '2月16日', month: 2 },
-            { date: '23/2', display: '2月23日', month: 2 },
-            { date: '2/3', display: '3月2日', month: 3 },
-            { date: '9/3', display: '3月9日', month: 3 },
-            { date: '16/3', display: '3月16日', month: 3 },
-            { date: '23/3', display: '3月23日', month: 3 },
-            { date: '30/3', display: '3月30日', month: 3 }
+            { date: '1/6', display: '1日', month: 6 },
+            { date: '8/6', display: '8日', month: 6 },
+            { date: '15/6', display: '15日', month: 6 },
+            { date: '22/6', display: '22日', month: 6 },
+            { date: '29/6', display: '29日', month: 6 }
         ];
 
-        // 將 dd/mm 轉為 MM月DD日（例如 5/1 -> 01月05日）
+        // 將 dd/mm 轉為 MM月DD日（例如 1/6 -> 06月01日）
         function toGoogleFormDateFormat(dateStr) {
             const match = dateStr.match(/^(\d{1,2})\/(\d{1,2})$/);
             if (match) {
@@ -373,45 +320,32 @@
 
             const table = document.createElement('table');
             table.className = 'date-table';
-            const thead = document.createElement('thead');
             const tbody = document.createElement('tbody');
-
-            // 創建表頭
-            const headerRow = document.createElement('tr');
-            headerRow.innerHTML = '<th>月份</th>';
-            for (let i = 0; i < Math.max(...Object.keys(datesByMonth).map(m => datesByMonth[m].length)); i++) {
-                headerRow.innerHTML += '<th>日期</th>';
-            }
-            thead.appendChild(headerRow);
 
             // 創建表格內容
             Object.keys(datesByMonth).sort((a, b) => a - b).forEach(month => {
                 const row = document.createElement('tr');
                 const monthCell = document.createElement('td');
                 monthCell.textContent = `${month}月`;
-                monthCell.rowSpan = 1;
                 row.appendChild(monthCell);
 
-                datesByMonth[month].forEach(({ date, display, index }, colIndex) => {
+                // 填充第二至六欄，缺少的用空元素補齊
+                for (let i = 0; i < 5; i++) {
                     const dateCell = document.createElement('td');
-                    dateCell.innerHTML = `
-                        <span class="flex-1">${escapeHtml(display)}</span>
-                        <input type="checkbox" id="date-${index}" name="dates" value="${escapeHtml(date)}" class="form-checkbox text-blue-600" onclick="event.stopPropagation()">
-                    `;
-                    dateCell.setAttribute('onclick', 'toggleCheckbox(this)');
+                    if (i < datesByMonth[month].length) {
+                        const { date, display, index } = datesByMonth[month][i];
+                        dateCell.innerHTML = `
+                            <span class="flex-1">${escapeHtml(display)}</span>
+                            <input type="checkbox" id="date-${index}" name="dates" value="${escapeHtml(date)}" class="form-checkbox text-blue-600" onclick="event.stopPropagation()">
+                        `;
+                        dateCell.setAttribute('onclick', 'toggleCheckbox(this)');
+                    }
                     row.appendChild(dateCell);
-                });
-
-                // 填補缺失的列
-                for (let i = datesByMonth[month].length; i < Math.max(...Object.keys(datesByMonth).map(m => datesByMonth[m].length)); i++) {
-                    const emptyCell = document.createElement('td');
-                    row.appendChild(emptyCell);
                 }
 
                 tbody.appendChild(row);
             });
 
-            table.appendChild(thead);
             table.appendChild(tbody);
             dateContainer.appendChild(table);
         }
@@ -441,7 +375,8 @@
                                 const month = parseInt(match[1], 10);
                                 const day = parseInt(match[2], 10);
                                 const date = `${day}/${month}`;
-                                dates.push({ date, display, month, index });
+                                const newDisplay = `${day}日`;
+                                dates.push({ date, display: newDisplay, month, index });
                             }
                         }
                     });
