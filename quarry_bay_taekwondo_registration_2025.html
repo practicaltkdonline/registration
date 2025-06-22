@@ -70,6 +70,22 @@
                 font-size: 1rem;
             }
         }
+        .date-table {
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+        .date-table td {
+            padding: 8px;
+            text-align: center;
+        }
+        .date-table td:first-child {
+            background-color: #E0F2FE; /* 浅蓝色背景 */
+            font-weight: bold; /* 加粗字体 */
+            color: #1F2937; /* 深灰色文字 */
+        }
+        .date-table td input[type="checkbox"] {
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -252,24 +268,20 @@
             return div.innerHTML;
         }
 
-        // 後備日期（2025年1-3月星期日，格式為 MM月DD日）
+        // 後備日期（2025年6月-9月星期日，格式為 dd/mm）
         const fallbackDates = [
-            { date: '5/1', display: '1月5日', month: 1 },
-            { date: '12/1', display: '1月12日', month: 1 },
-            { date: '19/1', display: '1月19日', month: 1 },
-            { date: '26/1', display: '1月26日', month: 1 },
-            { date: '2/2', display: '2月2日', month: 2 },
-            { date: '9/2', display: '2月9日', month: 2 },
-            { date: '16/2', display: '2月16日', month: 2 },
-            { date: '23/2', display: '2月23日', month: 2 },
-            { date: '2/3', display: '3月2日', month: 3 },
-            { date: '9/3', display: '3月9日', month: 3 },
-            { date: '16/3', display: '3月16日', month: 3 },
-            { date: '23/3', display: '3月23日', month: 3 },
-            { date: '30/3', display: '3月30日', month: 3 }
+            { date: '1/6', display: '1日', month: 6 },
+            { date: '8/6', display: '8日', month: 6 },
+            { date: '15/6', display: '15日', month: 6 },
+            { date: '22/6', display: '22日', month: 6 },
+            { date: '29/6', display: '29日', month: 6 },
+            { date: '6/7', display: '6日', month: 7 },
+            { date: '20/7', display: '20日', month: 7 },
+            { date: '14/9', display: '14日', month: 9 },
+            { date: '28/9', display: '28日', month: 9 }
         ];
 
-        // 將 dd/mm 轉為 MM月DD日（例如 5/1 -> 01月05日）
+        // 將 dd/mm 轉為 MM月DD日（例如 1/6 -> 06月01日）
         function toGoogleFormDateFormat(dateStr) {
             const match = dateStr.match(/^(\d{1,2})\/(\d{1,2})$/);
             if (match) {
@@ -315,27 +327,36 @@
                 datesByMonth[month].push({ date, display, index });
             });
 
-            Object.keys(datesByMonth)
-                .sort((a, b) => a - b)
-                .forEach(month => {
-                    const monthDiv = document.createElement('div');
-                    monthDiv.className = 'month-group';
-                    monthDiv.innerHTML = `<h3 class="text-lg font-semibold text-gray-700 mt-4">${month}月</h3>`;
-                    const ul = document.createElement('ul');
-                    ul.className = 'list-none';
-                    datesByMonth[month].forEach(({ date, display, index }) => {
-                        const li = document.createElement('li');
-                        li.className = 'flex items-center p-2 course-row';
-                        li.setAttribute('onclick', 'toggleCheckbox(this)');
-                        li.innerHTML = `
+            const table = document.createElement('table');
+            table.className = 'date-table';
+            const tbody = document.createElement('tbody');
+
+            // 創建表格內容
+            Object.keys(datesByMonth).sort((a, b) => a - b).forEach(month => {
+                const row = document.createElement('tr');
+                const monthCell = document.createElement('td');
+                monthCell.textContent = `${month}月`;
+                row.appendChild(monthCell);
+
+                // 填充第二至六欄，缺少的用空元素補齊
+                for (let i = 0; i < 5; i++) {
+                    const dateCell = document.createElement('td');
+                    if (i < datesByMonth[month].length) {
+                        const { date, display, index } = datesByMonth[month][i];
+                        dateCell.innerHTML = `
                             <span class="flex-1">${escapeHtml(display)}</span>
                             <input type="checkbox" id="date-${index}" name="dates" value="${escapeHtml(date)}" class="form-checkbox text-blue-600" onclick="event.stopPropagation()">
                         `;
-                        ul.appendChild(li);
-                    });
-                    monthDiv.appendChild(ul);
-                    dateContainer.appendChild(monthDiv);
-                });
+                        dateCell.setAttribute('onclick', 'toggleCheckbox(this)');
+                    }
+                    row.appendChild(dateCell);
+                }
+
+                tbody.appendChild(row);
+            });
+
+            table.appendChild(tbody);
+            dateContainer.appendChild(table);
         }
 
         // 從 Google Sheet 獲取日期並按月份分組
@@ -363,7 +384,8 @@
                                 const month = parseInt(match[1], 10);
                                 const day = parseInt(match[2], 10);
                                 const date = `${day}/${month}`;
-                                dates.push({ date, display, month, index });
+                                const newDisplay = `${day}日`;
+                                dates.push({ date, display: newDisplay, month, index });
                             }
                         }
                     });
@@ -480,7 +502,8 @@
             const classSelected = document.getElementById('class').value;
             const selectedDates = Array.from(document.querySelectorAll('input[name="dates"]:checked')).map(cb => ({
                 value: cb.value,
-                display: cb.parentElement.querySelector('span').textContent
+                display: cb.parentElement.querySelector('span').textContent,
+                month: parseInt(cb.value.split('/')[1])
             }));
             const leave = document.querySelector('input[name="leave"]:checked')?.value;
             const leaveDate = document.getElementById('leaveDate').value.trim();
@@ -568,11 +591,26 @@
                 return;
             }
 
+            // 按月份分组并格式化日期
+            const datesByMonth = {};
+            selectedDates.forEach(date => {
+                if (!datesByMonth[date.month]) {
+                    datesByMonth[date.month] = [];
+                }
+                datesByMonth[date.month].push(date.display.replace('日', ''));
+            });
+
+            // 更新确认页日期显示
+            const confirmDatesElement = document.getElementById('confirm-dates');
+            confirmDatesElement.innerHTML = Object.keys(datesByMonth)
+                .sort((a, b) => a - b)
+                .map(month => `・${month}月${datesByMonth[month].join('日, ') + '日'}`)
+                .join('<br>');
+
             // 更新確認頁
             document.getElementById('confirm-name').textContent = name;
             document.getElementById('confirm-phone').textContent = phone;
             document.getElementById('confirm-class').textContent = classSelected === 'junior' ? '初級 3-7歲 白帶至綠帶' : '進階 8歲或以上 綠帶或以上';
-            document.getElementById('confirm-dates').innerHTML = selectedDates.map(date => `<li>${date.display}</li>`).join('');
             document.getElementById('confirm-leave').textContent = leave === 'yes' ? '有' : '沒有';
             document.getElementById('confirm-leave-date').textContent = leaveDate || '無';
             document.getElementById('confirm-deduction').textContent = leave === 'yes' ? deduction : '0';
