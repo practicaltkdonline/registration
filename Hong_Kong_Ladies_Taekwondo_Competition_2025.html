@@ -264,25 +264,25 @@
 <body>
   <div class="form-container" id="mainForm">
     <div class="form-header">
-      <h1>香港女子跆拳道比賽2025 (色帶組)</h1>
+      <h1>香港女子跆拳道比賽2025(色帶組)</h1>
       <h2>Hong Kong Ladies Taekwondo Competition 2025</h2>
       <h2>報名表(實用會)</h2>
     </div>
     <form id="registrationForm">
       <div class="form-group">
-        <label for="chineseName">中文姓名（如無，請填英文姓名，大寫字母） *</label>
+        <label>中文姓名（如無，請填英文姓名，大寫字母） *</label>
         <input type="text" id="chineseName" name="entry.1765832625" required>
         <span id="chineseNameError" class="error">請輸入學員姓名</span>
       </div>
 
       <div class="form-group">
-        <label for="englishName">英文姓名（大寫字母） *</label>
+        <label>英文姓名（大寫字母） *</label>
         <input type="text" id="englishName" name="entry.216449808" required>
         <span id="englishNameError" class="error">請輸入英文姓名（大寫字母）</span>
       </div>
 
       <div class="form-group">
-        <label for="birthYear">出生日期 *</label>
+        <label>出生日期 *</label>
         <div class="date-group">
           <select id="birthYear" name="entry.279357896_year" required>
             <option value="">年</option>
@@ -301,19 +301,19 @@
       </div>
 
       <div class="form-group">
-        <label for="nationality">國籍 *</label>
+        <label>國籍 *</label>
         <input type="text" id="nationality" name="entry.1173530868" required>
         <span id="nationalityError" class="error">請輸入國籍</span>
       </div>
 
       <div class="form-group">
-        <label for="phone">聯絡電話 *</label>
+        <label>聯絡電話 *</label>
         <input type="tel" id="phone" name="entry.1182944626" pattern="\d{8}" required>
         <span id="phoneError" class="error">請輸入有效的8位電話號碼</span>
       </div>
 
       <div class="form-group">
-        <label for="membershipNumber">會員證或品段證編號 *</label>
+        <label>會員證或品段證編號 *</label>
         <div class="membership-group">
           <input type="text" id="membershipNumber" name="entry.1418708504" required>
           <label><input type="checkbox" id="noMembership" name="entry.277172485" onchange="toggleMembershipInput()"> 未申請</label>
@@ -323,7 +323,7 @@
       </div>
 
       <div class="form-group">
-        <label for="beltLevel">現有級別 *</label>
+        <label>現有級別 *</label>
         <select id="beltLevel" name="entry.503966002" required>
           <option value="">請選擇級別</option>
           <option value="黃帶 (8th)">黃帶 (8th)</option>
@@ -339,25 +339,25 @@
       </div>
 
       <div class="form-group">
-        <label for="emergencyContact">緊急聯絡人姓名 *</label>
+        <label>緊急聯絡人姓名 *</label>
         <input type="text" id="emergencyContact" name="entry.941686019" required>
         <span id="emergencyContactError" class="error">請輸入緊急聯絡人姓名</span>
       </div>
 
       <div class="form-group">
-        <label for="emergencyRelationship">緊急聯絡人關係 *</label>
+        <label>緊急聯絡人關係 *</label>
         <input type="text" id="emergencyRelationship" name="entry.520097981" required>
         <span id="emergencyRelationshipError" class="error">請輸入緊急聯絡人關係</span>
       </div>
 
       <div class="form-group">
-        <label for="emergencyPhone">緊急聯絡人電話 *</label>
+        <label>緊急聯絡人電話 *</label>
         <input type="tel" id="emergencyPhone" name="entry.355688131" pattern="\d{8}" required>
         <span id="emergencyPhoneError" class="error">請輸入有效的8位緊急聯絡人電話號碼</span>
       </div>
 
       <div class="form-group">
-        <label for="affiliation">所屬屬會 *</label>
+        <label>所屬屬會 *</label>
         <select id="affiliation" name="entry.34077198" required>
           <option value="香港實用跆拳道協會" selected>香港實用跆拳道協會</option>
           <option value="香港仔跆拳道會" disabled>香港仔跆拳道會</option>
@@ -422,17 +422,17 @@
 
       <div class="form-group" id="kyorugiGroup" style="display: none;">
         <div class="sub-form-group">
-          <label for="height">參賽者身高 (厘米) *</label>
+          <label>參賽者身高 (厘米) *</label>
           <input type="number" id="height" name="entry.221014349" min="0">
           <span id="heightError" class="error">請輸入有效的身高（厘米，數字）</span>
         </div>
         <div class="sub-form-group">
-          <label for="weight">參賽者體重 (公斤) *</label>
+          <label>參賽者體重 (公斤) *</label>
           <input type="number" id="weight" name="entry.1541763782" min="0" step="0.1">
           <span id="weightError" class="error">請輸入有效的體重（公斤，數字）</span>
         </div>
         <div class="sub-form-group">
-          <label for="kyorugiDivision">搏擊組別 *</label>
+          <label>搏擊組別 *</label>
           <select id="kyorugiDivision" name="entry.1077046336">
             <option value="">請選擇組別</option>
             <option value="女童色帶CA組 (8-9歲)">女童色帶CA組 (8-9歲，2016-2017年出生)</option>
@@ -444,7 +444,7 @@
           <span id="kyorugiDivisionError" class="error">請選擇搏擊組別</span>
         </div>
         <div class="sub-form-group">
-          <label for="kyorugiWeightClass">量級 *</label>
+          <label>量級 *</label>
           <select id="kyorugiWeightClass" name="entry.185268418">
             <option value="">請選擇量級</option>
           </select>
@@ -454,7 +454,7 @@
 
       <div class="form-group" id="poomsaeGroup" style="display: none;">
         <div class="sub-form-group">
-          <label for="poomsaeDivision">品勢組別 *</label>
+          <label>品勢組別 *</label>
           <select id="poomsaeDivision" name="entry.1719572232">
             <option value="">請選擇組別</option>
             <option value="女童色帶A組 (4-5歲)">女童色帶A組 (4-5歲，2020-2021年出生)</option>
@@ -469,7 +469,7 @@
           <span id="poomsaeDivisionError" class="error">請選擇品勢組別</span>
         </div>
         <div class="sub-form-group">
-          <label for="poomsaeLevel">品勢級別 *</label>
+          <label>品勢級別 *</label>
           <select id="poomsaeLevel" name="entry.1985392895">
             <option value="">請選擇級別</option>
           </select>
