@@ -67,6 +67,21 @@
       border-color: #1976D2;
       box-shadow: 0 0 6px rgba(25, 118, 210, 0.3);
     }
+    .date-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .date-group select {
+      width: 120px;
+    }
+    .date-group select#birthYear {
+      width: 160px;
+    }
+    .date-group span {
+      font-size: 16px;
+      color: #333;
+    }
     .category-group {
       display: flex;
       flex-direction: column;
@@ -215,6 +230,15 @@
         height: 85vh;
         max-height: 500px;
       }
+      .date-group {
+        gap: 8px;
+      }
+      .date-group select {
+        width: 70px;
+      }
+      .date-group select#birthYear {
+        width: 110px;
+      }
       .form-header h1 {
         font-size: 24px;
       }
@@ -244,9 +268,22 @@
       </div>
 
       <div class="form-group">
-        <label for="birthdate">出生日期（格式：YYYY-MM-DD，例如 2021-12-31） *</label>
-        <input type="text" id="birthdate" name="entry.279357896" pattern="\d{4}-\d{2}-\d{2}" placeholder="YYYY-MM-DD" required>
-        <span id="birthdateError" class="error">請輸入有效的出生日期（格式：YYYY-MM-DD，不得晚於今日）</span>
+        <label for="birthYear">出生日期 *</label>
+        <div class="date-group">
+          <select id="birthYear" name="entry.279357896_year" required>
+            <option value="">年</option>
+          </select>
+          <span>/</span>
+          <select id="birthMonth" name="entry.279357896_month" required>
+            <option value="">月</option>
+          </select>
+          <span>/</span>
+          <select id="birthDay" name="entry.279357896_day" required>
+            <option value="">日</option>
+          </select>
+        </div>
+        <input type="hidden" id="birthdate" name="entry.279357896">
+        <span id="birthdateError" class="error">請選擇有效的出生日期（不得晚於今日，且年份不晚於2021年）</span>
       </div>
 
       <div class="form-group">
@@ -273,8 +310,18 @@
 
       <div class="form-group">
         <label for="beltLevel">現有級別 *</label>
-        <input type="text" id="beltLevel" name="entry.503966002" required>
-        <span id="beltLevelError" class="error">請輸入現有級別（如：黃帶 (8th)）</span>
+        <select id="beltLevel" name="entry.503966002" required>
+          <option value="">請選擇級別</option>
+          <option value="黃帶 (8th)">黃帶 (8th)</option>
+          <option value="黃綠帶 (7th)">黃綠帶 (7th)</option>
+          <option value="綠帶 (6th)">綠帶 (6th)</option>
+          <option value="綠藍帶 (5th)">綠藍帶 (5th)</option>
+          <option value="藍帶 (4th)">藍帶 (4th)</option>
+          <option value="藍紅帶 (3rd)">藍紅帶 (3rd)</option>
+          <option value="紅帶 (2nd)">紅帶 (2nd)</option>
+          <option value="紅黑帶 (1st)">紅黑帶 (1st)</option>
+        </select>
+        <span id="beltLevelError" class="error">請選擇現有級別</span>
       </div>
 
       <div class="form-group">
@@ -297,9 +344,8 @@
 
       <div class="form-group">
         <label for="affiliation">所屬屬會 *</label>
-        <input type="text" id="affiliation" name="entry.34077198" value="香港實用跆拳道協會" readonly>
-        <!-- 隱藏的屬會選項，供後續使用 -->
-        <select id="affiliationHidden" style="display: none;">
+        <select id="affiliation" name="entry.34077198" required>
+          <option value="">請選擇屬會</option>
           <option value="香港仔跆拳道會">香港仔跆拳道會</option>
           <option value="技擊跆拳道會">技擊跆拳道會</option>
           <option value="躍駿跆拳道會">躍駿跆拳道會</option>
@@ -346,8 +392,9 @@
           <option value="樂武跆拳道會">樂武跆拳道會</option>
           <option value="世紀跆拳道會">世紀跆拳道會</option>
           <option value="燊．跆拳道館">燊．跆拳道館</option>
-          <option value="其他">其他（請手動輸入）</option>
+          <option value="其他">其他</option>
         </select>
+        <span id="affiliationError" class="error">請選擇所屬屬會</span>
       </div>
 
       <div class="form-group">
@@ -362,26 +409,47 @@
 
       <div class="form-group" id="kyorugiGroup" style="display: none;">
         <label for="height">參賽者身高 (厘米) *</label>
-        <input type="text" id="height" name="entry.221014349">
+        <input type="number" id="height" name="entry.221014349" min="0">
         <span id="heightError" class="error">請輸入有效的身高（厘米，數字）</span>
         <label for="weight">參賽者體重 (公斤) *</label>
-        <input type="text" id="weight" name="entry.1541763782">
+        <input type="number" id="weight" name="entry.1541763782" min="0" step="0.1">
         <span id="weightError" class="error">請輸入有效的體重（公斤，數字）</span>
         <label for="kyorugiDivision">搏擊組別 *</label>
-        <input type="text" id="kyorugiDivision" name="entry.1077046336">
-        <span id="kyorugiDivisionError" class="error">請輸入搏擊組別</span>
+        <select id="kyorugiDivision" name="entry.1077046336">
+          <option value="">請選擇組別</option>
+          <option value="女童色帶CA組 (8-9歲)">女童色帶CA組 (8-9歲，2016-2017年出生)</option>
+          <option value="女童色帶CB組 (10-11歲)">女童色帶CB組 (10-11歲，2014-2015年出生)</option>
+          <option value="女童色帶CC組 (12-14歲)">女童色帶CC組 (12-14歲，2011-2013年出生)</option>
+          <option value="女子色帶FA組 (15-17歲)">女子色帶FA組 (15-17歲，2008-2010年出生)</option>
+          <option value="女子色帶FB組 (18歲或以上)">女子色帶FB組 (18歲或以上，2007年或之前出生)</option>
+        </select>
+        <span id="kyorugiDivisionError" class="error">請選擇搏擊組別</span>
         <label for="kyorugiWeightClass">量級 *</label>
-        <input type="text" id="kyorugiWeightClass" name="entry.185268418">
-        <span id="kyorugiWeightClassError" class="error">請輸入量級</span>
+        <select id="kyorugiWeightClass" name="entry.185268418">
+          <option value="">請選擇量級</option>
+        </select>
+        <span id="kyorugiWeightClassError" class="error">請選擇量級</span>
       </div>
 
       <div class="form-group" id="poomsaeGroup" style="display: none;">
         <label for="poomsaeDivision">品勢組別 *</label>
-        <input type="text" id="poomsaeDivision" name="entry.1719572232">
-        <span id="poomsaeDivisionError" class="error">請輸入品勢組別</span>
+        <select id="poomsaeDivision" name="entry.1719572232">
+          <option value="">請選擇組別</option>
+          <option value="女童色帶A組 (4-5歲)">女童色帶A組 (4-5歲，2020-2021年出生)</option>
+          <option value="女童色帶B組 (6-7歲)">女童色帶B組 (6-7歲，2018-2019年出生)</option>
+          <option value="女童色帶C組 (8-9歲)">女童色帶C組 (8-9歲，2016-2017年出生)</option>
+          <option value="女童色帶D組 (10-11歲)">女童色帶D組 (10-11歲，2014-2015年出生)</option>
+          <option value="女童色帶E組 (12-14歲)">女童色帶E組 (12-14歲，2011-2013年出生)</option>
+          <option value="女童色帶F組 (15-17歲)">女童色帶F組 (15-17歲，2008-2010年出生)</option>
+          <option value="女子色帶G組 (18-30歲)">女子色帶G組 (18-30歲，2007-1995年出生)</option>
+          <option value="女子色帶H組 (31歲或以上)">女子色帶H組 (31歲或以上，1994年或之前出生)</option>
+        </select>
+        <span id="poomsaeDivisionError" class="error">請選擇品勢組別</span>
         <label for="poomsaeLevel">品勢級別 *</label>
-        <input type="text" id="poomsaeLevel" name="entry.1985392895">
-        <span id="poomsaeLevelError" class="error">請輸入品勢級別</span>
+        <select id="poomsaeLevel" name="entry.1985392895">
+          <option value="">請選擇級別</option>
+        </select>
+        <span id="poomsaeLevelError" class="error">請選擇品勢級別</span>
       </div>
 
       <button type="button" id="submitBtn" onclick="submitForm()">提交表單</button>
@@ -421,6 +489,47 @@
   </div>
 
   <script>
+    // 動態生成出生年份選項（1900年至2021年）
+    const yearSelect = document.getElementById('birthYear');
+    const monthSelect = document.getElementById('birthMonth');
+    const daySelect = document.getElementById('birthDay');
+    const birthdateInput = document.getElementById('birthdate');
+    for (let year = 2021; year >= 1900; year--) {
+      let option = document.createElement('option');
+      option.value = year;
+      option.text = year;
+      yearSelect.appendChild(option);
+    }
+    for (let month = 1; month <= 12; month++) {
+      let option = document.createElement('option');
+      option.value = month;
+      option.text = month.toString().padStart(2, '0');
+      monthSelect.appendChild(option);
+    }
+
+    function isLeapYear(year) {
+      return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+    }
+
+    function updateDays() {
+      const year = parseInt(yearSelect.value);
+      const month = parseInt(monthSelect.value);
+      daySelect.innerHTML = '<option value="">日</option>';
+      if (year && month) {
+        let daysInMonth = month === 2 ? (isLeapYear(year) ? 29 : 28) : [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
+        for (let day = 1; day <= daysInMonth; day++) {
+          let option = document.createElement('option');
+          option.value = day;
+          option.text = day.toString().padStart(2, '0');
+          daySelect.appendChild(option);
+        }
+      }
+    }
+
+    yearSelect.addEventListener('change', updateDays);
+    monthSelect.addEventListener('change', updateDays);
+    updateDays();
+
     // 會員證編號邏輯
     const membershipNumberInput = document.getElementById('membershipNumber');
     const noMembershipCheckbox = document.getElementById('noMembership');
@@ -448,8 +557,78 @@
       radio.addEventListener('change', () => {
         kyorugiGroup.style.display = radio.value.includes('搏擊') ? 'block' : 'none';
         poomsaeGroup.style.display = radio.value.includes('品勢') ? 'block' : 'none';
+        updateKyorugiWeightClass();
+        updatePoomsaeLevel();
       });
     });
+
+    // 搏擊量級選項
+    const kyorugiWeightClasses = {
+      '女童色帶CA組 (8-9歲)': [
+        '鰭量級 (21-24kg)', '蠅量級 (24-27kg)', '雛量級 (27-30kg)', '羽量級 (30-33kg)', '輕量級 (33-36kg)',
+        '沉量級 (36-39kg)', '輕中量級 (39-42kg)', '中量級 (42-45kg)', '輕重量級 (45-48kg)', '重量級 (48-52kg)'
+      ],
+      '女童色帶CB組 (10-11歲)': [
+        '鰭量級 (22-25kg)', '蠅量級 (25-28kg)', '雛量級 (28-31kg)', '羽量級 (31-34kg)', '輕量級 (34-37kg)',
+        '沉量級 (37-40kg)', '輕中量級 (40-43kg)', '中量級 (43-46kg)', '輕重量級 (46-49kg)', '重量級 (49-53kg)'
+      ],
+      '女童色帶CC組 (12-14歲)': [
+        '鰭量級 (26-29kg)', '蠅量級 (29-33kg)', '雛量級 (33-37kg)', '羽量級 (37-41kg)', '輕量級 (41-44kg)',
+        '沉量級 (44-47kg)', '輕中量級 (47-51kg)', '中量級 (51-55kg)', '輕重量級 (55-59kg)', '重量級 (>59kg)'
+      ],
+      '女子色帶FA組 (15-17歲)': [
+        '鰭量級 (≤42kg)', '蠅量級 (42-44kg)', '雛量級 (44-46kg)', '羽量級 (46-49kg)', '輕量級 (49-52kg)',
+        '沉量級 (52-55kg)', '輕中量級 (55-59kg)', '中量級 (59-63kg)', '輕重量級 (63-68kg)', '重量級 (>68kg)'
+      ],
+      '女子色帶FB組 (18歲或以上)': [
+        '鰭量級 (≤46kg)', '蠅量級 (46-49kg)', '雛量級 (49-53kg)', '羽量級 (53-57kg)', '輕量級 (57-62kg)',
+        '沉量級 (62-67kg)', '中量級 (67-73kg)', '重量級 (>73kg)'
+      ]
+    };
+
+    const kyorugiDivisionSelect = document.getElementById('kyorugiDivision');
+    const kyorugiWeightClassSelect = document.getElementById('kyorugiWeightClass');
+    function updateKyorugiWeightClass() {
+      kyorugiWeightClassSelect.innerHTML = '<option value="">請選擇量級</option>';
+      const selectedDivision = kyorugiDivisionSelect.value;
+      if (selectedDivision && kyorugiWeightClasses[selectedDivision]) {
+        kyorugiWeightClasses[selectedDivision].forEach(weightClass => {
+          let option = document.createElement('option');
+          option.value = weightClass;
+          option.text = weightClass;
+          kyorugiWeightClassSelect.appendChild(option);
+        });
+      }
+    }
+    kyorugiDivisionSelect.addEventListener('change', updateKyorugiWeightClass);
+
+    // 品勢級別選項
+    const poomsaeLevels = {
+      '女童色帶A組 (4-5歲)': ['A1F 黃帶', 'A2F 黃綠帶', 'A3F 綠帶', 'A4F 綠藍帶', 'A5F 藍帶', 'A6F 藍紅帶', 'A7F 紅帶', 'A8F 紅黑帶'],
+      '女童色帶B組 (6-7歲)': ['B1F 黃帶', 'B2F 黃綠帶', 'B3F 綠帶', 'B4F 綠藍帶', 'B5F 藍帶', 'B6F 藍紅帶', 'B7F 紅帶', 'B8F 紅黑帶'],
+      '女童色帶C組 (8-9歲)': ['C1F 黃帶', 'C2F 黃綠帶', 'C3F 綠帶', 'C4F 綠藍帶', 'C5F 藍帶', 'C6F 藍紅帶', 'C7F 紅帶', 'C8F 紅黑帶'],
+      '女童色帶D組 (10-11歲)': ['D1F 黃帶', 'D2F 黃綠帶', 'D3F 綠帶', 'D4F 綠藍帶', 'D5F 藍帶', 'D6F 藍紅帶', 'D7F 紅帶', 'D8F 紅黑帶'],
+      '女童色帶E組 (12-14歲)': ['E1F 黃帶', 'E2F 黃綠帶', 'E3F 綠帶', 'E4F 綠藍帶', 'E5F 藍帶', 'E6F 藍紅帶', 'E7F 紅帶', 'E8F 紅黑帶'],
+      '女童色帶F組 (15-17歲)': ['F1F 黃帶', 'F2F 黃綠帶', 'F3F 綠帶', 'F4F 綠藍帶', 'F5F 藍帶', 'F6F 藍紅帶', 'F7F 紅帶', 'F8F 紅黑帶'],
+      '女子色帶G組 (18-30歲)': ['G1F 黃帶', 'G2F 黃綠帶', 'G3F 綠帶', 'G4F 綠藍帶', 'G5F 藍帶', 'G6F 藍紅帶', 'G7F 紅帶', 'G8F 紅黑帶'],
+      '女子色帶H組 (31歲或以上)': ['H1F 黃帶', 'H2F 黃綠帶', 'H3F 綠帶', 'H4F 綠藍帶', 'H5F 藍帶', 'H6F 藍紅帶', 'H7F 紅帶', 'H8F 紅黑帶']
+    };
+
+    const poomsaeDivisionSelect = document.getElementById('poomsaeDivision');
+    const poomsaeLevelSelect = document.getElementById('poomsaeLevel');
+    function updatePoomsaeLevel() {
+      poomsaeLevelSelect.innerHTML = '<option value="">請選擇級別</option>';
+      const selectedDivision = poomsaeDivisionSelect.value;
+      if (selectedDivision && poomsaeLevels[selectedDivision]) {
+        poomsaeLevels[selectedDivision].forEach(level => {
+          let option = document.createElement('option');
+          option.value = level;
+          option.text = level;
+          poomsaeLevelSelect.appendChild(option);
+        });
+      }
+    }
+    poomsaeDivisionSelect.addEventListener('change', updatePoomsaeLevel);
 
     // 表單驗證與提交
     function submitForm() {
@@ -457,22 +636,25 @@
       const form = document.getElementById('registrationForm');
       const chineseNameInput = document.getElementById('chineseName');
       const englishNameInput = document.getElementById('englishName');
-      const birthdateInput = document.getElementById('birthdate');
+      const yearSelect = document.getElementById('birthYear');
+      const monthSelect = document.getElementById('birthMonth');
+      const daySelect = document.getElementById('birthDay');
       const nationalityInput = document.getElementById('nationality');
       const phoneInput = document.getElementById('phone');
       const membershipNumberInput = document.getElementById('membershipNumber');
       const noMembershipCheckbox = document.getElementById('noMembership');
-      const beltLevelInput = document.getElementById('beltLevel');
+      const beltLevelSelect = document.getElementById('beltLevel');
       const emergencyContactInput = document.getElementById('emergencyContact');
       const emergencyRelationshipInput = document.getElementById('emergencyRelationship');
       const emergencyPhoneInput = document.getElementById('emergencyPhone');
+      const affiliationSelect = document.getElementById('affiliation');
       const eventTypeRadios = document.getElementsByName('entry.600589316');
       const heightInput = document.getElementById('height');
       const weightInput = document.getElementById('weight');
-      const kyorugiDivisionInput = document.getElementById('kyorugiDivision');
-      const kyorugiWeightClassInput = document.getElementById('kyorugiWeightClass');
-      const poomsaeDivisionInput = document.getElementById('poomsaeDivision');
-      const poomsaeLevelInput = document.getElementById('poomsaeLevel');
+      const kyorugiDivisionSelect = document.getElementById('kyorugiDivision');
+      const kyorugiWeightClassSelect = document.getElementById('kyorugiWeightClass');
+      const poomsaeDivisionSelect = document.getElementById('poomsaeDivision');
+      const poomsaeLevelSelect = document.getElementById('poomsaeLevel');
 
       let isValid = true;
       document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
@@ -488,17 +670,21 @@
           document.getElementById('englishNameError').style.display = 'block';
           isValid = false;
         }
-        if (!birthdateInput.value.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        const year = parseInt(yearSelect.value);
+        const month = parseInt(monthSelect.value);
+        const day = parseInt(daySelect.value);
+        if (!year || !month || !day) {
           document.getElementById('birthdateError').style.display = 'block';
           isValid = false;
         } else {
-          const [year, month, day] = birthdateInput.value.split('-').map(Number);
           const selectedDate = new Date(year, month - 1, day);
           const today = new Date();
           today.setHours(0, 0, 0, 0);
           if (isNaN(selectedDate) || selectedDate > today || year > 2021) {
             document.getElementById('birthdateError').style.display = 'block';
             isValid = false;
+          } else {
+            birthdateInput.value = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
           }
         }
         if (!nationalityInput.value.trim()) {
@@ -513,7 +699,7 @@
           document.getElementById('membershipNumberError').style.display = 'block';
           isValid = false;
         }
-        if (!beltLevelInput.value.trim()) {
+        if (!beltLevelSelect.value) {
           document.getElementById('beltLevelError').style.display = 'block';
           isValid = false;
         }
@@ -527,6 +713,10 @@
         }
         if (!emergencyPhoneInput.value.match(/^\d{8}$/)) {
           document.getElementById('emergencyPhoneError').style.display = 'block';
+          isValid = false;
+        }
+        if (!affiliationSelect.value) {
+          document.getElementById('affiliationError').style.display = 'block';
           isValid = false;
         }
         const selectedEventType = Array.from(eventTypeRadios).find(radio => radio.checked)?.value;
@@ -543,21 +733,21 @@
             document.getElementById('weightError').style.display = 'block';
             isValid = false;
           }
-          if (!kyorugiDivisionInput.value.trim()) {
+          if (!kyorugiDivisionSelect.value) {
             document.getElementById('kyorugiDivisionError').style.display = 'block';
             isValid = false;
           }
-          if (!kyorugiWeightClassInput.value.trim()) {
+          if (!kyorugiWeightClassSelect.value) {
             document.getElementById('kyorugiWeightClassError').style.display = 'block';
             isValid = false;
           }
         }
         if (selectedEventType && selectedEventType.includes('品勢')) {
-          if (!poomsaeDivisionInput.value.trim()) {
+          if (!poomsaeDivisionSelect.value) {
             document.getElementById('poomsaeDivisionError').style.display = 'block';
             isValid = false;
           }
-          if (!poomsaeLevelInput.value.trim()) {
+          if (!poomsaeLevelSelect.value) {
             document.getElementById('poomsaeLevelError').style.display = 'block';
             isValid = false;
           }
@@ -571,11 +761,11 @@
         document.getElementById('confirmNationality').textContent = nationalityInput.value || '未填寫';
         document.getElementById('confirmPhone').textContent = phoneInput.value || '未填寫';
         document.getElementById('confirmMembershipNumber').textContent = noMembershipCheckbox.checked ? '未申請' : (membershipNumberInput.value || '未填寫');
-        document.getElementById('confirmBeltLevel').textContent = beltLevelInput.value || '未填寫';
+        document.getElementById('confirmBeltLevel').textContent = beltLevelSelect.value || '未填寫';
         document.getElementById('confirmEmergencyContact').textContent = emergencyContactInput.value || '未填寫';
         document.getElementById('confirmEmergencyRelationship').textContent = emergencyRelationshipInput.value || '未填寫';
         document.getElementById('confirmEmergencyPhone').textContent = emergencyPhoneInput.value || '未填寫';
-        document.getElementById('confirmAffiliation').textContent = document.getElementById('affiliation').value;
+        document.getElementById('confirmAffiliation').textContent = affiliationSelect.value || '未填寫';
 
         const confirmEvents = document.getElementById('confirmEvents');
         confirmEvents.innerHTML = '';
@@ -588,13 +778,13 @@
         if (selectedEventType.includes('搏擊')) {
           const kyorugiDiv = document.createElement('div');
           kyorugiDiv.className = 'category-item';
-          kyorugiDiv.textContent = `${kyorugiDivisionInput.value || '未選擇'} - ${kyorugiWeightClassInput.value || '未選擇'} (身高: ${heightInput.value || '未填寫'}cm, 體重: ${weightInput.value || '未填寫'}kg)`;
+          kyorugiDiv.textContent = `${kyorugiDivisionSelect.value || '未選擇'} - ${kyorugiWeightClassSelect.value || '未選擇'} (身高: ${heightInput.value || '未填寫'}cm, 體重: ${weightInput.value || '未填寫'}kg)`;
           eventDiv.appendChild(kyorugiDiv);
         }
         if (selectedEventType.includes('品勢')) {
           const poomsaeDiv = document.createElement('div');
           poomsaeDiv.className = 'category-item';
-          poomsaeDiv.textContent = `${poomsaeDivisionInput.value || '未選擇'} - ${poomsaeLevelInput.value || '未選擇'}`;
+          poomsaeDiv.textContent = `${poomsaeDivisionSelect.value || '未選擇'} - ${poomsaeLevelSelect.value || '未選擇'}`;
           eventDiv.appendChild(poomsaeDiv);
         }
         confirmEvents.appendChild(eventDiv);
@@ -642,6 +832,9 @@
       membershipNumberInput.required = true;
       kyorugiGroup.style.display = 'none';
       poomsaeGroup.style.display = 'none';
+      updateDays();
+      updateKyorugiWeightClass();
+      updatePoomsaeLevel();
     }
 
     function restartForm() {
