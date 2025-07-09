@@ -364,7 +364,7 @@
           <option value="技擊跆拳道會" disabled>技擊跆拳道會</option>
           <option value="躍駿跆拳道會" disabled>躍駿跆拳道會</option>
           <option value="青雲跆拳道會" disabled>青雲跆拳道會</option>
-          <option value="精英跆拳道會" disabled>精英跆拳道會</option>
+          <option value="精英�搏擊道會" disabled>精英跆拳道會</option>
           <option value="金柏跆拳道協會" disabled>金柏跆拳道協會</option>
           <option value="香港跆拳道東龍會" disabled>香港跆拳道東龍會</option>
           <option value="勵志跆拳道總會" disabled>勵志跆拳道總會</option>
@@ -496,7 +496,7 @@
         <p><strong>緊急聯絡人關係：</strong> <span id="confirmEmergencyRelationship"></span></p>
         <p><strong>緊急聯絡人電話：</strong> <span id="confirmEmergencyPhone"></span></p>
         <p><strong>所屬屬會：</strong> <span id="confirmAffiliation"></span></p>
-        <p><strong>參賽項目與組別：</strong></p>
+        <p><strong>參賽項目與組別：</strong><span id="confirmEventType"></span></p>
         <div id="confirmEvents"></div>
         <p><strong>報名費用：</strong> <span id="confirmFee"></span></p>
       </div>
@@ -837,24 +837,52 @@
         const confirmEvents = document.getElementById('confirmEvents');
         confirmEvents.innerHTML = '';
         const selectedEventType = Array.from(eventTypeRadios).find(radio => radio.checked)?.value || '未選擇';
-        const eventDiv = document.createElement('div');
-        eventDiv.className = 'event-item';
-        const eventStrong = document.createElement('strong');
-        eventStrong.textContent = selectedEventType;
-        eventDiv.appendChild(eventStrong);
+        document.getElementById('confirmEventType').textContent = selectedEventType;
+
         if (selectedEventType.includes('搏擊')) {
           const kyorugiDiv = document.createElement('div');
-          kyorugiDiv.className = 'category-item';
-          kyorugiDiv.textContent = `${kyorugiDivisionSelect.value || '未選擇'} - ${kyorugiWeightClassSelect.value || '未選擇'} (身高: ${heightInput.value || '未填寫'}cm, 體重: ${weightInput.value || '未填寫'}kg)`;
-          eventDiv.appendChild(kyorugiDiv);
+          kyorugiDiv.className = 'event-item';
+          const kyorugiStrong = document.createElement('strong');
+          kyorugiStrong.textContent = '搏擊';
+          kyorugiDiv.appendChild(kyorugiStrong);
+          
+          const kyorugiDivisionDiv = document.createElement('div');
+          kyorugiDivisionDiv.className = 'category-item';
+          kyorugiDivisionDiv.textContent = kyorugiDivisionSelect.value || '未選擇';
+          kyorugiDiv.appendChild(kyorugiDivisionDiv);
+
+          const kyorugiWeightClassDiv = document.createElement('div');
+          kyorugiWeightClassDiv.className = 'category-item';
+          kyorugiWeightClassDiv.textContent = kyorugiWeightClassSelect.value || '未選擇';
+          kyorugiDiv.appendChild(kyorugiWeightClassDiv);
+
+          const kyorugiDetailsDiv = document.createElement('div');
+          kyorugiDetailsDiv.className = 'category-item';
+          kyorugiDetailsDiv.textContent = `(身高: ${heightInput.value || '未填寫'}cm, 體重: ${weightInput.value || '未填寫'}kg)`;
+          kyorugiDiv.appendChild(kyorugiDetailsDiv);
+
+          confirmEvents.appendChild(kyorugiDiv);
         }
+
         if (selectedEventType.includes('品勢')) {
           const poomsaeDiv = document.createElement('div');
-          poomsaeDiv.className = 'category-item';
-          poomsaeDiv.textContent = `${poomsaeDivisionSelect.value || '未選擇'} - ${poomsaeLevelSelect.value || '未選擇'}`;
-          eventDiv.appendChild(poomsaeDiv);
+          poomsaeDiv.className = 'event-item';
+          const poomsaeStrong = document.createElement('strong');
+          poomsaeStrong.textContent = '品勢';
+          poomsaeDiv.appendChild(poomsaeStrong);
+
+          const poomsaeDivisionDiv = document.createElement('div');
+          poomsaeDivisionDiv.className = 'category-item';
+          poomsaeDivisionDiv.textContent = poomsaeDivisionSelect.value || '未選擇';
+          poomsaeDiv.appendChild(poomsaeDivisionDiv);
+
+          const poomsaeLevelDiv = document.createElement('div');
+          poomsaeLevelDiv.className = 'category-item';
+          poomsaeLevelDiv.textContent = poomsaeLevelSelect.value || '未選擇';
+          poomsaeDiv.appendChild(poomsaeLevelDiv);
+
+          confirmEvents.appendChild(poomsaeDiv);
         }
-        confirmEvents.appendChild(eventDiv);
 
         const fee = selectedEventType === '搏擊' ? '$390' : selectedEventType === '品勢' ? '$350' : selectedEventType === '搏擊及品勢' ? '$740' : '$0';
         document.getElementById('confirmFee').textContent = `${fee}${noMembershipCheckbox.checked ? ' + $150 (會員證申請費)' : ''}`;
