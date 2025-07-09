@@ -722,6 +722,17 @@
 
       // 檢查中文姓名是否包含「測試」
       const isTestMode = chineseNameInput.value.includes('測試');
+
+      // 設置 birthdateInput 值
+      const year = parseInt(yearSelect.value);
+      const month = parseInt(monthSelect.value);
+      const day = parseInt(daySelect.value);
+      if (year && month && day) {
+        birthdateInput.value = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+      } else {
+        birthdateInput.value = '';
+      }
+
       if (!isTestMode) {
         if (!chineseNameInput.value.trim()) {
           document.getElementById('chineseNameError').style.display = 'block';
@@ -731,9 +742,6 @@
           document.getElementById('englishNameError').style.display = 'block';
           isValid = false;
         }
-        const year = parseInt(yearSelect.value);
-        const month = parseInt(monthSelect.value);
-        const day = parseInt(daySelect.value);
         if (!year || !month || !day) {
           document.getElementById('birthdateError').style.display = 'block';
           isValid = false;
@@ -744,8 +752,6 @@
           if (isNaN(selectedDate) || selectedDate > today || year > 2021) {
             document.getElementById('birthdateError').style.display = 'block';
             isValid = false;
-          } else {
-            birthdateInput.value = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
           }
         }
         if (!nationalityInput.value.trim()) {
