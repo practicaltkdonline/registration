@@ -783,8 +783,17 @@
         defaultStyle: { font: 'NotoSansTC' }
       };
 
-      // 生成並下載 PDF
-      pdfMake.createPdf(docDefinition).download('registration-confirmation.pdf');
+      // 生成 PDF Blob 並手動觸發下載
+      pdfMake.createPdf(docDefinition).getBlob((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'registration-confirmation.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      });
     }
   </script>
 </body>
