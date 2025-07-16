@@ -1,0 +1,119 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>表單轉PDF (pdfmake)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <style>
+        @font-face {
+            font-display: swap;
+            font-family: 'Noto Sans TC';
+            font-style: normal;
+            font-weight: 400;
+            src: url('./NotoSansTC[wght].ttf') format('truetype');
+        }
+        #form { font-family: 'Noto Sans TC', sans-serif; }
+    </style>
+</head>
+<body>
+    <div id="form">
+        <h2>用戶表單</h2>
+        <label>姓名: <input type="text" id="name" placeholder="輸入姓名"></label><br>
+        <label>電子郵件: <input type="text" id="email" placeholder="輸入電子郵件"></label><br>
+        <button onclick="generatePDF()">下載 PDF</button>
+    </div>
+
+    <script>
+        async function generatePDF() {
+            // 載入 .ttf 字體
+            const fontPath = './NotoSansTC[wght].ttf'; // 同一路徑
+            const fontName = 'NotoSansTC';
+            try {
+                const response = await fetch(fontPath);
+                if (!response.ok) throw new Error('字體載入失敗');
+                const fontData = await response.arrayBuffer();
+                const base64Font = btoa(
+                    new Uint8Array(fontData).reduce(
+                        (data, byte) => data + String.fromCharCode(byte),
+                        ''
+                    )
+                );
+                pdfMake.vfs = pdfMake.vfs || {};
+                pdfMake.vfs[`${fontName}.ttf`] = base64Font;
+                pdfMake.fonts = {
+                    NotoSansTC: {
+                        normal: `${fontName}.ttf`,
+                        bold: `${fontName}.ttf`,
+                        italics: `${fontName}.ttf`,
+                        bolditalics: `${fontName}.ttf`
+                    }
+                };
+            } catch (error) {
+                console.error('字體載入錯誤:', error);
+                alert('無法載入中文字體，請檢查字體檔案是否存在');
+                return;
+            }
+
+            // 收集表單資料
+            const name = document.getElementById('name').value || '未輸入';
+            const email = document.getElementById('email').value || '未輸入';
+
+            // 定義 PDF 結構
+            const docDefinition = {
+                content: [
+                    { text: '用戶表單', style: 'header' },
+                    { text: `姓名: ${name}`, style: 'content' },
+                    { text: `電子郵件: ${email}`, style: 'content' }
+                ],
+                styles: {
+                    header: { fontSize: 18, bold: true, margin: [0, 0, 0, 10], font: 'NotoSansTC' },
+                    content: { fontSize: 12, margin: [0, 5], font: 'NotoSansTC' }
+                },
+                defaultStyle: { font: 'NotoSansTC' }
+            };
+
+            // 生成並下載 PDF
+            pdfMake.createPdf(docDefinition).download('form-data.pdf');
+        }
+    </script>
+</body>
+</html>
