@@ -237,19 +237,19 @@
   <div class="form-container" id="mainForm">
     <form id="registrationForm">
       <div class="form-group">
-        <label for="name">學員姓名</label>
+        <label>學員姓名</label>
         <input type="text" id="name" name="entry.1702329531" required>
         <span id="nameError" class="error">請輸入學員姓名</span>
       </div>
 
       <div class="form-group">
-        <label for="phone">聯絡電話</label>
+        <label>聯絡電話</label>
         <input type="tel" id="phone" name="entry.1541580542" pattern="\d{8}" required>
         <span id="phoneError" class="error">請輸入有效的8位電話號碼</span>
       </div>
 
       <div class="form-group">
-        <label for="birthYear">出生日期</label>
+        <label>出生日期</label>
         <div class="date-group">
           <select id="birthYear" name="entry.1919065731_year" required>
             <option value="">年</option>
@@ -267,7 +267,7 @@
       </div>
 
       <div class="form-group">
-        <label for="dojo">所屬道場</label>
+        <label>所屬道場</label>
         <select id="dojo" name="entry.1923170591" required onchange="toggleCustomDojo()">
           <option value="">請選擇道場</option>
           <option value="觀塘總館">觀塘總館</option>
@@ -289,6 +289,7 @@
         </div>
         <span id="eventListError" class="error" style="display: none;">無法載入比賽資料，請檢查試算表是否公開</span>
         <input type="hidden" id="selectedEvents" name="entry.1287068960">
+        <input type="hidden" id="totalPrice" name="entry.1317768085">
       </div>
 
       <button type="button" id="submitBtn" onclick="submitForm()" style="display: none;">
@@ -321,6 +322,7 @@
         <p><strong>所屬道場：</strong> <span id="confirmDojo"></span></p>
         <p><strong>報名賽事與項目：</strong></p>
         <div id="confirmEvents"></div>
+        <p><strong>總費用：</strong> <span id="confirmTotalPrice"></span></p>
       </div>
       <div style="display: flex; gap: 10px;">
         <button class="cancel" onclick="cancelSubmission()">取消</button>
@@ -338,6 +340,7 @@
   <script>
     let eventCategories = {};
     let selectedCategories = {};
+    let categoryPrices = {};
 
     // 動態載入比賽資料
     async function loadEventsFromSheet() {
@@ -345,29 +348,33 @@
       const eventListError = document.getElementById('eventListError');
       const spreadsheetId = '1FFuryD0S4CbOsw4HJKQQHSRtek_JwWlxGx1FmPEER9Y';
       const sheetId = '1485917481';
-      const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&gid=${sheetId}`;
+      const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&gid=${sheetId}&range=A2:B`;
 
       try {
         const response = await fetch(url);
         const text = await response.text();
-        // 解析 Google Sheets 的 JSON 回應
-        const jsonString = text.substring(47, text.length - 2); // 移除前綴 "google.visualization.Query.setResponse(" 和後綴 ");"
+        const jsonString = text.substring(47, text.length - 2);
         const data = JSON.parse(jsonString);
         const rows = data.table.rows;
 
-        eventList.innerHTML = ''; // 清空現有按鈕
-        eventCategories = {}; // 清空現有比賽資料
+        eventList.innerHTML = '';
+        eventCategories = {};
+        categoryPrices = {};
 
-        // 提取 A 欄（比賽名稱）和 B 欄（項目選擇）
         rows.forEach(row => {
-          const eventName = row.c[0]?.v; // A 欄：比賽名稱
-          const categories = row.c[1]?.v; // B 欄：項目選擇
+          const eventName = row.c[0]?.v;
+          const categories = row.c[1]?.v;
           if (eventName && categories) {
-            // 將項目選擇按逗號分隔並去除多餘空格
             const categoryArray = categories.split(',').map(cat => cat.trim());
             eventCategories[eventName] = categoryArray;
+            categoryArray.forEach(category => {
+              const match = category.match(/(.+?)\s*-\s*\$(\d+)/);
+              if (match) {
+                const [, categoryName, price] = match;
+                categoryPrices[`${eventName}:${categoryName.trim()}`] = parseInt(price);
+              }
+            });
 
-            // 動態生成比賽按鈕
             const button = document.createElement('button');
             button.type = 'button';
             button.textContent = eventName;
@@ -386,13 +393,11 @@
         console.error('載入比賽資料失敗:', error);
         eventListError.style.display = 'block';
       }
-      updateSelectedEvents(); // 更新比賽數量顯示
+      updateSelectedEvents();
     }
 
-    // 頁面載入時自動更新比賽資料
     window.addEventListener('load', loadEventsFromSheet);
 
-    // Populate birthdate dropdowns
     const yearSelect = document.getElementById('birthYear');
     const monthSelect = document.getElementById('birthMonth');
     const daySelect = document.getElementById('birthDay');
@@ -457,7 +462,6 @@
       categoryTitle.textContent = `選擇 ${eventName} 的項目`;
       categoryGroup.innerHTML = '';
 
-      // 使用深拷貝初始化 tempCategories
       tempCategories[eventName] = selectedCategories[eventName] ? [...selectedCategories[eventName]] : [];
       eventCategories[eventName].forEach(category => {
         const label = document.createElement('label');
@@ -487,14 +491,12 @@
     function closeCategoryModal() {
       const categoryModal = document.getElementById('categoryModal');
       categoryModal.style.display = 'none';
-      // 清除臨時選擇，恢復到上一次確認狀態
       tempCategories = {};
     }
 
     function confirmCategorySelection() {
       const eventName = document.getElementById('categoryTitle').textContent.replace('選擇 ', '').replace(' 的項目', '');
       if (tempCategories[eventName] && tempCategories[eventName].length > 0) {
-        // 合併更新 selectedCategories，保留未修改的項目
         selectedCategories[eventName] = [...tempCategories[eventName]];
       } else {
         delete selectedCategories[eventName];
@@ -502,7 +504,6 @@
       updateSelectedEvents();
       closeCategoryModal();
 
-      // 更新按鈕標示
       const buttons = document.querySelectorAll('#eventList button');
       buttons.forEach(button => {
         const btnEventName = button.textContent;
@@ -516,9 +517,28 @@
 
     function updateSelectedEvents() {
       const selectedEventsInput = document.getElementById('selectedEvents');
+      const totalPriceInput = document.getElementById('totalPrice');
       selectedEventsInput.value = Object.entries(selectedCategories)
-        .map(([event, categories]) => `${event}, ${categories.join(', ')}`)
+        .map(([event, categories]) => {
+          const cleanCategories = categories.map(category => {
+            const match = category.match(/(.+?)\s*-\s*\$/);
+            return match ? match[1].trim() : category;
+          });
+          return `${event}, ${cleanCategories.join(', ')}`;
+        })
         .join('; ') || '';
+      
+      let totalPrice = 0;
+      Object.entries(selectedCategories).forEach(([event, categories]) => {
+        categories.forEach(category => {
+          const priceKey = `${event}:${category.match(/(.+?)\s*-\s*\$/)?.[1].trim()}`;
+          if (categoryPrices[priceKey]) {
+            totalPrice += categoryPrices[priceKey];
+          }
+        });
+      });
+      totalPriceInput.value = totalPrice;
+      
       const submitBtn = document.getElementById('submitBtn');
       const eventCount = document.getElementById('eventCount');
       const eventCountNum = Object.keys(selectedCategories).length;
@@ -531,6 +551,7 @@
     function submitForm() {
       const confirmModal = document.getElementById('confirmModal');
       const confirmEvents = document.getElementById('confirmEvents');
+      const confirmTotalPrice = document.getElementById('confirmTotalPrice');
       const nameInput = document.getElementById('name');
       const phoneInput = document.getElementById('phone');
       const yearSelect = document.getElementById('birthYear');
@@ -599,6 +620,17 @@
           confirmEvents.textContent = '無';
         }
 
+        let totalPrice = 0;
+        Object.entries(selectedCategories).forEach(([event, categories]) => {
+          categories.forEach(category => {
+            const priceKey = `${event}:${category.match(/(.+?)\s*-\s*\$/)?.[1].trim()}`;
+            if (categoryPrices[priceKey]) {
+              totalPrice += categoryPrices[priceKey];
+            }
+          });
+        });
+        confirmTotalPrice.textContent = `$${totalPrice}`;
+
         confirmModal.style.display = 'flex';
       }
     }
@@ -640,6 +672,7 @@
       form.reset();
       selectedCategories = {};
       document.getElementById('selectedEvents').value = '';
+      document.getElementById('totalPrice').value = '';
       document.getElementById('submitBtn').style.display = 'none';
       document.getElementById('eventCount').style.display = 'none';
       document.getElementById('nameError').style.display = 'none';
@@ -649,7 +682,7 @@
       customDojoInput.style.display = 'none';
       customDojoInput.value = '';
       updateDays();
-      loadEventsFromSheet(); // 重新載入比賽資料
+      loadEventsFromSheet();
     }
 
     function restartForm() {
