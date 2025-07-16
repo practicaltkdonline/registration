@@ -1,43 +1,4 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
@@ -45,8 +6,14 @@
   <title>比賽報名系統</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
   <style>
+    @font-face {
+      font-display: swap;
+      font-family: 'NotoSansTC';
+      font-style: normal;
+      font-weight: 400;
+      src: url('./NotoSansTC[wght].ttf') format('truetype');
+    }
     body {
       font-family: 'Noto Sans TC', Arial, sans-serif;
       max-width: 800px;
@@ -742,7 +709,36 @@
       resetForm();
     }
 
-    function generatePDF() {
+    async function generatePDF() {
+      // 載入 NotoSansTC 字體
+      const fontPath = './NotoSansTC[wght].ttf';
+      const fontName = 'NotoSansTC';
+      try {
+        const response = await fetch(fontPath);
+        if (!response.ok) throw new Error('字體載入失敗');
+        const fontData = await response.arrayBuffer();
+        const base64Font = btoa(
+          new Uint8Array(fontData).reduce(
+            (data, byte) => data + String.fromCharCode(byte),
+            ''
+          )
+        );
+        pdfMake.vfs = pdfMake.vfs || {};
+        pdfMake.vfs[`${fontName}.ttf`] = base64Font;
+        pdfMake.fonts = {
+          NotoSansTC: {
+            normal: `${fontName}.ttf`,
+            bold: `${fontName}.ttf`,
+            italics: `${fontName}.ttf`,
+            bolditalics: `${fontName}.ttf`
+          }
+        };
+      } catch (error) {
+        console.error('字體載入錯誤:', error);
+        alert('無法載入中文字體，請檢查字體檔案是否存在');
+        return;
+      }
+
       // 收集確認頁資料
       const name = document.getElementById('confirmName').textContent || '未輸入';
       const phone = document.getElementById('confirmPhone').textContent || '未輸入';
@@ -765,16 +761,6 @@
           });
         });
       }
-
-      // 配置 pdfmake 字體
-      pdfMake.fonts = {
-        NotoSansTC: {
-          normal: 'Roboto-Regular.ttf',
-          bold: 'Roboto-Medium.ttf',
-          italics: 'Roboto-Italic.ttf',
-          bolditalics: 'Roboto-MediumItalic.ttf'
-        }
-      };
 
       // 定義 PDF 結構
       const docDefinition = {
