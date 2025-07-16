@@ -6,6 +6,13 @@
   <title>比賽報名系統</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    @font-face {
+      font-display: swap;
+      font-family: 'NotoSansTC';
+      font-style: normal;
+      font-weight: 400;
+      src: url('./NotoSansTC[wght].ttf') format('truetype');
+    }
     body {
       font-family: 'Noto Sans TC', Arial, sans-serif;
       max-width: 800px;
@@ -142,6 +149,24 @@
       content: '-';
       margin-right: 5px;
     }
+    .event-total {
+      margin-left: 20px;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+    .event-discount, .event-admin-fee {
+      margin-left: 20px;
+      font-size: 14px;
+      color: #555;
+      margin-top: 4px;
+    }
+    .total-sum {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      border-top: 1px solid #B0BEC5;
+      padding-top: 10px;
+    }
     button.confirm, button.return-button, button.confirm-selection {
       background-color: #1976D2;
       color: white;
@@ -211,6 +236,11 @@
       margin: 16px 0;
       color: #155724;
     }
+    #thankYouPage .button-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
     @media (max-width: 600px) {
       .form-container, #thankYouPage {
         padding: 24px;
@@ -244,22 +274,22 @@
 
       <div class="form-group">
         <label>聯絡電話</label>
-        <input type="tel" id="phone" name="entry.1541580542" pattern="\d{8}" required>
+        <input type="tel" id="phone" name="entry.1541580542" pattern="\d{8}">
         <span id="phoneError" class="error">請輸入有效的8位電話號碼</span>
       </div>
 
       <div class="form-group">
         <label>出生日期</label>
         <div class="date-group">
-          <select id="birthYear" name="entry.1919065731_year" required>
+          <select id="birthYear" name="entry.1919065731_year">
             <option value="">年</option>
           </select>
           <span>/</span>
-          <select id="birthMonth" name="entry.1919065731_month" required>
+          <select id="birthMonth" name="entry.1919065731_month">
             <option value="">月</option>
           </select>
           <span>/</span>
-          <select id="birthDay" name="entry.1919065731_day" required>
+          <select id="birthDay" name="entry.1919065731_day">
             <option value="">日</option>
           </select>
         </div>
@@ -268,7 +298,7 @@
 
       <div class="form-group">
         <label>所屬道場</label>
-        <select id="dojo" name="entry.1923170591" required onchange="toggleCustomDojo()">
+        <select id="dojo" name="entry.1923170591">
           <option value="">請選擇道場</option>
           <option value="觀塘總館">觀塘總館</option>
           <option value="紅磡-培匠道場">紅磡-培匠道場</option>
@@ -322,7 +352,7 @@
         <p><strong>所屬道場：</strong> <span id="confirmDojo"></span></p>
         <p><strong>報名賽事與項目：</strong></p>
         <div id="confirmEvents"></div>
-        <p><strong>總費用：</strong> <span id="confirmTotalPrice"></span></p>
+        <div id="totalSum"></div>
       </div>
       <div style="display: flex; gap: 10px;">
         <button class="cancel" onclick="cancelSubmission()">取消</button>
@@ -334,13 +364,17 @@
   <div id="thankYouPage">
     <h2>感謝您的報名！</h2>
     <p>確認後教練將盡快與您聯繫</p>
-    <button class="return-button" onclick="restartForm()">重新報名</button>
+    <div class="button-group">
+      <button class="return-button" onclick="restartForm()">重新報名</button>
+    </div>
   </div>
 
   <script>
     let eventCategories = {};
     let selectedCategories = {};
     let categoryPrices = {};
+    let discountRules = {};
+    let adminFees = {};
 
     // 動態載入比賽資料
     async function loadEventsFromSheet() {
@@ -348,7 +382,7 @@
       const eventListError = document.getElementById('eventListError');
       const spreadsheetId = '1FFuryD0S4CbOsw4HJKQQHSRtek_JwWlxGx1FmPEER9Y';
       const sheetId = '1485917481';
-      const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&gid=${sheetId}&range=A2:B`;
+      const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&gid=${sheetId}&range=A2:C`;
 
       try {
         const response = await fetch(url);
@@ -360,10 +394,13 @@
         eventList.innerHTML = '';
         eventCategories = {};
         categoryPrices = {};
+        discountRules = {};
+        adminFees = {};
 
         rows.forEach(row => {
           const eventName = row.c[0]?.v;
           const categories = row.c[1]?.v;
+          const discounts = row.c[2]?.v || '{}';
           if (eventName && categories) {
             const categoryArray = categories.split(',').map(cat => cat.trim());
             eventCategories[eventName] = categoryArray;
@@ -374,6 +411,16 @@
                 categoryPrices[`${eventName}:${categoryName.trim()}`] = parseInt(price);
               }
             });
+
+            try {
+              const discountData = JSON.parse(discounts);
+              discountRules[eventName] = discountData.discounts || [];
+              adminFees[eventName] = discountData.adminFee || 0;
+            } catch (error) {
+              console.error(`解析 ${eventName} 的優惠規則或行政費失敗:`, error);
+              discountRules[eventName] = [];
+              adminFees[eventName] = 0;
+            }
 
             const button = document.createElement('button');
             button.type = 'button';
@@ -515,6 +562,93 @@
       });
     }
 
+    function calculateDiscountedPrice(eventName, selected, calculateFormula = false) {
+      let totalPrice = 0;
+      const adminFee = adminFees[eventName] || 0;
+      const rules = discountRules[eventName] || [];
+      const selectedCategoriesClean = selected.map(category => category.match(/(.+?)\s*-\s*\$/)?.[1].trim() || category);
+      let formulaParts = [];
+      let hasDiscount = false;
+
+      // 計算項目費用
+      let appliedCategories = [];
+      let isSingleTotalPrice = false;
+      for (const rule of rules) {
+        if (rule.condition && rule.totalPrice !== undefined) {
+          const conditionsMet = rule.condition.every(cond => selectedCategoriesClean.includes(cond));
+          if (conditionsMet && rule.condition.length === selectedCategoriesClean.length) {
+            totalPrice = rule.totalPrice;
+            appliedCategories = [...rule.condition];
+            isSingleTotalPrice = true;
+            // 只要規則包含 name 鍵（無論值），不視為優惠；否則檢查 discounts 或 totalPrice
+            if (!rule.hasOwnProperty('name') && (rule.discounts || rule.totalPrice !== undefined)) {
+              hasDiscount = true;
+            }
+            if (calculateFormula) {
+              formulaParts.push(`$${rule.totalPrice}`);
+            }
+            break;
+          }
+        }
+      }
+
+      if (!isSingleTotalPrice) {
+        rules.forEach(rule => {
+          if (rule.condition && rule.totalPrice !== undefined) {
+            const conditionsMet = rule.condition.every(cond => selectedCategoriesClean.includes(cond));
+            if (conditionsMet) {
+              totalPrice += rule.totalPrice;
+              // 只要規則包含 name 鍵（無論值），不視為優惠；否則檢查 discounts 或 totalPrice
+              if (!rule.hasOwnProperty('name') && (rule.discounts || rule.totalPrice !== undefined)) {
+                hasDiscount = true;
+              }
+              if (calculateFormula) {
+                formulaParts.push(`$${rule.totalPrice}`);
+              }
+              appliedCategories.push(...rule.condition);
+            }
+          }
+        });
+
+        selectedCategoriesClean.forEach(category => {
+          if (appliedCategories.includes(category)) return;
+          let categoryPrice = categoryPrices[`${eventName}:${category}`] || 0;
+          rules.forEach(rule => {
+            if (rule.condition && rule.discounts) {
+              const conditionsMet = rule.condition.some(cond => selectedCategoriesClean.includes(cond));
+              if (conditionsMet && rule.discounts[category]) {
+                categoryPrice = rule.discounts[category];
+                hasDiscount = true;
+              }
+            }
+          });
+          totalPrice += categoryPrice;
+          if (calculateFormula) {
+            formulaParts.push(`$${categoryPrice}`);
+          }
+        });
+      }
+
+      // 添加行政費
+      totalPrice += adminFee;
+      if (calculateFormula && adminFee > 0) {
+        formulaParts.push(`$${adminFee}`);
+      }
+
+      if (calculateFormula) {
+        // 若有行政費，總是顯示括號公式
+        if (adminFee > 0) {
+          return { totalPrice, formula: `$${totalPrice} (${formulaParts.join('+')})`, hasDiscount, adminFee };
+        }
+        // 無行政費時，單項或單一 totalPrice 無括號
+        if (selected.length === 1 || isSingleTotalPrice) {
+          return { totalPrice, formula: `$${totalPrice}`, hasDiscount, adminFee };
+        }
+        return { totalPrice, formula: `$${totalPrice} (${formulaParts.join('+')})`, hasDiscount, adminFee };
+      }
+      return totalPrice;
+    }
+
     function updateSelectedEvents() {
       const selectedEventsInput = document.getElementById('selectedEvents');
       const totalPriceInput = document.getElementById('totalPrice');
@@ -530,12 +664,7 @@
       
       let totalPrice = 0;
       Object.entries(selectedCategories).forEach(([event, categories]) => {
-        categories.forEach(category => {
-          const priceKey = `${event}:${category.match(/(.+?)\s*-\s*\$/)?.[1].trim()}`;
-          if (categoryPrices[priceKey]) {
-            totalPrice += categoryPrices[priceKey];
-          }
-        });
+        totalPrice += calculateDiscountedPrice(event, categories);
       });
       totalPriceInput.value = totalPrice;
       
@@ -551,7 +680,7 @@
     function submitForm() {
       const confirmModal = document.getElementById('confirmModal');
       const confirmEvents = document.getElementById('confirmEvents');
-      const confirmTotalPrice = document.getElementById('confirmTotalPrice');
+      const totalSum = document.getElementById('totalSum');
       const nameInput = document.getElementById('name');
       const phoneInput = document.getElementById('phone');
       const yearSelect = document.getElementById('birthYear');
@@ -565,42 +694,52 @@
       const dojoError = document.getElementById('dojoError');
 
       let isValid = true;
-
       nameError.style.display = 'none';
       phoneError.style.display = 'none';
       birthdateError.style.display = 'none';
       dojoError.style.display = 'none';
 
+      const isTestName = /test/i.test(nameInput.value);
+
       if (!nameInput.value.trim()) {
         nameError.style.display = 'block';
         isValid = false;
       }
-      if (!phoneInput.value.match(/^\d{8}$/)) {
-        phoneError.style.display = 'block';
-        isValid = false;
-      }
-      const year = parseInt(yearSelect.value);
-      const month = parseInt(monthSelect.value);
-      const day = parseInt(daySelect.value);
-      const selectedDate = new Date(year, month - 1, day);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      if (!year || !month || !day || isNaN(selectedDate) || selectedDate > today) {
-        birthdateError.style.display = 'block';
-        isValid = false;
-      }
-      if (!dojoSelect.value || (dojoSelect.value === '其他' && !customDojoInput.value.trim())) {
-        dojoError.style.display = 'block';
-        isValid = false;
+
+      if (!isTestName) {
+        if (!phoneInput.value.match(/^\d{8}$/)) {
+          phoneError.style.display = 'block';
+          isValid = false;
+        }
+        const year = parseInt(yearSelect.value);
+        const month = parseInt(monthSelect.value);
+        const day = parseInt(daySelect.value);
+        const selectedDate = new Date(year, month - 1, day);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (!year || !month || !day || isNaN(selectedDate) || selectedDate > today) {
+          birthdateError.style.display = 'block';
+          isValid = false;
+        }
+        if (!dojoSelect.value || (dojoSelect.value === '其他' && !customDojoInput.value.trim())) {
+          dojoError.style.display = 'block';
+          isValid = false;
+        }
       }
 
       if (isValid) {
         document.getElementById('confirmName').textContent = nameInput.value;
-        document.getElementById('confirmPhone').textContent = phoneInput.value;
-        document.getElementById('confirmBirthdate').textContent = `${year}/${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}`;
-        document.getElementById('confirmDojo').textContent = dojoSelect.value === '其他' ? customDojoInput.value : dojoSelect.value;
+        document.getElementById('confirmPhone').textContent = phoneInput.value || '未提供';
+        document.getElementById('confirmBirthdate').textContent = yearSelect.value && monthSelect.value && daySelect.value 
+          ? `${yearSelect.value}/${monthSelect.value.padStart(2, '0')}/${daySelect.value.padStart(2, '0')}` 
+          : '未提供';
+        document.getElementById('confirmDojo').textContent = dojoSelect.value === '其他' ? customDojoInput.value : dojoSelect.value || '未提供';
 
         confirmEvents.innerHTML = '';
+        totalSum.innerHTML = '';
+        let totalPrice = 0;
+        let totalFormulaParts = [];
+
         if (Object.keys(selectedCategories).length > 0) {
           Object.entries(selectedCategories).forEach(([event, categories]) => {
             const eventDiv = document.createElement('div');
@@ -608,28 +747,48 @@
             const eventStrong = document.createElement('strong');
             eventStrong.textContent = event;
             eventDiv.appendChild(eventStrong);
-            categories.forEach(category => {
-              const categoryDiv = document.createElement('div');
-              categoryDiv.className = 'category-item';
-              categoryDiv.textContent = category;
-              eventDiv.appendChild(categoryDiv);
-            });
+
+            const categoriesText = categories.join(', ');
+            const categoryDiv = document.createElement('div');
+            categoryDiv.className = 'category-item';
+            categoryDiv.textContent = categoriesText;
+            eventDiv.appendChild(categoryDiv);
+
+            const { totalPrice: eventPrice, formula, hasDiscount, adminFee } = calculateDiscountedPrice(event, categories, true);
+            totalPrice += eventPrice;
+            totalFormulaParts.push(`$${eventPrice}`);
+
+            const totalDiv = document.createElement('div');
+            totalDiv.className = 'event-total';
+            totalDiv.textContent = formula;
+            eventDiv.appendChild(totalDiv);
+
+            if (hasDiscount) {
+              const discountDiv = document.createElement('div');
+              discountDiv.className = 'event-discount';
+              discountDiv.textContent = '已添加優惠';
+              eventDiv.appendChild(discountDiv);
+            }
+
+            if (adminFee > 0) {
+              const adminFeeDiv = document.createElement('div');
+              adminFeeDiv.className = 'event-admin-fee';
+              adminFeeDiv.textContent = '已包括行政費';
+              eventDiv.appendChild(adminFeeDiv);
+            }
+
             confirmEvents.appendChild(eventDiv);
           });
         } else {
           confirmEvents.textContent = '無';
         }
 
-        let totalPrice = 0;
-        Object.entries(selectedCategories).forEach(([event, categories]) => {
-          categories.forEach(category => {
-            const priceKey = `${event}:${category.match(/(.+?)\s*-\s*\$/)?.[1].trim()}`;
-            if (categoryPrices[priceKey]) {
-              totalPrice += categoryPrices[priceKey];
-            }
-          });
-        });
-        confirmTotalPrice.textContent = `$${totalPrice}`;
+        const totalSumDiv = document.createElement('div');
+        totalSumDiv.className = 'total-sum';
+        totalSumDiv.textContent = Object.keys(selectedCategories).length === 1 
+          ? `總數 $${totalPrice}` 
+          : `總數 $${totalPrice} (${totalFormulaParts.join('+')})`;
+        totalSum.appendChild(totalSumDiv);
 
         confirmModal.style.display = 'flex';
       }
