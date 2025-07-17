@@ -375,6 +375,7 @@
     let categoryPrices = {};
     let discountRules = {};
     let adminFees = {};
+    let eventOrder = []; // 儲存 Google Sheet 的比賽順序
 
     // 動態載入比賽資料
     async function loadEventsFromSheet() {
@@ -396,12 +397,14 @@
         categoryPrices = {};
         discountRules = {};
         adminFees = {};
+        eventOrder = []; // 重置比賽順序
 
         rows.forEach(row => {
           const eventName = row.c[0]?.v;
           const categories = row.c[1]?.v;
           const discounts = row.c[2]?.v || '{}';
           if (eventName && categories) {
+            eventOrder.push(eventName); // 儲存比賽名稱順序
             const categoryArray = categories.split(',').map(cat => cat.trim());
             eventCategories[eventName] = categoryArray;
             categoryArray.forEach(category => {
@@ -573,15 +576,39 @@
       // 計算項目費用
       let appliedCategories = [];
       let isSingleTotalPrice = false;
+
+      // 首先檢查基於數量的折扣率規則（count 和 discountRate）
       for (const rule of rules) {
-        if (rule.condition && rule.totalPrice !== undefined) {
-          const conditionsMet = rule.condition.every(cond => selectedCategoriesClean.includes(cond));
-          if (conditionsMet && rule.condition.length === selectedCategoriesClean.length) {
+        if (rule.count !== undefined && rule.discountRate !== undefined && rule.count === selectedCategoriesClean.length) {
+          // 計算原始總價
+          let originalPrice = 0;
+          selectedCategoriesClean.forEach(category => {
+            originalPrice += categoryPrices[`${eventName}:${category}`] || 0;
+          });
+          // 應用折扣率
+          totalPrice = originalPrice * rule.discountRate;
+          // 保留 2 位小數
+          totalPrice = Math.round(totalPrice * 100) / 100;
+          appliedCategories = [...selectedCategoriesClean];
+          isSingleTotalPrice = true;
+          if (!rule.hasOwnProperty('name')) {
+            hasDiscount = true;
+          }
+          if (calculateFormula) {
+            formulaParts.push(`$${totalPrice.toFixed(2)}`);
+          }
+          break;
+        }
+      }
+
+      // 若無匹配的 discountRate 規則，檢查基於數量的 totalPrice 規則
+      if (!isSingleTotalPrice) {
+        for (const rule of rules) {
+          if (rule.count !== undefined && rule.totalPrice !== undefined && rule.count === selectedCategoriesClean.length) {
             totalPrice = rule.totalPrice;
-            appliedCategories = [...rule.condition];
+            appliedCategories = [...selectedCategoriesClean];
             isSingleTotalPrice = true;
-            // 只要規則包含 name 鍵（無論值），不視為優惠；否則檢查 discounts 或 totalPrice
-            if (!rule.hasOwnProperty('name') && (rule.discounts || rule.totalPrice !== undefined)) {
+            if (!rule.hasOwnProperty('name')) {
               hasDiscount = true;
             }
             if (calculateFormula) {
@@ -592,13 +619,34 @@
         }
       }
 
+      // 若無匹配的 count 規則，檢查基於條件的規則（condition）
+      if (!isSingleTotalPrice) {
+        for (const rule of rules) {
+          if (rule.condition && rule.totalPrice !== undefined) {
+            const conditionsMet = rule.condition.every(cond => selectedCategoriesClean.includes(cond));
+            if (conditionsMet && rule.condition.length === selectedCategoriesClean.length) {
+              totalPrice = rule.totalPrice;
+              appliedCategories = [...rule.condition];
+              isSingleTotalPrice = true;
+              if (!rule.hasOwnProperty('name') && (rule.discounts || rule.totalPrice !== undefined)) {
+                hasDiscount = true;
+              }
+              if (calculateFormula) {
+                formulaParts.push(`$${rule.totalPrice}`);
+              }
+              break;
+            }
+          }
+        }
+      }
+
+      // 若無完全匹配的規則，計算個別項目價格
       if (!isSingleTotalPrice) {
         rules.forEach(rule => {
           if (rule.condition && rule.totalPrice !== undefined) {
             const conditionsMet = rule.condition.every(cond => selectedCategoriesClean.includes(cond));
             if (conditionsMet) {
               totalPrice += rule.totalPrice;
-              // 只要規則包含 name 鍵（無論值），不視為優惠；否則檢查 discounts 或 totalPrice
               if (!rule.hasOwnProperty('name') && (rule.discounts || rule.totalPrice !== undefined)) {
                 hasDiscount = true;
               }
@@ -638,13 +686,13 @@
       if (calculateFormula) {
         // 若有行政費，總是顯示括號公式
         if (adminFee > 0) {
-          return { totalPrice, formula: `$${totalPrice} (${formulaParts.join('+')})`, hasDiscount, adminFee };
+          return { totalPrice, formula: `$${totalPrice.toFixed(2)} (${formulaParts.join('+')})`, hasDiscount, adminFee };
         }
-        // 無行政費時，單項或單一 totalPrice 無括號
+        // 無行政費時，單項或單一 totalPrice/discountRate 無括號
         if (selected.length === 1 || isSingleTotalPrice) {
-          return { totalPrice, formula: `$${totalPrice}`, hasDiscount, adminFee };
+          return { totalPrice, formula: `$${totalPrice.toFixed(2)}`, hasDiscount, adminFee };
         }
-        return { totalPrice, formula: `$${totalPrice} (${formulaParts.join('+')})`, hasDiscount, adminFee };
+        return { totalPrice, formula: `$${totalPrice.toFixed(2)} (${formulaParts.join('+')})`, hasDiscount, adminFee };
       }
       return totalPrice;
     }
@@ -741,26 +789,35 @@
         let totalFormulaParts = [];
 
         if (Object.keys(selectedCategories).length > 0) {
-          Object.entries(selectedCategories).forEach(([event, categories]) => {
+          // 按 Google Sheet 的比賽順序排序
+          const sortedEvents = Object.keys(selectedCategories).sort((a, b) => {
+            return eventOrder.indexOf(a) - eventOrder.indexOf(b);
+          });
+
+          sortedEvents.forEach(event => {
+            const categories = selectedCategories[event];
+            // 按 Google Sheet B 欄的項目順序排序
+            const sortedCategories = categories.sort((a, b) => {
+              return eventCategories[event].indexOf(a) - eventCategories[event].indexOf(b);
+            });
+
             const eventDiv = document.createElement('div');
             eventDiv.className = 'event-item';
             const eventStrong = document.createElement('strong');
             eventStrong.textContent = event;
             eventDiv.appendChild(eventStrong);
 
-            // 按試算表 B 欄順序顯示選擇的項目
-            const orderedCategories = eventCategories[event].filter(category => categories.includes(category));
-            orderedCategories.forEach((category, index) => {
+            // 每個項目單獨一行
+            sortedCategories.forEach(category => {
               const categoryDiv = document.createElement('div');
               categoryDiv.className = 'category-item';
-              // 最後一項不加逗號
-              categoryDiv.textContent = index === orderedCategories.length - 1 ? category : `${category},`;
+              categoryDiv.textContent = category;
               eventDiv.appendChild(categoryDiv);
             });
 
-            const { totalPrice: eventPrice, formula, hasDiscount, adminFee } = calculateDiscountedPrice(event, categories, true);
+            const { totalPrice: eventPrice, formula, hasDiscount, adminFee } = calculateDiscountedPrice(event, sortedCategories, true);
             totalPrice += eventPrice;
-            totalFormulaParts.push(`$${eventPrice}`);
+            totalFormulaParts.push(`$${eventPrice.toFixed(2)}`);
 
             const totalDiv = document.createElement('div');
             totalDiv.className = 'event-total';
@@ -790,8 +847,8 @@
         const totalSumDiv = document.createElement('div');
         totalSumDiv.className = 'total-sum';
         totalSumDiv.textContent = Object.keys(selectedCategories).length === 1 
-          ? `總數 $${totalPrice}` 
-          : `總數 $${totalPrice} (${totalFormulaParts.join('+')})`;
+          ? `總數 $${totalPrice.toFixed(2)}` 
+          : `總數 $${totalPrice.toFixed(2)} (${totalFormulaParts.join('+')})`;
         totalSum.appendChild(totalSumDiv);
 
         confirmModal.style.display = 'flex';
