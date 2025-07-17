@@ -748,11 +748,15 @@
             eventStrong.textContent = event;
             eventDiv.appendChild(eventStrong);
 
-            const categoriesText = categories.join(', ');
-            const categoryDiv = document.createElement('div');
-            categoryDiv.className = 'category-item';
-            categoryDiv.textContent = categoriesText;
-            eventDiv.appendChild(categoryDiv);
+            // 按試算表 B 欄順序顯示選擇的項目
+            const orderedCategories = eventCategories[event].filter(category => categories.includes(category));
+            orderedCategories.forEach((category, index) => {
+              const categoryDiv = document.createElement('div');
+              categoryDiv.className = 'category-item';
+              // 最後一項不加逗號
+              categoryDiv.textContent = index === orderedCategories.length - 1 ? category : `${category},`;
+              eventDiv.appendChild(categoryDiv);
+            });
 
             const { totalPrice: eventPrice, formula, hasDiscount, adminFee } = calculateDiscountedPrice(event, categories, true);
             totalPrice += eventPrice;
