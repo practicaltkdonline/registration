@@ -1,43 +1,4 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
@@ -156,7 +117,9 @@
       display: none;
     }
     .membership-group {
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: 12px; /* 減少間距以確保一行 */
     }
     .membership-group input[type="text"] {
       width: 100%;
@@ -165,6 +128,13 @@
       display: flex;
       align-items: center;
       font-weight: normal;
+      margin: 0;
+      white-space: nowrap; /* 防止文字換行 */
+    }
+    .membership-group input[type="checkbox"] {
+      margin: 0;
+      width: 16px; /* 縮減 checkbox 寬度 */
+      height: 16px; /* 縮減 checkbox 高度 */
     }
     .modal {
       display: none;
@@ -313,8 +283,8 @@
       </div>
       <div class="form-group">
         <label>英文姓名 English Name *</label>
-        <input type="text" id="englishName" name="entry.1628056645" required>
-        <span id="englishNameError" class="error">請輸入英文姓名（大寫字母）</span>
+        <input type="text" id="englishName" name="entry.1628056645" required oninput="this.value = this.value.toUpperCase()">
+        <span id="englishNameError" class="error">請輸入英文姓名</span>
       </div>
       <div class="form-group">
         <label>出生日期 Date of Birth YYYY-MM-DD *</label>
@@ -358,7 +328,7 @@
         <label>中國香港跆拳道協會品段證/現有黑帶會員証編號 HKTKDA Poom/ Dan or Membership Card No. *</label>
         <input type="text" id="membershipNumber" name="entry.1754862681">
         <div class="membership-group">
-          <label><input type="checkbox" id="membershipPending" name="membershipPending" onchange="toggleMembershipInput()"> 申請中 (如未有品段/黑帶會員證)</label>
+          <label><input type="checkbox" id="membershipPending" name="membershipPending" onchange="toggleMembershipInput()">  申請中 (如未有品段/黑帶會員證)</label>
         </div>
         <span id="membershipNumberError" class="error">請輸入會員証或品段證編號或勾選申請中</span>
       </div>
@@ -388,9 +358,8 @@
       <div class="form-group">
         <label>屬會名稱 Association *</label>
         <select id="affiliation" name="entry.393150406" required>
-          <option value="香港實用跆拳道協會" selected>香港實用跆拳道協會 HK Practical TKD Association</option>
+          <option value="香港實用跆拳道協會 HK Practical TKD Association" selected>香港實用跆拳道協會 HK Practical TKD Association</option>
         </select>
-        <span id="affiliationError" class="error" style="display: none;">所屬屬會只能為香港實用跆拳道協會</span>
       </div>
       <div class="form-group">
         <label>參加者有沒有持有其他品段/黑帶證? *</label>
@@ -488,7 +457,9 @@
 
   <div id="thankYouPage">
     <h2>感謝您的報名！</h2>
-    <p>確認後教練將盡快與您聯繫。費用為 $290 + $100 行政費，共 $390。</p>
+    <p>確認後教練將盡快與您聯繫。</p>
+    <p>費用為 $290 + $100 行政費，共 $390。</p>
+    <p>並將PDF最後一頁的同意書及費用交給歐sir或師母。</p>
     <button class="return-button" onclick="restartForm()">重新報名</button>
   </div>
 
@@ -496,11 +467,8 @@
     // 鎖定所屬屬會
     const affiliationSelect = document.getElementById('affiliation');
     affiliationSelect.addEventListener('change', (e) => {
-      if (e.target.value !== '香港實用跆拳道協會') {
-        e.target.value = '香港實用跆拳道協會';
-        document.getElementById('affiliationError').style.display = 'block';
-      } else {
-        document.getElementById('affiliationError').style.display = 'none';
+      if (e.target.value !== '香港實用跆拳道協會 HK Practical TKD Association') {
+        e.target.value = '香港實用跆拳道協會 HK Practical TKD Association';
       }
     });
 
@@ -725,7 +693,7 @@
           document.getElementById('chineseNameError').style.display = 'block';
           isValid = false;
         }
-        if (!englishNameInput.value.trim() || !/^[A-Z\s]+$/.test(englishNameInput.value)) {
+        if (!englishNameInput.value.trim()) {
           document.getElementById('englishNameError').style.display = 'block';
           isValid = false;
         }
@@ -761,9 +729,8 @@
           document.getElementById('certDateError').style.display = 'block';
           isValid = false;
         }
-        if (affiliationSelect.value !== '香港實用跆拳道協會') {
-          document.getElementById('affiliationError').style.display = 'block';
-          isValid = false;
+        if (affiliationSelect.value !== '香港實用跆拳道協會 HK Practical TKD Association') {
+          affiliationSelect.value = '香港實用跆拳道協會 HK Practical TKD Association';
         }
         const selectedOtherCert = Array.from(otherCertRadios).find(radio => radio.checked)?.value;
         if (!selectedOtherCert) {
