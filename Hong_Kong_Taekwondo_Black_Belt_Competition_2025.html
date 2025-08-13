@@ -9,68 +9,78 @@
     body {
       font-family: 'Noto Sans TC', Arial, sans-serif;
       max-width: 800px;
-      margin: 40px auto;
+      margin: 20px auto;
       padding: 20px;
-      background-color: #f5f5f5;
+      background: linear-gradient(135deg, #f0f4f8, #e0e8f0);
       color: #333;
+      line-height: 1.6;
     }
     .form-container {
       background: white;
       padding: 32px;
-      border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
+    }
+    .form-container:hover {
+      transform: translateY(-2px);
     }
     .form-header {
       text-align: center;
       margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e0e0e0;
     }
     .form-header h1 {
       font-size: 28px;
       font-weight: 700;
-      color: #333;
+      color: #2c3e50;
+      margin: 0;
     }
     .form-header h2 {
       font-size: 20px;
       font-weight: 500;
-      color: #555;
+      color: #7f8c8d;
       margin-top: 8px;
     }
     .form-group {
       margin-bottom: 24px;
       padding: 16px;
-      border-radius: 8px;
+      border-radius: 12px;
+      background: #fff;
+      transition: background 0.3s ease;
     }
     .form-group:nth-child(odd) {
-      background-color: #F7FAFC;
+      background: #f9fafb;
     }
     .form-group:nth-child(even) {
-      background-color: #FFFFFF;
+      background: #ffffff;
     }
-    .sub-form-group {
-      margin-bottom: 24px;
-      padding: 16px;
-      border-radius: 8px;
+    .form-group:hover {
+      background: #f5f7fa;
     }
     label {
       display: block;
       margin-bottom: 8px;
       font-weight: 500;
       font-size: 16px;
-      color: #333;
+      color: #34495e;
     }
     input, select, button {
       width: 100%;
       padding: 12px;
-      border: 1px solid #B0BEC5;
+      border: 1px solid #d3d9e0;
       border-radius: 8px;
       box-sizing: border-box;
       font-size: 16px;
-      transition: border-color 0.3s, box-shadow 0.3s;
+      background: #ffffff;
+      transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
     }
     input:focus, select:focus, button:focus {
       outline: none;
-      border-color: #1976D2;
-      box-shadow: 0 0 6px rgba(25, 118, 210, 0.3);
+      border-color: #3498db;
+      box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+      background: #f8fcff;
     }
     .date-group {
       display: flex;
@@ -79,18 +89,20 @@
     }
     .date-group select {
       width: 120px;
+      max-width: 100%;
     }
     .date-group select#birthYear, .date-group select#certYear, .date-group select#otherCertYear {
       width: 160px;
+      max-width: 100%;
     }
     .date-group span {
       font-size: 16px;
-      color: #333;
+      color: #34495e;
     }
     .category-group {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
       padding: 8px 0;
     }
     .category-group label {
@@ -98,6 +110,7 @@
       align-items: center;
       font-weight: normal;
       font-size: 16px;
+      color: #2c3e50;
     }
     .category-group input[type="radio"],
     .category-group input[type="checkbox"] {
@@ -105,13 +118,13 @@
       margin-right: 12px;
     }
     .error {
-      color: #D32F2F;
+      color: #e74c3c;
       font-size: 14px;
       margin-top: 6px;
       display: none;
     }
     .info {
-      color: #1976D2;
+      color: #3498db;
       font-size: 14px;
       margin-top: 6px;
       display: none;
@@ -119,7 +132,7 @@
     .membership-group {
       display: flex;
       align-items: center;
-      gap: 12px; /* 減少間距以確保一行 */
+      gap: 4px;
     }
     .membership-group input[type="text"] {
       width: 100%;
@@ -129,12 +142,13 @@
       align-items: center;
       font-weight: normal;
       margin: 0;
-      white-space: nowrap; /* 防止文字換行 */
+      white-space: nowrap;
+      color: #2c3e50;
     }
     .membership-group input[type="checkbox"] {
       margin: 0;
-      width: 16px; /* 縮減 checkbox 寬度 */
-      height: 16px; /* 縮減 checkbox 高度 */
+      width: 16px;
+      height: 16px;
     }
     .modal {
       display: none;
@@ -151,23 +165,24 @@
     .modal-content {
       background-color: white;
       padding: 32px;
-      border-radius: 12px;
+      border-radius: 16px;
       width: 90%;
       max-width: 600px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
       display: flex;
       flex-direction: column;
-      height: 80vh;
-      max-height: 600px;
+      max-height: 80vh;
     }
     .modal-scroll {
       overflow-y: auto;
       flex-grow: 1;
       margin-bottom: 20px;
+      padding-right: 10px;
     }
     .modal-content p {
       font-size: 16px;
       margin: 12px 0;
+      color: #2c3e50;
     }
     .event-item {
       margin-bottom: 12px;
@@ -185,85 +200,112 @@
       margin-right: 5px;
     }
     button.confirm, button.return-button {
-      background-color: #1976D2;
+      background: linear-gradient(90deg, #3498db, #2980b9);
       color: white;
       border: none;
       cursor: pointer;
       padding: 12px;
+      border-radius: 8px;
+      transition: background 0.3s, transform 0.2s;
     }
     button.confirm:hover, button.return-button:hover {
-      background-color: #1565C0;
+      background: linear-gradient(90deg, #2980b9, #1f6b9e);
       transform: translateY(-2px);
     }
     button.cancel {
-      background-color: #B0BEC5;
-      color: #333;
+      background: #ecf0f1;
+      color: #7f8c8d;
       padding: 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
     }
     button.cancel:hover {
-      background-color: #90A4AE;
+      background: #dfe6e9;
       transform: translateY(-2px);
     }
     #submitBtn {
-      background-color: #4CAF50;
+      background: linear-gradient(90deg, #2ecc71, #27ae60);
       color: white;
       margin-top: 20px;
-      position: relative;
-      padding-right: 40px;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      width: 100%;
     }
     #submitBtn:hover {
-      background-color: #45a049;
+      background: linear-gradient(90deg, #27ae60, #219653);
       transform: translateY(-2px);
     }
     #thankYouPage {
       display: none;
       background: white;
       padding: 32px;
-      border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
       text-align: center;
+      transition: transform 0.2s ease;
+    }
+    #thankYouPage:hover {
+      transform: translateY(-2px);
     }
     #thankYouPage h2 {
       font-size: 24px;
       margin-bottom: 16px;
-      color: #333;
+      color: #2c3e50;
     }
     #thankYouPage p {
       font-size: 16px;
       margin: 16px 0;
-      color: #155724;
+      color: #27ae60;
     }
     #affiliation {
       pointer-events: none;
-      background-color: #f5f5f5;
+      background-color: #f5f7fa;
     }
     @media (max-width: 600px) {
       .form-container, #thankYouPage {
-        padding: 24px;
+        padding: 20px;
+        margin: 10px;
+      }
+      .form-header h1 {
+        font-size: 22px;
+      }
+      .form-header h2 {
+        font-size: 16px;
+      }
+      .form-group {
+        padding: 12px;
+      }
+      input, select, button {
+        padding: 10px;
+        font-size: 14px;
+      }
+      .date-group {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+      }
+      .date-group select {
+        width: 100%;
+      }
+      .date-group select#birthYear, .date-group select#certYear, .date-group select#otherCertYear {
+        width: 100%;
       }
       .modal-content {
         width: 95%;
-        padding: 24px;
-        height: 85vh;
-        max-height: 500px;
+        padding: 20px;
+        max-height: 85vh;
       }
-      .date-group {
-        gap: 8px;
+      .modal-content p {
+        font-size: 14px;
       }
-      .date-group select {
-        width: 70px;
-      }
-      .date-group select#birthYear, .date-group select#certYear, .date-group select#otherCertYear {
-        width: 110px;
-      }
-      .form-header h1 {
-        font-size: 24px;
-      }
-      .form-header h2 {
-        font-size: 18px;
-      }
-      .sub-form-group {
-        padding: 12px;
+      button.confirm, button.cancel, button.return-button, #submitBtn {
+        padding: 10px;
+        font-size: 14px;
       }
     }
   </style>
