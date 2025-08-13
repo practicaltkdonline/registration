@@ -1,0 +1,951 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>香港跆拳道品勢比賽2025 (色帶組) 實用會</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans TC', Arial, sans-serif;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #f0f4f8, #e0e8f0);
+      color: #333;
+      line-height: 1.6;
+    }
+    .form-container {
+      background: white;
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
+    }
+    .form-container:hover {
+      transform: translateY(-2px);
+    }
+    .form-header {
+      text-align: center;
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .form-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #2c3e50;
+      margin: 0;
+    }
+    .form-header h2 {
+      font-size: 20px;
+      font-weight: 500;
+      color: #7f8c8d;
+      margin-top: 8px;
+    }
+    .form-group {
+      margin-bottom: 24px;
+      padding: 16px;
+      border-radius: 12px;
+      background: #fff;
+      transition: background 0.3s ease;
+    }
+    .form-group:nth-child(odd) {
+      background: #f9fafb;
+    }
+    .form-group:nth-child(even) {
+      background: #ffffff;
+    }
+    .form-group:hover {
+      background: #f5f7fa;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 16px;
+      color: #34495e;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d3d9e0;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 16px;
+      background: #ffffff;
+      transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+    }
+    input:focus, select:focus, button:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+      background: #f8fcff;
+    }
+    .date-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .date-group select {
+      width: 120px;
+      max-width: 100%;
+    }
+    .date-group select#birthYear {
+      width: 160px;
+      max-width: 100%;
+    }
+    .date-group span {
+      font-size: 16px;
+      color: #34495e;
+    }
+    .category-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 8px 0;
+    }
+    .category-group label {
+      display: flex;
+      align-items: center;
+      font-weight: normal;
+      font-size: 16px;
+      color: #2c3e50;
+    }
+    .category-group input[type="radio"],
+    .category-group input[type="checkbox"] {
+      width: auto;
+      margin-right: 12px;
+    }
+    .error {
+      color: #e74c3c;
+      font-size: 14px;
+      margin-top: 6px;
+      display: none;
+    }
+    .membership-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .membership-group label {
+      display: flex;
+      align-items: center;
+      font-weight: normal;
+      margin: 0;
+      white-space: nowrap;
+      color: #2c3e50;
+    }
+    .membership-group input[type="checkbox"] {
+      margin: 0;
+      width: 16px;
+      height: 16px;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 32px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      max-height: 80vh;
+    }
+    .modal-scroll {
+      overflow-y: auto;
+      flex-grow: 1;
+      margin-bottom: 20px;
+      padding-right: 10px;
+    }
+    .modal-content p {
+      font-size: 16px;
+      margin: 12px 0;
+      color: #2c3e50;
+    }
+    button.confirm, button.return-button {
+      background: linear-gradient(90deg, #3498db, #2980b9);
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 12px;
+      border-radius: 8px;
+      transition: background 0.3s, transform 0.2s;
+    }
+    button.confirm:hover, button.return-button:hover {
+      background: linear-gradient(90deg, #2980b9, #1f6b9e);
+      transform: translateY(-2px);
+    }
+    button.cancel {
+      background: #ecf0f1;
+      color: #7f8c8d;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    button.cancel:hover {
+      background: #dfe6e9;
+      transform: translateY(-2px);
+    }
+    #submitBtn {
+      background: linear-gradient(90deg, #2ecc71, #27ae60);
+      color: white;
+      margin-top: 20px;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      width: 100%;
+    }
+    #submitBtn:hover {
+      background: linear-gradient(90deg, #27ae60, #219653);
+      transform: translateY(-2px);
+    }
+    #thankYouPage {
+      display: none;
+      background: white;
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+    #thankYouPage:hover {
+      transform: translateY(-2px);
+    }
+    #thankYouPage h2 {
+      font-size: 24px;
+      margin-bottom: 16px;
+      color: #2c3e50;
+    }
+    #thankYouPage p {
+      font-size: 16px;
+      margin: 16px 0;
+      color: #27ae60;
+    }
+    #affiliation {
+      pointer-events: none;
+      background-color: #f5f7fa;
+    }
+    @media (max-width: 600px) {
+      .form-container, #thankYouPage {
+        padding: 20px;
+        margin: 10px;
+      }
+      .form-header h1 {
+        font-size: 22px;
+      }
+      .form-header h2 {
+        font-size: 16px;
+      }
+      .form-group {
+        padding: 12px;
+      }
+      input, select, button {
+        padding: 10px;
+        font-size: 14px;
+      }
+      .date-group {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+      }
+      .date-group select {
+        width: 100%;
+      }
+      .date-group select#birthYear {
+        width: 100%;
+      }
+      .modal-content {
+        width: 95%;
+        padding: 20px;
+        max-height: 85vh;
+      }
+      .modal-content p {
+        font-size: 14px;
+      }
+      button.confirm, button.cancel, button.return-button, #submitBtn {
+        padding: 10px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container" id="mainForm">
+    <div class="form-header">
+      <h1>香港跆拳道品勢比賽2025 (色帶組)</h1>
+      <h1>2025 Hong Kong Poomsae Competition (Colour Belt)</h1>
+      <h2>報名表 (實用會)</h2>
+    </div>
+    <form id="registrationForm">
+      <div class="form-group">
+        <label>中文姓名 Chinese Name *</label>
+        <input type="text" id="chineseName" name="entry.1657596741" required>
+        <span id="chineseNameError" class="error">請輸入中文姓名</span>
+      </div>
+      <div class="form-group">
+        <label>英文姓名 English Name *</label>
+        <input type="text" id="englishName" name="entry.1801277804" required oninput="this.value = this.value.toUpperCase()">
+        <span id="englishNameError" class="error">請輸入英文姓名</span>
+      </div>
+      <div class="form-group">
+        <label>出生日期 Date of Birth YYYY-MM-DD *</label>
+        <div class="date-group">
+          <select id="birthYear" name="entry.1972979152_year" required>
+            <option value="">年</option>
+          </select>
+          <span>/</span>
+          <select id="birthMonth" name="entry.1972979152_month" required>
+            <option value="">月</option>
+          </select>
+          <span>/</span>
+          <select id="birthDay" name="entry.1972979152_day" required>
+            <option value="">日</option>
+          </select>
+        </div>
+        <input type="hidden" id="birthDate" name="entry.1972979152">
+        <span id="birthDateError" class="error">請選擇有效的出生日期</span>
+      </div>
+      <div class="form-group">
+        <label>參賽者性別 Gender of Participant *</label>
+        <div class="category-group">
+          <label><input type="radio" name="entry.227436368" value="男子 Male" required> 男子 Male</label>
+          <label><input type="radio" name="entry.227436368" value="女子 Female"> 女子 Female</label>
+        </div>
+        <span id="genderError" class="error">請選擇性別</span>
+      </div>
+      <div class="form-group">
+        <label>國藉 Nationality *</label>
+        <input type="text" id="nationality" name="entry.930689813" required>
+        <span id="nationalityError" class="error">請輸入國籍</span>
+      </div>
+      <div class="form-group">
+        <label>聯絡電話 Telephone Number *</label>
+        <input type="tel" id="phone" name="entry.845347406" pattern="\d{8}" required>
+        <span id="phoneError" class="error">請輸入有效的8位電話號碼</span>
+      </div>
+      <div class="form-group">
+        <label>屬會名稱 Association *</label>
+        <select id="affiliation" name="entry.29321243" required>
+          <option value="香港實用跆拳道協會 HK Practical TKD Association" selected>香港實用跆拳道協會 HK Practical TKD Association</option>
+          <option value="香港仔跆拳道會 Aberdeen TKD Club" hidden>香港仔跆拳道會 Aberdeen TKD Club</option>
+          <option value="技擊跆拳道會 Advanced TKD Association" hidden>技擊跆拳道會 Advanced TKD Association</option>
+          <option value="躍駿跆拳道會 Attack TKD Association" hidden>躍駿跆拳道會 Attack TKD Association</option>
+          <option value="青雲跆拳道會 Ching Wan TKD Association" hidden>青雲跆拳道會 Ching Wan TKD Association</option>
+          <option value="精英跆拳道會 Ching Ying TKD Union" hidden>精英跆拳道會 Ching Ying TKD Union</option>
+          <option value="金柏跆拳道協會 Combat TKD Association" hidden>金柏跆拳道協會 Combat TKD Association</option>
+          <option value="香港跆拳道東龍會 Eastern Dragon TKD Federation HK" hidden>香港跆拳道東龍會 Eastern Dragon TKD Federation HK</option>
+          <option value="勵志跆拳道總會 Encouragement TKD Association" hidden>勵志跆拳道總會 Encouragement TKD Association</option>
+          <option value="香港智道跆拳總會 HK Chido TKD Association" hidden>香港智道跆拳總會 HK Chido TKD Association</option>
+          <option value="香港啟聯跆拳道協會 HK Kai Luen TKD Association" hidden>香港啟聯跆拳道協會 HK Kai Luen TKD Association</option>
+          <option value="香港尼泊爾跆拳道會 HK Nepalese TKD Club" hidden>香港尼泊爾跆拳道會 HK Nepalese TKD Club</option>
+          <option value="香港跆拳道振武館 HK TKD Chun Mo Kwan" hidden>香港跆拳道振武館 HK TKD Chun Mo Kwan</option>
+          <option value="香港跆拳道勵進會 HK TKD Action Association" hidden>香港跆拳道勵進會 HK TKD Action Association</option>
+          <option value="香港跆拳道勵誠會 HK TKD Active Association" hidden>香港跆拳道勵誠會 HK TKD Active Association</option>
+          <option value="香港跆拳道勵輝會 HK TKD Actual Association" hidden>香港跆拳道勵輝會 HK TKD Actual Association</option>
+          <option value="香港中道跆拳道會 HK Chong Do TKD Association" hidden>香港中道跆拳道會 HK Chong Do TKD Association</option>
+          <option value="香港跆拳道青濤館 HK TKD Chung Do Kwan" hidden>香港跆拳道青濤館 HK TKD Chung Do Kwan</option>
+          <option value="香港跆拳道正道館 HK TKD Jung Do Kwan" hidden>香港跆拳道正道館 HK TKD Jung Do Kwan</option>
+          <option value="香港跆拳道正心館 HK TKD Jung Sim Kwan" hidden>香港跆拳道正心館 HK TKD Jung Sim Kwan</option>
+          <option value="香港聯盟跆拳道協會 HK United TKD Association" hidden>香港聯盟跆拳道協會 HK United TKD Association</option>
+          <option value="跆拳道明道會 TKD Bright Way Association" hidden>跆拳道明道會 TKD Bright Way Association</option>
+          <option value="漢道跆拳道館 Hon Do TKD Kwan" hidden>漢道跆拳道館 Hon Do TKD Kwan</option>
+          <option value="國際跆拳道香港總會 International TKD HK Association" hidden>國際跆拳道香港總會 International TKD HK Association</option>
+          <option value="韓國跆拳道青道館 Korea TKD Cheung Do Kwan" hidden>韓國跆拳道青道館 Korea TKD Cheung Do Kwan</option>
+          <option value="樂華跆拳道會 Lok Wah TKD Club" hidden>樂華跆拳道會 Lok Wah TKD Club</option>
+          <option value="銘英跆拳道會 Main Pioneer TKD Association" hidden>銘英跆拳道會 Main Pioneer TKD Association</option>
+          <option value="跆拳道武德會 Moo Duk TKD Hae" hidden>跆拳道武德會 Moo Duk TKD Hae</option>
+          <option value="伍華跆拳道會 Ng Wah TKD Club" hidden>伍華跆拳道會 Ng Wah TKD Club</option>
+          <option value="毅武聯盟跆拳道 Ngai Mo Alliance TKD" hidden>毅武聯盟跆拳道 Ngai Mo Alliance TKD</option>
+          <option value="香港警察跆拳道會 HK Police TKD Club" hidden>香港警察跆拳道會 HK Police TKD Club</option>
+          <option value="香港跆拳道國藝會 Potential TKD HK Association" hidden>香港跆拳道國藝會 Potential TKD HK Association</option>
+          <option value="尚武聯跆拳道會 Sheung Mo Luen TKD Association" hidden>尚武聯跆拳道會 Sheung Mo Luen TKD Association</option>
+          <option value="捷擊跆拳道館 TKD Jet Kick Kwan" hidden>捷擊跆拳道館 TKD Jet Kick Kwan</option>
+          <option value="跆拳道吾道會體育館 TKD Oh Do Hae Gymnasium" hidden>跆拳道吾道會體育館 TKD Oh Do Hae Gymnasium</option>
+          <option value="香港胡氏跆拳道會 Wu’s TKD HK Association" hidden>香港胡氏跆拳道會 Wu’s TKD HK Association</option>
+          <option value="正武會跆拳道協會 Zheng Wu TKD Association" hidden>正武會跆拳道協會 Zheng Wu TKD Association</option>
+          <option value="香港發景跆拳道會 Hong Kong Greatview TKD Club" hidden>香港發景跆拳道會 Hong Kong Greatview TKD Club</option>
+          <option value="香港跆拳道柏毅會 Hong Kong TKD Pak Ngai Association" hidden>香港跆拳道柏毅會 Hong Kong TKD Pak Ngai Association</option>
+          <option value="香港跆拳道嚴濤會 Hong Kong TKD Uhm Do Club" hidden>香港跆拳道嚴濤會 Hong Kong TKD Uhm Do Club</option>
+          <option value="威格跆拳道會 Warrior TKD Club" hidden>威格跆拳道會 Warrior TKD Club</option>
+          <option value="金道跆拳道聯盟 The Kimdo TKD Federation" hidden>金道跆拳道聯盟 The Kimdo TKD Federation</option>
+          <option value="金道一跆拳道館 Kim Do Yi TKD Kwan" hidden>金道一跆拳道館 Kim Do Yi TKD Kwan</option>
+          <option value="樂武跆拳道會 Cheerful TKD Association Limited" hidden>樂武跆拳道會 Cheerful TKD Association Limited</option>
+          <option value="世紀跆拳道會 H.K. Taekwondo Cosmopolitan Club" hidden>世紀跆拳道會 H.K. Taekwondo Cosmopolitan Club</option>
+          <option value="燊．跆拳道館 Sun Taekwondo Club" hidden>燊．跆拳道館 Sun Taekwondo Club</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>中國香港跆拳道協會會員証編號 HKTKDA Membership No. *</label>
+        <input type="text" id="membershipNumber" name="entry.592237082">
+        <div class="membership-group">
+          <label><input type="checkbox" id="membershipPending" name="membershipPending" onchange="toggleMembershipInput()"> 申請會員證</label>
+        </div>
+        <span id="membershipNumberError" class="error">請輸入會員証編號或勾選申請會員證</span>
+      </div>
+      <div class="form-group">
+        <label>現有級別 Present Grade Held *</label>
+        <div class="category-group">
+          <label><input type="radio" name="entry.1431367945" value="黃 Yellow (8th)" required> 黃 Yellow (8th)</label>
+          <label><input type="radio" name="entry.1431367945" value="黃綠 Yellow-Green (7th)"> 黃綠 Yellow-Green (7th)</label>
+          <label><input type="radio" name="entry.1431367945" value="綠 Green (6th)"> 綠 Green (6th)</label>
+          <label><input type="radio" name="entry.1431367945" value="綠藍 Green-Blue (5th)"> 綠藍 Green-Blue (5th)</label>
+          <label><input type="radio" name="entry.1431367945" value="藍 Blue (4th)"> 藍 Blue (4th)</label>
+          <label><input type="radio" name="entry.1431367945" value="藍紅 Blue-Red (3rd)"> 藍紅 Blue-Red (3rd)</label>
+          <label><input type="radio" name="entry.1431367945" value="紅 Red (2nd)"> 紅 Red (2nd)</label>
+          <label><input type="radio" name="entry.1431367945" value="紅黑 Red-Black (1st)"> 紅黑 Red-Black (1st)</label>
+        </div>
+        <span id="beltLevelError" class="error">請選擇現有級別</span>
+      </div>
+      <div class="form-group">
+        <label>年齡組別 Age Divisions *</label>
+        <select id="ageDivision" name="entry.1725566264" required>
+          <option value="">請選擇年齡組別</option>
+          <option value="7歲或以下 Age: 7 or below (2018年或之後出生者)">7歲或以下 Age: 7 or below (2018年或之後出生者)</option>
+          <option value="8歲 至9歲 Age: 8 to 9 (2016 - 2017年出生者)">8歲 至9歲 Age: 8 to 9 (2016 - 2017年出生者)</option>
+          <option value="10歲 至12歲 Age: 10 to 12 (2013 - 2015年出生者)">10歲 至12歲 Age: 10 to 12 (2013 - 2015年出生者)</option>
+          <option value="13歲 至 15歲 Age: 13 to 15 (2010 - 2012年出生者)">13歲 至 15歲 Age: 13 to 15 (2010 - 2012年出生者)</option>
+          <option value="16歲 至17歲 Age: 16 to 17 (2008 - 2009年出生者)">16歲 至17歲 Age: 16 to 17 (2008 - 2009年出生者)</option>
+          <option value="18歲或以上 Age: 18 or above (2007年或之前出生者)">18歲或以上 Age: 18 or above (2007年或之前出生者)</option>
+        </select>
+        <span id="ageDivisionError" class="error">請選擇年齡組別</span>
+      </div>
+      <div class="form-group">
+        <label>色帶級別 Belt Divisions *</label>
+        <select id="beltDivision" name="entry.1560201602" required>
+          <option value="">請選擇色帶級別</option>
+        </select>
+        <span id="beltDivisionError" class="error">請選擇色帶級別</span>
+      </div>
+      <button type="button" id="submitBtn" onclick="submitForm()">提交表單</button>
+    </form>
+  </div>
+
+  <div id="confirmModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-scroll">
+        <h2>請確認您的報名資料</h2>
+        <p><strong>中文姓名：</strong> <span id="confirmChineseName"></span></p>
+        <p><strong>英文姓名：</strong> <span id="confirmEnglishName"></span></p>
+        <p><strong>出生日期：</strong> <span id="confirmBirthDate"></span></p>
+        <p><strong>參賽者性別：</strong> <span id="confirmGender"></span></p>
+        <p><strong>國藉：</strong> <span id="confirmNationality"></span></p>
+        <p><strong>聯絡電話：</strong> <span id="confirmPhone"></span></p>
+        <p><strong>屬會名稱：</strong> <span id="confirmAffiliation"></span></p>
+        <p><strong>中國香港跆拳道協會會員証編號：</strong> <span id="confirmMembershipNumber"></span></p>
+        <p><strong>現有級別：</strong> <span id="confirmBeltLevel"></span></p>
+        <p><strong>年齡組別：</strong> <span id="confirmAgeDivision"></span></p>
+        <p><strong>色帶級別：</strong> <span id="confirmBeltDivision"></span></p>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="cancel" onclick="cancelSubmission()">取消</button>
+        <button class="confirm" onclick="confirmSubmission()">確認提交</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="thankYouPage">
+    <h2>感謝您的報名！</h2>
+    <p>確認後教練將盡快與您聯繫。</p>
+    <p id="feeMessage"></p>
+    <p id="photoMessage"></p>
+    <p>並將PDF最後一頁的同意書及費用交給歐sir或師母。</p>
+    <button class="return-button" onclick="restartForm()">重新報名</button>
+  </div>
+
+  <script>
+    // 色帶級別映射
+    const beltMapping = {
+      '黃 Yellow (8th)': '1',
+      '黃綠 Yellow-Green (7th)': '2',
+      '綠 Green (6th)': '3',
+      '綠藍 Green-Blue (5th)': '4',
+      '藍 Blue (4th)': '5',
+      '藍紅 Blue-Red (3rd)': '6',
+      '紅 Red (2nd)': '7',
+      '紅黑 Red-Black (1st)': '8'
+    };
+
+    // 年齡組別前綴映射
+    const ageDivisionPrefixes = {
+      '7歲或以下 Age: 7 or below (2018年或之後出生者)': 'A',
+      '8歲 至9歲 Age: 8 to 9 (2016 - 2017年出生者)': 'B',
+      '10歲 至12歲 Age: 10 to 12 (2013 - 2015年出生者)': 'C',
+      '13歲 至 15歲 Age: 13 to 15 (2010 - 2012年出生者)': 'D',
+      '16歲 至17歲 Age: 16 to 17 (2008 - 2009年出生者)': 'E',
+      '18歲或以上 Age: 18 or above (2007年或之前出生者)': 'F'
+    };
+
+    // 色帶級別數據
+    const beltDivisions = {
+      '7歲或以下 Age: 7 or below (2018年或之後出生者)': {
+        '男子 Male': [
+          'A1M 男子太極一章 Male Taegeuk 1', 'A2M 男子太極二章 Male Taegeuk 2', 'A3M 男子太極三章 Male Taegeuk 3',
+          'A4M 男子太極四章 Male Taegeuk 4', 'A5M 男子太極五章 Male Taegeuk 5', 'A6M 男子太極六章 Male Taegeuk 6',
+          'A7M 男子太極七章 Male Taegeuk 7', 'A8M 男子太極八章 Male Taegeuk 8'
+        ],
+        '女子 Female': [
+          'A1F 女子太極一章 Female Taegeuk 1', 'A2F 女子太極二章 Female Taegeuk 2', 'A3F 女子太極三章 Female Taegeuk 3',
+          'A4F 女子太極四章 Female Taegeuk 4', 'A5F 女子太極五章 Female Taegeuk 5', 'A6F 女子太極六章 Female Taegeuk 6',
+          'A7F 女子太極七章 Female Taegeuk 7', 'A8F 女子太極八章 Female Taegeuk 8'
+        ]
+      },
+      '8歲 至9歲 Age: 8 to 9 (2016 - 2017年出生者)': {
+        '男子 Male': [
+          'B1M 男子太極一章 Male Taegeuk 1', 'B2M 男子太極二章 Male Taegeuk 2', 'B3M 男子太極三章 Male Taegeuk 3',
+          'B4M 男子太極四章 Male Taegeuk 4', 'B5M 男子太極五章 Male Taegeuk 5', 'B6M 男子太極六章 Male Taegeuk 6',
+          'B7M 男子太極七章 Male Taegeuk 7', 'B8M 男子太極八章 Male Taegeuk 8'
+        ],
+        '女子 Female': [
+          'B1F 女子太極一章 Female Taegeuk 1', 'B2F 女子太極二章 Female Taegeuk 2', 'B3F 女子太極三章 Female Taegeuk 3',
+          'B4F 女子太極四章 Female Taegeuk 4', 'B5F 女子太極五章 Female Taegeuk 5', 'B6F 女子太極六章 Female Taegeuk 6',
+          'B7F 女子太極七章 Female Taegeuk 7', 'B8F 女子太極八章 Female Taegeuk 8'
+        ]
+      },
+      '10歲 至12歲 Age: 10 to 12 (2013 - 2015年出生者)': {
+        '男子 Male': [
+          'C1M 男子太極一章 Male Taegeuk 1', 'C2M 男子太極二章 Male Taegeuk 2', 'C3M 男子太極三章 Male Taegeuk 3',
+          'C4M 男子太極四章 Male Taegeuk 4', 'C5M 男子太極五章 Male Taegeuk 5', 'C6M 男子太極六章 Male Taegeuk 6',
+          'C7M 男子太極七章 Male Taegeuk 7', 'C8M 男子太極八章 Male Taegeuk 8'
+        ],
+        '女子 Female': [
+          'C1F 女子太極一章 Female Taegeuk 1', 'C2F 女子太極二章 Female Taegeuk 2', 'C3F 女子太極三章 Female Taegeuk 3',
+          'C4F 女子太極四章 Female Taegeuk 4', 'C5F 女子太極五章 Female Taegeuk 5', 'C6F 女子太極六章 Female Taegeuk 6',
+          'C7F 女子太極七章 Female Taegeuk 7', 'C8F 女子太極八章 Female Taegeuk 8'
+        ]
+      },
+      '13歲 至 15歲 Age: 13 to 15 (2010 - 2012年出生者)': {
+        '男子 Male': [
+          'D1M 男子太極一章 Male Taegeuk 1', 'D2M 男子太極二章 Male Taegeuk 2', 'D3M 男子太極三章 Male Taegeuk 3',
+          'D4M 男子太極四章 Male Taegeuk 4', 'D5M 男子太極五章 Male Taegeuk 5', 'D6M 男子太極六章 Male Taegeuk 6',
+          'D7M 男子太極七章 Male Taegeuk 7', 'D8M 男子太極八章 Male Taegeuk 8'
+        ],
+        '女子 Female': [
+          'D1F 女子太極一章 Female Taegeuk 1', 'D2F 女子太極二章 Female Taegeuk 2', 'D3F 女子太極三章 Female Taegeuk 3',
+          'D4F 女子太極四章 Female Taegeuk 4', 'D5F 女子太極五章 Female Taegeuk 5', 'D6F 女子太極六章 Female Taegeuk 6',
+          'D7F 女子太極七章 Female Taegeuk 7', 'D8F 女子太極八章 Female Taegeuk 8'
+        ]
+      },
+      '16歲 至17歲 Age: 16 to 17 (2008 - 2009年出生者)': {
+        '男子 Male': [
+          'E1M 男子太極一章 Male Taegeuk 1', 'E2M 男子太極二章 Male Taegeuk 2', 'E3M 男子太極三章 Male Taegeuk 3',
+          'E4M 男子太極四章 Male Taegeuk 4', 'E5M 男子太極五章 Male Taegeuk 5', 'E6M 男子太極六章 Male Taegeuk 6',
+          'E7M 男子太極七章 Male Taegeuk 7', 'E8M 男子太極八章 Male Taegeuk 8'
+        ],
+        '女子 Female': [
+          'E1F 女子太極一章 Female Taegeuk 1', 'E2F 女子太極二章 Female Taegeuk 2', 'E3F 女子太極三章 Female Taegeuk 3',
+          'E4F 女子太極四章 Female Taegeuk 4', 'E5F 女子太極五章 Female Taegeuk 5', 'E6F 女子太極六章 Female Taegeuk 6',
+          'E7F 女子太極七章 Female Taegeuk 7', 'E8F 女子太極八章 Female Taegeuk 8'
+        ]
+      },
+      '18歲或以上 Age: 18 or above (2007年或之前出生者)': {
+        '男子 Male': [
+          'F1M 男子太極一章 Male Taegeuk 1', 'F2M 男子太極二章 Male Taegeuk 2', 'F3M 男子太極三章 Male Taegeuk 3',
+          'F4M 男子太極四章 Male Taegeuk 4', 'F5M 男子太極五章 Male Taegeuk 5', 'F6M 男子太極六章 Male Taegeuk 6',
+          'F7M 男子太極七章 Male Taegeuk 7', 'F8M 男子太極八章 Male Taegeuk 8'
+        ],
+        '女子 Female': [
+          'F1F 女子太極一章 Female Taegeuk 1', 'F2F 女子太極二章 Female Taegeuk 2', 'F3F 女子太極三章 Female Taegeuk 3',
+          'F4F 女子太極四章 Female Taegeuk 4', 'F5F 女子太極五章 Female Taegeuk 5', 'F6F 女子太極六章 Female Taegeuk 6',
+          'F7F 女子太極七章 Female Taegeuk 7', 'F8F 女子太極八章 Female Taegeuk 8'
+        ]
+      }
+    };
+
+    // 會員證編號邏輯
+    function toggleMembershipInput() {
+      const membershipNumberInput = document.getElementById('membershipNumber');
+      const membershipPendingCheckbox = document.getElementById('membershipPending');
+      if (membershipPendingCheckbox.checked) {
+        membershipNumberInput.value = '申請會員證';
+        membershipNumberInput.removeAttribute('required');
+        document.getElementById('membershipNumberError').style.display = 'none';
+      } else {
+        membershipNumberInput.value = '';
+        membershipNumberInput.setAttribute('required', 'required');
+      }
+    }
+
+    // 表單驗證與提交
+    function submitForm() {
+      const confirmModal = document.getElementById('confirmModal');
+      const form = document.getElementById('registrationForm');
+      const chineseNameInput = document.getElementById('chineseName');
+      const englishNameInput = document.getElementById('englishName');
+      const birthYearSelect = document.getElementById('birthYear');
+      const birthMonthSelect = document.getElementById('birthMonth');
+      const birthDaySelect = document.getElementById('birthDay');
+      const genderRadios = document.getElementsByName('entry.227436368');
+      const nationalityInput = document.getElementById('nationality');
+      const phoneInput = document.getElementById('phone');
+      const membershipNumberInput = document.getElementById('membershipNumber');
+      const membershipPendingCheckbox = document.getElementById('membershipPending');
+      const beltLevelRadios = document.getElementsByName('entry.1431367945');
+      const ageDivisionSelect = document.getElementById('ageDivision');
+      const beltDivisionSelect = document.getElementById('beltDivision');
+
+      let isValid = true;
+      document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
+
+      // 設置日期輸入值
+      const birthDateInput = document.getElementById('birthDate');
+      if (birthYearSelect.value && birthMonthSelect.value && birthDaySelect.value) {
+        birthDateInput.value = `${birthYearSelect.value}-${birthMonthSelect.value.toString().padStart(2, '0')}-${birthDaySelect.value.toString().padStart(2, '0')}`;
+      }
+
+      // 檢查是否為 "test" 模式
+      const isTestMode = chineseNameInput.value.toLowerCase().includes('test');
+
+      if (!isTestMode) {
+        if (!chineseNameInput.value.trim()) {
+          document.getElementById('chineseNameError').style.display = 'block';
+          isValid = false;
+        }
+        if (!englishNameInput.value.trim()) {
+          document.getElementById('englishNameError').style.display = 'block';
+          isValid = false;
+        }
+        if (!birthDateInput.value) {
+          document.getElementById('birthDateError').style.display = 'block';
+          isValid = false;
+        }
+        if (!Array.from(genderRadios).some(radio => radio.checked)) {
+          document.getElementById('genderError').style.display = 'block';
+          isValid = false;
+        }
+        if (!nationalityInput.value.trim()) {
+          document.getElementById('nationalityError').style.display = 'block';
+          isValid = false;
+        }
+        if (!phoneInput.value.match(/^\d{8}$/)) {
+          document.getElementById('phoneError').style.display = 'block';
+          isValid = false;
+        }
+        if (!membershipPendingCheckbox.checked && !membershipNumberInput.value.trim()) {
+          document.getElementById('membershipNumberError').style.display = 'block';
+          isValid = false;
+        }
+        if (!Array.from(beltLevelRadios).some(radio => radio.checked)) {
+          document.getElementById('beltLevelError').style.display = 'block';
+          isValid = false;
+        }
+        if (!ageDivisionSelect.value) {
+          document.getElementById('ageDivisionError').style.display = 'block';
+          isValid = false;
+        }
+        if (!beltDivisionSelect.value) {
+          document.getElementById('beltDivisionError').style.display = 'block';
+          isValid = false;
+        }
+      }
+
+      if (isValid || isTestMode) {
+        document.getElementById('confirmChineseName').textContent = chineseNameInput.value || '未填寫';
+        document.getElementById('confirmEnglishName').textContent = englishNameInput.value || '未填寫';
+        document.getElementById('confirmBirthDate').textContent = birthDateInput.value || '未填寫';
+        document.getElementById('confirmGender').textContent = Array.from(genderRadios).find(radio => radio.checked)?.value || '未選擇';
+        document.getElementById('confirmNationality').textContent = nationalityInput.value || '未填寫';
+        document.getElementById('confirmPhone').textContent = phoneInput.value || '未填寫';
+        document.getElementById('confirmAffiliation').textContent = document.getElementById('affiliation').value || '未填寫';
+        document.getElementById('confirmMembershipNumber').textContent = membershipPendingCheckbox.checked ? '申請會員證' : (membershipNumberInput.value || '未填寫');
+        document.getElementById('confirmBeltLevel').textContent = Array.from(beltLevelRadios).find(radio => radio.checked)?.value || '未選擇';
+        document.getElementById('confirmAgeDivision').textContent = ageDivisionSelect.value || '未選擇';
+        document.getElementById('confirmBeltDivision').textContent = beltDivisionSelect.value || '未選擇';
+
+        confirmModal.style.display = 'flex';
+      }
+    }
+
+    function cancelSubmission() {
+      document.getElementById('confirmModal').style.display = 'none';
+    }
+
+    async function confirmSubmission() {
+      const confirmModal = document.getElementById('confirmModal');
+      const form = document.getElementById('registrationForm');
+      const formContainer = document.getElementById('mainForm');
+      const thankYouPage = document.getElementById('thankYouPage');
+      const membershipPendingCheckbox = document.getElementById('membershipPending');
+      const formData = new FormData(form);
+
+      // 動態設置費用和相片提示
+      const feeMessage = membershipPendingCheckbox.checked
+        ? '費用為 $250 + $100 行政費 + $150 會員證申請費，共 $500。'
+        : '費用為 $250 + $100 行政費，共 $350。';
+      const photoMessage = membershipPendingCheckbox.checked
+        ? '請提交一張相片用作申請會員證。'
+        : '';
+      document.getElementById('feeMessage').textContent = feeMessage;
+      document.getElementById('photoMessage').textContent = photoMessage;
+
+      try {
+        const response = await fetch('https://docs.google.com/forms/d/e/1FAIpQLSfK2v8kyeQM8g_VF2B9RM6wZRNltLhU8OZXwCwMw1DRCkaBNQ/formResponse', {
+          method: 'POST',
+          body: formData,
+          mode: 'no-cors'
+        });
+        console.log('表單提交成功');
+        confirmModal.style.display = 'none';
+        formContainer.style.display = 'none';
+        thankYouPage.style.display = 'block';
+      } catch (error) {
+        console.error('提交失敗:', error);
+        alert('表單提交失敗，請稍後再試或檢查控制台日誌。');
+      }
+    }
+
+    function resetForm() {
+      const form = document.getElementById('registrationForm');
+      form.reset();
+      document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
+      document.getElementById('membershipNumber').removeAttribute('required');
+      document.getElementById('membershipNumber').value = '';
+      document.getElementById('membershipPending').checked = false;
+      document.getElementById('beltDivision').innerHTML = '<option value="">請選擇色帶級別</option>';
+    }
+
+    function restartForm() {
+      const thankYouPage = document.getElementById('thankYouPage');
+      const formContainer = document.getElementById('mainForm');
+      thankYouPage.style.display = 'none';
+      formContainer.style.display = 'block';
+      resetForm();
+    }
+
+    // 等待 DOM 完全加載
+    document.addEventListener('DOMContentLoaded', () => {
+      // 鎖定所屬屬會
+      const affiliationSelect = document.getElementById('affiliation');
+      affiliationSelect.addEventListener('change', (e) => {
+        if (e.target.value !== '香港實用跆拳道協會 HK Practical TKD Association') {
+          e.target.value = '香港實用跆拳道協會 HK Practical TKD Association';
+        }
+      });
+
+      // 定義全局變數
+      const ageDivisionSelect = document.getElementById('ageDivision');
+      const beltDivisionSelect = document.getElementById('beltDivision');
+
+      // 動態生成年份、月份和日期選項
+      function populateDateSelects(yearSelectId, monthSelectId, daySelectId, hiddenInputId) {
+        const yearSelect = document.getElementById(yearSelectId);
+        const monthSelect = document.getElementById(monthSelectId);
+        const daySelect = document.getElementById(daySelectId);
+        const hiddenInput = document.getElementById(hiddenInputId);
+
+        // 生成年份選項 (1900 到 2025)
+        for (let year = 2025; year >= 1900; year--) {
+          let option = document.createElement('option');
+          option.value = year;
+          option.text = year;
+          yearSelect.appendChild(option);
+        }
+
+        // 生成月份選項 (1 到 12)
+        for (let month = 1; month <= 12; month++) {
+          let option = document.createElement('option');
+          option.value = month;
+          option.text = month.toString().padStart(2, '0');
+          monthSelect.appendChild(option);
+        }
+
+        function isLeapYear(year) {
+          return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+        }
+
+        function updateDays() {
+          const year = parseInt(yearSelect.value) || 2025;
+          const month = parseInt(monthSelect.value) || 1;
+          daySelect.innerHTML = '<option value="">日</option>';
+          if (year && month) {
+            const daysInMonth = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
+            for (let day = 1; day <= daysInMonth; day++) {
+              let option = document.createElement('option');
+              option.value = day;
+              option.text = day.toString().padStart(2, '0');
+              daySelect.appendChild(option);
+            }
+          }
+          updateHiddenInput();
+        }
+
+        function updateHiddenInput() {
+          const year = yearSelect.value;
+          const month = monthSelect.value;
+          const day = daySelect.value;
+          if (year && month && day) {
+            hiddenInput.value = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+            // 自動選擇年齡組別
+            autoSelectAgeDivision(parseInt(year));
+          } else {
+            hiddenInput.value = '';
+          }
+          updateBeltDivision();
+        }
+
+        // 自動選擇年齡組別
+        function autoSelectAgeDivision(birthYear) {
+          const currentYear = 2025;
+          const age = currentYear - birthYear;
+          if (age <= 7) {
+            ageDivisionSelect.value = '7歲或以下 Age: 7 or below (2018年或之後出生者)';
+          } else if (age >= 8 && age <= 9) {
+            ageDivisionSelect.value = '8歲 至9歲 Age: 8 to 9 (2016 - 2017年出生者)';
+          } else if (age >= 10 && age <= 12) {
+            ageDivisionSelect.value = '10歲 至12歲 Age: 10 to 12 (2013 - 2015年出生者)';
+          } else if (age >= 13 && age <= 15) {
+            ageDivisionSelect.value = '13歲 至 15歲 Age: 13 to 15 (2010 - 2012年出生者)';
+          } else if (age >= 16 && age <= 17) {
+            ageDivisionSelect.value = '16歲 至17歲 Age: 16 to 17 (2008 - 2009年出生者)';
+          } else if (age >= 18) {
+            ageDivisionSelect.value = '18歲或以上 Age: 18 or above (2007年或之前出生者)';
+          } else {
+            ageDivisionSelect.value = '';
+          }
+          updateBeltDivision();
+        }
+
+        // 綁定事件監聽器
+        yearSelect.addEventListener('change', () => {
+          updateDays();
+          validateDate(yearSelectId, monthSelectId, daySelectId);
+        });
+        monthSelect.addEventListener('change', () => {
+          updateDays();
+          validateDate(yearSelectId, monthSelectId, daySelectId);
+        });
+        daySelect.addEventListener('change', () => {
+          updateHiddenInput();
+          validateDate(yearSelectId, monthSelectId, daySelectId);
+        });
+
+        // 初始化日期選項
+        updateDays();
+      }
+
+      // 日期驗證
+      function validateDate(yearSelectId, monthSelectId, daySelectId) {
+        const yearSelect = document.getElementById(yearSelectId);
+        const monthSelect = document.getElementById(monthSelectId);
+        const daySelect = document.getElementById(daySelectId);
+        const errorElement = document.getElementById(`${yearSelectId.replace('Year', '')}Error`);
+        if (errorElement) {
+          if (yearSelect.value && monthSelect.value && daySelect.value) {
+            const selectedDate = new Date(parseInt(yearSelect.value), parseInt(monthSelect.value) - 1, parseInt(daySelect.value));
+            if (!isNaN(selectedDate)) {
+              errorElement.style.display = 'none';
+              return true;
+            } else {
+              errorElement.style.display = 'block';
+              return false;
+            }
+          }
+          errorElement.style.display = 'none';
+        }
+        return true;
+      }
+
+      // 初始化日期選項
+      populateDateSelects('birthYear', 'birthMonth', 'birthDay', 'birthDate');
+
+      // 會員證編號事件監聽器
+      document.getElementById('membershipPending').addEventListener('change', toggleMembershipInput);
+
+      // 動態更新色帶級別選項
+      function updateBeltDivision() {
+        const selectedAgeDivision = ageDivisionSelect.value;
+        const selectedGender = Array.from(document.getElementsByName('entry.227436368')).find(radio => radio.checked)?.value;
+        const selectedBeltLevel = Array.from(document.getElementsByName('entry.1431367945')).find(radio => radio.checked)?.value;
+
+        // 清空色帶級別選項
+        beltDivisionSelect.innerHTML = '<option value="">請選擇色帶級別</option>';
+
+        // 如果年齡組別和性別都已選擇，生成對應的色帶級別選項
+        if (selectedAgeDivision && selectedGender && beltDivisions[selectedAgeDivision] && beltDivisions[selectedAgeDivision][selectedGender]) {
+          beltDivisions[selectedAgeDivision][selectedGender].forEach(division => {
+            let option = document.createElement('option');
+            option.value = division;
+            option.text = division;
+            beltDivisionSelect.appendChild(option);
+          });
+
+          // 自動選擇色帶級別
+          if (selectedBeltLevel) {
+            const prefix = ageDivisionPrefixes[selectedAgeDivision];
+            const beltIndex = beltMapping[selectedBeltLevel];
+            const genderCode = selectedGender === '男子 Male' ? 'M' : 'F';
+            const autoBeltDivision = `${prefix}${beltIndex}${genderCode} ${selectedGender === '男子 Male' ? '男子' : '女子'}太極${['一', '二', '三', '四', '五', '六', '七', '八'][beltIndex - 1]}章 ${selectedGender === '男子 Male' ? 'Male' : 'Female'} Taegeuk ${beltIndex}`;
+            if (beltDivisions[selectedAgeDivision][selectedGender].includes(autoBeltDivision)) {
+              beltDivisionSelect.value = autoBeltDivision;
+            }
+          }
+        }
+      }
+
+      // 監聽年齡組別、性別和現有級別的變更
+      ageDivisionSelect.addEventListener('change', updateBeltDivision);
+      document.querySelectorAll('input[name="entry.227436368"]').forEach(radio => {
+        radio.addEventListener('change', updateBeltDivision);
+      });
+      document.querySelectorAll('input[name="entry.1431367945"]').forEach(radio => {
+        radio.addEventListener('change', updateBeltDivision);
+      });
+    });
+  </script>
+</body>
+</html>
