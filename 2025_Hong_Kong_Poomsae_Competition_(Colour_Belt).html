@@ -1,43 +1,4 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
@@ -501,10 +462,10 @@
 
   <div id="thankYouPage">
     <h2>感謝您的報名！</h2>
-    <p>確認後教練將盡快與您聯繫。</p>
+    <p>確認後教練將盡快與您聯繫核對資料。</p>
     <p id="feeMessage"></p>
     <p id="photoMessage"></p>
-    <p>並將PDF最後一頁的同意書及費用交給歐sir或師母。</p>
+    <p>並將費用及PDF最後一頁的同意書交給歐sir或師母。</p>
     <button class="return-button" onclick="restartForm()">重新報名</button>
   </div>
 
@@ -725,10 +686,10 @@
 
       // 動態設置費用和相片提示
       const feeMessage = membershipPendingCheckbox.checked
-        ? '費用為 $250 + $100 行政費 + $150 會員證申請費，共 $500。'
-        : '費用為 $250 + $100 行政費，共 $350。';
+        ? '費用為 $250 報名費 + $100 行政費 + $150 會員證申請費，共 $500。'
+        : '費用為 $250 報名費 + $100 行政費，共 $350。';
       const photoMessage = membershipPendingCheckbox.checked
-        ? '請提交一張相片用作申請會員證。'
+        ? '請提交一張相片用作申請會員證，'
         : '';
       document.getElementById('feeMessage').textContent = feeMessage;
       document.getElementById('photoMessage').textContent = photoMessage;
