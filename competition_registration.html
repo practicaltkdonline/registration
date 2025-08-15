@@ -95,7 +95,6 @@
       align-items: flex-start;
     }
     .event-list .card-text .field-label {
-      width: fit-content;
       min-width: 0;
       white-space: nowrap;
       font-weight: bold;
@@ -474,6 +473,33 @@
       const sheetId = '1485917481';
       const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&gid=${sheetId}&range=A2:G`;
 
+      // 定義標籤並動態生成 CSS
+      const labels = {
+        'date': '日期：',
+        'location': '地點：',
+        'target': '對象：',
+        'deadline': '截止日期：'
+      };
+      const style = document.createElement('style');
+      style.id = 'dynamic-label-style';
+      let cssRules = '';
+      for (const [key, label] of Object.entries(labels)) {
+        const labelLength = label.length;
+        cssRules += `
+          .event-list .card-text .field-group-${key} .field-label {
+            width: ${labelLength}em;
+            white-space: nowrap;
+            font-weight: bold;
+            margin-right: 4px;
+            display: inline-block;
+          }
+        `;
+      }
+      style.textContent = cssRules;
+      const existingStyle = document.getElementById('dynamic-label-style');
+      if (existingStyle) existingStyle.remove();
+      document.head.appendChild(style);
+
       try {
         const response = await fetch(url);
         const text = await response.text();
@@ -527,7 +553,7 @@
             if (date && date !== '未提供') {
               const dateLines = date.split('\n').map(line => line.trim()).filter(line => line);
               dateContent = `
-                <div class="field-group">
+                <div class="field-group field-group-date">
                   ${dateLines.map((line, index) => `
                     <div class="field-row">
                       <span class="field-label">${index === 0 ? '日期：' : ''}</span>
@@ -541,7 +567,7 @@
             if (location && location !== '未提供') {
               const locationLines = location.split('\n').map(line => line.trim()).filter(line => line);
               locationContent = `
-                <div class="field-group">
+                <div class="field-group field-group-location">
                   ${locationLines.map((line, index) => `
                     <div class="field-row">
                       <span class="field-label">${index === 0 ? '地點：' : ''}</span>
@@ -555,7 +581,7 @@
             if (target && target !== '未提供') {
               const targetLines = target.split('\n').map(line => line.trim()).filter(line => line);
               targetContent = `
-                <div class="field-group">
+                <div class="field-group field-group-target">
                   ${targetLines.map((line, index) => `
                     <div class="field-row">
                       <span class="field-label">${index === 0 ? '對象：' : ''}</span>
@@ -569,10 +595,10 @@
             if (deadline && deadline !== '未提供') {
               const deadlineLines = deadline.split('\n').map(line => line.trim()).filter(line => line);
               deadlineContent = `
-                <div class="field-group">
+                <div class="field-group field-group-deadline">
                   ${deadlineLines.map((line, index) => `
                     <div class="field-row">
-                      <span class="field-label">${index === 0 ? '內部截止日期：' : ''}</span>
+                      <span class="field-label">${index === 0 ? '截止日期：' : ''}</span>
                       <span class="field-content">${line}</span>
                     </div>
                   `).join('')}
