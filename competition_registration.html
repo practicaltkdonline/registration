@@ -189,6 +189,7 @@
       flex-direction: column;
       height: 80vh;
       max-height: 600px;
+      position: relative;
     }
     .modal-content h2 {
       font-size: 20px;
@@ -257,12 +258,23 @@
       margin-top: 4px;
     }
     .total-sum {
-      margin-top: 20px;
+      position: sticky;
+      bottom: 60px;
       font-size: 18px;
-      font-weight: bold;
       color: #1a3c5e;
-      border-top: 2px solid #e0e7ff;
-      padding-top: 12px;
+      padding: 12px 20px;
+      margin: 12px 0 20px 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      line-height: 1.6;
+    }
+    .total-sum .formula {
+      font-size: 14px;
+      font-weight: normal;
+      color: #666;
+      display: block;
+      margin-top: 4px;
     }
     button.confirm, button.return-button, button.confirm-selection, button.next-step {
       background-color: #1976D2;
@@ -399,6 +411,11 @@
       .event-list .col-12 {
         width: 100%;
       }
+      .total-sum {
+        bottom: 50px;
+        padding: 10px 15px;
+        margin: 10px 0 15px 10px;
+      }
     }
   </style>
 </head>
@@ -494,9 +511,9 @@
         <p><strong>所屬道場：</strong> <span id="confirmDojo"></span></p>
         <p><strong>報名賽事與項目：</strong></p>
         <div id="confirmEvents"></div>
-        <div id="totalSum"></div>
       </div>
-      <div style="display: flex; gap: 10px;">
+      <div id="totalSum"></div>
+      <div style="display: flex; gap: 10px; padding-top: 10px;">
         <button type="button" class="next-step" onclick="goBackToPersonalInfo()">上一步</button>
         <button type="button" class="confirm" onclick="confirmSubmission()">確認提交</button>
       </div>
@@ -1147,9 +1164,15 @@
 
         const totalSumDiv = document.createElement('div');
         totalSumDiv.className = 'total-sum';
-        totalSumDiv.textContent = Object.keys(selectedCategories).length === 1 
-          ? `總數 $${totalPrice.toFixed(2)}` 
-          : `總數 $${totalPrice.toFixed(2)} (${totalFormulaParts.join('+')})`;
+        const totalText = document.createElement('span');
+        totalText.textContent = `總數 $${totalPrice.toFixed(2)}`;
+        totalSumDiv.appendChild(totalText);
+        if (Object.keys(selectedCategories).length > 1 && totalFormulaParts.length > 1) {
+          const formulaText = document.createElement('span');
+          formulaText.className = 'formula';
+          formulaText.textContent = `(${totalFormulaParts.join('+')})`;
+          totalSumDiv.appendChild(formulaText);
+        }
         totalSum.appendChild(totalSumDiv);
 
         document.getElementById('personalInfoModal').style.display = 'none';
