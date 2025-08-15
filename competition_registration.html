@@ -221,11 +221,14 @@
       margin-bottom: 16px;
       padding-bottom: 8px;
       border-bottom: 2px solid #e0e7ff;
+      margin-top: 0; /* 確保標題不被裁切 */
+      position: relative; /* 防止標題被遮蓋 */
     }
     .modal-scroll {
       overflow-y: auto;
       flex-grow: 1;
       margin-bottom: 20px;
+      padding-top: 0; /* 確保滾動區域不影響標題 */
     }
     .modal-content p {
       font-size: 16px;
@@ -235,11 +238,21 @@
     .modal-content p strong {
       color: #1a3c5e;
     }
-    .modal-content .button-group {
+    #categoryModal .modal-content {
+      padding-bottom: 16px; /* 明確設置，無額外底部空間 */
+    }
+    #confirmModal .modal-content .button-group,
+    #personalInfoModal .modal-content .button-group {
       display: flex;
       gap: 10px;
       padding-top: 10px;
-      padding-bottom: 40px; /* 增加底部空間以避免 Safari 工具列遮擋 */
+      padding-bottom: 40px; /* 為確認頁和個人資料頁按鈕留出空間 */
+    }
+    #categoryModal .modal-content .button-group {
+      display: flex;
+      gap: 10px;
+      padding-top: 10px;
+      padding-bottom: 0; /* 比賽選擇模態框不添加額外空間 */
     }
     .event-item {
       margin-bottom: 12px;
@@ -379,6 +392,7 @@
       top: 0;
       left: 0;
       z-index: 1100;
+      display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
@@ -390,6 +404,8 @@
       margin-bottom: 16px;
       padding-bottom: 8px;
       border-bottom: 2px solid #e0e7ff;
+      margin-top: 0; /* 確保標題不被裁切 */
+      position: relative; /* 防止標題被遮蓋 */
     }
     #thankYouPage p {
       font-size: 18px;
@@ -400,6 +416,7 @@
       display: flex;
       gap: 10px;
       justify-content: center;
+      padding-bottom: 40px; /* 為感謝頁按鈕留出空間 */
     }
     #floatingSubmitBtn {
       position: fixed;
