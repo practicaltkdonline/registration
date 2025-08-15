@@ -235,6 +235,12 @@
     .modal-content p strong {
       color: #1a3c5e;
     }
+    .modal-content .button-group {
+      display: flex;
+      gap: 10px;
+      padding-top: 10px;
+      padding-bottom: 40px; /* 增加底部空間以避免 Safari 工具列遮擋 */
+    }
     .event-item {
       margin-bottom: 12px;
       padding-left: 12px;
@@ -529,7 +535,7 @@
             <span id="dojoError" class="error">請選擇或輸入道場</span>
           </div>
         </div>
-        <div style="display: flex; gap: 10px;">
+        <div class="button-group">
           <button type="button" class="cancel" onclick="closePersonalInfoModal()">取消</button>
           <button type="button" class="next-step" onclick="submitPersonalInfo()">確認</button>
         </div>
@@ -543,7 +549,7 @@
         <h2 id="categoryTitle"></h2>
         <div class="category-group" id="categoryGroup"></div>
       </div>
-      <div style="display: flex; gap: 10px;">
+      <div class="button-group">
         <button type="button" class="cancel" onclick="closeCategoryModal()">取消</button>
         <button type="button" class="confirm-selection" onclick="confirmCategorySelection()">確定</button>
       </div>
@@ -564,7 +570,7 @@
         <div id="confirmEvents"></div>
       </div>
       <div id="totalSum"></div>
-      <div style="display: flex; gap: 10px; padding-top: 10px;">
+      <div class="button-group">
         <button type="button" class="next-step" id="backButton" onclick="goBack()">上一步</button>
         <button type="button" class="next-step" id="nextButton" onclick="nextStep()">下一步</button>
         <button type="button" class="confirm" id="submitButton" onclick="confirmSubmission()" style="display: none;">確認提交</button>
