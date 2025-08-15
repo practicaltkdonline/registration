@@ -65,8 +65,8 @@
       transition: transform 0.3s, box-shadow 0.3s;
       margin-bottom: 20px;
       border: 1px solid #B0BEC5;
-      min-height: 200px;
-      max-height: 300px;
+      min-height: 250px;
+      max-height: 400px;
       overflow-y: auto;
     }
     .event-list .card:hover {
@@ -471,12 +471,13 @@
       const eventListError = document.getElementById('eventListError');
       const spreadsheetId = '1FFuryD0S4CbOsw4HJKQQHSRtek_JwWlxGx1FmPEER9Y';
       const sheetId = '1485917481';
-      const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&gid=${sheetId}&range=A2:H`;
+      const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&gid=${sheetId}&range=A2:I`;
 
       // 定義標籤並動態生成 CSS
       const labels = {
         'date': '日期：',
         'location': '地點：',
+        'categories': '項目：',
         'target': '對象：',
         'deadline': '截止日期：'
       };
@@ -521,13 +522,14 @@
           const discounts = row.c[2]?.v || '{}';
           const date = row.c[3]?.v || '未提供';
           const location = row.c[4]?.v || '未提供';
-          const target = row.c[5]?.v || '未提供';
-          const deadline = row.c[6]?.v || '未提供';
-          const remark = row.c[7]?.v || ''; // 讀取 H 欄（備註）
+          const eventCategoriesData = row.c[5]?.v || '未提供'; // F 欄：項目
+          const target = row.c[6]?.v || '未提供'; // G 欄：對象
+          const deadline = row.c[7]?.v || '未提供'; // H 欄：截止日期
+          const remark = row.c[8]?.v || ''; // I 欄：備註
 
           if (eventName && categories) {
             eventOrder.push(eventName);
-            eventDetails[eventName] = { date, location, target, deadline, remark };
+            eventDetails[eventName] = { date, location, categories: eventCategoriesData, target, deadline, remark };
             const categoryArray = categories.split(',').map(cat => cat.trim());
             eventCategories[eventName] = categoryArray;
             categoryArray.forEach(category => {
@@ -572,6 +574,20 @@
                   ${locationLines.map((line, index) => `
                     <div class="field-row">
                       <span class="field-label">${index === 0 ? '地點：' : ''}</span>
+                      <span class="field-content">${line}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              `;
+            }
+            let categoriesContent = '';
+            if (eventCategoriesData && eventCategoriesData !== '未提供') {
+              const categoryLines = eventCategoriesData.split('\n').map(line => line.trim()).filter(line => line);
+              categoriesContent = `
+                <div class="field-group field-group-categories">
+                  ${categoryLines.map((line, index) => `
+                    <div class="field-row">
+                      <span class="field-label">${index === 0 ? '項目：' : ''}</span>
                       <span class="field-content">${line}</span>
                     </div>
                   `).join('')}
@@ -628,6 +644,7 @@
                   <div class="card-text">
                     ${dateContent}
                     ${locationContent}
+                    ${categoriesContent}
                     ${targetContent}
                     ${deadlineContent}
                     ${remarkContent}
