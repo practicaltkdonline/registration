@@ -5,14 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>比賽報名系統</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <style>
-    @font-face {
-      font-display: swap;
-      font-family: 'NotoSansTC';
-      font-style: normal;
-      font-weight: 400;
-      src: url('./NotoSansTC[wght].ttf') format('truetype');
-    }
     body {
       font-family: 'Noto Sans TC', Arial, sans-serif;
       max-width: 800px;
@@ -66,19 +60,51 @@
       font-size: 16px;
       color: #333;
     }
-    .event-list button {
-      background-color: #e3f2fd;
-      border: none;
+    .event-list .card {
       cursor: pointer;
-      margin-bottom: 8px;
-      position: relative;
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin-bottom: 20px;
+      border: 1px solid #B0BEC5;
+      min-height: 250px;
+      max-height: 250px;
+      overflow-y: auto;
     }
-    .event-list button.selected {
-      background-color: #bbdefb;
+    .event-list .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+    .event-list .card.selected {
       border: 2px solid #1976D2;
+      background-color: #e3f2fd;
     }
-    .event-list button:hover {
-      background-color: #bbdefb;
+    .event-list .card-text {
+      font-size: 14px;
+      color: #555;
+    }
+    .event-list .card-text p {
+      margin: 4px 0;
+      white-space: pre-wrap;
+    }
+    .event-list .card-text .field-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 4px;
+    }
+    .event-list .card-text .field-row {
+      display: flex;
+      align-items: flex-start;
+    }
+    .event-list .card-text .field-label {
+      width: fit-content;
+      min-width: 0;
+      white-space: nowrap;
+      font-weight: bold;
+      margin-right: 4px;
+      display: inline-block;
+    }
+    .event-list .card-text .field-content {
+      flex-grow: 1;
+      white-space: pre-wrap;
     }
     .category-group {
       display: flex;
@@ -156,6 +182,18 @@
     }
     .event-discount, .event-admin-fee {
       margin-left: 20px;
+      font-size: 14px;
+      color: #555;
+      margin-top: 4px;
+    }
+    .group-total {
+      margin-left: 20px;
+      font-size: 14px;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+    .group-discount {
+      margin-left: 40px;
       font-size: 14px;
       color: #555;
       margin-top: 4px;
@@ -296,6 +334,12 @@
         height: 50px;
         font-size: 12px;
       }
+      .event-list .card {
+        margin-bottom: 15px;
+      }
+      .event-list .col-12 {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -304,8 +348,8 @@
     <div class="form-container" id="mainForm">
       <div class="form-group">
         <label>選擇比賽</label>
-        <div class="event-list" id="eventList">
-          <!-- 比賽按鈕將動態生成 -->
+        <div class="event-list row" id="eventList">
+          <!-- 卡片將動態生成 -->
         </div>
         <span id="eventListError" class="error" style="display: none;">無法載入比賽資料，請檢查試算表是否公開</span>
         <input type="hidden" id="selectedEvents" name="entry.1287068960">
@@ -413,6 +457,7 @@
     結算
   </button>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <script>
     let eventCategories = {};
     let selectedCategories = {};
@@ -420,13 +465,14 @@
     let discountRules = {};
     let adminFees = {};
     let eventOrder = [];
+    let eventDetails = {};
 
     async function loadEventsFromSheet() {
       const eventList = document.getElementById('eventList');
       const eventListError = document.getElementById('eventListError');
       const spreadsheetId = '1FFuryD0S4CbOsw4HJKQQHSRtek_JwWlxGx1FmPEER9Y';
       const sheetId = '1485917481';
-      const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&gid=${sheetId}&range=A2:C`;
+      const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&gid=${sheetId}&range=A2:G`;
 
       try {
         const response = await fetch(url);
@@ -441,13 +487,20 @@
         discountRules = {};
         adminFees = {};
         eventOrder = [];
+        eventDetails = {};
 
         rows.forEach(row => {
           const eventName = row.c[0]?.v;
           const categories = row.c[1]?.v;
           const discounts = row.c[2]?.v || '{}';
+          const date = row.c[3]?.v || '未提供';
+          const location = row.c[4]?.v || '未提供';
+          const target = row.c[5]?.v || '未提供';
+          const deadline = row.c[6]?.v || '未提供';
+
           if (eventName && categories) {
             eventOrder.push(eventName);
+            eventDetails[eventName] = { date, location, target, deadline };
             const categoryArray = categories.split(',').map(cat => cat.trim());
             eventCategories[eventName] = categoryArray;
             categoryArray.forEach(category => {
@@ -460,7 +513,7 @@
 
             try {
               const discountData = JSON.parse(discounts);
-              discountRules[eventName] = discountData.discounts || [];
+              discountRules[eventName] = discountData.groups || discountData.discounts || [];
               adminFees[eventName] = discountData.adminFee || 0;
             } catch (error) {
               console.error(`解析 ${eventName} 的優惠規則或行政費失敗:`, error);
@@ -468,14 +521,80 @@
               adminFees[eventName] = 0;
             }
 
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.textContent = eventName;
-            button.onclick = () => showCategoriesModal(eventName);
-            if (selectedCategories[eventName] && selectedCategories[eventName].length > 0) {
-              button.classList.add('selected');
+            const card = document.createElement('div');
+            card.className = 'col-md-6 col-12';
+            let dateContent = '';
+            if (date && date !== '未提供') {
+              const dateLines = date.split('\n').map(line => line.trim()).filter(line => line);
+              dateContent = `
+                <div class="field-group">
+                  ${dateLines.map((line, index) => `
+                    <div class="field-row">
+                      <span class="field-label">${index === 0 ? '日期：' : ''}</span>
+                      <span class="field-content">${line}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              `;
             }
-            eventList.appendChild(button);
+            let locationContent = '';
+            if (location && location !== '未提供') {
+              const locationLines = location.split('\n').map(line => line.trim()).filter(line => line);
+              locationContent = `
+                <div class="field-group">
+                  ${locationLines.map((line, index) => `
+                    <div class="field-row">
+                      <span class="field-label">${index === 0 ? '地點：' : ''}</span>
+                      <span class="field-content">${line}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              `;
+            }
+            let targetContent = '';
+            if (target && target !== '未提供') {
+              const targetLines = target.split('\n').map(line => line.trim()).filter(line => line);
+              targetContent = `
+                <div class="field-group">
+                  ${targetLines.map((line, index) => `
+                    <div class="field-row">
+                      <span class="field-label">${index === 0 ? '對象：' : ''}</span>
+                      <span class="field-content">${line}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              `;
+            }
+            let deadlineContent = '';
+            if (deadline && deadline !== '未提供') {
+              const deadlineLines = deadline.split('\n').map(line => line.trim()).filter(line => line);
+              deadlineContent = `
+                <div class="field-group">
+                  ${deadlineLines.map((line, index) => `
+                    <div class="field-row">
+                      <span class="field-label">${index === 0 ? '內部截止日期：' : ''}</span>
+                      <span class="field-content">${line}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              `;
+            }
+
+            const cardContent = `
+              <div class="card${selectedCategories[eventName]?.length > 0 ? ' selected' : ''}" onclick="showCategoriesModal('${eventName}')">
+                <div class="card-body">
+                  <h5 class="card-title">${eventName}</h5>
+                  <div class="card-text">
+                    ${dateContent}
+                    ${locationContent}
+                    ${targetContent}
+                    ${deadlineContent}
+                  </div>
+                </div>
+              </div>
+            `;
+            card.innerHTML = cardContent;
+            eventList.appendChild(card);
           }
         });
 
@@ -607,13 +726,13 @@
       updateSelectedEvents();
       closeCategoryModal();
 
-      const buttons = document.querySelectorAll('#eventList button');
-      buttons.forEach(button => {
-        const btnEventName = button.textContent;
-        if (selectedCategories[btnEventName] && selectedCategories[btnEventName].length > 0) {
-          button.classList.add('selected');
+      const cards = document.querySelectorAll('#eventList .card');
+      cards.forEach(card => {
+        const cardEventName = card.getAttribute('onclick').match(/showCategoriesModal\('(.+?)'\)/)?.[1];
+        if (selectedCategories[cardEventName]?.length > 0) {
+          card.classList.add('selected');
         } else {
-          button.classList.remove('selected');
+          card.classList.remove('selected');
         }
       });
     }
@@ -621,122 +740,92 @@
     function calculateDiscountedPrice(eventName, selected, calculateFormula = false) {
       let totalPrice = 0;
       const adminFee = adminFees[eventName] || 0;
-      const rules = discountRules[eventName] || [];
       const selectedCategoriesClean = selected.map(category => category.match(/(.+?)\s*-\s*\$/)?.[1].trim() || category);
       let formulaParts = [];
+      let groupFormulas = [];
       let hasDiscount = false;
 
-      let appliedCategories = [];
-      let isSingleTotalPrice = false;
+      // 檢查是否使用分組優惠（groups 字段）
+      const groups = discountRules[eventName]?.filter(group => group.name && group.categories && group.discounts) || [];
+      if (groups.length > 0) {
+        groups.forEach(group => {
+          const groupCategories = selectedCategoriesClean.filter(cat => group.categories.includes(cat));
+          if (groupCategories.length > 0) {
+            const rule = group.discounts.find(r => r.count === groupCategories.length);
+            let groupPrice = 0;
+            let groupFormula = '';
+            let groupHasDiscount = false;
 
-      for (const rule of rules) {
-        if (rule.count !== undefined && rule.discountRate !== undefined && rule.count === selectedCategoriesClean.length) {
-          let originalPrice = 0;
-          selectedCategoriesClean.forEach(category => {
-            originalPrice += categoryPrices[`${eventName}:${category}`] || 0;
-          });
-          totalPrice = originalPrice * rule.discountRate;
-          totalPrice = Math.round(totalPrice * 100) / 100;
-          appliedCategories = [...selectedCategoriesClean];
-          isSingleTotalPrice = true;
-          if (!rule.hasOwnProperty('name')) {
-            hasDiscount = true;
-          }
-          if (calculateFormula) {
-            formulaParts.push(`$${totalPrice.toFixed(2)}`);
-          }
-          break;
-        }
-      }
+            if (rule && rule.totalPrice !== undefined) {
+              groupPrice = rule.totalPrice;
+              groupHasDiscount = true;
+              groupFormula = `${group.name}: $${groupPrice}`;
+            } else {
+              groupCategories.forEach(category => {
+                const price = categoryPrices[`${eventName}:${category}`] || 0;
+                groupPrice += price;
+                if (calculateFormula) groupFormula += (groupFormula ? '+' : '') + `$${price}`;
+              });
+              groupFormula = `${group.name}: $${groupPrice}${groupFormula ? ` (${groupFormula})` : ''}`;
+            }
 
-      if (!isSingleTotalPrice) {
-        for (const rule of rules) {
-          if (rule.count !== undefined && rule.totalPrice !== undefined && rule.count === selectedCategoriesClean.length) {
+            totalPrice += groupPrice;
+            if (calculateFormula) groupFormulas.push({ formula: groupFormula, hasDiscount: groupHasDiscount });
+            if (groupHasDiscount) hasDiscount = true;
+          }
+        });
+      } else {
+        // 原有邏輯：非分組優惠
+        const rule = discountRules[eventName]?.find(r => 
+          (r.count === selectedCategoriesClean.length) || 
+          (r.condition && r.condition.every(c => selectedCategoriesClean.includes(c)) && r.condition.length === selectedCategoriesClean.length)
+        );
+
+        if (rule) {
+          if (rule.totalPrice !== undefined) {
             totalPrice = rule.totalPrice;
-            appliedCategories = [...selectedCategoriesClean];
-            isSingleTotalPrice = true;
-            if (!rule.hasOwnProperty('name')) {
-              hasDiscount = true;
-            }
-            if (calculateFormula) {
-              formulaParts.push(`$${rule.totalPrice}`);
-            }
-            break;
+            hasDiscount = !rule.hasOwnProperty('name');
+            if (calculateFormula) formulaParts.push(`$${rule.totalPrice}`);
+          } else if (rule.discountRate !== undefined) {
+            let originalPrice = 0;
+            selectedCategoriesClean.forEach(category => {
+              originalPrice += categoryPrices[`${eventName}:${category}`] || 0;
+            });
+            totalPrice = originalPrice * rule.discountRate;
+            totalPrice = Math.round(totalPrice * 100) / 100;
+            hasDiscount = !rule.hasOwnProperty('name');
+            if (calculateFormula) formulaParts.push(`$${totalPrice.toFixed(2)}`);
           }
-        }
-      }
-
-      if (!isSingleTotalPrice) {
-        for (const rule of rules) {
-          if (rule.condition && rule.totalPrice !== undefined) {
-            const conditionsMet = rule.condition.every(cond => selectedCategoriesClean.includes(cond));
-            if (conditionsMet && rule.condition.length === selectedCategoriesClean.length) {
-              totalPrice = rule.totalPrice;
-              appliedCategories = [...rule.condition];
-              isSingleTotalPrice = true;
-              if (!rule.hasOwnProperty('name') && (rule.discounts || rule.totalPrice !== undefined)) {
-                hasDiscount = true;
-              }
-              if (calculateFormula) {
-                formulaParts.push(`$${rule.totalPrice}`);
-              }
-              break;
+        } else {
+          selectedCategoriesClean.forEach(category => {
+            let price = categoryPrices[`${eventName}:${category}`] || 0;
+            const discountRule = discountRules[eventName]?.find(r => 
+              r.condition && r.condition.includes(category) && r.discounts && r.discounts[category]
+            );
+            if (discountRule) {
+              price = discountRule.discounts[category];
+              hasDiscount = !discountRule.hasOwnProperty('name');
             }
-          }
-        }
-      }
-
-      if (!isSingleTotalPrice) {
-        rules.forEach(rule => {
-          if (rule.condition && rule.totalPrice !== undefined) {
-            const conditionsMet = rule.condition.every(cond => selectedCategoriesClean.includes(cond));
-            if (conditionsMet) {
-              totalPrice += rule.totalPrice;
-              if (!rule.hasOwnProperty('name') && (rule.discounts || rule.totalPrice !== undefined)) {
-                hasDiscount = true;
-              }
-              if (calculateFormula) {
-                formulaParts.push(`$${rule.totalPrice}`);
-              }
-              appliedCategories.push(...rule.condition);
-            }
-          }
-        });
-
-        selectedCategoriesClean.forEach(category => {
-          if (appliedCategories.includes(category)) return;
-          let categoryPrice = categoryPrices[`${eventName}:${category}`] || 0;
-          rules.forEach(rule => {
-            if (rule.condition && rule.discounts) {
-              const conditionsMet = rule.condition.some(cond => selectedCategoriesClean.includes(cond));
-              if (conditionsMet && rule.discounts[category]) {
-                categoryPrice = rule.discounts[category];
-                hasDiscount = true;
-              }
-            }
+            totalPrice += price;
+            if (calculateFormula) formulaParts.push(`$${price}`);
           });
-          totalPrice += categoryPrice;
-          if (calculateFormula) {
-            formulaParts.push(`$${categoryPrice}`);
-          }
-        });
+        }
       }
 
       totalPrice += adminFee;
-      if (calculateFormula && adminFee > 0) {
-        formulaParts.push(`$${adminFee}`);
-      }
+      if (calculateFormula && adminFee > 0) formulaParts.push(`$${adminFee}`);
 
-      if (calculateFormula) {
-        if (adminFee > 0) {
-          return { totalPrice, formula: `$${totalPrice.toFixed(2)} (${formulaParts.join('+')})`, hasDiscount, adminFee };
-        }
-        if (selected.length === 1 || isSingleTotalPrice) {
-          return { totalPrice, formula: `$${totalPrice.toFixed(2)}`, hasDiscount, adminFee };
-        }
-        return { totalPrice, formula: `$${totalPrice.toFixed(2)} (${formulaParts.join('+')})`, hasDiscount, adminFee };
-      }
-      return totalPrice;
+      return calculateFormula 
+        ? { 
+            totalPrice, 
+            formula: groups.length > 0 
+              ? groupFormulas.map(gf => gf.formula).join(' + ') + (adminFee > 0 ? ` + $${adminFee}` : '') + ` = $${totalPrice.toFixed(2)}`
+              : `$${totalPrice.toFixed(2)}${formulaParts.length > 1 ? ` (${formulaParts.join('+')})` : ''}`, 
+            hasDiscount,
+            adminFee,
+            groupFormulas: groups.length > 0 ? groupFormulas : []
+          }
+        : totalPrice;
     }
 
     function updateSelectedEvents() {
@@ -896,20 +985,34 @@
               eventDiv.appendChild(categoryDiv);
             });
 
-            const { totalPrice: eventPrice, formula, hasDiscount, adminFee } = calculateDiscountedPrice(event, sortedCategories, true);
+            const { totalPrice: eventPrice, formula, hasDiscount, adminFee, groupFormulas } = calculateDiscountedPrice(event, sortedCategories, true);
             totalPrice += eventPrice;
             totalFormulaParts.push(`$${eventPrice.toFixed(2)}`);
 
-            const totalDiv = document.createElement('div');
-            totalDiv.className = 'event-total';
-            totalDiv.textContent = formula;
-            eventDiv.appendChild(totalDiv);
-
-            if (hasDiscount) {
-              const discountDiv = document.createElement('div');
-              discountDiv.className = 'event-discount';
-              discountDiv.textContent = '已添加優惠';
-              eventDiv.appendChild(discountDiv);
+            if (groupFormulas.length > 0) {
+              groupFormulas.forEach(gf => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'group-total';
+                groupDiv.textContent = gf.formula;
+                eventDiv.appendChild(groupDiv);
+                if (gf.hasDiscount) {
+                  const discountDiv = document.createElement('div');
+                  discountDiv.className = 'group-discount';
+                  discountDiv.textContent = '已應用優惠';
+                  eventDiv.appendChild(discountDiv);
+                }
+              });
+            } else {
+              const totalDiv = document.createElement('div');
+              totalDiv.className = 'event-total';
+              totalDiv.textContent = formula;
+              eventDiv.appendChild(totalDiv);
+              if (hasDiscount) {
+                const discountDiv = document.createElement('div');
+                discountDiv.className = 'event-discount';
+                discountDiv.textContent = '已應用優惠';
+                eventDiv.appendChild(discountDiv);
+              }
             }
 
             if (adminFee > 0) {
