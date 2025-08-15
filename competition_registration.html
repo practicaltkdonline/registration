@@ -20,6 +20,7 @@
       padding: 32px;
       border-radius: 12px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      display: block;
     }
     .form-group {
       margin-bottom: 24px;
@@ -139,6 +140,22 @@
       background: #f9fafb;
       border-radius: 8px;
       position: relative;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .category-group::-webkit-scrollbar {
+      width: 6px;
+    }
+    .category-group::-webkit-scrollbar-track {
+      background: #B0BEC5;
+      border-radius: 3px;
+    }
+    .category-group::-webkit-scrollbar-thumb {
+      background: #1976D2;
+      border-radius: 3px;
+    }
+    .category-group::-webkit-scrollbar-thumb:hover {
+      background: #1565C0;
     }
     .category-group label {
       display: flex;
@@ -157,24 +174,6 @@
       width: auto;
       margin-right: 12px;
       accent-color: #1976D2;
-    }
-    .scroll-indicator {
-      display: none;
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 14px;
-      color: #666;
-      background: #e0e7ff;
-      padding: 6px 12px;
-      border-radius: 12px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      animation: bounce 1.5s infinite;
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(-5px); }
     }
     .error {
       color: #D32F2F;
@@ -195,23 +194,28 @@
       background-color: rgba(0, 0, 0, 0.7);
       justify-content: center;
       align-items: center;
-      z-index: 1000;
+      z-index: 1100;
     }
     .modal-content {
       background: linear-gradient(to bottom, #ffffff, #f9fafb);
       padding: 32px;
       border-radius: 12px;
-      width: 90%;
       max-width: 600px;
+      max-height: 600px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
       display: flex;
       flex-direction: column;
-      height: 80vh;
-      max-height: 600px;
       position: relative;
+      overflow: hidden;
+    }
+    .modal-content.full-screen {
+      max-width: 100%;
+      max-height: 100vh;
+      width: 100%;
+      height: 100vh;
     }
     .modal-content h2 {
-      font-size: 20px;
+      font-size: 24px;
       font-weight: 700;
       color: #1a3c5e;
       margin-bottom: 16px;
@@ -253,9 +257,18 @@
     }
     .event-total {
       margin-left: 20px;
+      font-size: 18px;
       font-weight: bold;
       margin-top: 8px;
-      color: #333;
+      color: #1a3c5e;
+      display: inline;
+    }
+    .event-formula {
+      font-size: 14px;
+      font-weight: normal;
+      color: #666;
+      margin-left: 4px;
+      display: inline;
     }
     .event-discount, .event-admin-fee {
       margin-left: 20px;
@@ -265,10 +278,18 @@
     }
     .group-total {
       margin-left: 20px;
-      font-size: 14px;
+      font-size: 18px;
       font-weight: bold;
       margin-top: 8px;
-      color: #333;
+      color: #1a3c5e;
+      display: inline;
+    }
+    .group-formula {
+      font-size: 14px;
+      font-weight: normal;
+      color: #666;
+      margin-left: 4px;
+      display: inline;
     }
     .group-discount {
       margin-left: 40px;
@@ -346,9 +367,18 @@
       border-radius: 12px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
       text-align: center;
+      width: 100%;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1100;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
     #thankYouPage h2 {
-      font-size: 24px;
+      font-size: 28px;
       font-weight: 700;
       color: #1a3c5e;
       margin-bottom: 16px;
@@ -356,7 +386,7 @@
       border-bottom: 2px solid #e0e7ff;
     }
     #thankYouPage p {
-      font-size: 16px;
+      font-size: 18px;
       margin: 16px 0;
       color: #155724;
     }
@@ -410,10 +440,7 @@
         padding: 24px;
       }
       .modal-content {
-        width: 95%;
         padding: 24px;
-        height: 85vh;
-        max-height: 500px;
       }
       .date-group {
         gap: 8px;
@@ -438,9 +465,6 @@
       .category-group {
         padding-bottom: 40px;
       }
-      .scroll-indicator {
-        display: block;
-      }
     }
   </style>
 </head>
@@ -459,7 +483,7 @@
     </div>
 
     <div id="personalInfoModal" class="modal">
-      <div class="modal-content">
+      <div class="modal-content full-screen">
         <div class="modal-scroll">
           <h2>請輸入個人資料</h2>
           <div class="form-group">
@@ -507,7 +531,7 @@
         </div>
         <div style="display: flex; gap: 10px;">
           <button type="button" class="cancel" onclick="closePersonalInfoModal()">取消</button>
-          <button type="button" class="next-step" onclick="submitPersonalInfo()">下一步</button>
+          <button type="button" class="next-step" onclick="submitPersonalInfo()">確認</button>
         </div>
       </div>
     </div>
@@ -527,20 +551,23 @@
   </div>
 
   <div id="confirmModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content full-screen">
       <div class="modal-scroll">
-        <h2>請確認您的報名資料</h2>
-        <p><strong>學員姓名：</strong> <span id="confirmName"></span></p>
-        <p><strong>聯絡電話：</strong> <span id="confirmPhone"></span></p>
-        <p><strong>出生日期：</strong> <span id="confirmBirthdate"></span></p>
-        <p><strong>所屬道場：</strong> <span id="confirmDojo"></span></p>
+        <h2 id="confirmTitle">請確認您的報名資料</h2>
+        <div id="personalInfoSection" style="display: none;">
+          <p><strong>學員姓名：</strong> <span id="confirmName"></span></p>
+          <p><strong>聯絡電話：</strong> <span id="confirmPhone"></span></p>
+          <p><strong>出生日期：</strong> <span id="confirmBirthdate"></span></p>
+          <p><strong>所屬道場：</strong> <span id="confirmDojo"></span></p>
+        </div>
         <p><strong>報名賽事與項目：</strong></p>
         <div id="confirmEvents"></div>
       </div>
       <div id="totalSum"></div>
       <div style="display: flex; gap: 10px; padding-top: 10px;">
-        <button type="button" class="next-step" onclick="goBackToPersonalInfo()">上一步</button>
-        <button type="button" class="confirm" onclick="confirmSubmission()">確認提交</button>
+        <button type="button" class="next-step" id="backButton" onclick="goBack()">上一步</button>
+        <button type="button" class="next-step" id="nextButton" onclick="nextStep()">下一步</button>
+        <button type="button" class="confirm" id="submitButton" onclick="confirmSubmission()" style="display: none;">確認提交</button>
       </div>
     </div>
   </div>
@@ -567,6 +594,7 @@
     let adminFees = {};
     let eventOrder = [];
     let eventDetails = {};
+    let isFinalConfirmation = false;
 
     async function loadEventsFromSheet() {
       const eventList = document.getElementById('eventList');
@@ -575,7 +603,6 @@
       const sheetId = '1485917481';
       const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&gid=${sheetId}&range=A2:I`;
 
-      // 定義標籤並動態生成 CSS
       const labels = {
         'date': '日期：',
         'location': '地點：',
@@ -644,7 +671,7 @@
 
             try {
               const discountData = JSON.parse(discounts);
-              discountRules[eventName] = discountData.groups || discountData.discounts || [];
+              discountRules[eventName] = discountData.discounts || discountData.groups || [];
               adminFees[eventName] = discountData.adminFee || 0;
             } catch (error) {
               console.error(`解析 ${eventName} 的優惠規則或行政費失敗:`, error);
@@ -770,9 +797,10 @@
     }
 
     window.addEventListener('load', () => {
+      document.getElementById('mainForm').style.display = 'block';
+      document.getElementById('thankYouPage').style.display = 'none';
       loadEventsFromSheet();
       initializePersonalInfo();
-      setupScrollIndicator();
     });
 
     function initializePersonalInfo() {
@@ -801,31 +829,6 @@
 
       const dojoSelect = document.getElementById('dojo');
       dojoSelect.addEventListener('change', toggleCustomDojo);
-    }
-
-    function setupScrollIndicator() {
-      const categoryModal = document.getElementById('categoryModal');
-      const modalScroll = categoryModal.querySelector('.modal-scroll');
-      const categoryGroup = document.getElementById('categoryGroup');
-
-      function checkScroll() {
-        const scrollIndicator = categoryGroup.querySelector('.scroll-indicator');
-        if (scrollIndicator && modalScroll.scrollHeight > modalScroll.clientHeight) {
-          scrollIndicator.style.display = 'block';
-          modalScroll.addEventListener('scroll', () => {
-            if (modalScroll.scrollTop + modalScroll.clientHeight >= modalScroll.scrollHeight - 10) {
-              scrollIndicator.style.display = 'none';
-            } else {
-              scrollIndicator.style.display = 'block';
-            }
-          });
-        } else if (scrollIndicator) {
-          scrollIndicator.style.display = 'none';
-        }
-      }
-
-      categoryModal.addEventListener('show', checkScroll);
-      window.addEventListener('resize', checkScroll);
     }
 
     function isLeapYear(year) {
@@ -869,13 +872,7 @@
       const categoryTitle = document.getElementById('categoryTitle');
 
       categoryTitle.textContent = `選擇 ${eventName} 的項目`;
-      categoryGroup.innerHTML = ''; // 清空內容
-
-      // 動態創建 scroll-indicator
-      const scrollIndicator = document.createElement('div');
-      scrollIndicator.className = 'scroll-indicator';
-      scrollIndicator.textContent = '↓ 向下滾動查看更多';
-      categoryGroup.appendChild(scrollIndicator);
+      categoryGroup.innerHTML = '';
 
       tempCategories[eventName] = selectedCategories[eventName] ? [...selectedCategories[eventName]] : [];
       eventCategories[eventName].forEach(category => {
@@ -887,11 +884,16 @@
         checkbox.onchange = () => updateTempCategories(eventName, checkbox.checked, category);
         label.appendChild(checkbox);
         label.appendChild(document.createTextNode(category));
-        categoryGroup.insertBefore(label, scrollIndicator);
+        categoryGroup.appendChild(label);
       });
 
+      if (eventCategories[eventName].length >= 4) {
+        categoryGroup.style.overflowY = 'auto';
+      } else {
+        categoryGroup.style.overflowY = 'hidden';
+      }
+
       categoryModal.style.display = 'flex';
-      categoryModal.dispatchEvent(new Event('show'));
     }
 
     let tempCategories = {};
@@ -931,6 +933,10 @@
       });
     }
 
+    function formatPrice(price) {
+      return Number.isInteger(price) ? price.toString() : price.toFixed(1).replace(/\.0$/, '');
+    }
+
     function calculateDiscountedPrice(eventName, selected, calculateFormula = false) {
       let totalPrice = 0;
       const adminFee = adminFees[eventName] || 0;
@@ -952,14 +958,14 @@
             if (rule && rule.totalPrice !== undefined) {
               groupPrice = rule.totalPrice;
               groupHasDiscount = true;
-              groupFormula = `${group.name}: $${groupPrice}`;
+              groupFormula = `$${formatPrice(groupPrice)}`;
             } else {
               groupCategories.forEach(category => {
                 const price = categoryPrices[`${eventName}:${category}`] || 0;
                 groupPrice += price;
-                if (calculateFormula) groupFormula += (groupFormula ? '+' : '') + `$${price}`;
+                if (calculateFormula) groupFormula += (groupFormula ? '+' : '') + `$${formatPrice(price)}`;
               });
-              groupFormula = `${group.name}: $${groupPrice}${groupFormula ? ` (${groupFormula})` : ''}`;
+              groupFormula = `$${formatPrice(groupPrice)}`;
             }
 
             totalPrice += groupPrice;
@@ -967,52 +973,35 @@
             if (groupHasDiscount) hasDiscount = true;
           }
         });
-      } else {
-        const rule = discountRules[eventName]?.find(r => 
-          (r.count === selectedCategoriesClean.length) || 
-          (r.condition && r.condition.every(c => selectedCategoriesClean.includes(c)) && r.condition.length === selectedCategoriesClean.length)
-        );
-
-        if (rule) {
-          if (rule.totalPrice !== undefined) {
-            totalPrice = rule.totalPrice;
-            hasDiscount = !rule.hasOwnProperty('name');
-            if (calculateFormula) formulaParts.push(`$${rule.totalPrice}`);
-          } else if (rule.discountRate !== undefined) {
-            let originalPrice = 0;
-            selectedCategoriesClean.forEach(category => {
-              originalPrice += categoryPrices[`${eventName}:${category}`] || 0;
-            });
-            totalPrice = originalPrice * rule.discountRate;
-            totalPrice = Math.round(totalPrice * 100) / 100;
-            hasDiscount = !rule.hasOwnProperty('name');
-            if (calculateFormula) formulaParts.push(`$${totalPrice.toFixed(2)}`);
-          }
-        } else {
-          selectedCategoriesClean.forEach(category => {
-            let price = categoryPrices[`${eventName}:${category}`] || 0;
-            const discountRule = discountRules[eventName]?.find(r => 
-              r.condition && r.condition.includes(category) && r.discounts && r.discounts[category]
-            );
-            if (discountRule) {
-              price = discountRule.discounts[category];
-              hasDiscount = !discountRule.hasOwnProperty('name');
-            }
-            totalPrice += price;
-            if (calculateFormula) formulaParts.push(`$${price}`);
-          });
-        }
       }
 
+      const remainingCategories = selectedCategoriesClean.filter(cat => 
+        !groups.some(group => group.categories.includes(cat))
+      );
+      remainingCategories.forEach(category => {
+        let price = categoryPrices[`${eventName}:${category}`] || 0;
+        let categoryHasDiscount = false;
+        const discountRule = discountRules[eventName]?.find(r => 
+          r.condition && r.condition.includes(category) && r.condition.length === 1 && r.totalPrice !== undefined
+        );
+        if (discountRule) {
+          price = discountRule.totalPrice;
+          categoryHasDiscount = true;
+          hasDiscount = true;
+        }
+        totalPrice += price;
+        if (calculateFormula) formulaParts.push(`$${formatPrice(price)}`);
+      });
+
       totalPrice += adminFee;
-      if (calculateFormula && adminFee > 0) formulaParts.push(`$${adminFee}`);
+      if (calculateFormula && adminFee > 0) formulaParts.push(`$${formatPrice(adminFee)}`);
 
       return calculateFormula 
         ? { 
             totalPrice, 
             formula: groups.length > 0 
-              ? groupFormulas.map(gf => gf.formula).join(' + ') + (adminFee > 0 ? ` + $${adminFee}` : '') + ` = $${totalPrice.toFixed(2)}`
-              : `$${totalPrice.toFixed(2)}${formulaParts.length > 1 ? ` (${formulaParts.join('+')})` : ''}`, 
+              ? groupFormulas.map(gf => gf.formula).join('+') + (formulaParts.length > 0 ? `+${formulaParts.join('+')}` : '') 
+              : formulaParts.join('+'), 
             hasDiscount,
             adminFee,
             groupFormulas: groups.length > 0 ? groupFormulas : []
@@ -1026,8 +1015,8 @@
       selectedEventsInput.value = Object.entries(selectedCategories)
         .map(([event, categories]) => {
           const cleanCategories = categories.map(category => {
-            const match = category.match(/(.+?)\s*-\s*\$/);
-            return match ? match[1].trim() : category;
+            const match = category.match(/(.+?)\s*-\s*\$/)?.[1].trim() || category;
+            return match;
           });
           return `${event}, ${cleanCategories.join(', ')}`;
         })
@@ -1053,6 +1042,150 @@
         alert('請至少選擇一項比賽項目');
         return;
       }
+      isFinalConfirmation = false;
+      showConfirmModal();
+    }
+
+    function showConfirmModal() {
+      const confirmModal = document.getElementById('confirmModal');
+      const confirmTitle = document.getElementById('confirmTitle');
+      const personalInfoSection = document.getElementById('personalInfoSection');
+      const confirmEvents = document.getElementById('confirmEvents');
+      const totalSum = document.getElementById('totalSum');
+      const nextButton = document.getElementById('nextButton');
+      const submitButton = document.getElementById('submitButton');
+      const backButton = document.getElementById('backButton');
+
+      confirmEvents.innerHTML = '';
+      totalSum.innerHTML = '';
+      let totalPrice = 0;
+      let totalFormulaParts = [];
+
+      if (Object.keys(selectedCategories).length > 0) {
+        const sortedEvents = Object.keys(selectedCategories).sort((a, b) => {
+          return eventOrder.indexOf(a) - eventOrder.indexOf(b);
+        });
+
+        sortedEvents.forEach(event => {
+          const categories = selectedCategories[event];
+          const sortedCategories = categories.sort((a, b) => {
+            return eventCategories[event].indexOf(a) - eventCategories[event].indexOf(b);
+          });
+
+          const eventDiv = document.createElement('div');
+          eventDiv.className = 'event-item';
+          const eventStrong = document.createElement('strong');
+          eventStrong.textContent = event;
+          eventDiv.appendChild(eventStrong);
+
+          sortedCategories.forEach(category => {
+            const categoryDiv = document.createElement('div');
+            categoryDiv.className = 'category-item';
+            categoryDiv.textContent = category;
+            eventDiv.appendChild(categoryDiv);
+          });
+
+          const { totalPrice: eventPrice, formula, hasDiscount, adminFee, groupFormulas } = calculateDiscountedPrice(event, sortedCategories, true);
+          totalPrice += eventPrice;
+          totalFormulaParts.push(`$${formatPrice(eventPrice)}`);
+
+          if (groupFormulas.length > 0) {
+            groupFormulas.forEach(gf => {
+              const groupPriceDiv = document.createElement('div');
+              groupPriceDiv.className = 'group-total';
+              groupPriceDiv.textContent = `${gf.formula}`;
+              const groupFormulaDiv = document.createElement('div');
+              groupFormulaDiv.className = 'group-formula';
+              groupFormulaDiv.textContent = `=${gf.formula}`;
+              eventDiv.appendChild(groupPriceDiv);
+              eventDiv.appendChild(groupFormulaDiv);
+              if (gf.hasDiscount) {
+                const discountDiv = document.createElement('div');
+                discountDiv.className = 'group-discount';
+                discountDiv.textContent = '已應用優惠';
+                eventDiv.appendChild(discountDiv);
+              }
+            });
+          } else {
+            const totalDiv = document.createElement('div');
+            totalDiv.className = 'event-total';
+            totalDiv.textContent = `$${formatPrice(eventPrice)}`;
+            const formulaDiv = document.createElement('div');
+            formulaDiv.className = 'event-formula';
+            formulaDiv.textContent = `=${formula}`;
+            eventDiv.appendChild(totalDiv);
+            eventDiv.appendChild(formulaDiv);
+            if (hasDiscount) {
+              const discountDiv = document.createElement('div');
+              discountDiv.className = 'event-discount';
+              discountDiv.textContent = '已應用優惠';
+              eventDiv.appendChild(discountDiv);
+            }
+          }
+
+          if (adminFee > 0) {
+            const adminFeeDiv = document.createElement('div');
+            adminFeeDiv.className = 'event-admin-fee';
+            adminFeeDiv.textContent = '已包括行政費';
+            eventDiv.appendChild(adminFeeDiv);
+          }
+
+          confirmEvents.appendChild(eventDiv);
+        });
+      } else {
+        confirmEvents.textContent = '無';
+      }
+
+      const totalSumDiv = document.createElement('div');
+      totalSumDiv.className = 'total-sum';
+      const totalText = document.createElement('span');
+      totalText.textContent = `總數 $${formatPrice(totalPrice)}`;
+      totalSumDiv.appendChild(totalText);
+      if (Object.keys(selectedCategories).length > 1 && totalFormulaParts.length > 1) {
+        const formulaText = document.createElement('span');
+        formulaText.className = 'formula';
+        formulaText.textContent = totalFormulaParts.join('+');
+        totalSumDiv.appendChild(formulaText);
+      }
+      totalSum.appendChild(totalSumDiv);
+
+      if (isFinalConfirmation) {
+        confirmTitle.textContent = '請確認您的報名資料';
+        personalInfoSection.style.display = 'block';
+        nextButton.style.display = 'none';
+        submitButton.style.display = 'inline-block';
+        backButton.onclick = goBackToPersonalInfo;
+      } else {
+        confirmTitle.textContent = '請確認您的報名賽事';
+        personalInfoSection.style.display = 'none';
+        nextButton.style.display = 'inline-block';
+        submitButton.style.display = 'none';
+        backButton.onclick = goBackToMainForm;
+      }
+
+      confirmModal.style.display = 'flex';
+    }
+
+    function goBackToMainForm() {
+      const confirmModal = document.getElementById('confirmModal');
+      confirmModal.style.display = 'none';
+      document.getElementById('mainForm').style.display = 'block';
+    }
+
+    function goBackToPersonalInfo() {
+      const confirmModal = document.getElementById('confirmModal');
+      const personalInfoModal = document.getElementById('personalInfoModal');
+      confirmModal.style.display = 'none';
+      personalInfoModal.style.display = 'flex';
+    }
+
+    function nextStep() {
+      const confirmModal = document.getElementById('confirmModal');
+      confirmModal.style.display = 'none';
+      showPersonalInfoModal();
+    }
+
+    function showPersonalInfoModal() {
       const personalInfoModal = document.getElementById('personalInfoModal');
       personalInfoModal.style.display = 'flex';
     }
@@ -1060,6 +1193,7 @@
     function closePersonalInfoModal() {
       const personalInfoModal = document.getElementById('personalInfoModal');
       personalInfoModal.style.display = 'none';
+      document.getElementById('mainForm').style.display = 'block';
     }
 
     function resetPersonalInfo() {
@@ -1091,9 +1225,6 @@
     }
 
     function submitPersonalInfo() {
-      const confirmModal = document.getElementById('confirmModal');
-      const confirmEvents = document.getElementById('confirmEvents');
-      const totalSum = document.getElementById('totalSum');
       const nameInput = document.getElementById('name');
       const phoneInput = document.getElementById('phone');
       const yearSelect = document.getElementById('birthYear');
@@ -1141,108 +1272,16 @@
       }
 
       if (isValid) {
+        isFinalConfirmation = true;
+        document.getElementById('personalInfoModal').style.display = 'none';
         document.getElementById('confirmName').textContent = nameInput.value;
         document.getElementById('confirmPhone').textContent = phoneInput.value || '未提供';
         document.getElementById('confirmBirthdate').textContent = yearSelect.value && monthSelect.value && daySelect.value 
           ? `${yearSelect.value}/${monthSelect.value.padStart(2, '0')}/${daySelect.value.padStart(2, '0')}` 
           : '未提供';
         document.getElementById('confirmDojo').textContent = dojoSelect.value === '其他' ? customDojoInput.value : dojoSelect.value || '未提供';
-
-        confirmEvents.innerHTML = '';
-        totalSum.innerHTML = '';
-        let totalPrice = 0;
-        let totalFormulaParts = [];
-
-        if (Object.keys(selectedCategories).length > 0) {
-          const sortedEvents = Object.keys(selectedCategories).sort((a, b) => {
-            return eventOrder.indexOf(a) - eventOrder.indexOf(b);
-          });
-
-          sortedEvents.forEach(event => {
-            const categories = selectedCategories[event];
-            const sortedCategories = categories.sort((a, b) => {
-              return eventCategories[event].indexOf(a) - eventCategories[event].indexOf(b);
-            });
-
-            const eventDiv = document.createElement('div');
-            eventDiv.className = 'event-item';
-            const eventStrong = document.createElement('strong');
-            eventStrong.textContent = event;
-            eventDiv.appendChild(eventStrong);
-
-            sortedCategories.forEach(category => {
-              const categoryDiv = document.createElement('div');
-              categoryDiv.className = 'category-item';
-              categoryDiv.textContent = category;
-              eventDiv.appendChild(categoryDiv);
-            });
-
-            const { totalPrice: eventPrice, formula, hasDiscount, adminFee, groupFormulas } = calculateDiscountedPrice(event, sortedCategories, true);
-            totalPrice += eventPrice;
-            totalFormulaParts.push(`$${eventPrice.toFixed(2)}`);
-
-            if (groupFormulas.length > 0) {
-              groupFormulas.forEach(gf => {
-                const groupDiv = document.createElement('div');
-                groupDiv.className = 'group-total';
-                groupDiv.textContent = gf.formula;
-                eventDiv.appendChild(groupDiv);
-                if (gf.hasDiscount) {
-                  const discountDiv = document.createElement('div');
-                  discountDiv.className = 'group-discount';
-                  discountDiv.textContent = '已應用優惠';
-                  eventDiv.appendChild(discountDiv);
-                }
-              });
-            } else {
-              const totalDiv = document.createElement('div');
-              totalDiv.className = 'event-total';
-              totalDiv.textContent = formula;
-              eventDiv.appendChild(totalDiv);
-              if (hasDiscount) {
-                const discountDiv = document.createElement('div');
-                discountDiv.className = 'event-discount';
-                discountDiv.textContent = '已應用優惠';
-                eventDiv.appendChild(discountDiv);
-              }
-            }
-
-            if (adminFee > 0) {
-              const adminFeeDiv = document.createElement('div');
-              adminFeeDiv.className = 'event-admin-fee';
-              adminFeeDiv.textContent = '已包括行政費';
-              eventDiv.appendChild(adminFeeDiv);
-            }
-
-            confirmEvents.appendChild(eventDiv);
-          });
-        } else {
-          confirmEvents.textContent = '無';
-        }
-
-        const totalSumDiv = document.createElement('div');
-        totalSumDiv.className = 'total-sum';
-        const totalText = document.createElement('span');
-        totalText.textContent = `總數 $${totalPrice.toFixed(2)}`;
-        totalSumDiv.appendChild(totalText);
-        if (Object.keys(selectedCategories).length > 1 && totalFormulaParts.length > 1) {
-          const formulaText = document.createElement('span');
-          formulaText.className = 'formula';
-          formulaText.textContent = `(${totalFormulaParts.join('+')})`;
-          totalSumDiv.appendChild(formulaText);
-        }
-        totalSum.appendChild(totalSumDiv);
-
-        document.getElementById('personalInfoModal').style.display = 'none';
-        confirmModal.style.display = 'flex';
+        showConfirmModal();
       }
-    }
-
-    function goBackToPersonalInfo() {
-      const confirmModal = document.getElementById('confirmModal');
-      const personalInfoModal = document.getElementById('personalInfoModal');
-      confirmModal.style.display = 'none';
-      personalInfoModal.style.display = 'flex';
     }
 
     async function confirmSubmission() {
@@ -1268,7 +1307,7 @@
         console.log('表單提交成功');
         confirmModal.style.display = 'none';
         formContainer.style.display = 'none';
-        thankYouPage.style.display = 'block';
+        thankYouPage.style.display = 'flex';
       } catch (error) {
         console.error('提交失敗:', error);
         alert('表單提交失敗，請稍後再試或檢查控制台日誌。');
@@ -1284,6 +1323,7 @@
       document.getElementById('floatingSubmitBtn').style.display = 'none';
       document.getElementById('eventCount').style.display = 'none';
       resetPersonalInfo();
+      isFinalConfirmation = false;
       loadEventsFromSheet();
     }
 
