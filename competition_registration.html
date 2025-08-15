@@ -167,14 +167,14 @@
       border-top: 1px solid #B0BEC5;
       padding-top: 10px;
     }
-    button.confirm, button.return-button, button.confirm-selection {
+    button.confirm, button.return-button, button.confirm-selection, button.next-step {
       background-color: #1976D2;
       color: white;
       border: none;
       cursor: pointer;
       padding: 12px;
     }
-    button.confirm:hover, button.return-button:hover, button.confirm-selection:hover {
+    button.confirm:hover, button.return-button:hover, button.confirm-selection:hover, button.next-step:hover {
       background-color: #1565C0;
       transform: translateY(-2px);
     }
@@ -190,17 +190,6 @@
     #customDojo {
       margin-top: 12px;
       display: none;
-    }
-    #submitBtn {
-      background-color: #4CAF50;
-      color: white;
-      margin-top: 20px;
-      position: relative;
-      padding-right: 40px;
-    }
-    #submitBtn:hover {
-      background-color: #45a049;
-      transform: translateY(-2px);
     }
     .event-count {
       position: absolute;
@@ -241,6 +230,46 @@
       gap: 10px;
       justify-content: center;
     }
+    #floatingSubmitBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+      z-index: 1000;
+      padding: 0;
+      flex-direction: column;
+    }
+    #floatingSubmitBtn:hover {
+      background-color: #45a049;
+      transform: scale(1.1);
+    }
+    #floatingSubmitBtn .event-count {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background-color: #ff4444;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
     @media (max-width: 600px) {
       .form-container, #thankYouPage {
         padding: 24px;
@@ -260,58 +289,19 @@
       .date-group select#birthYear {
         width: 110px;
       }
+      #floatingSubmitBtn {
+        bottom: 15px;
+        right: 15px;
+        width: 50px;
+        height: 50px;
+        font-size: 12px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="form-container" id="mainForm">
-    <form id="registrationForm">
-      <div class="form-group">
-        <label>學員姓名</label>
-        <input type="text" id="name" name="entry.1702329531" required>
-        <span id="nameError" class="error">請輸入學員姓名</span>
-      </div>
-
-      <div class="form-group">
-        <label>聯絡電話</label>
-        <input type="tel" id="phone" name="entry.1541580542" pattern="\d{8}">
-        <span id="phoneError" class="error">請輸入有效的8位電話號碼</span>
-      </div>
-
-      <div class="form-group">
-        <label>出生日期</label>
-        <div class="date-group">
-          <select id="birthYear" name="entry.1919065731_year">
-            <option value="">年</option>
-          </select>
-          <span>/</span>
-          <select id="birthMonth" name="entry.1919065731_month">
-            <option value="">月</option>
-          </select>
-          <span>/</span>
-          <select id="birthDay" name="entry.1919065731_day">
-            <option value="">日</option>
-          </select>
-        </div>
-        <span id="birthdateError" class="error">請選擇有效的出生日期（不得晚於今日）</span>
-      </div>
-
-      <div class="form-group">
-        <label>所屬道場</label>
-        <select id="dojo" name="entry.1923170591">
-          <option value="">請選擇道場</option>
-          <option value="觀塘總館">觀塘總館</option>
-          <option value="紅磡-培匠道場">紅磡-培匠道場</option>
-          <option value="鰂魚涌體育館">鰂魚涌體育館</option>
-          <option value="北角官立小學">北角官立小學</option>
-          <option value="大角嘴天主教小學">大角嘴天主教小學</option>
-          <option value="佛教林金殿紀念小學">佛教林金殿紀念小學</option>
-          <option value="其他">其他（請手動輸入）</option>
-        </select>
-        <input type="text" id="customDojo" placeholder="請輸入道場名稱" style="display: none;">
-        <span id="dojoError" class="error">請選擇或輸入道場</span>
-      </div>
-
+  <form id="registrationForm">
+    <div class="form-container" id="mainForm">
       <div class="form-group">
         <label>選擇比賽</label>
         <div class="event-list" id="eventList">
@@ -321,13 +311,62 @@
         <input type="hidden" id="selectedEvents" name="entry.1287068960">
         <input type="hidden" id="totalPrice" name="entry.1317768085">
       </div>
+    </div>
 
-      <button type="button" id="submitBtn" onclick="submitForm()" style="display: none;">
-        提交表單
-        <span id="eventCount" class="event-count"></span>
-      </button>
-    </form>
-  </div>
+    <div id="personalInfoModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-scroll">
+          <h2>請輸入個人資料</h2>
+          <div class="form-group">
+            <label>學員姓名</label>
+            <input type="text" id="name" name="entry.1702329531" required>
+            <span id="nameError" class="error">請輸入學員姓名</span>
+          </div>
+          <div class="form-group">
+            <label>聯絡電話</label>
+            <input type="tel" id="phone" name="entry.1541580542" pattern="\d{8}">
+            <span id="phoneError" class="error">請輸入有效的8位電話號碼</span>
+          </div>
+          <div class="form-group">
+            <label>出生日期</label>
+            <div class="date-group">
+              <select id="birthYear" name="entry.1919065731_year">
+                <option value="">年</option>
+              </select>
+              <span>/</span>
+              <select id="birthMonth" name="entry.1919065731_month">
+                <option value="">月</option>
+              </select>
+              <span>/</span>
+              <select id="birthDay" name="entry.1919065731_day">
+                <option value="">日</option>
+              </select>
+            </div>
+            <span id="birthdateError" class="error">請選擇有效的出生日期（不得晚於今日）</span>
+          </div>
+          <div class="form-group">
+            <label>所屬道場</label>
+            <select id="dojo" name="entry.1923170591">
+              <option value="">請選擇道場</option>
+              <option value="觀塘總館">觀塘總館</option>
+              <option value="紅磡-培匠道場">紅磡-培匠道場</option>
+              <option value="鰂魚涌體育館">鰂魚涌體育館</option>
+              <option value="北角官立小學">北角官立小學</option>
+              <option value="大角嘴天主教小學">大角嘴天主教小學</option>
+              <option value="佛教林金殿紀念小學">佛教林金殿紀念小學</option>
+              <option value="其他">其他（請手動輸入）</option>
+            </select>
+            <input type="text" id="customDojo" placeholder="請輸入道場名稱" style="display: none;">
+            <span id="dojoError" class="error">請選擇或輸入道場</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="cancel" onclick="closePersonalInfoModal()">取消</button>
+          <button type="button" class="next-step" onclick="submitPersonalInfo()">下一步</button>
+        </div>
+      </div>
+    </div>
+  </form>
 
   <div id="categoryModal" class="modal">
     <div class="modal-content">
@@ -336,8 +375,8 @@
         <div class="category-group" id="categoryGroup"></div>
       </div>
       <div style="display: flex; gap: 10px;">
-        <button class="cancel" onclick="closeCategoryModal()">取消</button>
-        <button class="confirm-selection" onclick="confirmCategorySelection()">確定</button>
+        <button type="button" class="cancel" onclick="closeCategoryModal()">取消</button>
+        <button type="button" class="confirm-selection" onclick="confirmCategorySelection()">確定</button>
       </div>
     </div>
   </div>
@@ -355,8 +394,8 @@
         <div id="totalSum"></div>
       </div>
       <div style="display: flex; gap: 10px;">
-        <button class="cancel" onclick="cancelSubmission()">取消</button>
-        <button class="confirm" onclick="confirmSubmission()">確認提交</button>
+        <button type="button" class="next-step" onclick="goBackToPersonalInfo()">上一步</button>
+        <button type="button" class="confirm" onclick="confirmSubmission()">確認提交</button>
       </div>
     </div>
   </div>
@@ -365,9 +404,14 @@
     <h2>感謝您的報名！</h2>
     <p>確認後教練將盡快與您聯繫</p>
     <div class="button-group">
-      <button class="return-button" onclick="restartForm()">重新報名</button>
+      <button type="button" class="return-button" onclick="restartForm()">重新報名</button>
     </div>
   </div>
+
+  <button type="button" id="floatingSubmitBtn" style="display: none;">
+    <span id="eventCount" class="event-count"></span>
+    結算
+  </button>
 
   <script>
     let eventCategories = {};
@@ -375,9 +419,8 @@
     let categoryPrices = {};
     let discountRules = {};
     let adminFees = {};
-    let eventOrder = []; // 儲存 Google Sheet 的比賽順序
+    let eventOrder = [];
 
-    // 動態載入比賽資料
     async function loadEventsFromSheet() {
       const eventList = document.getElementById('eventList');
       const eventListError = document.getElementById('eventListError');
@@ -397,14 +440,14 @@
         categoryPrices = {};
         discountRules = {};
         adminFees = {};
-        eventOrder = []; // 重置比賽順序
+        eventOrder = [];
 
         rows.forEach(row => {
           const eventName = row.c[0]?.v;
           const categories = row.c[1]?.v;
           const discounts = row.c[2]?.v || '{}';
           if (eventName && categories) {
-            eventOrder.push(eventName); // 儲存比賽名稱順序
+            eventOrder.push(eventName);
             const categoryArray = categories.split(',').map(cat => cat.trim());
             eventCategories[eventName] = categoryArray;
             categoryArray.forEach(category => {
@@ -446,25 +489,37 @@
       updateSelectedEvents();
     }
 
-    window.addEventListener('load', loadEventsFromSheet);
+    window.addEventListener('load', () => {
+      loadEventsFromSheet();
+      initializePersonalInfo();
+    });
 
-    const yearSelect = document.getElementById('birthYear');
-    const monthSelect = document.getElementById('birthMonth');
-    const daySelect = document.getElementById('birthDay');
-    const currentYear = new Date().getFullYear();
+    function initializePersonalInfo() {
+      const yearSelect = document.getElementById('birthYear');
+      const monthSelect = document.getElementById('birthMonth');
+      const daySelect = document.getElementById('birthDay');
+      const currentYear = new Date().getFullYear();
 
-    for (let year = currentYear; year >= 1900; year--) {
-      let option = document.createElement('option');
-      option.value = year;
-      option.text = year;
-      yearSelect.appendChild(option);
-    }
+      for (let year = currentYear; year >= 1900; year--) {
+        let option = document.createElement('option');
+        option.value = year;
+        option.text = year;
+        yearSelect.appendChild(option);
+      }
 
-    for (let month = 1; month <= 12; month++) {
-      let option = document.createElement('option');
-      option.value = month;
-      option.text = month.toString().padStart(2, '0');
-      monthSelect.appendChild(option);
+      for (let month = 1; month <= 12; month++) {
+        let option = document.createElement('option');
+        option.value = month;
+        option.text = month.toString().padStart(2, '0');
+        monthSelect.appendChild(option);
+      }
+
+      updateDays();
+      yearSelect.addEventListener('change', updateDays);
+      monthSelect.addEventListener('change', updateDays);
+
+      const dojoSelect = document.getElementById('dojo');
+      dojoSelect.addEventListener('change', toggleCustomDojo);
     }
 
     function isLeapYear(year) {
@@ -472,6 +527,9 @@
     }
 
     function updateDays() {
+      const yearSelect = document.getElementById('birthYear');
+      const monthSelect = document.getElementById('birthMonth');
+      const daySelect = document.getElementById('birthDay');
       const year = parseInt(yearSelect.value);
       const month = parseInt(monthSelect.value);
       daySelect.innerHTML = '<option value="">日</option>';
@@ -486,14 +544,9 @@
       }
     }
 
-    updateDays();
-    yearSelect.addEventListener('change', updateDays);
-    monthSelect.addEventListener('change', updateDays);
-
-    const dojoSelect = document.getElementById('dojo');
-    const customDojoInput = document.getElementById('customDojo');
-
     function toggleCustomDojo() {
+      const dojoSelect = document.getElementById('dojo');
+      const customDojoInput = document.getElementById('customDojo');
       if (dojoSelect.value === '其他') {
         customDojoInput.style.display = 'block';
         customDojoInput.required = true;
@@ -573,21 +626,16 @@
       let formulaParts = [];
       let hasDiscount = false;
 
-      // 計算項目費用
       let appliedCategories = [];
       let isSingleTotalPrice = false;
 
-      // 首先檢查基於數量的折扣率規則（count 和 discountRate）
       for (const rule of rules) {
         if (rule.count !== undefined && rule.discountRate !== undefined && rule.count === selectedCategoriesClean.length) {
-          // 計算原始總價
           let originalPrice = 0;
           selectedCategoriesClean.forEach(category => {
             originalPrice += categoryPrices[`${eventName}:${category}`] || 0;
           });
-          // 應用折扣率
           totalPrice = originalPrice * rule.discountRate;
-          // 保留 2 位小數
           totalPrice = Math.round(totalPrice * 100) / 100;
           appliedCategories = [...selectedCategoriesClean];
           isSingleTotalPrice = true;
@@ -601,7 +649,6 @@
         }
       }
 
-      // 若無匹配的 discountRate 規則，檢查基於數量的 totalPrice 規則
       if (!isSingleTotalPrice) {
         for (const rule of rules) {
           if (rule.count !== undefined && rule.totalPrice !== undefined && rule.count === selectedCategoriesClean.length) {
@@ -619,7 +666,6 @@
         }
       }
 
-      // 若無匹配的 count 規則，檢查基於條件的規則（condition）
       if (!isSingleTotalPrice) {
         for (const rule of rules) {
           if (rule.condition && rule.totalPrice !== undefined) {
@@ -640,7 +686,6 @@
         }
       }
 
-      // 若無完全匹配的規則，計算個別項目價格
       if (!isSingleTotalPrice) {
         rules.forEach(rule => {
           if (rule.condition && rule.totalPrice !== undefined) {
@@ -677,18 +722,15 @@
         });
       }
 
-      // 添加行政費
       totalPrice += adminFee;
       if (calculateFormula && adminFee > 0) {
         formulaParts.push(`$${adminFee}`);
       }
 
       if (calculateFormula) {
-        // 若有行政費，總是顯示括號公式
         if (adminFee > 0) {
           return { totalPrice, formula: `$${totalPrice.toFixed(2)} (${formulaParts.join('+')})`, hasDiscount, adminFee };
         }
-        // 無行政費時，單項或單一 totalPrice/discountRate 無括號
         if (selected.length === 1 || isSingleTotalPrice) {
           return { totalPrice, formula: `$${totalPrice.toFixed(2)}`, hasDiscount, adminFee };
         }
@@ -716,16 +758,58 @@
       });
       totalPriceInput.value = totalPrice;
       
-      const submitBtn = document.getElementById('submitBtn');
+      const floatingBtn = document.getElementById('floatingSubmitBtn');
       const eventCount = document.getElementById('eventCount');
       const eventCountNum = Object.keys(selectedCategories).length;
 
-      submitBtn.style.display = eventCountNum > 0 ? 'block' : 'none';
+      floatingBtn.style.display = eventCountNum > 0 ? 'flex' : 'none';
       eventCount.textContent = eventCountNum;
       eventCount.style.display = eventCountNum > 0 ? 'flex' : 'none';
     }
 
     function submitForm() {
+      if (Object.keys(selectedCategories).length === 0) {
+        alert('請至少選擇一項比賽項目');
+        return;
+      }
+      const personalInfoModal = document.getElementById('personalInfoModal');
+      personalInfoModal.style.display = 'flex';
+    }
+
+    function closePersonalInfoModal() {
+      const personalInfoModal = document.getElementById('personalInfoModal');
+      personalInfoModal.style.display = 'none';
+    }
+
+    function resetPersonalInfo() {
+      const nameInput = document.getElementById('name');
+      const phoneInput = document.getElementById('phone');
+      const yearSelect = document.getElementById('birthYear');
+      const monthSelect = document.getElementById('birthMonth');
+      const daySelect = document.getElementById('birthDay');
+      const dojoSelect = document.getElementById('dojo');
+      const customDojoInput = document.getElementById('customDojo');
+      const nameError = document.getElementById('nameError');
+      const phoneError = document.getElementById('phoneError');
+      const birthdateError = document.getElementById('birthdateError');
+      const dojoError = document.getElementById('dojoError');
+
+      nameInput.value = '';
+      phoneInput.value = '';
+      yearSelect.value = '';
+      monthSelect.value = '';
+      daySelect.value = '';
+      dojoSelect.value = '';
+      customDojoInput.value = '';
+      customDojoInput.style.display = 'none';
+      nameError.style.display = 'none';
+      phoneError.style.display = 'none';
+      birthdateError.style.display = 'none';
+      dojoError.style.display = 'none';
+      updateDays();
+    }
+
+    function submitPersonalInfo() {
       const confirmModal = document.getElementById('confirmModal');
       const confirmEvents = document.getElementById('confirmEvents');
       const totalSum = document.getElementById('totalSum');
@@ -789,14 +873,12 @@
         let totalFormulaParts = [];
 
         if (Object.keys(selectedCategories).length > 0) {
-          // 按 Google Sheet 的比賽順序排序
           const sortedEvents = Object.keys(selectedCategories).sort((a, b) => {
             return eventOrder.indexOf(a) - eventOrder.indexOf(b);
           });
 
           sortedEvents.forEach(event => {
             const categories = selectedCategories[event];
-            // 按 Google Sheet B 欄的項目順序排序
             const sortedCategories = categories.sort((a, b) => {
               return eventCategories[event].indexOf(a) - eventCategories[event].indexOf(b);
             });
@@ -807,7 +889,6 @@
             eventStrong.textContent = event;
             eventDiv.appendChild(eventStrong);
 
-            // 每個項目單獨一行
             sortedCategories.forEach(category => {
               const categoryDiv = document.createElement('div');
               categoryDiv.className = 'category-item';
@@ -851,13 +932,16 @@
           : `總數 $${totalPrice.toFixed(2)} (${totalFormulaParts.join('+')})`;
         totalSum.appendChild(totalSumDiv);
 
+        document.getElementById('personalInfoModal').style.display = 'none';
         confirmModal.style.display = 'flex';
       }
     }
 
-    function cancelSubmission() {
+    function goBackToPersonalInfo() {
       const confirmModal = document.getElementById('confirmModal');
+      const personalInfoModal = document.getElementById('personalInfoModal');
       confirmModal.style.display = 'none';
+      personalInfoModal.style.display = 'flex';
     }
 
     async function confirmSubmission() {
@@ -865,6 +949,9 @@
       const form = document.getElementById('registrationForm');
       const formContainer = document.getElementById('mainForm');
       const thankYouPage = document.getElementById('thankYouPage');
+      const dojoSelect = document.getElementById('dojo');
+      const customDojoInput = document.getElementById('customDojo');
+
       const formData = new FormData(form);
       if (dojoSelect.value === '其他') {
         formData.set('entry.1923170591', customDojoInput.value);
@@ -893,15 +980,9 @@
       selectedCategories = {};
       document.getElementById('selectedEvents').value = '';
       document.getElementById('totalPrice').value = '';
-      document.getElementById('submitBtn').style.display = 'none';
+      document.getElementById('floatingSubmitBtn').style.display = 'none';
       document.getElementById('eventCount').style.display = 'none';
-      document.getElementById('nameError').style.display = 'none';
-      document.getElementById('phoneError').style.display = 'none';
-      document.getElementById('birthdateError').style.display = 'none';
-      document.getElementById('dojoError').style.display = 'none';
-      customDojoInput.style.display = 'none';
-      customDojoInput.value = '';
-      updateDays();
+      resetPersonalInfo();
       loadEventsFromSheet();
     }
 
@@ -912,6 +993,8 @@
       formContainer.style.display = 'block';
       resetForm();
     }
+
+    document.getElementById('floatingSubmitBtn').onclick = submitForm;
   </script>
 </body>
 </html>
