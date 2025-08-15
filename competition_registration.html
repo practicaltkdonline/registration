@@ -996,6 +996,8 @@
       totalPrice += adminFee;
       if (calculateFormula && adminFee > 0) formulaParts.push(`$${formatPrice(adminFee)}`);
 
+      const showFormula = calculateFormula && (selectedCategoriesClean.length > 1 || adminFee > 0 || hasDiscount);
+
       return calculateFormula 
         ? { 
             totalPrice, 
@@ -1004,7 +1006,8 @@
               : formulaParts.join('+'), 
             hasDiscount,
             adminFee,
-            groupFormulas: groups.length > 0 ? groupFormulas : []
+            groupFormulas: groups.length > 0 ? groupFormulas : [],
+            showFormula
           }
         : totalPrice;
     }
@@ -1085,7 +1088,7 @@
             eventDiv.appendChild(categoryDiv);
           });
 
-          const { totalPrice: eventPrice, formula, hasDiscount, adminFee, groupFormulas } = calculateDiscountedPrice(event, sortedCategories, true);
+          const { totalPrice: eventPrice, formula, hasDiscount, adminFee, groupFormulas, showFormula } = calculateDiscountedPrice(event, sortedCategories, true);
           totalPrice += eventPrice;
           totalFormulaParts.push(`$${formatPrice(eventPrice)}`);
 
@@ -1094,11 +1097,7 @@
               const groupPriceDiv = document.createElement('div');
               groupPriceDiv.className = 'group-total';
               groupPriceDiv.textContent = `${gf.formula}`;
-              const groupFormulaDiv = document.createElement('div');
-              groupFormulaDiv.className = 'group-formula';
-              groupFormulaDiv.textContent = `=${gf.formula}`;
               eventDiv.appendChild(groupPriceDiv);
-              eventDiv.appendChild(groupFormulaDiv);
               if (gf.hasDiscount) {
                 const discountDiv = document.createElement('div');
                 discountDiv.className = 'group-discount';
@@ -1110,24 +1109,25 @@
             const totalDiv = document.createElement('div');
             totalDiv.className = 'event-total';
             totalDiv.textContent = `$${formatPrice(eventPrice)}`;
-            const formulaDiv = document.createElement('div');
-            formulaDiv.className = 'event-formula';
-            formulaDiv.textContent = `=${formula}`;
             eventDiv.appendChild(totalDiv);
-            eventDiv.appendChild(formulaDiv);
+            if (showFormula) {
+              const formulaDiv = document.createElement('div');
+              formulaDiv.className = 'event-formula';
+              formulaDiv.textContent = `=${formula}`;
+              eventDiv.appendChild(formulaDiv);
+            }
             if (hasDiscount) {
               const discountDiv = document.createElement('div');
               discountDiv.className = 'event-discount';
               discountDiv.textContent = '已應用優惠';
               eventDiv.appendChild(discountDiv);
             }
-          }
-
-          if (adminFee > 0) {
-            const adminFeeDiv = document.createElement('div');
-            adminFeeDiv.className = 'event-admin-fee';
-            adminFeeDiv.textContent = '已包括行政費';
-            eventDiv.appendChild(adminFeeDiv);
+            if (adminFee > 0) {
+              const adminFeeDiv = document.createElement('div');
+              adminFeeDiv.className = 'event-admin-fee';
+              adminFeeDiv.textContent = '已包括行政費';
+              eventDiv.appendChild(adminFeeDiv);
+            }
           }
 
           confirmEvents.appendChild(eventDiv);
