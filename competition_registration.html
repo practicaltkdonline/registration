@@ -105,6 +105,13 @@
       flex-grow: 1;
       white-space: pre-wrap;
     }
+    .event-list .card-text .field-group-deadline .field-content {
+      color: #D32F2F; /* 紅色 */
+    }
+    .event-list .card-text .field-group-remark .field-content {
+      font-size: 12px; /* 備註字體較小 */
+      color: #555;
+    }
     .category-group {
       display: flex;
       flex-direction: column;
@@ -326,13 +333,6 @@
       .date-group select#birthYear {
         width: 110px;
       }
-      #floatingSubmitBtn {
-        bottom: 15px;
-        right: 15px;
-        width: 50px;
-        height: 50px;
-        font-size: 12px;
-      }
       .event-list .card {
         margin-bottom: 15px;
       }
@@ -471,7 +471,7 @@
       const eventListError = document.getElementById('eventListError');
       const spreadsheetId = '1FFuryD0S4CbOsw4HJKQQHSRtek_JwWlxGx1FmPEER9Y';
       const sheetId = '1485917481';
-      const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&gid=${sheetId}&range=A2:G`;
+      const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&gid=${sheetId}&range=A2:H`;
 
       // 定義標籤並動態生成 CSS
       const labels = {
@@ -523,10 +523,11 @@
           const location = row.c[4]?.v || '未提供';
           const target = row.c[5]?.v || '未提供';
           const deadline = row.c[6]?.v || '未提供';
+          const remark = row.c[7]?.v || ''; // 讀取 H 欄（備註）
 
           if (eventName && categories) {
             eventOrder.push(eventName);
-            eventDetails[eventName] = { date, location, target, deadline };
+            eventDetails[eventName] = { date, location, target, deadline, remark };
             const categoryArray = categories.split(',').map(cat => cat.trim());
             eventCategories[eventName] = categoryArray;
             categoryArray.forEach(category => {
@@ -605,6 +606,20 @@
                 </div>
               `;
             }
+            let remarkContent = '';
+            if (remark && remark !== '') {
+              const remarkLines = remark.split('\n').map(line => line.trim()).filter(line => line);
+              remarkContent = `
+                <div class="field-group field-group-remark">
+                  ${remarkLines.map(line => `
+                    <div class="field-row">
+                      <span class="field-label"></span>
+                      <span class="field-content">${line}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              `;
+            }
 
             const cardContent = `
               <div class="card${selectedCategories[eventName]?.length > 0 ? ' selected' : ''}" onclick="showCategoriesModal('${eventName}')">
@@ -615,6 +630,7 @@
                     ${locationContent}
                     ${targetContent}
                     ${deadlineContent}
+                    ${remarkContent}
                   </div>
                 </div>
               </div>
@@ -771,7 +787,6 @@
       let groupFormulas = [];
       let hasDiscount = false;
 
-      // 檢查是否使用分組優惠（groups 字段）
       const groups = discountRules[eventName]?.filter(group => group.name && group.categories && group.discounts) || [];
       if (groups.length > 0) {
         groups.forEach(group => {
@@ -801,7 +816,6 @@
           }
         });
       } else {
-        // 原有邏輯：非分組優惠
         const rule = discountRules[eventName]?.find(r => 
           (r.count === selectedCategoriesClean.length) || 
           (r.condition && r.condition.every(c => selectedCategoriesClean.includes(c)) && r.condition.length === selectedCategoriesClean.length)
