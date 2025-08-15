@@ -16,7 +16,7 @@
       color: #333;
     }
     .form-container {
-      background: white;
+      background: linear-gradient(to bottom, #ffffff, #f9fafb);
       padding: 32px;
       border-radius: 12px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
@@ -29,7 +29,7 @@
       margin-bottom: 8px;
       font-weight: 500;
       font-size: 16px;
-      color: #333;
+      color: #1a3c5e;
     }
     input, select, button {
       width: 100%;
@@ -62,24 +62,39 @@
     }
     .event-list .card {
       cursor: pointer;
-      transition: transform 0.3s, box-shadow 0.3s;
-      margin-bottom: 20px;
-      border: 1px solid #B0BEC5;
-      min-height: 250px;
-      max-height: 400px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      margin-bottom: 24px;
+      border: 1px solid #d1d9e6;
+      border-radius: 12px;
+      min-height: 300px;
+      max-height: 450px;
       overflow-y: auto;
+      background: linear-gradient(to bottom, #ffffff, #f9fafb);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
     .event-list .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-6px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
     }
     .event-list .card.selected {
       border: 2px solid #1976D2;
-      background-color: #e3f2fd;
+      background: linear-gradient(to bottom, #e3f2fd, #d6eaff);
+      box-shadow: 0 6px 16px rgba(25, 118, 210, 0.2);
+    }
+    .event-list .card-body {
+      padding: 20px;
+    }
+    .event-list .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a3c5e;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e0e7ff;
     }
     .event-list .card-text {
       font-size: 14px;
-      color: #555;
+      color: #666;
     }
     .event-list .card-text p {
       margin: 4px 0;
@@ -88,49 +103,67 @@
     .event-list .card-text .field-group {
       display: flex;
       flex-direction: column;
-      margin-bottom: 4px;
+      margin-bottom: 8px;
     }
     .event-list .card-text .field-row {
       display: flex;
       align-items: flex-start;
+      padding: 2px 0;
     }
     .event-list .card-text .field-label {
       min-width: 0;
       white-space: nowrap;
-      font-weight: bold;
+      font-weight: 600;
+      color: #333;
       margin-right: 4px;
       display: inline-block;
     }
     .event-list .card-text .field-content {
       flex-grow: 1;
       white-space: pre-wrap;
+      color: #666;
     }
     .event-list .card-text .field-group-deadline .field-content {
-      color: #D32F2F; /* 紅色 */
+      color: #D32F2F;
     }
     .event-list .card-text .field-group-remark .field-content {
-      font-size: 12px; /* 備註字體較小 */
-      color: #555;
+      font-size: 12px;
+      color: #666;
+      font-style: italic;
     }
     .category-group {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 16px;
+      padding: 16px;
+      background: #f9fafb;
+      border-radius: 8px;
     }
     .category-group label {
       display: flex;
       align-items: center;
       font-weight: normal;
       font-size: 16px;
+      color: #333;
+      padding: 8px 12px;
+      transition: background-color 0.2s;
+    }
+    .category-group label:hover {
+      background: #e0e7ff;
+      border-radius: 6px;
     }
     .category-group input[type="checkbox"] {
       width: auto;
       margin-right: 12px;
+      accent-color: #1976D2;
     }
     .error {
       color: #D32F2F;
       font-size: 14px;
       margin-top: 6px;
+      padding: 8px;
+      background: #ffebee;
+      border-radius: 6px;
       display: none;
     }
     .modal {
@@ -146,7 +179,7 @@
       z-index: 1000;
     }
     .modal-content {
-      background-color: white;
+      background: linear-gradient(to bottom, #ffffff, #f9fafb);
       padding: 32px;
       border-radius: 12px;
       width: 90%;
@@ -157,6 +190,14 @@
       height: 80vh;
       max-height: 600px;
     }
+    .modal-content h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a3c5e;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e0e7ff;
+    }
     .modal-scroll {
       overflow-y: auto;
       flex-grow: 1;
@@ -165,31 +206,41 @@
     .modal-content p {
       font-size: 16px;
       margin: 12px 0;
+      color: #333;
+    }
+    .modal-content p strong {
+      color: #1a3c5e;
     }
     .event-item {
       margin-bottom: 12px;
+      padding-left: 12px;
+      border-left: 3px solid #1976D2;
     }
     .event-item strong::before {
       content: '．';
       margin-right: 5px;
+      color: #1976D2;
     }
     .category-item {
       margin-left: 20px;
       margin-top: 4px;
+      color: #555;
     }
     .category-item::before {
       content: '-';
       margin-right: 5px;
+      color: #1976D2;
     }
     .event-total {
       margin-left: 20px;
       font-weight: bold;
       margin-top: 8px;
+      color: #333;
     }
     .event-discount, .event-admin-fee {
       margin-left: 20px;
       font-size: 14px;
-      color: #555;
+      color: #666;
       margin-top: 4px;
     }
     .group-total {
@@ -197,19 +248,21 @@
       font-size: 14px;
       font-weight: bold;
       margin-top: 8px;
+      color: #333;
     }
     .group-discount {
       margin-left: 40px;
       font-size: 14px;
-      color: #555;
+      color: #666;
       margin-top: 4px;
     }
     .total-sum {
       margin-top: 20px;
       font-size: 18px;
       font-weight: bold;
-      border-top: 1px solid #B0BEC5;
-      padding-top: 10px;
+      color: #1a3c5e;
+      border-top: 2px solid #e0e7ff;
+      padding-top: 12px;
     }
     button.confirm, button.return-button, button.confirm-selection, button.next-step {
       background-color: #1976D2;
@@ -217,6 +270,8 @@
       border: none;
       cursor: pointer;
       padding: 12px;
+      border-radius: 8px;
+      transition: background-color 0.3s, transform 0.3s;
     }
     button.confirm:hover, button.return-button:hover, button.confirm-selection:hover, button.next-step:hover {
       background-color: #1565C0;
@@ -226,6 +281,8 @@
       background-color: #B0BEC5;
       color: #333;
       padding: 12px;
+      border-radius: 8px;
+      transition: background-color 0.3s, transform 0.3s;
     }
     button.cancel:hover {
       background-color: #90A4AE;
@@ -253,7 +310,7 @@
     }
     #thankYouPage {
       display: none;
-      background: white;
+      background: linear-gradient(to bottom, #ffffff, #f9fafb);
       padding: 32px;
       border-radius: 12px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
@@ -261,8 +318,11 @@
     }
     #thankYouPage h2 {
       font-size: 24px;
+      font-weight: 700;
+      color: #1a3c5e;
       margin-bottom: 16px;
-      color: #333;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e0e7ff;
     }
     #thankYouPage p {
       font-size: 16px;
@@ -288,7 +348,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       cursor: pointer;
       transition: background-color 0.3s, transform 0.3s;
       z-index: 1000;
@@ -490,7 +550,7 @@
           .event-list .card-text .field-group-${key} .field-label {
             width: ${labelLength}em;
             white-space: nowrap;
-            font-weight: bold;
+            font-weight: 600;
             margin-right: 4px;
             display: inline-block;
           }
@@ -522,10 +582,10 @@
           const discounts = row.c[2]?.v || '{}';
           const date = row.c[3]?.v || '未提供';
           const location = row.c[4]?.v || '未提供';
-          const eventCategoriesData = row.c[5]?.v || '未提供'; // F 欄：項目
-          const target = row.c[6]?.v || '未提供'; // G 欄：對象
-          const deadline = row.c[7]?.v || '未提供'; // H 欄：截止日期
-          const remark = row.c[8]?.v || ''; // I 欄：備註
+          const eventCategoriesData = row.c[5]?.v || '未提供';
+          const target = row.c[6]?.v || '未提供';
+          const deadline = row.c[7]?.v || '未提供';
+          const remark = row.c[8]?.v || '';
 
           if (eventName && categories) {
             eventOrder.push(eventName);
