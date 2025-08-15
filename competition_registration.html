@@ -138,6 +138,7 @@
       padding: 16px;
       background: #f9fafb;
       border-radius: 8px;
+      position: relative;
     }
     .category-group label {
       display: flex;
@@ -156,6 +157,24 @@
       width: auto;
       margin-right: 12px;
       accent-color: #1976D2;
+    }
+    .scroll-indicator {
+      display: none;
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 14px;
+      color: #666;
+      background: #e0e7ff;
+      padding: 6px 12px;
+      border-radius: 12px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      animation: bounce 1.5s infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-5px); }
     }
     .error {
       color: #D32F2F;
@@ -262,12 +281,12 @@
       bottom: 60px;
       font-size: 18px;
       color: #1a3c5e;
-      padding: 12px 20px;
-      margin: 12px 0 20px 12px;
+      padding: 8px 16px;
+      margin: 10px 0 16px 12px;
       background: #f9fafb;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      line-height: 1.6;
+      line-height: 1.5;
     }
     .total-sum .formula {
       font-size: 14px;
@@ -413,8 +432,14 @@
       }
       .total-sum {
         bottom: 50px;
-        padding: 10px 15px;
-        margin: 10px 0 15px 10px;
+        padding: 6px 12px;
+        margin: 8px 0 12px 10px;
+      }
+      .category-group {
+        padding-bottom: 40px;
+      }
+      .scroll-indicator {
+        display: block;
       }
     }
   </style>
@@ -747,6 +772,7 @@
     window.addEventListener('load', () => {
       loadEventsFromSheet();
       initializePersonalInfo();
+      setupScrollIndicator();
     });
 
     function initializePersonalInfo() {
@@ -775,6 +801,31 @@
 
       const dojoSelect = document.getElementById('dojo');
       dojoSelect.addEventListener('change', toggleCustomDojo);
+    }
+
+    function setupScrollIndicator() {
+      const categoryModal = document.getElementById('categoryModal');
+      const modalScroll = categoryModal.querySelector('.modal-scroll');
+      const categoryGroup = document.getElementById('categoryGroup');
+
+      function checkScroll() {
+        const scrollIndicator = categoryGroup.querySelector('.scroll-indicator');
+        if (scrollIndicator && modalScroll.scrollHeight > modalScroll.clientHeight) {
+          scrollIndicator.style.display = 'block';
+          modalScroll.addEventListener('scroll', () => {
+            if (modalScroll.scrollTop + modalScroll.clientHeight >= modalScroll.scrollHeight - 10) {
+              scrollIndicator.style.display = 'none';
+            } else {
+              scrollIndicator.style.display = 'block';
+            }
+          });
+        } else if (scrollIndicator) {
+          scrollIndicator.style.display = 'none';
+        }
+      }
+
+      categoryModal.addEventListener('show', checkScroll);
+      window.addEventListener('resize', checkScroll);
     }
 
     function isLeapYear(year) {
@@ -818,7 +869,13 @@
       const categoryTitle = document.getElementById('categoryTitle');
 
       categoryTitle.textContent = `選擇 ${eventName} 的項目`;
-      categoryGroup.innerHTML = '';
+      categoryGroup.innerHTML = ''; // 清空內容
+
+      // 動態創建 scroll-indicator
+      const scrollIndicator = document.createElement('div');
+      scrollIndicator.className = 'scroll-indicator';
+      scrollIndicator.textContent = '↓ 向下滾動查看更多';
+      categoryGroup.appendChild(scrollIndicator);
 
       tempCategories[eventName] = selectedCategories[eventName] ? [...selectedCategories[eventName]] : [];
       eventCategories[eventName].forEach(category => {
@@ -830,10 +887,11 @@
         checkbox.onchange = () => updateTempCategories(eventName, checkbox.checked, category);
         label.appendChild(checkbox);
         label.appendChild(document.createTextNode(category));
-        categoryGroup.appendChild(label);
+        categoryGroup.insertBefore(label, scrollIndicator);
       });
 
       categoryModal.style.display = 'flex';
+      categoryModal.dispatchEvent(new Event('show'));
     }
 
     let tempCategories = {};
