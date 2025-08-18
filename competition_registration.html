@@ -696,10 +696,37 @@
 
             try {
               const discountData = JSON.parse(discounts);
-              discountRules[eventName] = discountData.discounts || discountData.groups || [];
               adminFees[eventName] = discountData.adminFee || 0;
+              discountRules[eventName] = [];
+              if (discountData.groups && Array.isArray(discountData.groups)) {
+                discountData.groups.forEach(group => {
+                  if (group.categories && group.discounts) {
+                    group.discounts.forEach(discount => {
+                      if (discount.count && discount.totalPrice !== undefined) {
+                        discountRules[eventName].push({
+                          groupName: group.name || '未命名組',
+                          condition: group.categories.slice(0, discount.count),
+                          totalPrice: discount.totalPrice
+                        });
+                      }
+                    });
+                  }
+                });
+              }
+              // 支援舊格式的 discounts
+              if (discountData.discounts && Array.isArray(discountData.discounts)) {
+                discountData.discounts.forEach(discount => {
+                  if (discount.condition && discount.totalPrice !== undefined) {
+                    discountRules[eventName].push({
+                      groupName: '單項或組合優惠',
+                      condition: discount.condition,
+                      totalPrice: discount.totalPrice
+                    });
+                  }
+                });
+              }
             } catch (error) {
-              console.error(`解析 ${eventName} 的優惠規則或行政費失敗:`, error);
+              console.error(`解析 ${eventName} 的優惠規則或行政費失敗: ${error.message}, JSON 內容: ${discounts}`);
               discountRules[eventName] = [];
               adminFees[eventName] = 0;
             }
@@ -819,6 +846,73 @@
         eventListError.style.display = 'block';
       }
       updateSelectedEvents();
+    }
+
+    function formatPrice(price) {
+      return Number.isInteger(price) ? price.toString() : price.toFixed(1).replace(/\.0$/, '');
+    }
+
+    function calculateDiscountedPrice(eventName, selected, calculateFormula = false) {
+      let totalPrice = 0;
+      const adminFee = adminFees[eventName] || 0;
+      const selectedCategoriesClean = selected.map(category => category.match(/(.+?)\s*-\s*\$/)?.[1].trim() || category);
+      let formulaParts = [];
+      let groupFormulas = [];
+      let hasDiscount = false;
+
+      // 按 condition 長度降序排序，優先匹配多項優惠
+      const rules = (discountRules[eventName] || [])
+        .filter(rule => rule.condition && rule.totalPrice !== undefined)
+        .sort((a, b) => b.condition.length - a.condition.length);
+
+      let remainingCategories = [...selectedCategoriesClean];
+
+      // 處理所有優惠規則
+      rules.forEach(rule => {
+        const ruleCategories = rule.condition;
+        if (ruleCategories.every(cat => remainingCategories.includes(cat)) && 
+            ruleCategories.length === rule.condition.length && 
+            ruleCategories.length <= remainingCategories.length) {
+          remainingCategories = remainingCategories.filter(cat => !ruleCategories.includes(cat));
+          totalPrice += rule.totalPrice;
+          hasDiscount = true;
+          if (calculateFormula) {
+            groupFormulas.push({
+              formula: `$${formatPrice(rule.totalPrice)} (${rule.groupName})`,
+              hasDiscount: true
+            });
+          }
+        }
+      });
+
+      // 處理未匹配優惠的剩餘項目
+      remainingCategories.forEach(category => {
+        const price = categoryPrices[`${eventName}:${category}`] || 0;
+        totalPrice += price;
+        if (calculateFormula) {
+          formulaParts.push(`$${formatPrice(price)}`);
+        }
+      });
+
+      // 添加行政費
+      totalPrice += adminFee;
+      if (calculateFormula && adminFee > 0) {
+        formulaParts.push(`$${formatPrice(adminFee)} (行政費)`);
+      }
+
+      // 僅在多項、行政費或有優惠時顯示算式
+      const showFormula = calculateFormula && (selectedCategoriesClean.length > 1 || adminFee > 0 || hasDiscount);
+
+      return calculateFormula 
+        ? { 
+            totalPrice, 
+            formula: groupFormulas.map(gf => gf.formula).join('+') + (formulaParts.length > 0 ? `+${formulaParts.join('+')}` : ''), 
+            hasDiscount,
+            adminFee,
+            groupFormulas,
+            showFormula
+          }
+        : totalPrice;
     }
 
     window.addEventListener('load', () => {
@@ -958,85 +1052,6 @@
       });
     }
 
-    function formatPrice(price) {
-      return Number.isInteger(price) ? price.toString() : price.toFixed(1).replace(/\.0$/, '');
-    }
-
-    function calculateDiscountedPrice(eventName, selected, calculateFormula = false) {
-      let totalPrice = 0;
-      const adminFee = adminFees[eventName] || 0;
-      const selectedCategoriesClean = selected.map(category => category.match(/(.+?)\s*-\s*\$/)?.[1].trim() || category);
-      let formulaParts = [];
-      let groupFormulas = [];
-      let hasDiscount = false;
-
-      const groups = discountRules[eventName]?.filter(group => group.name && group.categories && group.discounts) || [];
-      if (groups.length > 0) {
-        groups.forEach(group => {
-          const groupCategories = selectedCategoriesClean.filter(cat => group.categories.includes(cat));
-          if (groupCategories.length > 0) {
-            const rule = group.discounts.find(r => r.count === groupCategories.length);
-            let groupPrice = 0;
-            let groupFormula = '';
-            let groupHasDiscount = false;
-
-            if (rule && rule.totalPrice !== undefined) {
-              groupPrice = rule.totalPrice;
-              groupHasDiscount = true;
-              groupFormula = `$${formatPrice(groupPrice)}`;
-            } else {
-              groupCategories.forEach(category => {
-                const price = categoryPrices[`${eventName}:${category}`] || 0;
-                groupPrice += price;
-                if (calculateFormula) groupFormula += (groupFormula ? '+' : '') + `$${formatPrice(price)}`;
-              });
-              groupFormula = `$${formatPrice(groupPrice)}`;
-            }
-
-            totalPrice += groupPrice;
-            if (calculateFormula) groupFormulas.push({ formula: groupFormula, hasDiscount: groupHasDiscount });
-            if (groupHasDiscount) hasDiscount = true;
-          }
-        });
-      }
-
-      const remainingCategories = selectedCategoriesClean.filter(cat => 
-        !groups.some(group => group.categories.includes(cat))
-      );
-      remainingCategories.forEach(category => {
-        let price = categoryPrices[`${eventName}:${category}`] || 0;
-        let categoryHasDiscount = false;
-        const discountRule = discountRules[eventName]?.find(r => 
-          r.condition && r.condition.includes(category) && r.condition.length === 1 && r.totalPrice !== undefined
-        );
-        if (discountRule) {
-          price = discountRule.totalPrice;
-          categoryHasDiscount = true;
-          hasDiscount = true;
-        }
-        totalPrice += price;
-        if (calculateFormula) formulaParts.push(`$${formatPrice(price)}`);
-      });
-
-      totalPrice += adminFee;
-      if (calculateFormula && adminFee > 0) formulaParts.push(`$${formatPrice(adminFee)}`);
-
-      const showFormula = calculateFormula && (selectedCategoriesClean.length > 1 || adminFee > 0 || hasDiscount);
-
-      return calculateFormula 
-        ? { 
-            totalPrice, 
-            formula: groups.length > 0 
-              ? groupFormulas.map(gf => gf.formula).join('+') + (formulaParts.length > 0 ? `+${formulaParts.join('+')}` : '') 
-              : formulaParts.join('+'), 
-            hasDiscount,
-            adminFee,
-            groupFormulas: groups.length > 0 ? groupFormulas : [],
-            showFormula
-          }
-        : totalPrice;
-    }
-
     function updateSelectedEvents() {
       const selectedEventsInput = document.getElementById('selectedEvents');
       const totalPriceInput = document.getElementById('totalPrice');
@@ -1117,42 +1132,28 @@
           totalPrice += eventPrice;
           totalFormulaParts.push(`$${formatPrice(eventPrice)}`);
 
-          if (groupFormulas.length > 0) {
-            groupFormulas.forEach(gf => {
-              const groupPriceDiv = document.createElement('div');
-              groupPriceDiv.className = 'group-total';
-              groupPriceDiv.textContent = `${gf.formula}`;
-              eventDiv.appendChild(groupPriceDiv);
-              if (gf.hasDiscount) {
-                const discountDiv = document.createElement('div');
-                discountDiv.className = 'group-discount';
-                discountDiv.textContent = '已應用優惠';
-                eventDiv.appendChild(discountDiv);
-              }
-            });
-          } else {
-            const totalDiv = document.createElement('div');
-            totalDiv.className = 'event-total';
-            totalDiv.textContent = `$${formatPrice(eventPrice)}`;
-            eventDiv.appendChild(totalDiv);
-            if (showFormula) {
-              const formulaDiv = document.createElement('div');
-              formulaDiv.className = 'event-formula';
-              formulaDiv.textContent = `=${formula}`;
-              eventDiv.appendChild(formulaDiv);
-            }
-            if (hasDiscount) {
-              const discountDiv = document.createElement('div');
-              discountDiv.className = 'event-discount';
-              discountDiv.textContent = '已應用優惠';
-              eventDiv.appendChild(discountDiv);
-            }
-            if (adminFee > 0) {
-              const adminFeeDiv = document.createElement('div');
-              adminFeeDiv.className = 'event-admin-fee';
-              adminFeeDiv.textContent = '已包括行政費';
-              eventDiv.appendChild(adminFeeDiv);
-            }
+          const totalDiv = document.createElement('div');
+          totalDiv.className = 'event-total';
+          totalDiv.textContent = `$${formatPrice(eventPrice)}`;
+          eventDiv.appendChild(totalDiv);
+
+          if (showFormula) {
+            const formulaDiv = document.createElement('div');
+            formulaDiv.className = 'event-formula';
+            formulaDiv.textContent = `=${formula}`;
+            eventDiv.appendChild(formulaDiv);
+          }
+          if (hasDiscount) {
+            const discountDiv = document.createElement('div');
+            discountDiv.className = 'event-discount';
+            discountDiv.textContent = '已應用優惠';
+            eventDiv.appendChild(discountDiv);
+          }
+          if (adminFee > 0) {
+            const adminFeeDiv = document.createElement('div');
+            adminFeeDiv.className = 'event-admin-fee';
+            adminFeeDiv.textContent = '已包括行政費';
+            eventDiv.appendChild(adminFeeDiv);
           }
 
           confirmEvents.appendChild(eventDiv);
