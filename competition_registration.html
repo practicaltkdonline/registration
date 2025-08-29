@@ -175,6 +175,33 @@
       margin-right: 12px;
       accent-color: #1976D2;
     }
+    .category-sum {
+      position: sticky;
+      bottom: 0;
+      font-size: 18px;
+      color: #1a3c5e;
+      padding: 8px 16px;
+      margin: 10px 0 16px 12px;
+      line-height: 1.5;
+      border-top: 2px solid #e0e7ff; /* 分隔線 */
+    }
+    .category-sum .formula {
+      font-size: 14px;
+      font-weight: normal;
+      color: #666;
+      display: block;
+      margin-top: 4px;
+    }
+    .category-sum .discount {
+      font-size: 14px;
+      color: #666;
+      margin-top: 4px;
+    }
+    .category-sum .admin-fee {
+      font-size: 14px;
+      color: #666;
+      margin-top: 4px;
+    }
     .error {
       color: #D32F2F;
       font-size: 14px;
@@ -198,10 +225,10 @@
     }
     .modal-content {
       background: linear-gradient(to bottom, #ffffff, #f9fafb);
-      padding: calc(32px + env(safe-area-inset-top)) 32px 32px 32px; /* 考慮頂部安全區域 */
+      padding: calc(32px + env(safe-area-inset-top)) 32px 32px 32px;
       border-radius: 12px;
       max-width: 600px;
-      max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)); /* 適應安全區域 */
+      max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
       display: flex;
       flex-direction: column;
@@ -210,9 +237,9 @@
     }
     .modal-content.full-screen {
       max-width: 100%;
-      max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)); /* 適應安全區域 */
+      max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
       width: 100%;
-      height: auto; /* 改為 auto 以適應內容 */
+      height: auto;
     }
     .modal-content h2 {
       font-size: 24px;
@@ -221,15 +248,15 @@
       margin-bottom: 16px;
       padding-bottom: 8px;
       border-bottom: 2px solid #e0e7ff;
-      margin-top: 0; /* 確保標題不被裁切 */
-      position: relative; /* 防止標題被遮蓋 */
-      z-index: 1; /* 確保標題在滾動時不被遮蓋 */
+      margin-top: 0;
+      position: relative;
+      z-index: 1;
     }
     .modal-scroll {
       overflow-y: auto;
       flex-grow: 1;
       margin-bottom: 20px;
-      padding-top: 0; /* 確保滾動區域不影響標題 */
+      padding-top: 0;
     }
     .modal-content p {
       font-size: 16px;
@@ -240,20 +267,20 @@
       color: #1a3c5e;
     }
     #categoryModal .modal-content {
-      padding-bottom: 16px; /* 明確設置，無額外底部空間 */
+      padding-bottom: 16px;
     }
     #confirmModal .modal-content .button-group,
     #personalInfoModal .modal-content .button-group {
       display: flex;
       gap: 10px;
       padding-top: 10px;
-      padding-bottom: 40px; /* 為確認頁和個人資料頁按鈕留出空間 */
+      padding-bottom: 40px;
     }
     #categoryModal .modal-content .button-group {
       display: flex;
       gap: 10px;
       padding-top: 10px;
-      padding-bottom: 0; /* 比賽選擇模態框不添加額外空間 */
+      padding-bottom: 0;
     }
     .event-item {
       margin-bottom: 12px;
@@ -383,12 +410,12 @@
     #thankYouPage {
       display: none;
       background: linear-gradient(to bottom, #ffffff, #f9fafb);
-      padding: calc(32px + env(safe-area-inset-top)) 32px 32px 32px; /* 考慮頂部安全區域 */
+      padding: calc(32px + env(safe-area-inset-top)) 32px 32px 32px;
       border-radius: 12px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
       text-align: center;
       width: 100%;
-      min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)); /* 適應安全區域 */
+      min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
       position: fixed;
       top: 0;
       left: 0;
@@ -405,9 +432,9 @@
       margin-bottom: 16px;
       padding-bottom: 8px;
       border-bottom: 2px solid #e0e7ff;
-      margin-top: 0; /* 確保標題不被裁切 */
-      position: relative; /* 防止標題被遮蓋 */
-      z-index: 1; /* 確保標題在滾動時不被遮蓋 */
+      margin-top: 0;
+      position: relative;
+      z-index: 1;
     }
     #thankYouPage p {
       font-size: 18px;
@@ -418,7 +445,7 @@
       display: flex;
       gap: 10px;
       justify-content: center;
-      padding-bottom: 40px; /* 為感謝頁按鈕留出空間 */
+      padding-bottom: 40px;
     }
     #floatingSubmitBtn {
       position: fixed;
@@ -462,10 +489,10 @@
     }
     @media (max-width: 600px) {
       .form-container, #thankYouPage {
-        padding: calc(24px + env(safe-area-inset-top)) 24px 24px 24px; /* 考慮頂部安全區域 */
+        padding: calc(24px + env(safe-area-inset-top)) 24px 24px 24px;
       }
       .modal-content {
-        padding: calc(24px + env(safe-area-inset-top)) 24px 24px 24px; /* 考慮頂部安全區域 */
+        padding: calc(24px + env(safe-area-inset-top)) 24px 24px 24px;
       }
       .date-group {
         gap: 8px;
@@ -567,6 +594,7 @@
       <div class="modal-scroll">
         <h2 id="categoryTitle"></h2>
         <div class="category-group" id="categoryGroup"></div>
+        <div id="categorySum" class="category-sum"></div>
       </div>
       <div class="button-group">
         <button type="button" class="cancel" onclick="closeCategoryModal()">取消</button>
@@ -713,7 +741,6 @@
                   }
                 });
               }
-              // 支援舊格式的 discounts
               if (discountData.discounts && Array.isArray(discountData.discounts)) {
                 discountData.discounts.forEach(discount => {
                   if (discount.condition && discount.totalPrice !== undefined) {
@@ -860,14 +887,12 @@
       let groupFormulas = [];
       let hasDiscount = false;
 
-      // 按 condition 長度降序排序，優先匹配多項優惠
       const rules = (discountRules[eventName] || [])
         .filter(rule => rule.condition && rule.totalPrice !== undefined)
         .sort((a, b) => b.condition.length - a.condition.length);
 
       let remainingCategories = [...selectedCategoriesClean];
 
-      // 處理所有優惠規則
       rules.forEach(rule => {
         const ruleCategories = rule.condition;
         if (ruleCategories.every(cat => remainingCategories.includes(cat)) && 
@@ -885,7 +910,6 @@
         }
       });
 
-      // 處理未匹配優惠的剩餘項目
       remainingCategories.forEach(category => {
         const price = categoryPrices[`${eventName}:${category}`] || 0;
         totalPrice += price;
@@ -894,13 +918,11 @@
         }
       });
 
-      // 添加行政費
       totalPrice += adminFee;
       if (calculateFormula && adminFee > 0) {
         formulaParts.push(`$${formatPrice(adminFee)} (行政費)`);
       }
 
-      // 僅在多項、行政費或有優惠時顯示算式
       const showFormula = calculateFormula && (selectedCategoriesClean.length > 1 || adminFee > 0 || hasDiscount);
 
       return calculateFormula 
@@ -989,9 +1011,11 @@
       const categoryModal = document.getElementById('categoryModal');
       const categoryGroup = document.getElementById('categoryGroup');
       const categoryTitle = document.getElementById('categoryTitle');
+      const categorySum = document.getElementById('categorySum');
 
       categoryTitle.textContent = `選擇 ${eventName} 的項目`;
       categoryGroup.innerHTML = '';
+      categorySum.innerHTML = '';
 
       tempCategories[eventName] = selectedCategories[eventName] ? [...selectedCategories[eventName]] : [];
       eventCategories[eventName].forEach(category => {
@@ -1000,7 +1024,10 @@
         checkbox.type = 'checkbox';
         checkbox.value = category;
         checkbox.checked = tempCategories[eventName].includes(category);
-        checkbox.onchange = () => updateTempCategories(eventName, checkbox.checked, category);
+        checkbox.onchange = () => {
+          updateTempCategories(eventName, checkbox.checked, category);
+          updateCategorySum(eventName);
+        };
         label.appendChild(checkbox);
         label.appendChild(document.createTextNode(category));
         categoryGroup.appendChild(label);
@@ -1012,6 +1039,7 @@
         categoryGroup.style.overflowY = 'hidden';
       }
 
+      updateCategorySum(eventName);
       categoryModal.style.display = 'flex';
     }
 
@@ -1022,6 +1050,38 @@
         if (!tempCategories[eventName].includes(category)) tempCategories[eventName].push(category);
       } else {
         tempCategories[eventName] = tempCategories[eventName].filter(c => c !== category);
+      }
+    }
+
+    function updateCategorySum(eventName) {
+      const categorySum = document.getElementById('categorySum');
+      categorySum.innerHTML = '';
+      if (tempCategories[eventName]?.length > 0) {
+        const { totalPrice, formula, hasDiscount, adminFee, showFormula } = calculateDiscountedPrice(eventName, tempCategories[eventName], true);
+        const sumDiv = document.createElement('div');
+        sumDiv.className = 'category-sum';
+        const totalText = document.createElement('span');
+        totalText.textContent = `總數 $${formatPrice(totalPrice)}`;
+        sumDiv.appendChild(totalText);
+        if (showFormula) {
+          const formulaText = document.createElement('span');
+          formulaText.className = 'formula';
+          formulaText.textContent = `=${formula}`;
+          sumDiv.appendChild(formulaText);
+        }
+        if (hasDiscount) {
+          const discountText = document.createElement('span');
+          discountText.className = 'discount';
+          discountText.textContent = '已應用優惠';
+          sumDiv.appendChild(discountText);
+        }
+        if (adminFee > 0) {
+          const adminFeeText = document.createElement('span');
+          adminFeeText.className = 'admin-fee';
+          adminFeeText.textContent = '已包括行政費';
+          sumDiv.appendChild(adminFeeText);
+        }
+        categorySum.appendChild(sumDiv);
       }
     }
 
