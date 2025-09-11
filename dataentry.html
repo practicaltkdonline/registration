@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>實用盃2025報名</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background: linear-gradient(135deg, #f3e7e9, #e3eeff);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+    .container {
+      max-width: 700px;
+      width: 100%;
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      position: relative;
+    }
+    .error {
+      color: #dc2626;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+    input, select, button, a {
+      border-radius: 0.375rem;
+      transition: all 0.3s ease;
+    }
+    button:hover, a:hover {
+      transform: translateY(-1px);
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .view-order-btn {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+    }
+    @media (max-width: 640px) {
+      .container {
+        padding: 1rem;
+      }
+      .flex.space-x-2 > * {
+        flex: 1;
+      }
+      .view-order-btn {
+        top: 0.5rem;
+        left: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container mx-auto">
+    <a href="#" class="view-order-btn bg-gray-600 text-white px-3 py-1 rounded-md text-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500">查看</a>
+    <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">實用盃2025報名</h1>
+    <div id="sheetError" class="text-red-500 text-center mb-4 hidden">無法載入比賽資料，請檢查試算表是否公開</div>
+    <form id="registrationForm" class="space-y-4">
+      <div>
+        <label for="dojo" class="block text-sm font-medium text-gray-700">所屬道場 <span class="text-red-500">*</span></label>
+        <select id="dojo" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" onchange="toggleCustomDojo()">
+          <option value="">請選擇</option>
+          <option value="觀塘總館">觀塘總館</option>
+          <option value="紅磡-培匠道場">紅磡-培匠道場</option>
+          <option value="鰂魚涌體育館">鰂魚涌體育館</option>
+          <option value="北角官立小學">北角官立小學</option>
+          <option value="大角嘴天主教小學">大角嘴天主教小學</option>
+          <option value="佛教林金殿紀念小學">佛教林金殿紀念小學</option>
+          <option value="其他（請手動輸入）">其他（請手動輸入）</option>
+        </select>
+      </div>
+      <div id="customDojoDiv" class="hidden">
+        <label for="customDojo" class="block text-sm font-medium text-gray-700">其他道場名稱</label>
+        <input type="text" id="customDojo" name="entry.1166050402" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+      </div>
+      <div>
+        <label for="coach" class="block text-sm font-medium text-gray-700">所屬教練 <span class="text-red-500">*</span></label>
+        <select id="coach" name="entry.772146913" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+          <option value="">請選擇</option>
+          <option value="歐其煬教練">歐其煬教練</option>
+          <option value="李立富教練">李立富教練</option>
+          <option value="蔡劍堯教練">蔡劍堯教練</option>
+        </select>
+      </div>
+      <div>
+        <label for="name" class="block text-sm font-medium text-gray-700">參加者姓名 <span class="text-red-500">*</span></label>
+        <input type="text" id="name" name="entry.141012579" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" oninput="checkTestMode()">
+      </div>
+      <div>
+        <label for="englishName" class="block text-sm font-medium text-gray-700">英文姓名</label>
+        <input type="text" id="englishName" name="entry.1805318140" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">出生日期 YYYY-MM-DD <span class="text-red-500">*</span></label>
+        <div class="flex space-x-2">
+          <select id="birthYear" required class="mt-1 block w-1/3 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" onchange="updateDays(); validateDate()">
+            <option value="">年</option>
+          </select>
+          <select id="birthMonth" required class="mt-1 block w-1/3 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" onchange="updateDays(); validateDate()">
+            <option value="">月</option>
+            <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+            <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
+            <option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+          </select>
+          <select id="birthDay" required class="mt-1 block w-1/3 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" onchange="validateDate()">
+            <option value="">日</option>
+          </select>
+        </div>
+        <input type="hidden" id="birthDate" name="entry.1556685642">
+        <p id="birthDateError" class="error hidden">請輸入有效的出生日期</p>
+      </div>
+      <div>
+        <label for="gender" class="block text-sm font-medium text-gray-700">性別 <span class="text-red-500">*</span></label>
+        <select id="gender" name="entry.2127565785" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+          <option value="">請選擇</option>
+          <option value="男">男</option>
+          <option value="女">女</option>
+        </select>
+      </div>
+      <div>
+        <label for="phone" class="block text-sm font-medium text-gray-700">聯絡電話 <span class="text-red-500">*</span></label>
+        <input type="tel" id="phone" name="entry.1935738427" required pattern="\d{8}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        <p id="phoneError" class="error hidden">請輸入8位數字電話號碼</p>
+      </div>
+      <div>
+        <label for="emergencyPhone" class="block text-sm font-medium text-gray-700">緊急聯絡電話</label>
+        <input type="tel" id="emergencyPhone" name="entry.1312158204" pattern="\d{8}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        <p id="emergencyPhoneError" class="error hidden">請輸入8位數字緊急聯絡電話</p>
+      </div>
+      <div>
+        <label for="beltLevel" class="block text-sm font-medium text-gray-700">現有級別 <span class="text-red-500">*</span></label>
+        <select id="beltLevel" name="entry.2030015487" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+          <option value="">請選擇</option>
+          <option value="10級 - 白帶">10級 - 白帶</option>
+          <option value="8級 - 黃帶">8級 - 黃帶</option>
+          <option value="7級 - 黃綠帶">7級 - 黃綠帶</option>
+          <option value="6級 - 綠帶">6級 - 綠帶</option>
+          <option value="5級 - 綠藍帶">5級 - 綠藍帶</option>
+          <option value="4級 - 藍帶">4級 - 藍帶</option>
+          <option value="3級 - 藍紅帶">3級 - 藍紅帶</option>
+          <option value="2級 - 紅帶">2級 - 紅帶</option>
+          <option value="1級 - 紅黑帶">1級 - 紅黑帶</option>
+          <option value="品段 / 黑帶">品段 / 黑帶</option>
+        </select>
+      </div>
+      <div>
+        <label class="flex items-center text-sm font-medium text-gray-700">
+          <input type="checkbox" id="poomsae" name="entry.1602049091" value="TRUE" class="mr-2 focus:ring-blue-500" onchange="togglePoomsaeSelection()">品勢
+        </label>
+      </div>
+      <div id="poomsaeSelectionDiv" class="hidden">
+        <label for="poomsaeSelection" class="block text-sm font-medium text-gray-700">品勢選擇</label>
+        <select id="poomsaeSelection" name="entry.190206156" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+          <option value="">請選擇</option>
+          <option value="太極一章">太極一章</option>
+          <option value="太極三章">太極三章</option>
+          <option value="太極四章">太極四章</option>
+          <option value="太極六章">太極六章</option>
+          <option value="太極八章">太極八章</option>
+          <option value="品段/黑帶 高麗">品段/黑帶 高麗</option>
+        </select>
+      </div>
+      <div>
+        <label class="flex items-center text-sm font-medium text-gray-700">
+          <input type="checkbox" id="sparring" name="entry.1071488478" value="TRUE" class="mr-2 focus:ring-blue-500" onchange="toggleSparringFields()">搏擊
+        </label>
+      </div>
+      <div id="weightDiv" class="hidden">
+        <label for="weight" class="block text-sm font-medium text-gray-700">體重 (kg)</label>
+        <input type="number" id="weight" name="entry.362733170" min="0" step="0.1" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+      </div>
+      <div id="heightDiv" class="hidden">
+        <label for="height" class="block text-sm font-medium text-gray-700">身高 (cm)</label>
+        <input type="number" id="height" name="entry.1338425585" min="0" step="0.1" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+      </div>
+      <div>
+        <label class="flex items-center text-sm font-medium text-gray-700">
+          <input type="checkbox" id="speedFrontKick" name="entry.1988477881" value="TRUE" class="mr-2 focus:ring-blue-500">個人競速 (前踢)
+        </label>
+      </div>
+      <div>
+        <label class="flex items-center text-sm font-medium text-gray-700">
+          <input type="checkbox" id="speedSideKick" name="entry.645103094" value="TRUE" class="mr-2 focus:ring-blue-500">個人競速 (橫踢)
+        </label>
+      </div>
+      <div>
+        <label class="flex items-center text-sm font-medium text-gray-700">
+          <input type="checkbox" id="parentChildSpeed" name="entry.160321639" value="TRUE" class="mr-2 focus:ring-blue-500" onchange="toggleParentChildFields()">親子競速 (前踢)
+        </label>
+      </div>
+      <div id="familyMemberDiv" class="hidden">
+        <label for="familyMember" class="block text-sm font-medium text-gray-700">家屬參加者</label>
+        <input type="text" id="familyMember" name="entry.550208161" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+      </div>
+      <div id="relationshipDiv" class="hidden">
+        <label for="relationship" class="block text-sm font-medium text-gray-700">關係 <span id="relationshipRequired" class="text-red-500 hidden">*</span></label>
+        <select id="relationship" name="entry.1359712644" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" onchange="toggleCustomRelationship()">
+          <option value="">請選擇</option>
+          <option value="爸爸">爸爸</option>
+          <option value="媽媽">媽媽</option>
+          <option value="其他（請手動輸入）">其他（請手動輸入）</option>
+        </select>
+      </div>
+      <div id="customRelationshipDiv" class="hidden">
+        <label for="customRelationship" class="block text-sm font-medium text-gray-700">其他關係</label>
+        <input type="text" id="customRelationship" name="entry.1359712644" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+      </div>
+      <div class="text-center">
+        <button type="button" onclick="showConfirmModal()" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">提交</button>
+      </div>
+    </form>
+    <div id="thankYouPage" class="hidden text-center space-y-4">
+      <h2 class="text-2xl font-bold text-gray-800">感謝您的報名！</h2>
+      <p class="text-gray-600">您的報名已成功提交至Google Forms。</p>
+      <button onclick="resetForm()" class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">重新報名</button>
+    </div>
+    <div id="confirmModal" class="modal">
+      <div class="modal-content">
+        <h2 class="text-xl font-bold mb-4">確認報名信息</h2>
+        <p><strong>所屬道場:</strong> <span id="confirmDojo"></span></p>
+        <p id="confirmCustomDojo" class="hidden"><strong>其他道場名稱:</strong> <span id="confirmCustomDojoValue"></span></p>
+        <p><strong>所屬教練:</strong> <span id="confirmCoach"></span></p>
+        <p><strong>參加者姓名:</strong> <span id="confirmName"></span></p>
+        <p><strong>英文姓名:</strong> <span id="confirmEnglishName"></span></p>
+        <p><strong>出生日期:</strong> <span id="confirmBirthDate"></span></p>
+        <p><strong>性別:</strong> <span id="confirmGender"></span></p>
+        <p><strong>聯絡電話:</strong> <span id="confirmPhone"></span></p>
+        <p><strong>緊急聯絡電話:</strong> <span id="confirmEmergencyPhone"></span></p>
+        <p><strong>現有級別:</strong> <span id="confirmBeltLevel"></span></p>
+        <p><strong>品勢:</strong> <span id="confirmPoomsae"></span></p>
+        <p id="confirmPoomsaeSelection" class="hidden"><strong>品勢選擇:</strong> <span id="confirmPoomsaeSelectionValue"></span></p>
+        <p><strong>搏擊:</strong> <span id="confirmSparring"></span></p>
+        <p id="confirmWeight" class="hidden"><strong>體重 (kg):</strong> <span id="confirmWeightValue"></span></p>
+        <p id="confirmHeight" class="hidden"><strong>身高 (cm):</strong> <span id="confirmHeightValue"></span></p>
+        <p><strong>個人競速 (前踢):</strong> <span id="confirmSpeedFrontKick"></span></p>
+        <p><strong>個人競速 (橫踢):</strong> <span id="confirmSpeedSideKick"></span></p>
+        <p><strong>親子競速 (前踢):</strong> <span id="confirmParentChildSpeed"></span></p>
+        <p id="confirmFamilyMember" class="hidden"><strong>家屬參加者:</strong> <span id="confirmFamilyMemberValue"></span></p>
+        <p id="confirmRelationship" class="hidden"><strong>關係:</strong> <span id="confirmRelationshipValue"></span></p>
+        <p id="confirmCustomRelationship" class="hidden"><strong>其他關係:</strong> <span id="confirmCustomRelationshipValue"></span></p>
+        <div class="mt-4 flex justify-end space-x-2">
+          <button onclick="closeConfirmModal()" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">取消</button>
+          <button onclick="submitForm()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">確認提交</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 初始化年份 (1900-2025)
+    const yearSelect = document.getElementById('birthYear');
+    for (let year = 2025; year >= 1900; year--) {
+      const option = document.createElement('option');
+      option.value = year;
+      option.textContent = year;
+      yearSelect.appendChild(option);
+    }
+
+    function updateDays() {
+      const year = parseInt(document.getElementById('birthYear').value);
+      const month = parseInt(document.getElementById('birthMonth').value);
+      const daySelect = document.getElementById('birthDay');
+      daySelect.innerHTML = '<option value="">日</option>';
+      if (!year || !month) return;
+      const daysInMonth = new Date(year, month, 0).getDate();
+      for (let day = 1; day <= daysInMonth; day++) {
+        const option = document.createElement('option');
+        option.value = day;
+        option.textContent = day;
+        daySelect.appendChild(option);
+      }
+    }
+
+    function toggleCustomDojo() {
+      const dojo = document.getElementById('dojo').value;
+      const customDojoDiv = document.getElementById('customDojoDiv');
+      customDojoDiv.classList.toggle('hidden', dojo !== '其他（請手動輸入）');
+      document.getElementById('customDojo').required = dojo === '其他（請手動輸入）';
+    }
+
+    function togglePoomsaeSelection() {
+      const poomsae = document.getElementById('poomsae').checked;
+      const poomsaeSelectionDiv = document.getElementById('poomsaeSelectionDiv');
+      poomsaeSelectionDiv.classList.toggle('hidden', !poomsae);
+    }
+
+    function toggleSparringFields() {
+      const sparring = document.getElementById('sparring').checked;
+      const weightDiv = document.getElementById('weightDiv');
+      const heightDiv = document.getElementById('heightDiv');
+      weightDiv.classList.toggle('hidden', !sparring);
+      heightDiv.classList.toggle('hidden', !sparring);
+    }
+
+    function toggleParentChildFields() {
+      const parentChildSpeed = document.getElementById('parentChildSpeed').checked;
+      const familyMemberDiv = document.getElementById('familyMemberDiv');
+      const relationshipDiv = document.getElementById('relationshipDiv');
+      const relationship = document.getElementById('relationship');
+      const relationshipRequired = document.getElementById('relationshipRequired');
+      const isTestMode = document.getElementById('name').value === '12345';
+      familyMemberDiv.classList.toggle('hidden', !parentChildSpeed);
+      relationshipDiv.classList.toggle('hidden', !parentChildSpeed);
+      relationship.required = parentChildSpeed && !isTestMode;
+      relationshipRequired.classList.toggle('hidden', !parentChildSpeed || isTestMode);
+      toggleCustomRelationship();
+    }
+
+    function toggleCustomRelationship() {
+      const relationship = document.getElementById('relationship').value;
+      const customRelationshipDiv = document.getElementById('customRelationshipDiv');
+      customRelationshipDiv.classList.toggle('hidden', relationship !== '其他（請手動輸入）');
+    }
+
+    function validateDate() {
+      if (document.getElementById('name').value === '12345') return true;
+      const year = document.getElementById('birthYear').value;
+      const month = document.getElementById('birthMonth').value;
+      const day = document.getElementById('birthDay').value;
+      const birthDateError = document.getElementById('birthDateError');
+      const birthDateInput = document.getElementById('birthDate');
+      if (year && month && day) {
+        const date = new Date(year, month - 1, day);
+        const isValid = date.getFullYear() == year && date.getMonth() + 1 == month && date.getDate() == day;
+        birthDateError.classList.toggle('hidden', isValid);
+        birthDateInput.value = isValid ? `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}` : '';
+        return isValid;
+      }
+      birthDateError.classList.remove('hidden');
+      birthDateInput.value = '';
+      return false;
+    }
+
+    function validatePhone(fieldId, errorId) {
+      const phone = document.getElementById(fieldId).value;
+      const phoneError = document.getElementById(errorId);
+      if (phone === '') {
+        phoneError.classList.add('hidden');
+        document.getElementById(fieldId).setCustomValidity('');
+        return true;
+      }
+      const isValid = /^\d{8}$/.test(phone);
+      phoneError.classList.toggle('hidden', isValid);
+      document.getElementById(fieldId).setCustomValidity(isValid ? '' : '請輸入8位數字電話號碼');
+      return isValid;
+    }
+
+    function checkTestMode() {
+      const name = document.getElementById('name').value;
+      const isTestMode = name === '12345';
+      const requiredFields = document.querySelectorAll('input[required], select[required]');
+      requiredFields.forEach(field => {
+        if (field.id !== 'name' && field.id !== 'birthYear' && field.id !== 'birthMonth' && field.id !== 'birthDay') {
+          field.required = !isTestMode;
+        }
+      });
+      const relationshipRequired = document.getElementById('relationshipRequired');
+      const relationship = document.getElementById('relationship');
+      relationshipRequired.classList.toggle('hidden', !document.getElementById('parentChildSpeed').checked || isTestMode);
+      relationship.required = document.getElementById('parentChildSpeed').checked && !isTestMode;
+    }
+
+    function showConfirmModal() {
+      const isTestMode = document.getElementById('name').value === '12345';
+      if (!isTestMode && (!validateDate() || !validatePhone('phone', 'phoneError'))) {
+        alert('請修正表單中的錯誤');
+        return;
+      }
+      const form = document.getElementById('registrationForm');
+      if (!isTestMode && !form.checkValidity()) {
+        alert('請填寫所有必填欄位');
+        return;
+      }
+      document.getElementById('confirmDojo').textContent = document.getElementById('dojo').value === '其他（請手動輸入）' ? document.getElementById('customDojo').value : document.getElementById('dojo').value || '無';
+      document.getElementById('confirmCustomDojo').classList.toggle('hidden', document.getElementById('dojo').value !== '其他（請手動輸入）');
+      document.getElementById('confirmCustomDojoValue').textContent = document.getElementById('customDojo').value || '無';
+      document.getElementById('confirmCoach').textContent = document.getElementById('coach').value || '無';
+      document.getElementById('confirmName').textContent = document.getElementById('name').value || '無';
+      document.getElementById('confirmEnglishName').textContent = document.getElementById('englishName').value || '無';
+      document.getElementById('confirmBirthDate').textContent = document.getElementById('birthDate').value || '無';
+      document.getElementById('confirmGender').textContent = document.getElementById('gender').value || '無';
+      document.getElementById('confirmPhone').textContent = document.getElementById('phone').value || '無';
+      document.getElementById('confirmEmergencyPhone').textContent = document.getElementById('emergencyPhone').value || '無';
+      document.getElementById('confirmBeltLevel').textContent = document.getElementById('beltLevel').value || '無';
+      document.getElementById('confirmPoomsae').textContent = document.getElementById('poomsae').checked ? 'TRUE' : 'FALSE';
+      document.getElementById('confirmPoomsaeSelection').classList.toggle('hidden', !document.getElementById('poomsae').checked);
+      document.getElementById('confirmPoomsaeSelectionValue').textContent = document.getElementById('poomsaeSelection').value || '無';
+      document.getElementById('confirmSparring').textContent = document.getElementById('sparring').checked ? 'TRUE' : 'FALSE';
+      document.getElementById('confirmWeight').classList.toggle('hidden', !document.getElementById('sparring').checked);
+      document.getElementById('confirmWeightValue').textContent = document.getElementById('weight').value || '無';
+      document.getElementById('confirmHeight').classList.toggle('hidden', !document.getElementById('sparring').checked);
+      document.getElementById('confirmHeightValue').textContent = document.getElementById('height').value || '無';
+      document.getElementById('confirmSpeedFrontKick').textContent = document.getElementById('speedFrontKick').checked ? 'TRUE' : 'FALSE';
+      document.getElementById('confirmSpeedSideKick').textContent = document.getElementById('speedSideKick').checked ? 'TRUE' : 'FALSE';
+      document.getElementById('confirmParentChildSpeed').textContent = document.getElementById('parentChildSpeed').checked ? 'TRUE' : 'FALSE';
+      document.getElementById('confirmFamilyMember').classList.toggle('hidden', !document.getElementById('parentChildSpeed').checked);
+      document.getElementById('confirmFamilyMemberValue').textContent = document.getElementById('familyMember').value || '無';
+      document.getElementById('confirmRelationship').classList.toggle('hidden', !document.getElementById('parentChildSpeed').checked);
+      document.getElementById('confirmRelationshipValue').textContent = document.getElementById('relationship').value === '其他（請手動輸入）' ? document.getElementById('customRelationship').value : document.getElementById('relationship').value || '無';
+      document.getElementById('confirmCustomRelationship').classList.toggle('hidden', document.getElementById('relationship').value !== '其他（請手動輸入）');
+      document.getElementById('confirmCustomRelationshipValue').textContent = document.getElementById('customRelationship').value || '無';
+      document.getElementById('confirmModal').style.display = 'flex';
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('confirmModal').style.display = 'none';
+    }
+
+    function submitForm() {
+      const form = document.getElementById('registrationForm');
+      const formData = new FormData();
+      // Explicitly set form fields
+      const dojoValue = document.getElementById('dojo').value === '其他（請手動輸入）' ? document.getElementById('customDojo').value : document.getElementById('dojo').value;
+      if (dojoValue) formData.append('entry.1166050402', dojoValue);
+      formData.append('entry.772146913', document.getElementById('coach').value);
+      formData.append('entry.141012579', document.getElementById('name').value);
+      if (document.getElementById('englishName').value) formData.append('entry.1805318140', document.getElementById('englishName').value);
+      const birthDate = document.getElementById('birthDate').value;
+      if (birthDate) formData.append('entry.1556685642', birthDate);
+      formData.append('entry.2127565785', document.getElementById('gender').value);
+      formData.append('entry.1935738427', document.getElementById('phone').value);
+      if (document.getElementById('emergencyPhone').value) formData.append('entry.1312158204', document.getElementById('emergencyPhone').value);
+      formData.append('entry.2030015487', document.getElementById('beltLevel').value);
+      if (document.getElementById('poomsae').checked) {
+        formData.append('entry.1602049091', 'TRUE');
+        if (document.getElementById('poomsaeSelection').value) {
+          formData.append('entry.190206156', document.getElementById('poomsaeSelection').value);
+        }
+      }
+      if (document.getElementById('sparring').checked) {
+        formData.append('entry.1071488478', 'TRUE');
+        if (document.getElementById('weight').value) formData.append('entry.362733170', document.getElementById('weight').value);
+        if (document.getElementById('height').value) formData.append('entry.1338425585', document.getElementById('height').value);
+      }
+      if (document.getElementById('speedFrontKick').checked) formData.append('entry.1988477881', 'TRUE');
+      if (document.getElementById('speedSideKick').checked) formData.append('entry.645103094', 'TRUE');
+      if (document.getElementById('parentChildSpeed').checked) {
+        formData.append('entry.160321639', 'TRUE');
+        if (document.getElementById('familyMember').value) formData.append('entry.550208161', document.getElementById('familyMember').value);
+        const relationshipValue = document.getElementById('relationship').value === '其他（請手動輸入）' ? document.getElementById('customRelationship').value : document.getElementById('relationship').value;
+        if (relationshipValue) formData.append('entry.1359712644', relationshipValue);
+      }
+      // Submit to Google Forms using fetch
+      fetch('https://docs.google.com/forms/d/e/1FAIpQLSfP0Fz26YRH2FjGdtalzBZpjs-eyGKuAl7piwCZTWlEVzfskg/formResponse', {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors'
+      }).then(() => {
+        closeConfirmModal();
+        document.getElementById('registrationForm').classList.add('hidden');
+        document.getElementById('thankYouPage').classList.remove('hidden');
+      }).catch(error => {
+        console.error('提交失敗:', error);
+        alert('提交失敗，請稍後再試');
+      });
+    }
+
+    function resetForm() {
+      const form = document.getElementById('registrationForm');
+      const thankYouPage = document.getElementById('thankYouPage');
+      form.reset();
+      form.classList.remove('hidden');
+      thankYouPage.classList.add('hidden');
+      toggleCustomDojo();
+      togglePoomsaeSelection();
+      toggleSparringFields();
+      toggleParentChildFields();
+    }
+
+    document.getElementById('phone').addEventListener('input', () => validatePhone('phone', 'phoneError'));
+    document.getElementById('emergencyPhone').addEventListener('input', () => validatePhone('emergencyPhone', 'emergencyPhoneError'));
+
+    // 初始化
+    toggleCustomDojo();
+    togglePoomsaeSelection();
+    toggleSparringFields();
+    toggleParentChildFields();
+  </script>
+</body>
+</html>
