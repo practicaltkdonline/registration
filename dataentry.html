@@ -447,21 +447,19 @@
       formData.append('entry.1935738427', document.getElementById('phone').value);
       if (document.getElementById('emergencyPhone').value) formData.append('entry.1312158204', document.getElementById('emergencyPhone').value);
       formData.append('entry.2030015487', document.getElementById('beltLevel').value);
-      if (document.getElementById('poomsae').checked) {
-        formData.append('entry.1602049091', 'TRUE');
-        if (document.getElementById('poomsaeSelection').value) {
-          formData.append('entry.190206156', document.getElementById('poomsaeSelection').value);
-        }
+      formData.append('entry.1602049091', document.getElementById('poomsae').checked ? 'TRUE' : 'FALSE');
+      if (document.getElementById('poomsae').checked && document.getElementById('poomsaeSelection').value) {
+        formData.append('entry.190206156', document.getElementById('poomsaeSelection').value);
       }
+      formData.append('entry.1071488478', document.getElementById('sparring').checked ? 'TRUE' : 'FALSE');
       if (document.getElementById('sparring').checked) {
-        formData.append('entry.1071488478', 'TRUE');
         if (document.getElementById('weight').value) formData.append('entry.362733170', document.getElementById('weight').value);
         if (document.getElementById('height').value) formData.append('entry.1338425585', document.getElementById('height').value);
       }
-      if (document.getElementById('speedFrontKick').checked) formData.append('entry.1988477881', 'TRUE');
-      if (document.getElementById('speedSideKick').checked) formData.append('entry.645103094', 'TRUE');
+      formData.append('entry.1988477881', document.getElementById('speedFrontKick').checked ? 'TRUE' : 'FALSE');
+      formData.append('entry.645103094', document.getElementById('speedSideKick').checked ? 'TRUE' : 'FALSE');
+      formData.append('entry.160321639', document.getElementById('parentChildSpeed').checked ? 'TRUE' : 'FALSE');
       if (document.getElementById('parentChildSpeed').checked) {
-        formData.append('entry.160321639', 'TRUE');
         if (document.getElementById('familyMember').value) formData.append('entry.550208161', document.getElementById('familyMember').value);
         const relationshipValue = document.getElementById('relationship').value === '其他（請手動輸入）' ? document.getElementById('customRelationship').value : document.getElementById('relationship').value;
         if (relationshipValue) formData.append('entry.1359712644', relationshipValue);
