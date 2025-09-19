@@ -116,6 +116,10 @@
       width: auto;
       margin-right: 12px;
     }
+    .category-group input[type="radio"]:disabled + span {
+      color: #ccc;
+      cursor: not-allowed;
+    }
     .error {
       color: #e74c3c;
       font-size: 14px;
@@ -277,73 +281,9 @@
         <span id="schoolError" class="error">請輸入現讀小學</span>
       </div>
       <div class="form-group">
-        <label>中文姓名 Chinese Name *</label>
-        <input type="text" id="chineseName" name="entry.1739837016" placeholder="如沒有請填寫英文姓名" required oninput="this.value = this.value.toUpperCase()">
-        <span id="chineseNameError" class="error">請輸入中文姓名</span>
-      </div>
-      <div class="form-group">
-        <label>英文姓名 English Name *</label>
-        <input type="text" id="englishName" name="entry.69039678" placeholder="請以大寫字母填寫" required oninput="this.value = this.value.toUpperCase()">
-        <span id="englishNameError" class="error">請輸入英文姓名</span>
-      </div>
-      <div class="form-group">
-        <label>出生日期 Date of Birth YYYY-MM-DD *</label>
-        <div class="date-group">
-          <select id="birthYear" name="entry.71284989_year" required>
-            <option value="">年</option>
-          </select>
-          <span>/</span>
-          <select id="birthMonth" name="entry.71284989_month" required>
-            <option value="">月</option>
-          </select>
-          <span>/</span>
-          <select id="birthDay" name="entry.71284989_day" required>
-            <option value="">日</option>
-          </select>
-        </div>
-        <input type="hidden" id="birthDate" name="entry.71284989">
-        <span id="birthDateError" class="error">請選擇有效的出生日期</span>
-      </div>
-      <div class="form-group">
-        <label>性別 Gender *</label>
-        <div class="category-group">
-          <label><input type="radio" name="entry.1854501309" value="男 Male" required> 男 Male</label>
-          <label><input type="radio" name="entry.1854501309" value="女 Female"> 女 Female</label>
-        </div>
-        <span id="genderError" class="error">請選擇性別</span>
-      </div>
-      <div class="form-group">
-        <label>聯絡電話 Telephone Number *</label>
-        <input type="tel" id="phone" name="entry.269558714" pattern="\d{8}" required>
-        <span id="phoneError" class="error">請輸入有效的8位電話號碼</span>
-      </div>
-      <div class="form-group">
         <label>學生證編號 Student ID Number *</label>
         <input type="text" id="studentId" name="entry.1045318375" required>
         <span id="studentIdError" class="error">請輸入學生證編號</span>
-      </div>
-      <div class="form-group">
-        <label>跆協段證/色帶會員証編號 HKTKDA Membership No. *</label>
-        <input type="text" id="membershipNumber" name="entry.1820097193" required>
-        <span id="membershipNumberError" class="error">請輸入會員証編號</span>
-      </div>
-      <div class="form-group">
-        <label>現有級別 Present Grade Held *</label>
-        <select id="beltLevel" name="entry.274850195" required>
-          <option value="">請選擇級別</option>
-          <option value="黃帶 Yellow Belt">黃帶 Yellow Belt</option>
-          <option value="黃綠帶 Yellow-Green Belt">黃綠帶 Yellow-Green Belt</option>
-          <option value="綠帶 Green Belt">綠帶 Green Belt</option>
-          <option value="綠藍帶 Green-Blue Belt">綠藍帶 Green-Blue Belt</option>
-          <option value="藍帶 Blue Belt">藍帶 Blue Belt</option>
-          <option value="藍紅帶 Blue-Red Belt">藍紅帶 Blue-Red Belt</option>
-          <option value="紅帶 Red Belt">紅帶 Red Belt</option>
-          <option value="紅黑帶 Red-Black Belt">紅黑帶 Red-Black Belt</option>
-          <option value="品一 Poom 1">品一 Poom 1</option>
-          <option value="品二 Poom 2">品二 Poom 2</option>
-          <option value="品三或上 Poom 3 or above">品三或上 Poom 3 or above</option>
-        </select>
-        <span id="beltLevelError" class="error">請選擇現有級別</span>
       </div>
       <div class="form-group">
         <label>屬會名稱 Association *</label>
@@ -354,7 +294,7 @@
           <option value="躍駿跆拳道會 Attack TKD Association">躍駿跆拳道會 Attack TKD Association</option>
           <option value="青雲跆拳道會 Ching Wan TKD Association">青雲跆拳道會 Ching Wan TKD Association</option>
           <option value="精英跆拳道會 Ching Ying TKD Union">精英跆拳道會 Ching Ying TKD Union</option>
-          <option value="金柏跆拳道協會 Combat TKD Association">金柏跆拳道協會 Combat TKD Association</option>
+          <option value="金柏跆拳道協會 Combat TKD Association">金柏跆拳道會 Combat TKD Association</option>
           <option value="香港跆拳道東龍會 Eastern Dragon TKD Federation HK">香港跆拳道東龍會 Eastern Dragon TKD Federation HK</option>
           <option value="勵志跆拳道總會 Encouragement TKD Association">勵志跆拳道總會 Encouragement TKD Association</option>
           <option value="香港智道跆拳總會 HK Chido TKD Association">香港智道跆拳總會 HK Chido TKD Association</option>
@@ -399,6 +339,70 @@
           <option value="香港賢薈跆拳道會 Hong Kong Ultimate Taekwondo Club">香港賢薈跆拳道會 Hong Kong Ultimate Taekwondo Club</option>
         </select>
         <span id="affiliationError" class="error">請選擇屬會名稱</span>
+      </div>
+      <div class="form-group">
+        <label>跆協段證/色帶會員証編號 HKTKDA Membership No. *</label>
+        <input type="text" id="membershipNumber" name="entry.1820097193" required>
+        <span id="membershipNumberError" class="error">請輸入會員証編號</span>
+      </div>
+      <div class="form-group">
+        <label>聯絡電話 Telephone Number *</label>
+        <input type="tel" id="phone" name="entry.269558714" pattern="\d{8}" required>
+        <span id="phoneError" class="error">請輸入有效的8位電話號碼</span>
+      </div>
+      <div class="form-group">
+        <label>中文姓名 Chinese Name *</label>
+        <input type="text" id="chineseName" name="entry.1739837016" placeholder="如沒有請填寫英文姓名" required oninput="this.value = this.value.toUpperCase()">
+        <span id="chineseNameError" class="error">請輸入中文姓名</span>
+      </div>
+      <div class="form-group">
+        <label>英文姓名 English Name *</label>
+        <input type="text" id="englishName" name="entry.69039678" placeholder="請以大寫字母填寫" required oninput="this.value = this.value.toUpperCase()">
+        <span id="englishNameError" class="error">請輸入英文姓名</span>
+      </div>
+      <div class="form-group">
+        <label>出生日期 Date of Birth YYYY-MM-DD *</label>
+        <div class="date-group">
+          <select id="birthYear" name="entry.71284989_year" required>
+            <option value="">年</option>
+          </select>
+          <span>/</span>
+          <select id="birthMonth" name="entry.71284989_month" required>
+            <option value="">月</option>
+          </select>
+          <span>/</span>
+          <select id="birthDay" name="entry.71284989_day" required>
+            <option value="">日</option>
+          </select>
+        </div>
+        <input type="hidden" id="birthDate" name="entry.71284989">
+        <span id="birthDateError" class="error">請選擇有效的出生日期</span>
+      </div>
+      <div class="form-group">
+        <label>性別 Gender *</label>
+        <div class="category-group">
+          <label><input type="radio" name="entry.1854501309" value="男 Male" required> 男 Male</label>
+          <label><input type="radio" name="entry.1854501309" value="女 Female"> 女 Female</label>
+        </div>
+        <span id="genderError" class="error">請選擇性別</span>
+      </div>
+      <div class="form-group">
+        <label>現有級別 Present Grade Held *</label>
+        <select id="beltLevel" name="entry.274850195" required>
+          <option value="">請選擇級別</option>
+          <option value="黃帶 Yellow Belt">黃帶 Yellow Belt</option>
+          <option value="黃綠帶 Yellow-Green Belt">黃綠帶 Yellow-Green Belt</option>
+          <option value="綠帶 Green Belt">綠帶 Green Belt</option>
+          <option value="綠藍帶 Green-Blue Belt">綠藍帶 Green-Blue Belt</option>
+          <option value="藍帶 Blue Belt">藍帶 Blue Belt</option>
+          <option value="藍紅帶 Blue-Red Belt">藍紅帶 Blue-Red Belt</option>
+          <option value="紅帶 Red Belt">紅帶 Red Belt</option>
+          <option value="紅黑帶 Red-Black Belt">紅黑帶 Red-Black Belt</option>
+          <option value="品一 Poom 1">品一 Poom 1</option>
+          <option value="品二 Poom 2">品二 Poom 2</option>
+          <option value="品三或上 Poom 3 or above">品三或上 Poom 3 or above</option>
+        </select>
+        <span id="beltLevelError" class="error">請選擇現有級別</span>
       </div>
       <div class="form-group">
         <label>參賽項目 Event *</label>
@@ -456,15 +460,15 @@
       <div class="modal-scroll">
         <h2>請確認您的報名資料</h2>
         <p><strong>現讀小學：</strong> <span id="confirmSchool"></span></p>
+        <p><strong>學生證編號：</strong> <span id="confirmStudentId"></span></p>
+        <p><strong>屬會名稱：</strong> <span id="confirmAffiliation"></span></p>
+        <p><strong>跆協段證/色帶會員証編號：</strong> <span id="confirmMembershipNumber"></span></p>
+        <p><strong>聯絡電話：</strong> <span id="confirmPhone"></span></p>
         <p><strong>中文姓名：</strong> <span id="confirmChineseName"></span></p>
         <p><strong>英文姓名：</strong> <span id="confirmEnglishName"></span></p>
         <p><strong>出生日期：</strong> <span id="confirmBirthDate"></span></p>
         <p><strong>性別：</strong> <span id="confirmGender"></span></p>
-        <p><strong>聯絡電話：</strong> <span id="confirmPhone"></span></p>
-        <p><strong>學生證編號：</strong> <span id="confirmStudentId"></span></p>
-        <p><strong>跆協段證/色帶會員証編號：</strong> <span id="confirmMembershipNumber"></span></p>
         <p><strong>現有級別：</strong> <span id="confirmBeltLevel"></span></p>
-        <p><strong>屬會名稱：</strong> <span id="confirmAffiliation"></span></p>
         <p><strong>參賽項目：</strong> <span id="confirmEvent"></span></p>
         <p><strong>參賽者高度：</strong> <span id="confirmHeight"></span></p>
         <p><strong>參賽者重量：</strong> <span id="confirmWeight"></span></p>
@@ -483,7 +487,7 @@
   <div id="thankYouPage">
     <h2>感謝您的報名！</h2>
     <p>確認後教練將盡快與您聯繫核對資料。</p>
-    <p>並請將PDF最後一頁的同意書交給教練。</p>
+    <p>並請將PDF的同意書、會員證及學生證副本交給教練。</p>
     <button class="return-button" onclick="restartForm()">重新報名</button>
   </div>
 
@@ -573,6 +577,12 @@
         'FIN 鰭量級 (22公斤以上而不超過25公斤)',
         'FLY 蠅量級 (25公斤以上而不超過28公斤)',
         'BANTAM 雛量級 (28公斤以上而不超過31公斤)',
+        'FEATHER 羽量級 (31公斤以上而不超過34公斤)',
+        'LIGHT 輕量級 (34公斤以上而不超過37公斤)',
+        'WELTER 沉量級 (37公斤以上而不超過40公斤)',
+        'LIGHT MIDDLE 輕中量級 (40公斤以上而不超過43公斤)',
+        'MIDDLE 中量級 (43公斤以上而不超過46公斤)',
+        'LIGHT HEAVY 輕重量級 (46公斤以上而不超過49公斤)',
         'HEAVY 重量級 (49公斤以上而不超過53公斤)'
       ],
       '女童色帶C組 Girls Color Belt Group C 13歲至14歲 Age: 13 to 14 (2011年至2012年出生者)': [
@@ -624,7 +634,8 @@
         'B2M 男童色帶 - 綠、綠藍 - 太極3',
         'B3M 男童色帶 - 藍、藍紅 - 太極5',
         'B4M 男童色帶 - 紅、紅黑 - 太極7',
-        'B5M 男童品段 - 品一、品二 - 高麗'
+        'B5M 男童品段 - 品一、品二 - 高麗',
+        'B6M 男童品段 - 品三或以上 - 高麗'
       ],
       '男童C組 Boys Group C (10歲至11歲 Age: 10 to 11, 2014年至2015年出生者)': [
         'C1M 男童色帶 - 黃、黃綠 - 太極1',
@@ -681,17 +692,17 @@
       const confirmModal = document.getElementById('confirmModal');
       const form = document.getElementById('registrationForm');
       const schoolInput = document.getElementById('school');
+      const studentIdInput = document.getElementById('studentId');
+      const affiliationSelect = document.getElementById('affiliation');
+      const membershipNumberInput = document.getElementById('membershipNumber');
+      const phoneInput = document.getElementById('phone');
       const chineseNameInput = document.getElementById('chineseName');
       const englishNameInput = document.getElementById('englishName');
       const birthYearSelect = document.getElementById('birthYear');
       const birthMonthSelect = document.getElementById('birthMonth');
       const birthDaySelect = document.getElementById('birthDay');
       const genderRadios = document.getElementsByName('entry.1854501309');
-      const phoneInput = document.getElementById('phone');
-      const studentIdInput = document.getElementById('studentId');
-      const membershipNumberInput = document.getElementById('membershipNumber');
       const beltLevelSelect = document.getElementById('beltLevel');
-      const affiliationSelect = document.getElementById('affiliation');
       const eventRadios = document.getElementsByName('entry.629960054');
       const heightInput = document.getElementById('height');
       const weightInput = document.getElementById('weight');
@@ -717,6 +728,22 @@
           document.getElementById('schoolError').style.display = 'block';
           isValid = false;
         }
+        if (!studentIdInput.value.trim()) {
+          document.getElementById('studentIdError').style.display = 'block';
+          isValid = false;
+        }
+        if (!affiliationSelect.value) {
+          document.getElementById('affiliationError').style.display = 'block';
+          isValid = false;
+        }
+        if (!membershipNumberInput.value.trim()) {
+          document.getElementById('membershipNumberError').style.display = 'block';
+          isValid = false;
+        }
+        if (!phoneInput.value.match(/^\d{8}$/)) {
+          document.getElementById('phoneError').style.display = 'block';
+          isValid = false;
+        }
         if (!chineseNameInput.value.trim()) {
           document.getElementById('chineseNameError').style.display = 'block';
           isValid = false;
@@ -733,24 +760,8 @@
           document.getElementById('genderError').style.display = 'block';
           isValid = false;
         }
-        if (!phoneInput.value.match(/^\d{8}$/)) {
-          document.getElementById('phoneError').style.display = 'block';
-          isValid = false;
-        }
-        if (!studentIdInput.value.trim()) {
-          document.getElementById('studentIdError').style.display = 'block';
-          isValid = false;
-        }
-        if (!membershipNumberInput.value.trim()) {
-          document.getElementById('membershipNumberError').style.display = 'block';
-          isValid = false;
-        }
         if (!beltLevelSelect.value) {
           document.getElementById('beltLevelError').style.display = 'block';
-          isValid = false;
-        }
-        if (!affiliationSelect.value) {
-          document.getElementById('affiliationError').style.display = 'block';
           isValid = false;
         }
         if (!Array.from(eventRadios).some(radio => radio.checked)) {
@@ -789,15 +800,15 @@
 
       if (isValid || isTestMode) {
         document.getElementById('confirmSchool').textContent = schoolInput.value || '未填寫';
+        document.getElementById('confirmStudentId').textContent = studentIdInput.value || '未填寫';
+        document.getElementById('confirmAffiliation').textContent = affiliationSelect.value || '未選擇';
+        document.getElementById('confirmMembershipNumber').textContent = membershipNumberInput.value || '未填寫';
+        document.getElementById('confirmPhone').textContent = phoneInput.value || '未填寫';
         document.getElementById('confirmChineseName').textContent = chineseNameInput.value || '未填寫';
         document.getElementById('confirmEnglishName').textContent = englishNameInput.value || '未填寫';
         document.getElementById('confirmBirthDate').textContent = birthDateInput.value || '未填寫';
         document.getElementById('confirmGender').textContent = Array.from(genderRadios).find(radio => radio.checked)?.value || '未選擇';
-        document.getElementById('confirmPhone').textContent = phoneInput.value || '未填寫';
-        document.getElementById('confirmStudentId').textContent = studentIdInput.value || '未填寫';
-        document.getElementById('confirmMembershipNumber').textContent = membershipNumberInput.value || '未填寫';
         document.getElementById('confirmBeltLevel').textContent = beltLevelSelect.value || '未選擇';
-        document.getElementById('confirmAffiliation').textContent = affiliationSelect.value || '未選擇';
         document.getElementById('confirmEvent').textContent = Array.from(eventRadios).find(radio => radio.checked)?.value || '未選擇';
         document.getElementById('confirmHeight').textContent = heightInput.value || '未填寫';
         document.getElementById('confirmWeight').textContent = weightInput.value || '未填寫';
@@ -846,6 +857,7 @@
       document.getElementById('poomsaeDivision').innerHTML = '<option value="">請選擇品勢級別</option>';
       document.getElementById('poomsaeEvent').innerHTML = '<option value="">請選擇參賽品勢</option>';
       toggleEventFields();
+      restrictEventOptions();
     }
 
     function restartForm() {
@@ -900,6 +912,37 @@
       }
     }
 
+    // 限制參賽項目選擇
+    function restrictEventOptions() {
+      const birthYear = parseInt(document.getElementById('birthYear').value) || 0;
+      const beltLevel = document.getElementById('beltLevel').value;
+      const eventRadios = document.getElementsByName('entry.629960054');
+      const allowedSparringYears = [2011, 2012, 2013, 2014, 2015, 2016, 2017];
+      const allowedSparringBelts = ['綠帶 Green Belt', '綠藍帶 Green-Blue Belt', '藍帶 Blue Belt', '藍紅帶 Blue-Red Belt', '紅帶 Red Belt', '紅黑帶 Red-Black Belt'];
+
+      const canParticipateInSparring = birthYear >= 2011 && birthYear <= 2017 && allowedSparringBelts.includes(beltLevel);
+
+      eventRadios.forEach(radio => {
+        if (radio.value === '搏擊' || radio.value === '搏擊及品勢') {
+          radio.disabled = !canParticipateInSparring;
+          const label = radio.parentElement;
+          label.style.color = canParticipateInSparring ? '#2c3e50' : '#ccc';
+          label.style.cursor = canParticipateInSparring ? 'pointer' : 'not-allowed';
+          if (!canParticipateInSparring && radio.checked) {
+            radio.checked = false;
+            document.querySelector('input[name="entry.629960054"][value="品勢"]').checked = true;
+          }
+        } else {
+          radio.disabled = false;
+          radio.parentElement.style.color = '#2c3e50';
+          radio.parentElement.style.cursor = 'pointer';
+        }
+      });
+
+      toggleEventFields();
+      updateDivisions();
+    }
+
     // 等待 DOM 完全加載
     document.addEventListener('DOMContentLoaded', () => {
       // 動態生成年份、月份和日期選項
@@ -932,16 +975,32 @@
         function updateDays() {
           const year = parseInt(yearSelect.value) || 2019;
           const month = parseInt(monthSelect.value) || 1;
+          const currentDay = parseInt(daySelect.value) || null;
+
+          // 計算當前月份的天數
+          const daysInMonth = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
+
+          // 清空日期選項
           daySelect.innerHTML = '<option value="">日</option>';
-          if (year && month) {
-            const daysInMonth = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
-            for (let day = 1; day <= daysInMonth; day++) {
-              let option = document.createElement('option');
-              option.value = day;
-              option.text = day.toString().padStart(2, '0');
-              daySelect.appendChild(option);
-            }
+
+          // 如果當前選擇的日期有效且在新月份中仍然有效，則保留
+          const maxValidDay = Math.min(currentDay || daysInMonth, daysInMonth);
+
+          // 生成日期選項
+          for (let day = 1; day <= daysInMonth; day++) {
+            let option = document.createElement('option');
+            option.value = day;
+            option.text = day.toString().padStart(2, '0');
+            daySelect.appendChild(option);
           }
+
+          // 恢復有效日期或保持空白
+          if (currentDay && currentDay <= daysInMonth) {
+            daySelect.value = currentDay;
+          } else {
+            daySelect.value = '';
+          }
+
           updateHiddenInput();
         }
 
@@ -952,6 +1011,7 @@
           if (year && month && day) {
             hiddenInput.value = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
             updateDivisions();
+            restrictEventOptions();
           } else {
             hiddenInput.value = '';
           }
@@ -1003,6 +1063,8 @@
       // 動態更新搏擊和品勢級別選項
       function updateDivisions() {
         const birthYear = document.getElementById('birthYear').value;
+        const birthMonth = document.getElementById('birthMonth').value;
+        const birthDay = document.getElementById('birthDay').value;
         const selectedGender = Array.from(document.getElementsByName('entry.1854501309')).find(radio => radio.checked)?.value;
         const selectedBeltLevel = document.getElementById('beltLevel').value;
         const selectedEvent = Array.from(document.getElementsByName('entry.629960054')).find(radio => radio.checked)?.value;
@@ -1011,95 +1073,208 @@
         const poomsaeDivisionSelect = document.getElementById('poomsaeDivision');
         const poomsaeEventSelect = document.getElementById('poomsaeEvent');
 
+        // 儲存當前選擇值以防止不必要的重置
+        const currentSparringDivision = sparringDivisionSelect.value;
+        const currentWeightClass = weightClassSelect.value;
+        const currentPoomsaeDivision = poomsaeDivisionSelect.value;
+        const currentPoomsaeEvent = poomsaeEventSelect.value;
+
+        // 檢查是否應允許自由選擇（出生日期、性別或級別未填寫時）
+        const isFreeSelection = !birthYear || !birthMonth || !birthDay || !selectedGender || !selectedBeltLevel;
+
         // 更新搏擊級別
-        if (['搏擊', '搏擊及品勢'].includes(selectedEvent) && birthYear && selectedGender) {
+        if (['搏擊', '搏擊及品勢'].includes(selectedEvent)) {
           sparringDivisionSelect.innerHTML = '<option value="">請選擇搏擊級別</option>';
-          let yearRange;
-          if (birthYear >= 2015 && birthYear <= 2017) yearRange = '2015-2017';
-          else if (birthYear >= 2013 && birthYear <= 2014) yearRange = '2013-2014';
-          else if (birthYear >= 2011 && birthYear <= 2012) yearRange = '2011-2012';
-          else yearRange = null;
-
-          if (yearRange && sparringDivisions[yearRange] && sparringDivisions[yearRange][selectedGender]) {
-            sparringDivisions[yearRange][selectedGender].forEach(division => {
-              let option = document.createElement('option');
-              option.value = division;
-              option.text = division;
-              sparringDivisionSelect.appendChild(option);
+          if (isFreeSelection) {
+            // 提供所有搏擊級別選項
+            Object.values(sparringDivisions).forEach(yearGroup => {
+              ['男 Male', '女 Female'].forEach(gender => {
+                if (yearGroup[gender]) {
+                  yearGroup[gender].forEach(division => {
+                    let option = document.createElement('option');
+                    option.value = division;
+                    option.text = division;
+                    sparringDivisionSelect.appendChild(option);
+                  });
+                }
+              });
             });
-            sparringDivisionSelect.value = sparringDivisions[yearRange][selectedGender][0];
+            // 恢復之前的選擇，如果仍然有效
+            if (currentSparringDivision && Array.from(sparringDivisionSelect.options).some(opt => opt.value === currentSparringDivision)) {
+              sparringDivisionSelect.value = currentSparringDivision;
+            }
+          } else if (birthYear && selectedGender) {
+            let yearRange;
+            if (birthYear >= 2015 && birthYear <= 2017) yearRange = '2015-2017';
+            else if (birthYear >= 2013 && birthYear <= 2014) yearRange = '2013-2014';
+            else if (birthYear >= 2011 && birthYear <= 2012) yearRange = '2011-2012';
+            else yearRange = null;
+
+            if (yearRange && sparringDivisions[yearRange] && sparringDivisions[yearRange][selectedGender]) {
+              sparringDivisions[yearRange][selectedGender].forEach(division => {
+                let option = document.createElement('option');
+                option.value = division;
+                option.text = division;
+                sparringDivisionSelect.appendChild(option);
+              });
+              // 恢復之前的選擇，如果仍然有效
+              if (currentSparringDivision && sparringDivisions[yearRange][selectedGender].includes(currentSparringDivision)) {
+                sparringDivisionSelect.value = currentSparringDivision;
+              } else {
+                sparringDivisionSelect.value = sparringDivisions[yearRange][selectedGender][0];
+              }
+            }
           }
-        }
 
-        // 更新搏擊量級
-        if (sparringDivisionSelect.value) {
-          weightClassSelect.innerHTML = '<option value="">請選擇搏擊量級</option>';
-          if (weightClasses[sparringDivisionSelect.value]) {
-            weightClasses[sparringDivisionSelect.value].forEach(weightClass => {
-              let option = document.createElement('option');
-              option.value = weightClass;
-              option.text = weightClass;
-              weightClassSelect.appendChild(option);
-            });
+          // 更新搏擊量級，保留現有選擇
+          if (sparringDivisionSelect.value) {
+            weightClassSelect.innerHTML = '<option value="">請選擇搏擊量級</option>';
+            if (isFreeSelection) {
+              // 提供所有搏擊量級選項
+              Object.values(weightClasses).flat().forEach(weightClass => {
+                let option = document.createElement('option');
+                option.value = weightClass;
+                option.text = weightClass;
+                weightClassSelect.appendChild(option);
+              });
+              // 恢復之前的選擇，如果仍然有效
+              if (currentWeightClass && Array.from(weightClassSelect.options).some(opt => opt.value === currentWeightClass)) {
+                weightClassSelect.value = currentWeightClass;
+              }
+            } else if (weightClasses[sparringDivisionSelect.value]) {
+              weightClasses[sparringDivisionSelect.value].forEach(weightClass => {
+                let option = document.createElement('option');
+                option.value = weightClass;
+                option.text = weightClass;
+                weightClassSelect.appendChild(option);
+              });
+              // 恢復之前的選擇，如果仍然有效
+              if (currentWeightClass && weightClasses[sparringDivisionSelect.value].includes(currentWeightClass)) {
+                weightClassSelect.value = currentWeightClass;
+              }
+            }
           }
         }
 
         // 更新品勢級別
-        if (['品勢', '搏擊及品勢'].includes(selectedEvent) && birthYear && selectedGender) {
+        if (['品勢', '搏擊及品勢'].includes(selectedEvent)) {
           poomsaeDivisionSelect.innerHTML = '<option value="">請選擇品勢級別</option>';
-          let yearRange;
-          if (birthYear >= 2018 && birthYear <= 2019) yearRange = '2018-2019';
-          else if (birthYear >= 2016 && birthYear <= 2017) yearRange = '2016-2017';
-          else if (birthYear >= 2014 && birthYear <= 2015) yearRange = '2014-2015';
-          else if (birthYear <= 2013) yearRange = '2013';
-          else yearRange = null;
-
-          if (yearRange && poomsaeDivisions[yearRange] && poomsaeDivisions[yearRange][selectedGender]) {
-            poomsaeDivisions[yearRange][selectedGender].forEach(division => {
-              let option = document.createElement('option');
-              option.value = division;
-              option.text = division;
-              poomsaeDivisionSelect.appendChild(option);
+          if (isFreeSelection) {
+            // 提供所有品勢級別選項
+            Object.values(poomsaeDivisions).forEach(yearGroup => {
+              ['男 Male', '女 Female'].forEach(gender => {
+                if (yearGroup[gender]) {
+                  yearGroup[gender].forEach(division => {
+                    let option = document.createElement('option');
+                    option.value = division;
+                    option.text = division;
+                    poomsaeDivisionSelect.appendChild(option);
+                  });
+                }
+              });
             });
-            poomsaeDivisionSelect.value = poomsaeDivisions[yearRange][selectedGender][0];
+            // 恢復之前的選擇，如果仍然有效
+            if (currentPoomsaeDivision && Array.from(poomsaeDivisionSelect.options).some(opt => opt.value === currentPoomsaeDivision)) {
+              poomsaeDivisionSelect.value = currentPoomsaeDivision;
+            }
+          } else if (birthYear && selectedGender) {
+            let yearRange;
+            if (birthYear >= 2018 && birthYear <= 2019) yearRange = '2018-2019';
+            else if (birthYear >= 2016 && birthYear <= 2017) yearRange = '2016-2017';
+            else if (birthYear >= 2014 && birthYear <= 2015) yearRange = '2014-2015';
+            else if (birthYear <= 2013) yearRange = '2013';
+            else yearRange = null;
+
+            if (yearRange && poomsaeDivisions[yearRange] && poomsaeDivisions[yearRange][selectedGender]) {
+              poomsaeDivisions[yearRange][selectedGender].forEach(division => {
+                let option = document.createElement('option');
+                option.value = division;
+                option.text = division;
+                poomsaeDivisionSelect.appendChild(option);
+              });
+              // 恢復之前的選擇，如果仍然有效
+              if (currentPoomsaeDivision && poomsaeDivisions[yearRange][selectedGender].includes(currentPoomsaeDivision)) {
+                poomsaeDivisionSelect.value = currentPoomsaeDivision;
+              } else {
+                poomsaeDivisionSelect.value = poomsaeDivisions[yearRange][selectedGender][0];
+              }
+            }
           }
-        }
 
-        // 更新參賽品勢
-        if (poomsaeDivisionSelect.value && selectedBeltLevel) {
-          poomsaeEventSelect.innerHTML = '<option value="">請選擇參賽品勢</option>';
-          if (poomsaeEvents[poomsaeDivisionSelect.value]) {
-            poomsaeEvents[poomsaeDivisionSelect.value].forEach(event => {
-              let option = document.createElement('option');
-              option.value = event;
-              option.text = event;
-              poomsaeEventSelect.appendChild(option);
-            });
-            const beltIndex = beltMapping[selectedBeltLevel];
-            const prefix = poomsaeDivisionSelect.value.split(' ')[0].slice(0, 1);
-            const genderCode = selectedGender === '男 Male' ? 'M' : 'F';
-            const autoPoomsaeEvent = `${prefix}${beltIndex}${genderCode} ${selectedGender === '男 Male' ? '男童' : '女童'} ${['色帶 - 黃、黃綠 - 太極1', '色帶 - 綠、綠藍 - 太極3', '色帶 - 藍、藍紅 - 太極5', '色帶 - 紅、紅黑 - 太極7', '品段 - 品一、品二 - 高麗', '品段 - 品三或以上 - 高麗'][beltIndex - 1]}`;
-            if (poomsaeEvents[poomsaeDivisionSelect.value].includes(autoPoomsaeEvent)) {
-              poomsaeEventSelect.value = autoPoomsaeEvent;
+          // 更新參賽品勢
+          if (poomsaeDivisionSelect.value) {
+            poomsaeEventSelect.innerHTML = '<option value="">請選擇參賽品勢</option>';
+            if (isFreeSelection) {
+              // 提供所有參賽品勢選項
+              Object.values(poomsaeEvents).flat().forEach(event => {
+                let option = document.createElement('option');
+                option.value = event;
+                option.text = event;
+                poomsaeEventSelect.appendChild(option);
+              });
+              // 恢復之前的選擇，如果仍然有效
+              if (currentPoomsaeEvent && Array.from(poomsaeEventSelect.options).some(opt => opt.value === currentPoomsaeEvent)) {
+                poomsaeEventSelect.value = currentPoomsaeEvent;
+              }
+            } else if (poomsaeEvents[poomsaeDivisionSelect.value] && selectedBeltLevel) {
+              const beltIndex = beltMapping[selectedBeltLevel];
+              const genderCode = selectedGender === '男 Male' ? 'M' : 'F';
+              const prefix = poomsaeDivisionSelect.value.split(' ')[0].slice(0, 1);
+              const poomsaeOptions = poomsaeEvents[poomsaeDivisionSelect.value].filter(event => {
+                const eventIndex = event.split(' ')[0].slice(1, 2);
+                const eventGender = event.split(' ')[0].slice(2, 3);
+                return eventIndex === beltIndex && eventGender === genderCode;
+              });
+
+              poomsaeOptions.forEach(event => {
+                let option = document.createElement('option');
+                option.value = event;
+                option.text = event;
+                poomsaeEventSelect.appendChild(option);
+              });
+
+              // 自動選擇對應的品勢選項
+              const autoPoomsaeEvent = poomsaeOptions[0] || '';
+              if (autoPoomsaeEvent) {
+                if (!currentPoomsaeEvent || poomsaeOptions.includes(currentPoomsaeEvent)) {
+                  poomsaeEventSelect.value = currentPoomsaeEvent || autoPoomsaeEvent;
+                } else {
+                  poomsaeEventSelect.value = autoPoomsaeEvent;
+                }
+              }
             }
           }
         }
       }
 
       // 監聽事件
-      document.getElementById('birthYear').addEventListener('change', updateDivisions);
-      document.getElementById('beltLevel').addEventListener('change', updateDivisions);
-      document.querySelectorAll('input[name="entry.1854501309"]').forEach(radio => {
-        radio.addEventListener('change', updateDivisions);
+      document.getElementById('birthYear').addEventListener('change', () => {
+        updateDivisions();
+        restrictEventOptions();
       });
-      document.querySelectorAll('input[name="entry.629960054"]').forEach(radio => {
+      document.getElementById('birthMonth').addEventListener('change', () => {
+        updateDivisions();
+        restrictEventOptions();
+      });
+      document.getElementById('birthDay').addEventListener('change', () => {
+        updateDivisions();
+        restrictEventOptions();
+      });
+      document.querySelectorAll('input[name="entry.1854501309"]').forEach(radio => {
         radio.addEventListener('change', () => {
-          toggleEventFields();
           updateDivisions();
+          restrictEventOptions();
         });
+      });
+      document.getElementById('beltLevel').addEventListener('change', () => {
+        updateDivisions();
+        restrictEventOptions();
       });
       document.getElementById('sparringDivision').addEventListener('change', updateDivisions);
       document.getElementById('poomsaeDivision').addEventListener('change', updateDivisions);
+      document.querySelectorAll('input[name="entry.629960054"]').forEach(radio => {
+        radio.addEventListener('change', toggleEventFields);
+      });
     });
   </script>
 </body>
