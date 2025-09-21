@@ -383,8 +383,8 @@
       <div class="form-group">
         <label>性別 Gender *</label>
         <div class="category-group">
-          <label><input type="radio" name="entry.1854501309" value="男 Male" required> 男 Male</label>
-          <label><input type="radio" name="entry.1854501309" value="女 Female"> 女 Female</label>
+          <label><input type="radio" name="entry.1294289670" value="男 Male" required> 男 Male</label>
+          <label><input type="radio" name="entry.1294289670" value="女 Female"> 女 Female</label>
         </div>
         <span id="genderError" class="error">請選擇性別</span>
       </div>
@@ -705,7 +705,7 @@
       const birthYearSelect = document.getElementById('birthYear');
       const birthMonthSelect = document.getElementById('birthMonth');
       const birthDaySelect = document.getElementById('birthDay');
-      const genderRadios = document.getElementsByName('entry.1854501309');
+      const genderRadios = document.getElementsByName('entry.1294289670');
       const phoneInput = document.getElementById('phone');
       const beltLevelSelect = document.getElementById('beltLevel');
       const eventRadios = document.getElementsByName('entry.629960054');
@@ -1064,7 +1064,7 @@
       // 更新搏擊級別劃分
       function updateKyorugiDivision() {
         const birthYear = parseInt(document.getElementById('birthYear').value);
-        const gender = Array.from(document.getElementsByName('entry.1854501309')).find(radio => radio.checked)?.value;
+        const gender = Array.from(document.getElementsByName('entry.1294289670')).find(radio => radio.checked)?.value;
         const kyorugiDivisionSelect = document.getElementById('kyorugiDivision');
         kyorugiDivisionSelect.innerHTML = '<option value="">請選擇搏擊級別</option>';
 
@@ -1107,7 +1107,7 @@
       // 更新品勢級別劃分
       function updatePoomsaeDivision() {
         const birthYear = parseInt(document.getElementById('birthYear').value);
-        const gender = Array.from(document.getElementsByName('entry.1854501309')).find(radio => radio.checked)?.value;
+        const gender = Array.from(document.getElementsByName('entry.1294289670')).find(radio => radio.checked)?.value;
         const poomsaeDivisionSelect = document.getElementById('poomsaeDivision');
         poomsaeDivisionSelect.innerHTML = '<option value="">請選擇品勢級別</option>';
 
@@ -1171,7 +1171,7 @@
       document.querySelectorAll('input[name="entry.629960054"]').forEach(radio => {
         radio.addEventListener('change', updateEventFields);
       });
-      document.querySelectorAll('input[name="entry.1854501309"]').forEach(radio => {
+      document.querySelectorAll('input[name="entry.1294289670"]').forEach(radio => {
         radio.addEventListener('change', () => {
           updateKyorugiDivision();
           updatePoomsaeDivision();
