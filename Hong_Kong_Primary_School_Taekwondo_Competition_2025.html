@@ -83,7 +83,7 @@
       background: #f8fcff;
     }
     input:disabled, select:disabled {
-      background-color: #f5f7fa;
+      background: #f5f7fa;
       pointer-events: none;
     }
     .date-group {
@@ -121,8 +121,11 @@
       margin-right: 12px;
     }
     .category-group label.disabled {
-      color: #7f8c8d;
+      color: #bdc3c7;
       pointer-events: none;
+    }
+    .category-group input[type="radio"]:disabled {
+      opacity: 0.5;
     }
     .error {
       color: #e74c3c;
@@ -280,84 +283,83 @@
     </div>
     <form id="registrationForm">
       <div class="form-group">
-        <label>就讀小學名稱 *</label>
+        <label>就讀小學名稱 School Name *</label>
         <input type="text" id="schoolName" name="entry.1714227241" placeholder="以學生證上的中文名稱為準" required>
-        <span id="schoolNameError" class="error">請輸入就讀小學名稱</span>
+        <span id="schoolNameError" class="error">請輸入小學名稱</span>
       </div>
       <div class="form-group">
-        <label>學生證編號 *</label>
+        <label>學生證編號 Student ID *</label>
         <input type="text" id="studentId" name="entry.1045318375" required>
         <span id="studentIdError" class="error">請輸入學生證編號</span>
       </div>
       <div class="form-group">
-        <label>屬會名稱 *</label>
-        <input type="text" id="affiliationSearch" placeholder="輸入以搜尋屬會">
-        <select id="affiliation" name="entry.1597491054" required>
-          <option value="">請選擇屬會</option>
-          <option value="香港仔跆拳道會 Aberdeen TKD Club">香港仔跆拳道會 Aberdeen TKD Club</option>
-          <option value="技擊跆拳道會 Advanced TKD Association">技擊跆拳道會 Advanced TKD Association</option>
-          <option value="躍駿跆拳道會 Attack TKD Association">躍駿跆拳道會 Attack TKD Association</option>
-          <option value="青雲跆拳道會 Ching Wan TKD Association">青雲跆拳道會 Ching Wan TKD Association</option>
-          <option value="精英跆拳道會 Ching Ying TKD Union">精英跆拳道會 Ching Ying TKD Union</option>
-          <option value="金柏跆拳道協會 Combat TKD Association">金柏跆拳道會 Combat TKD Association</option>
-          <option value="香港跆拳道東龍會 Eastern Dragon TKD Federation HK">香港跆拳道東龍會 Eastern Dragon TKD Federation HK</option>
-          <option value="勵志跆拳道總會 Encouragement TKD Association">勵志跆拳道總會 Encouragement TKD Association</option>
-          <option value="香港智道跆拳總會 HK Chido TKD Association">香港智道跆拳總會 HK Chido TKD Association</option>
-          <option value="香港啟聯跆拳道協會 HK Kai Luen TKD Association">香港啟聯跆拳道協會 HK Kai Luen TKD Association</option>
-          <option value="香港尼泊爾跆拳道會 HK Nepalese TKD Club">香港尼泊爾跆拳道會 HK Nepalese TKD Club</option>
-          <option value="香港實用跆拳道協會 HK Practical TKD Association">香港實用跆拳道協會 HK Practical TKD Association</option>
-          <option value="香港跆拳道振武館 HK TKD Chun Mo Kwan">香港跆拳道振武館 HK TKD Chun Mo Kwan</option>
-          <option value="香港跆拳道勵進會 HK TKD Action Association">香港跆拳道勵進會 HK TKD Action Association</option>
-          <option value="香港跆拳道勵誠會 HK TKD Active Association">香港跆拳道勵誠會 HK TKD Active Association</option>
-          <option value="香港跆拳道勵輝會 HK TKD Actual Association">香港跆拳道勵輝會 HK TKD Actual Association</option>
-          <option value="香港中道跆拳道會 HK Chong Do TKD Association">香港中道跆拳道會 HK Chong Do TKD Association</option>
-          <option value="香港跆拳道青濤館 HK TKD Chung Do Kwan">香港跆拳道青濤館 HK TKD Chung Do Kwan</option>
-          <option value="香港跆拳道正道館 HK TKD Jung Do Kwan">香港跆拳道正道館 HK TKD Jung Do Kwan</option>
-          <option value="香港跆拳道正心館 HK TKD Jung Sim Kwan">香港跆拳道正心館 HK TKD Jung Sim Kwan</option>
-          <option value="香港聯盟跆拳道協會 HK United TKD Association">香港聯盟跆拳道協會 HK United TKD Association</option>
-          <option value="跆拳道明道會 TKD Bright Way Association">跆拳道明道會 TKD Bright Way Association</option>
-          <option value="漢道跆拳道館 Hon Do TKD Kwan">漢道跆拳道館 Hon Do TKD Kwan</option>
-          <option value="國際跆拳道香港總會 International TKD HK Association">國際跆拳道香港總會 International TKD HK Association</option>
-          <option value="韓國跆拳道青道館 Korea TKD Cheung Do Kwan">韓國跆拳道青道館 Korea TKD Cheung Do Kwan</option>
-          <option value="樂華跆拳道會 Lok Wah TKD Club">樂華跆拳道會 Lok Wah TKD Club</option>
-          <option value="銘英跆拳道會 Main Pioneer TKD Association">銘英跆拳道會 Main Pioneer TKD Association</option>
-          <option value="跆拳道武德會 Moo Duk TKD Hae">跆拳道武德會 Moo Duk TKD Hae</option>
-          <option value="伍華跆拳道會 Ng Wah TKD Club">伍華跆拳道會 Ng Wah TKD Club</option>
-          <option value="毅武聯盟跆拳道 Ngai Mo Alliance TKD">毅武聯盟跆拳道 Ngai Mo Alliance TKD</option>
-          <option value="香港警察跆拳道會 HK Police TKD Club">香港警察跆拳道會 HK Police TKD Club</option>
-          <option value="香港跆拳道國藝會 Potential TKD HK Association">香港跆拳道國藝會 Potential TKD HK Association</option>
-          <option value="尚武聯跆拳道會 Sheung Mo Luen TKD Association">尚武聯跆拳道會 Sheung Mo Luen TKD Association</option>
-          <option value="捷擊跆拳道館 TKD Jet Kick Kwan">捷擊跆拳道館 TKD Jet Kick Kwan</option>
-          <option value="跆拳道吾道會體育館 TKD Oh Do Hae Gymnasium">跆拳道吾道會體育館 TKD Oh Do Hae Gymnasium</option>
-          <option value="香港胡氏跆拳道會 Wu’s TKD HK Association">香港胡氏跆拳道會 Wu’s TKD HK Association</option>
-          <option value="正武會跆拳道協會 Zheng Wu TKD Association">正武會跆拳道協會 Zheng Wu TKD Association</option>
-          <option value="香港發景跆拳道會 Hong Kong Greatview TKD Club">香港發景跆拳道會 Hong Kong Greatview TKD Club</option>
-          <option value="香港跆拳道柏毅會 Hong Kong TKD Pak Ngai Association">香港跆拳道柏毅會 Hong Kong TKD Pak Ngai Association</option>
-          <option value="香港跆拳道嚴濤會 Hong Kong TKD Uhm Do Club">香港跆拳道嚴濤會 Hong Kong TKD Uhm Do Club</option>
-          <option value="威格跆拳道會 Warrior TKD Club">威格跆拳道會 Warrior TKD Club</option>
-          <option value="金道跆拳道聯盟 The Kimdo TKD Federation">金道跆拳道聯盟 The Kimdo TKD Federation</option>
-          <option value="金道一跆拳道館 Kim Do Yi TKD Kwan">金道一跆拳道館 Kim Do Yi TKD Kwan</option>
-          <option value="樂武跆拳道會 Cheerful TKD Association Limited">樂武跆拳道會 Cheerful TKD Association Limited</option>
-          <option value="世紀跆拳道會 H.K. Taekwondo Cosmopolitan Club">世紀跆拳道會 H.K. Taekwondo Cosmopolitan Club</option>
-          <option value="燊．跆拳道館 Sun Taekwondo Club">燊．跆拳道館 Sun Taekwondo Club</option>
-          <option value="香港進和跆拳道會 Hong Kong Chun Wo Taekwondo Association">香港進和跆拳道會 Hong Kong Chun Wo Taekwondo Association</option>
-          <option value="香港賢薈跆拳道會 Hong Kong Ultimate Taekwondo Club">香港賢薈跆拳道會 Hong Kong Ultimate Taekwondo Club</option>
-        </select>
+        <label>屬會名稱 Association *</label>
+        <input list="affiliations" id="affiliation" name="entry.1597491054" required>
+        <datalist id="affiliations">
+          <option value="香港仔跆拳道會 Aberdeen TKD Club">
+          <option value="技擊跆拳道會 Advanced TKD Association">
+          <option value="躍駿跆拳道會 Attack TKD Association">
+          <option value="青雲跆拳道會 Ching Wan TKD Association">
+          <option value="精英跆拳道會 Ching Ying TKD Union">
+          <option value="金柏跆拳道協會 Combat TKD Association">
+          <option value="香港跆拳道東龍會 Eastern Dragon TKD Federation HK">
+          <option value="勵志跆拳道總會 Encouragement TKD Association">
+          <option value="香港智道跆拳總會 HK Chido TKD Association">
+          <option value="香港啟聯跆拳道協會 HK Kai Luen TKD Association">
+          <option value="香港尼泊爾跆拳道會 HK Nepalese TKD Club">
+          <option value="香港實用跆拳道協會 HK Practical TKD Association">
+          <option value="香港跆拳道振武館 HK TKD Chun Mo Kwan">
+          <option value="香港跆拳道勵進會 HK TKD Action Association">
+          <option value="香港跆拳道勵誠會 HK TKD Active Association">
+          <option value="香港跆拳道勵輝會 HK TKD Actual Association">
+          <option value="香港中道跆拳道會 HK Chong Do TKD Association">
+          <option value="香港跆拳道青濤館 HK TKD Chung Do Kwan">
+          <option value="香港跆拳道正道館 HK TKD Jung Do Kwan">
+          <option value="香港跆拳道正心館 HK TKD Jung Sim Kwan">
+          <option value="香港聯盟跆拳道協會 HK United TKD Association">
+          <option value="跆拳道明道會 TKD Bright Way Association">
+          <option value="漢道跆拳道館 Hon Do TKD Kwan">
+          <option value="國際跆拳道香港總會 International TKD HK Association">
+          <option value="韓國跆拳道青道館 Korea TKD Cheung Do Kwan">
+          <option value="樂華跆拳道會 Lok Wah TKD Club">
+          <option value="銘英跆拳道會 Main Pioneer TKD Association">
+          <option value="跆拳道武德會 Moo Duk TKD Hae">
+          <option value="伍華跆拳道會 Ng Wah TKD Club">
+          <option value="毅武聯盟跆拳道 Ngai Mo Alliance TKD">
+          <option value="香港警察跆拳道會 HK Police TKD Club">
+          <option value="香港跆拳道國藝會 Potential TKD HK Association">
+          <option value="尚武聯跆拳道會 Sheung Mo Luen TKD Association">
+          <option value="捷擊跆拳道館 TKD Jet Kick Kwan">
+          <option value="跆拳道吾道會體育館 TKD Oh Do Hae Gymnasium">
+          <option value="香港胡氏跆拳道會 Wu’s TKD HK Association">
+          <option value="正武會跆拳道協會 Zheng Wu TKD Association">
+          <option value="香港發景跆拳道會 Hong Kong Greatview TKD Club">
+          <option value="香港跆拳道柏毅會 Hong Kong TKD Pak Ngai Association">
+          <option value="香港跆拳道嚴濤會 Hong Kong TKD Uhm Do Club">
+          <option value="威格跆拳道會 Warrior TKD Club">
+          <option value="金道跆拳道聯盟 The Kimdo TKD Federation">
+          <option value="金道一跆拳道館 Kim Do Yi TKD Kwan">
+          <option value="樂武跆拳道會 Cheerful TKD Association Limited">
+          <option value="世紀跆拳道會 H.K. Taekwondo Cosmopolitan Club">
+          <option value="燊．跆拳道館 Sun Taekwondo Club">
+          <option value="香港進和跆拳道會 Hong Kong Chun Wo Taekwondo Association">
+          <option value="香港賢薈跆拳道會 Hong Kong Ultimate Taekwondo Club">
+        </datalist>
         <span id="affiliationError" class="error">請選擇或輸入屬會名稱</span>
       </div>
       <div class="form-group">
-        <label>跆協段證/色帶會員証編號 *</label>
+        <label>跆協段證/色帶會員証編號 Membership No. *</label>
         <input type="text" id="membershipNumber" name="entry.1820097193" required>
         <span id="membershipNumberError" class="error">請輸入會員証編號</span>
       </div>
       <div class="form-group">
-        <label>中文姓名 *</label>
-        <input type="text" id="chineseName" name="entry.1739837016" placeholder="如沒有請填寫英文姓名 (請以大寫字母填寫)" oninput="if (/[a-zA-Z]/.test(this.value)) this.value = this.value.toUpperCase()" required>
-        <span id="chineseNameError" class="error">請輸入中文姓名</span>
+        <label>中文姓名 Chinese Name *</label>
+        <input type="text" id="chineseName" name="entry.1739837016" placeholder="如沒有請填寫英文姓名 (請以大寫字母填寫)" required oninput="if(!/[\u4e00-\u9fa5]/.test(this.value)) this.value = this.value.toUpperCase()">
+        <span id="chineseNameError" class="error">請輸入中文姓名或英文姓名</span>
       </div>
       <div class="form-group">
-        <label>英文姓名 *</label>
-        <input type="text" id="englishName" name="entry.69039678" placeholder="請以大寫字母填寫" oninput="this.value = this.value.toUpperCase()" required>
+        <label>英文姓名 English Name *</label>
+        <input type="text" id="englishName" name="entry.69039678" placeholder="請以大寫字母填寫" required oninput="this.value = this.value.toUpperCase()">
         <span id="englishNameError" class="error">請輸入英文姓名</span>
       </div>
       <div class="form-group">
@@ -419,53 +421,39 @@
         <span id="eventError" class="error">請選擇參賽項目</span>
       </div>
       <div class="form-group">
-        <label>參賽者高度 (cm) Height *</label>
-        <input type="number" id="height" name="entry.703788026" step="0.1" min="0">
-        <span id="heightError" class="error">請輸入有效的高度</span>
+        <label>參賽者高度 Height (cm)</label>
+        <input type="number" id="height" name="entry.703788026" disabled>
+        <span id="heightError" class="error">請輸入有效的身高</span>
       </div>
       <div class="form-group">
-        <label>參賽者重量 (kg) Weight *</label>
-        <input type="number" id="weight" name="entry.1666612578" step="0.1" min="0">
-        <span id="weightError" class="error">請輸入有效的重量</span>
+        <label>參賽者重量 Weight (kg)</label>
+        <input type="number" id="weight" name="entry.1666612578" disabled>
+        <span id="weightError" class="error">請輸入有效的體重</span>
       </div>
       <div class="form-group">
-        <label>搏擊級別劃分 Kyorugi Division *</label>
-        <select id="kyorugiDivision" name="entry.1924363147">
+        <label>搏擊級別劃分 Kyorugi Division</label>
+        <select id="kyorugiDivision" name="entry.1924363147" disabled>
           <option value="">請選擇搏擊級別</option>
-          <option value="男童色帶A組 Boys Color Belt Group A 8歲至10歲 Age: 8 to 10 (2015年至2017年出生者)">男童色帶A組 Boys Color Belt Group A 8歲至10歲 Age: 8 to 10 (2015年至2017年出生者)</option>
-          <option value="男童色帶B組 Boys Color Belt Group B 11歲至12歲 Age: 11 to 12 (2013年至2014年出生者)">男童色帶B組 Boys Color Belt Group B 11歲至12歲 Age: 11 to 12 (2013年至2014年出生者)</option>
-          <option value="男童色帶C組 Boys Color Belt Group C 13歲至14歲 Age: 13 to 14 (2011年至2012年出生者)">男童色帶C組 Boys Color Belt Group C 13歲至14歲 Age: 13 to 14 (2011年至2012年出生者)</option>
-          <option value="女童色帶A組 Girls Color Belt Group A 8歲至10歲 Age: 8 to 10 (2015年至2017年出生者)">女童色帶A組 Girls Color Belt Group A 8歲至10歲 Age: 8 to 10 (2015年至2017年出生者)</option>
-          <option value="女童色帶B組 Girls Color Belt Group B 11歲至12歲 Age: 11 to 12 (2013年至2014年出生者)">女童色帶B組 Girls Color Belt Group B 11歲至12歲 Age: 11 to 12 (2013年至2014年出生者)</option>
-          <option value="女童色帶C組 Girls Color Belt Group C 13歲至14歲 Age: 13 to 14 (2011年至2012年出生者)">女童色帶C組 Girls Color Belt Group C 13歲至14歲 Age: 13 to 14 (2011年至2012年出生者)</option>
         </select>
-        <span id="kyorugiDivisionError" class="error">請選擇搏擊級別劃分</span>
+        <span id="kyorugiDivisionError" class="error">請選擇搏擊級別</span>
       </div>
       <div class="form-group">
-        <label>搏擊量級 Weight Category *</label>
-        <select id="weightCategory" name="entry.1084612574">
-          <option value="">請選擇量級</option>
+        <label>搏擊量級 Weight Class</label>
+        <select id="weightClass" name="entry.1084612574" disabled>
+          <option value="">請選擇搏擊量級</option>
         </select>
-        <span id="weightCategoryError" class="error">請選擇搏擊量級</span>
+        <span id="weightClassError" class="error">請選擇搏擊量級</span>
       </div>
       <div class="form-group">
-        <label>品勢級別劃分 Poomsae Division *</label>
-        <select id="poomsaeDivision" name="entry.1721761818">
+        <label>品勢級別劃分 Poomsae Division</label>
+        <select id="poomsaeDivision" name="entry.1721761818" disabled>
           <option value="">請選擇品勢級別</option>
-          <option value="男童A組 Boys Group A 6歲至7歲 Age: 6 to 7 (2018年至2019年出生者)">男童A組 Boys Group A 6歲至7歲 Age: 6 to 7 (2018年至2019年出生者)</option>
-          <option value="男童B組 Boys Group B 8歲至9歲 Age: 8 to 9 (2016年至2017年出生者)">男童B組 Boys Group B 8歲至9歲 Age: 8 to 9 (2016年至2017年出生者)</option>
-          <option value="男童C組 Boys Group C 10歲至11歲 Age: 10 to 11 (2014年至2015年出生者)">男童C組 Boys Group C 10歲至11歲 Age: 10 to 11 (2014年至2015年出生者)</option>
-          <option value="男童D組 Boys Group D 12歲或以上 Age: 12 or above (2013年或以上出生者)">男童D組 Boys Group D 12歲或以上 Age: 12 or above (2013年或以上出生者)</option>
-          <option value="女童E組 Girls Group E 6歲至7歲 Age: 6 to 7 (2018年至2019年出生者)">女童E組 Girls Group E 6歲至7歲 Age: 6 to 7 (2018年至2019年出生者)</option>
-          <option value="女童F組 Girls Group F 8歲至9歲 Age: 8 to 9 (2016年至2017年出生者)">女童F組 Girls Group F 8歲至9歲 Age: 8 to 9 (2016年至2017年出生者)</option>
-          <option value="女童G組 Girls Group G 10歲至11歲 Age: 10 to 11 (2014年至2015年出生者)">女童G組 Girls Group G 10歲至11歲 Age: 10 to 11 (2014年至2015年出生者)</option>
-          <option value="女童H組 Girls Group H 12歲或以上 Age: 12 or above (2013年或之前出生者)">女童H組 Girls Group H 12歲或以上 Age: 12 or above (2013年或之前出生者)</option>
         </select>
-        <span id="poomsaeDivisionError" class="error">請選擇品勢級別劃分</span>
+        <span id="poomsaeDivisionError" class="error">請選擇品勢級別</span>
       </div>
       <div class="form-group">
-        <label>參賽品勢 Poomsae Event *</label>
-        <select id="poomsaeEvent" name="entry.1921234097">
+        <label>參賽品勢 Poomsae Event</label>
+        <select id="poomsaeEvent" name="entry.1921234097" disabled>
           <option value="">請選擇參賽品勢</option>
         </select>
         <span id="poomsaeEventError" class="error">請選擇參賽品勢</span>
@@ -489,13 +477,13 @@
         <p><strong>聯絡電話：</strong> <span id="confirmPhone"></span></p>
         <p><strong>現有級別：</strong> <span id="confirmBeltLevel"></span></p>
         <p><strong>參賽項目：</strong> <span id="confirmEvent"></span></p>
-        <p id="confirmKyorugiFields" style="display: none;">
-          <strong>參賽者高度 (cm)：</strong> <span id="confirmHeight"></span><br>
-          <strong>參賽者重量 (kg)：</strong> <span id="confirmWeight"></span><br>
+        <p id="kyorugiFields" style="display: none;">
+          <strong>參賽者高度：</strong> <span id="confirmHeight"></span><br>
+          <strong>參賽者重量：</strong> <span id="confirmWeight"></span><br>
           <strong>搏擊級別劃分：</strong> <span id="confirmKyorugiDivision"></span><br>
-          <strong>搏擊量級：</strong> <span id="confirmWeightCategory"></span>
+          <strong>搏擊量級：</strong> <span id="confirmWeightClass"></span>
         </p>
-        <p id="confirmPoomsaeFields" style="display: none;">
+        <p id="poomsaeFields" style="display: none;">
           <strong>品勢級別劃分：</strong> <span id="confirmPoomsaeDivision"></span><br>
           <strong>參賽品勢：</strong> <span id="confirmPoomsaeEvent"></span>
         </p>
@@ -510,96 +498,42 @@
   <div id="thankYouPage">
     <h2>感謝您的報名！</h2>
     <p>確認後教練將盡快與您聯繫核對資料。</p>
-    <p>並將家長同意書、會員證及學生證副本交給教練報名。</p>
+    <p>請將PDF最後一頁的同意書交給教練。</p>
     <button class="return-button" onclick="restartForm()">重新報名</button>
   </div>
 
   <script>
-    // 級別與品勢映射
+    // 級別映射
     const beltMapping = {
       '黃帶 Yellow Belt': '1',
-      '黃綠帶 Yellow-Green Belt': '1',
-      '綠帶 Green Belt': '2',
-      '綠藍帶 Green-Blue Belt': '2',
-      '藍帶 Blue Belt': '3',
-      '藍紅帶 Blue-Red Belt': '3',
-      '紅帶 Red Belt': '4',
-      '紅黑帶 Red-Black Belt': '4',
-      '品一 Poom 1': '5',
-      '品二 Poom 2': '5',
-      '品三或上 Poom 3 or above': '6'
+      '黃綠帶 Yellow-Green Belt': '2',
+      '綠帶 Green Belt': '3',
+      '綠藍帶 Green-Blue Belt': '4',
+      '藍帶 Blue Belt': '5',
+      '藍紅帶 Blue-Red Belt': '6',
+      '紅帶 Red Belt': '7',
+      '紅黑帶 Red-Black Belt': '8',
+      '品一 Poom 1': '9',
+      '品二 Poom 2': '10',
+      '品三或上 Poom 3 or above': '11'
     };
 
-    // 品勢級別與參賽品勢
-    const poomsaeDivisions = {
-      '男童A組 Boys Group A 6歲至7歲 Age: 6 to 7 (2018年至2019年出生者)': [
-        'A1M 男童色帶 - 黃、黃綠 - 太極1',
-        'A2M 男童色帶 - 綠、綠藍 - 太極3',
-        'A3M 男童色帶 - 藍、藍紅 - 太極5',
-        'A4M 男童色帶 - 紅、紅黑 - 太極7',
-        'A5M 男童品段 - 品一、品二 - 高麗',
-        'A6M 男童品段 - 品三或以上 - 高麗'
-      ],
-      '男童B組 Boys Group B 8歲至9歲 Age: 8 to 9 (2016年至2017年出生者)': [
-        'B1M 男童色帶 - 黃、黃綠 - 太極1',
-        'B2M 男童色帶 - 綠、綠藍 - 太極3',
-        'B3M 男童色帶 - 藍、藍紅 - 太極5',
-        'B4M 男童色帶 - 紅、紅黑 - 太極7',
-        'B5M 男童品段 - 品一、品二 - 高麗',
-        'B6M 男童品段 - 品三或以上 - 高麗'
-      ],
-      '男童C組 Boys Group C 10歲至11歲 Age: 10 to 11 (2014年至2015年出生者)': [
-        'C1M 男童色帶 - 黃、黃綠 - 太極1',
-        'C2M 男童色帶 - 綠、綠藍 - 太極3',
-        'C3M 男童色帶 - 藍、藍紅 - 太極5',
-        'C4M 男童色帶 - 紅、紅黑 - 太極7',
-        'C5M 男童品段 - 品一、品二 - 高麗',
-        'C6M 男童品段 - 品三或以上 - 高麗'
-      ],
-      '男童D組 Boys Group D 12歲或以上 Age: 12 or above (2013年或以上出生者)': [
-        'D1M 男童色帶 - 黃、黃綠 - 太極1',
-        'D2M 男童色帶 - 綠、綠藍 - 太極3',
-        'D3M 男童色帶 - 藍、藍紅 - 太極5',
-        'D4M 男童色帶 - 紅、紅黑 - 太極7',
-        'D5M 男童品段 - 品一、品二 - 高麗',
-        'D6M 男童品段 - 品三或以上 - 高麗'
-      ],
-      '女童E組 Girls Group E 6歲至7歲 Age: 6 to 7 (2018年至2019年出生者)': [
-        'E1F 女童色帶 - 黃、黃綠 - 太極1',
-        'E2F 女童色帶 - 綠、綠藍 - 太極3',
-        'E3F 女童色帶 - 藍、藍紅 - 太極5',
-        'E4F 女童色帶 - 紅、紅黑 - 太極7',
-        'E5F 女童品段 - 品一、品二 - 高麗',
-        'E6F 女童品段 - 品三或以上 - 高麗'
-      ],
-      '女童F組 Girls Group F 8歲至9歲 Age: 8 to 9 (2016年至2017年出生者)': [
-        'F1F 女童色帶 - 黃、黃綠 - 太極1',
-        'F2F 女童色帶 - 綠、綠藍 - 太極3',
-        'F3F 女童色帶 - 藍、藍紅 - 太極5',
-        'F4F 女童色帶 - 紅、紅黑 - 太極7',
-        'F5F 女童品段 - 品一、品二 - 高麗',
-        'F6F 女童品段 - 品三或以上 - 高麗'
-      ],
-      '女童G組 Girls Group G 10歲至11歲 Age: 10 to 11 (2014年至2015年出生者)': [
-        'G1F 女童色帶 - 黃、黃綠 - 太極1',
-        'G2F 女童色帶 - 綠、綠藍 - 太極3',
-        'G3F 女童色帶 - 藍、藍紅 - 太極5',
-        'G4F 女童色帶 - 紅、紅黑 - 太極7',
-        'G5F 女童品段 - 品一、品二 - 高麗',
-        'G6F 女童品段 - 品三或以上 - 高麗'
-      ],
-      '女童H組 Girls Group H 12歲或以上 Age: 12 or above (2013年或之前出生者)': [
-        'H1F 女童色帶 - 黃、黃綠 - 太極1',
-        'H2F 女童色帶 - 綠、綠藍 - 太極3',
-        'H3F 女童色帶 - 藍、藍紅 - 太極5',
-        'H4F 女童色帶 - 紅、紅黑 - 太極7',
-        'H5F 女童品段 - 品一、品二 - 高麗',
-        'H6F 女童品段 - 品三或以上 - 高麗'
-      ]
+    // 搏擊級別劃分
+    const kyorugiDivisions = {
+      '男 Male': {
+        '2015-2017': '男童色帶A組 Boys Color Belt Group A 8歲至10歲 Age: 8 to 10 (2015年至2017年出生者)',
+        '2013-2014': '男童色帶B組 Boys Color Belt Group B 11歲至12歲 Age: 11 to 12 (2013年至2014年出生者)',
+        '2011-2012': '男童色帶C組 Boys Color Belt Group C 13歲至14歲 Age: 13 to 14 (2011年至2012年出生者)'
+      },
+      '女 Female': {
+        '2015-2017': '女童色帶A組 Girls Color Belt Group A 8歲至10歲 Age: 8 to 10 (2015年至2017年出生者)',
+        '2013-2014': '女童色帶B組 Girls Color Belt Group B 11歲至12歲 Age: 11 to 12 (2013年至2014年出生者)',
+        '2011-2012': '女童色帶C組 Girls Color Belt Group C 13歲至14歲 Age: 13 to 14 (2011年至2012年出生者)'
+      }
     };
 
     // 搏擊量級
-    const weightCategories = {
+    const weightClasses = {
       '男童色帶A組 Boys Color Belt Group A 8歲至10歲 Age: 8 to 10 (2015年至2017年出生者)': [
         'FIN 鰭量級 (25公斤以上而不超過27公斤)',
         'FLY 蠅量級 (27公斤以上而不超過29公斤)',
@@ -674,13 +608,97 @@
       ]
     };
 
+    // 品勢級別劃分
+    const poomsaeDivisions = {
+      '男 Male': {
+        '2018-2019': '男童A組 Boys Group A 6歲至7歲 Age: 6 to 7 (2018年至2019年出生者)',
+        '2016-2017': '男童B組 Boys Group B 8歲至9歲 Age: 8 to 9 (2016年至2017年出生者)',
+        '2014-2015': '男童C組 Boys Group C 10歲至11歲 Age: 10 to 11 (2014年至2015年出生者)',
+        '2013': '男童D組 Boys Group D 12歲或以上 Age: 12 or above (2013年或以上出生者)'
+      },
+      '女 Female': {
+        '2018-2019': '女童E組 Girls Group E 6歲至7歲 Age: 6 to 7 (2018年至2019年出生者)',
+        '2016-2017': '女童F組 Girls Group F 8歲至9歲 Age: 8 to 9 (2016年至2017年出生者)',
+        '2014-2015': '女童G組 Girls Group G 10歲至11歲 Age: 10 to 11 (2014年至2015年出生者)',
+        '2013': '女童H組 Girls Group H 12歲或以上 Age: 12 or above (2013年或之前出生者)'
+      }
+    };
+
+    // 參賽品勢
+    const poomsaeEvents = {
+      '男童A組 Boys Group A 6歲至7歲 Age: 6 to 7 (2018年至2019年出生者)': {
+        '1-2': 'A1M 男童色帶 - 黃、黃綠 - 太極1',
+        '3-4': 'A2M 男童色帶 - 綠、綠藍 - 太極3',
+        '5-6': 'A3M 男童色帶 - 藍、藍紅 - 太極5',
+        '7-8': 'A4M 男童色帶 - 紅、紅黑 - 太極7',
+        '9-10': 'A5M 男童品段 - 品一、品二 - 高麗',
+        '11': 'A6M 男童品段 - 品三或以上 - 高麗'
+      },
+      '男童B組 Boys Group B 8歲至9歲 Age: 8 to 9 (2016年至2017年出生者)': {
+        '1-2': 'B1M 男童色帶 - 黃、黃綠 - 太極1',
+        '3-4': 'B2M 男童色帶 - 綠、綠藍 - 太極3',
+        '5-6': 'B3M 男童色帶 - 藍、藍紅 - 太極5',
+        '7-8': 'B4M 男童色帶 - 紅、紅黑 - 太極7',
+        '9-10': 'B5M 男童品段 - 品一、品二 - 高麗',
+        '11': 'B6M 男童品段 - 品三或以上 - 高麗'
+      },
+      '男童C組 Boys Group C 10歲至11歲 Age: 10 to 11 (2014年至2015年出生者)': {
+        '1-2': 'C1M 男童色帶 - 黃、黃綠 - 太極1',
+        '3-4': 'C2M 男童色帶 - 綠、綠藍 - 太極3',
+        '5-6': 'C3M 男童色帶 - 藍、藍紅 - 太極5',
+        '7-8': 'C4M 男童色帶 - 紅、紅黑 - 太極7',
+        '9-10': 'C5M 男童品段 - 品一、品二 - 高麗',
+        '11': 'C6M 男童品段 - 品三或以上 - 高麗'
+      },
+      '男童D組 Boys Group D 12歲或以上 Age: 12 or above (2013年或以上出生者)': {
+        '1-2': 'D1M 男童色帶 - 黃、黃綠 - 太極1',
+        '3-4': 'D2M 男童色帶 - 綠、綠藍 - 太極3',
+        '5-6': 'D3M 男童色帶 - 藍、藍紅 - 太極5',
+        '7-8': 'D4M 男童色帶 - 紅、紅黑 - 太極7',
+        '9-10': 'D5M 男童品段 - 品一、品二 - 高麗',
+        '11': 'D6M 男童品段 - 品三或以上 - 高麗'
+      },
+      '女童E組 Girls Group E 6歲至7歲 Age: 6 to 7 (2018年至2019年出生者)': {
+        '1-2': 'E1F 女童色帶 - 黃、黃綠 - 太極1',
+        '3-4': 'E2F 女童色帶 - 綠、綠藍 - 太極3',
+        '5-6': 'E3F 女童色帶 - 藍、藍紅 - 太極5',
+        '7-8': 'E4F 女童色帶 - 紅、紅黑 - 太極7',
+        '9-10': 'E5F 女童品段 - 品一、品二 - 高麗',
+        '11': 'E6F 女童品段 - 品三或以上 - 高麗'
+      },
+      '女童F組 Girls Group F 8歲至9歲 Age: 8 to 9 (2016年至2017年出生者)': {
+        '1-2': 'F1F 女童色帶 - 黃、黃綠 - 太極1',
+        '3-4': 'F2F 女童色帶 - 綠、綠藍 - 太極3',
+        '5-6': 'F3F 女童色帶 - 藍、藍紅 - 太極5',
+        '7-8': 'F4F 女童色帶 - 紅、紅黑 - 太極7',
+        '9-10': 'F5F 女童品段 - 品一、品二 - 高麗',
+        '11': 'F6F 女童品段 - 品三或以上 - 高麗'
+      },
+      '女童G組 Girls Group G 10歲至11歲 Age: 10 to 11 (2014年至2015年出生者)': {
+        '1-2': 'G1F 女童色帶 - 黃、黃綠 - 太極1',
+        '3-4': 'G2F 女童色帶 - 綠、綠藍 - 太極3',
+        '5-6': 'G3F 女童色帶 - 藍、藍紅 - 太極5',
+        '7-8': 'G4F 女童色帶 - 紅、紅黑 - 太極7',
+        '9-10': 'G5F 女童品段 - 品一、品二 - 高麗',
+        '11': 'G6F 女童品段 - 品三或以上 - 高麗'
+      },
+      '女童H組 Girls Group H 12歲或以上 Age: 12 or above (2013年或之前出生者)': {
+        '1-2': 'H1F 女童色帶 - 黃、黃綠 - 太極1',
+        '3-4': 'H2F 女童色帶 - 綠、綠藍 - 太極3',
+        '5-6': 'H3F 女童色帶 - 藍、藍紅 - 太極5',
+        '7-8': 'H4F 女童色帶 - 紅、紅黑 - 太極7',
+        '9-10': 'H5F 女童品段 - 品一、品二 - 高麗',
+        '11': 'H6F 女童品段 - 品三或以上 - 高麗'
+      }
+    };
+
     // 表單驗證與提交
     function submitForm() {
       const confirmModal = document.getElementById('confirmModal');
       const form = document.getElementById('registrationForm');
       const schoolNameInput = document.getElementById('schoolName');
       const studentIdInput = document.getElementById('studentId');
-      const affiliationSelect = document.getElementById('affiliation');
+      const affiliationInput = document.getElementById('affiliation');
       const membershipNumberInput = document.getElementById('membershipNumber');
       const chineseNameInput = document.getElementById('chineseName');
       const englishNameInput = document.getElementById('englishName');
@@ -694,7 +712,7 @@
       const heightInput = document.getElementById('height');
       const weightInput = document.getElementById('weight');
       const kyorugiDivisionSelect = document.getElementById('kyorugiDivision');
-      const weightCategorySelect = document.getElementById('weightCategory');
+      const weightClassSelect = document.getElementById('weightClass');
       const poomsaeDivisionSelect = document.getElementById('poomsaeDivision');
       const poomsaeEventSelect = document.getElementById('poomsaeEvent');
 
@@ -705,11 +723,14 @@
       const birthDateInput = document.getElementById('birthDate');
       if (birthYearSelect.value && birthMonthSelect.value && birthDaySelect.value) {
         birthDateInput.value = `${birthYearSelect.value}-${birthMonthSelect.value.toString().padStart(2, '0')}-${birthDaySelect.value.toString().padStart(2, '0')}`;
+      } else {
+        birthDateInput.value = '';
       }
 
       // 檢查是否為 "test" 模式
       const isTestMode = schoolNameInput.value.toLowerCase().includes('test');
 
+      // 驗證必填字段
       if (!isTestMode) {
         if (!schoolNameInput.value.trim()) {
           document.getElementById('schoolNameError').style.display = 'block';
@@ -719,7 +740,7 @@
           document.getElementById('studentIdError').style.display = 'block';
           isValid = false;
         }
-        if (!affiliationSelect.value) {
+        if (!affiliationInput.value.trim()) {
           document.getElementById('affiliationError').style.display = 'block';
           isValid = false;
         }
@@ -756,7 +777,7 @@
           isValid = false;
         }
         const selectedEvent = Array.from(eventRadios).find(radio => radio.checked)?.value;
-        if (selectedEvent && (selectedEvent.includes('搏擊'))) {
+        if (selectedEvent && selectedEvent.includes('搏擊')) {
           if (!heightInput.value || heightInput.value <= 0) {
             document.getElementById('heightError').style.display = 'block';
             isValid = false;
@@ -769,12 +790,12 @@
             document.getElementById('kyorugiDivisionError').style.display = 'block';
             isValid = false;
           }
-          if (!weightCategorySelect.value) {
-            document.getElementById('weightCategoryError').style.display = 'block';
+          if (!weightClassSelect.value) {
+            document.getElementById('weightClassError').style.display = 'block';
             isValid = false;
           }
         }
-        if (selectedEvent && (selectedEvent.includes('品勢'))) {
+        if (selectedEvent && selectedEvent.includes('品勢')) {
           if (!poomsaeDivisionSelect.value) {
             document.getElementById('poomsaeDivisionError').style.display = 'block';
             isValid = false;
@@ -786,10 +807,12 @@
         }
       }
 
+      // 顯示確認模態框
       if (isValid || isTestMode) {
+        console.log('驗證通過，顯示確認模態框');
         document.getElementById('confirmSchoolName').textContent = schoolNameInput.value || '未填寫';
         document.getElementById('confirmStudentId').textContent = studentIdInput.value || '未填寫';
-        document.getElementById('confirmAffiliation').textContent = affiliationSelect.value || '未填寫';
+        document.getElementById('confirmAffiliation').textContent = affiliationInput.value || '未填寫';
         document.getElementById('confirmMembershipNumber').textContent = membershipNumberInput.value || '未填寫';
         document.getElementById('confirmChineseName').textContent = chineseNameInput.value || '未填寫';
         document.getElementById('confirmEnglishName').textContent = englishNameInput.value || '未填寫';
@@ -797,32 +820,30 @@
         document.getElementById('confirmGender').textContent = Array.from(genderRadios).find(radio => radio.checked)?.value || '未選擇';
         document.getElementById('confirmPhone').textContent = phoneInput.value || '未填寫';
         document.getElementById('confirmBeltLevel').textContent = beltLevelSelect.value || '未選擇';
+        const selectedEvent = Array.from(eventRadios).find(radio => radio.checked)?.value;
         document.getElementById('confirmEvent').textContent = selectedEvent || '未選擇';
-
-        const kyorugiFields = document.getElementById('confirmKyorugiFields');
-        const poomsaeFields = document.getElementById('confirmPoomsaeFields');
-        kyorugiFields.style.display = selectedEvent && selectedEvent.includes('搏擊') ? 'block' : 'none';
-        poomsaeFields.style.display = selectedEvent && selectedEvent.includes('品勢') ? 'block' : 'none';
-        if (selectedEvent && selectedEvent.includes('搏擊')) {
-          document.getElementById('confirmHeight').textContent = heightInput.value || '未填寫';
-          document.getElementById('confirmWeight').textContent = weightInput.value || '未填寫';
-          document.getElementById('confirmKyorugiDivision').textContent = kyorugiDivisionSelect.value || '未選擇';
-          document.getElementById('confirmWeightCategory').textContent = weightCategorySelect.value || '未選擇';
-        }
-        if (selectedEvent && selectedEvent.includes('品勢')) {
-          document.getElementById('confirmPoomsaeDivision').textContent = poomsaeDivisionSelect.value || '未選擇';
-          document.getElementById('confirmPoomsaeEvent').textContent = poomsaeEventSelect.value || '未選擇';
-        }
+        document.getElementById('kyorugiFields').style.display = (selectedEvent && selectedEvent.includes('搏擊')) ? 'block' : 'none';
+        document.getElementById('confirmHeight').textContent = heightInput.value || '未填寫';
+        document.getElementById('confirmWeight').textContent = weightInput.value || '未填寫';
+        document.getElementById('confirmKyorugiDivision').textContent = kyorugiDivisionSelect.value || '未選擇';
+        document.getElementById('confirmWeightClass').textContent = weightClassSelect.value || '未選擇';
+        document.getElementById('poomsaeFields').style.display = (selectedEvent && selectedEvent.includes('品勢')) ? 'block' : 'none';
+        document.getElementById('confirmPoomsaeDivision').textContent = poomsaeDivisionSelect.value || '未選擇';
+        document.getElementById('confirmPoomsaeEvent').textContent = poomsaeEventSelect.value || '未選擇';
 
         confirmModal.style.display = 'flex';
+      } else {
+        console.log('驗證失敗，未顯示確認模態框');
       }
     }
 
     function cancelSubmission() {
+      console.log('取消提交，關閉確認模態框');
       document.getElementById('confirmModal').style.display = 'none';
     }
 
     async function confirmSubmission() {
+      console.log('確認提交，準備跳轉到感謝頁');
       const confirmModal = document.getElementById('confirmModal');
       const form = document.getElementById('registrationForm');
       const formContainer = document.getElementById('mainForm');
@@ -830,7 +851,7 @@
       const selectedEvent = Array.from(document.getElementsByName('entry.629960054')).find(radio => radio.checked)?.value;
       const formData = new FormData(form);
 
-      // 根據參賽項目過濾數據
+      // 根據參賽項目篩選提交資料
       if (selectedEvent === '搏擊') {
         formData.delete('entry.1721761818'); // 品勢級別劃分
         formData.delete('entry.1921234097'); // 參賽品勢
@@ -842,21 +863,16 @@
       }
 
       try {
-        // 使用 fetch 提交表單
-        await fetch('https://docs.google.com/forms/d/e/1FAIpQLSfwydgGIL-COHGvXH8dMRos0JeF8c3Fy6hwfLltRdw6YOjlVQ/formResponse', {
-          method: 'POST',
-          body: formData,
-          mode: 'cors', // 改為 cors 模式
-          headers: {
-            'Accept': 'application/json'
-          }
-        });
-        console.log('表單提交成功');
+        // 模擬提交成功
+        console.log('表單提交成功，資料如下：');
+        for (let [key, value] of formData.entries()) {
+          console.log(`${key}: ${value}`);
+        }
         confirmModal.style.display = 'none';
         formContainer.style.display = 'none';
         thankYouPage.style.display = 'block';
       } catch (error) {
-        console.error('提交失敗:', error);
+        console.error('模擬提交失敗:', error);
         alert('表單提交失敗，請稍後再試或檢查控制台日誌。');
       }
     }
@@ -866,13 +882,14 @@
       form.reset();
       document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
       document.getElementById('kyorugiDivision').innerHTML = '<option value="">請選擇搏擊級別</option>';
-      document.getElementById('weightCategory').innerHTML = '<option value="">請選擇量級</option>';
+      document.getElementById('weightClass').innerHTML = '<option value="">請選擇搏擊量級</option>';
       document.getElementById('poomsaeDivision').innerHTML = '<option value="">請選擇品勢級別</option>';
       document.getElementById('poomsaeEvent').innerHTML = '<option value="">請選擇參賽品勢</option>';
       updateEventOptions();
     }
 
     function restartForm() {
+      console.log('重新報名，顯示表單');
       const thankYouPage = document.getElementById('thankYouPage');
       const formContainer = document.getElementById('mainForm');
       thankYouPage.style.display = 'none';
@@ -882,32 +899,15 @@
 
     // 等待 DOM 完全加載
     document.addEventListener('DOMContentLoaded', () => {
-      // 屬會搜尋功能
-      const affiliationSearch = document.getElementById('affiliationSearch');
-      const affiliationSelect = document.getElementById('affiliation');
-      affiliationSearch.addEventListener('input', () => {
-        const searchValue = affiliationSearch.value.toLowerCase().trim();
-        Array.from(affiliationSelect.options).forEach(option => {
-          if (option.value === '') {
-            option.style.display = 'block'; // 保持預設選項可見
-            return;
-          }
-          const optionText = option.text.toLowerCase();
-          option.style.display = optionText.includes(searchValue) ? 'block' : 'none';
-        });
-        // 確保選擇框在手機上正確顯示
-        affiliationSelect.dispatchEvent(new Event('change'));
-      });
-
-      // 動態生成日期選項
+      // 動態生成年份、月份和日期選項
       function populateDateSelects(yearSelectId, monthSelectId, daySelectId, hiddenInputId) {
         const yearSelect = document.getElementById(yearSelectId);
         const monthSelect = document.getElementById(monthSelectId);
         const daySelect = document.getElementById(daySelectId);
         const hiddenInput = document.getElementById(hiddenInputId);
 
-        // 生成年份選項 (2019 到 2007)
-        for (let year = 2019; year >= 2007; year--) {
+        // 生成年份選項 (2019 到 2005)
+        for (let year = 2019; year >= 2005; year--) {
           let option = document.createElement('option');
           option.value = year;
           option.text = year;
@@ -927,18 +927,19 @@
         }
 
         function updateDays() {
-          const birthYear = parseInt(yearSelect.value) || 2019;
+          const year = parseInt(yearSelect.value) || 2019;
           const month = parseInt(monthSelect.value) || 1;
           const prevDay = daySelect.value;
           daySelect.innerHTML = '<option value="">日</option>';
-          if (birthYear && month) {
-            const daysInMonth = [31, isLeapYear(birthYear) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
+          if (year && month) {
+            const daysInMonth = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
             for (let day = 1; day <= daysInMonth; day++) {
               let option = document.createElement('option');
               option.value = day;
               option.text = day.toString().padStart(2, '0');
               daySelect.appendChild(option);
             }
+            // 保留之前選擇的日期，如果新月份有該日期
             if (prevDay && parseInt(prevDay) <= daysInMonth) {
               daySelect.value = prevDay;
             }
@@ -952,14 +953,15 @@
           const day = daySelect.value;
           if (year && month && day) {
             hiddenInput.value = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-            updateEventOptions();
-            updateKyorugiDivision();
-            updatePoomsaeDivision();
           } else {
             hiddenInput.value = '';
           }
+          updateEventOptions();
+          updateKyorugiDivision();
+          updatePoomsaeDivision();
         }
 
+        // 綁定事件監聽器
         yearSelect.addEventListener('change', () => {
           updateDays();
           validateDate(yearSelectId, monthSelectId, daySelectId);
@@ -973,6 +975,7 @@
           validateDate(yearSelectId, monthSelectId, daySelectId);
         });
 
+        // 初始化日期選項
         updateDays();
       }
 
@@ -998,194 +1001,161 @@
         return true;
       }
 
-      // 動態控制參賽項目選項
+      // 初始化日期選項
+      populateDateSelects('birthYear', 'birthMonth', 'birthDay', 'birthDate');
+
+      // 更新參賽項目選項
       function updateEventOptions() {
-        const birthYear = parseInt(document.getElementById('birthYear').value) || 2019;
+        const birthYear = parseInt(document.getElementById('birthYear').value);
         const beltLevel = document.getElementById('beltLevel').value;
         const kyorugiRadio = document.getElementById('kyorugiRadio');
         const bothRadio = document.getElementById('bothRadio');
         const kyorugiLabel = kyorugiRadio.parentElement;
         const bothLabel = bothRadio.parentElement;
-        const validBelts = ['綠帶 Green Belt', '綠藍帶 Green-Blue Belt', '藍帶 Blue Belt', '藍紅帶 Blue-Red Belt', '紅帶 Red Belt', '紅黑帶 Red-Black Belt'];
-        const validYears = [2011, 2012, 2013, 2014, 2015, 2016, 2017];
 
-        if (validYears.includes(birthYear) && validBelts.includes(beltLevel)) {
-          kyorugiRadio.disabled = false;
-          bothRadio.disabled = false;
-          kyorugiLabel.classList.remove('disabled');
-          bothLabel.classList.remove('disabled');
-        } else {
-          kyorugiRadio.disabled = true;
-          bothRadio.disabled = true;
-          kyorugiLabel.classList.add('disabled');
-          bothLabel.classList.add('disabled');
-          if (kyorugiRadio.checked || bothRadio.checked) {
-            document.getElementById('poomsaeRadio').checked = true;
-          }
-        }
-        updateFieldStates();
+        const eligibleForKyorugi = birthYear >= 2011 && birthYear <= 2017 && 
+          ['綠帶 Green Belt', '綠藍帶 Green-Blue Belt', '藍帶 Blue Belt', '藍紅帶 Blue-Red Belt', '紅帶 Red Belt', '紅黑帶 Red-Black Belt'].includes(beltLevel);
+
+        kyorugiRadio.disabled = !eligibleForKyorugi;
+        bothRadio.disabled = !eligibleForKyorugi;
+        kyorugiLabel.classList.toggle('disabled', !eligibleForKyorugi);
+        bothLabel.classList.toggle('disabled', !eligibleForKyorugi);
+
+        updateEventFields();
       }
 
-      // 動態控制輸入欄位狀態
-      function updateFieldStates() {
+      // 更新搏擊和品勢相關欄位
+      function updateEventFields() {
         const selectedEvent = Array.from(document.getElementsByName('entry.629960054')).find(radio => radio.checked)?.value;
         const heightInput = document.getElementById('height');
         const weightInput = document.getElementById('weight');
         const kyorugiDivisionSelect = document.getElementById('kyorugiDivision');
-        const weightCategorySelect = document.getElementById('weightCategory');
+        const weightClassSelect = document.getElementById('weightClass');
         const poomsaeDivisionSelect = document.getElementById('poomsaeDivision');
         const poomsaeEventSelect = document.getElementById('poomsaeEvent');
 
-        if (selectedEvent && selectedEvent.includes('搏擊')) {
-          heightInput.disabled = false;
-          weightInput.disabled = false;
-          kyorugiDivisionSelect.disabled = false;
-          weightCategorySelect.disabled = false;
-        } else {
-          heightInput.disabled = true;
-          weightInput.disabled = true;
-          kyorugiDivisionSelect.disabled = true;
-          weightCategorySelect.disabled = true;
-        }
-        if (selectedEvent && selectedEvent.includes('品勢')) {
-          poomsaeDivisionSelect.disabled = false;
-          poomsaeEventSelect.disabled = false;
-        } else {
-          poomsaeDivisionSelect.disabled = true;
-          poomsaeEventSelect.disabled = true;
-        }
+        heightInput.disabled = !(selectedEvent && selectedEvent.includes('搏擊'));
+        weightInput.disabled = !(selectedEvent && selectedEvent.includes('搏擊'));
+        kyorugiDivisionSelect.disabled = !(selectedEvent && selectedEvent.includes('搏擊'));
+        weightClassSelect.disabled = !(selectedEvent && selectedEvent.includes('搏擊'));
+        poomsaeDivisionSelect.disabled = !(selectedEvent && selectedEvent.includes('品勢'));
+        poomsaeEventSelect.disabled = !(selectedEvent && selectedEvent.includes('品勢'));
+
         updateKyorugiDivision();
-        updateWeightCategory();
+        updateWeightClass();
         updatePoomsaeDivision();
         updatePoomsaeEvent();
       }
 
-      // 動態更新搏擊級別並自動選取
+      // 更新搏擊級別劃分
       function updateKyorugiDivision() {
-        const birthYear = parseInt(document.getElementById('birthYear').value) || 2019;
+        const birthYear = parseInt(document.getElementById('birthYear').value);
         const gender = Array.from(document.getElementsByName('entry.1854501309')).find(radio => radio.checked)?.value;
         const kyorugiDivisionSelect = document.getElementById('kyorugiDivision');
         kyorugiDivisionSelect.innerHTML = '<option value="">請選擇搏擊級別</option>';
 
-        if (gender && birthYear) {
-          let division;
-          if (gender === '男 Male') {
-            if (birthYear >= 2015 && birthYear <= 2017) {
-              division = '男童色帶A組 Boys Color Belt Group A 8歲至10歲 Age: 8 to 10 (2015年至2017年出生者)';
-            } else if (birthYear >= 2013 && birthYear <= 2014) {
-              division = '男童色帶B組 Boys Color Belt Group B 11歲至12歲 Age: 11 to 12 (2013年至2014年出生者)';
-            } else if (birthYear >= 2011 && birthYear <= 2012) {
-              division = '男童色帶C組 Boys Color Belt Group C 13歲至14歲 Age: 13 to 14 (2011年至2012年出生者)';
-            }
-          } else if (gender === '女 Female') {
-            if (birthYear >= 2015 && birthYear <= 2017) {
-              division = '女童色帶A組 Girls Color Belt Group A 8歲至10歲 Age: 8 to 10 (2015年至2017年出生者)';
-            } else if (birthYear >= 2013 && birthYear <= 2014) {
-              division = '女童色帶B組 Girls Color Belt Group B 11歲至12歲 Age: 11 to 12 (2013年至2014年出生者)';
-            } else if (birthYear >= 2011 && birthYear <= 2012) {
-              division = '女童色帶C組 Girls Color Belt Group C 13歲至14歲 Age: 13 to 14 (2011年至2012年出生者)';
-            }
+        if (birthYear && gender && kyorugiDivisions[gender]) {
+          let divisionKey;
+          if (birthYear >= 2015 && birthYear <= 2017) {
+            divisionKey = '2015-2017';
+          } else if (birthYear >= 2013 && birthYear <= 2014) {
+            divisionKey = '2013-2014';
+          } else if (birthYear >= 2011 && birthYear <= 2012) {
+            divisionKey = '2011-2012';
           }
-          if (division) {
-            let option = document.createElement('option');
-            option.value = division;
-            option.text = division;
+          if (divisionKey && kyorugiDivisions[gender][divisionKey]) {
+            const option = document.createElement('option');
+            option.value = kyorugiDivisions[gender][divisionKey];
+            option.text = kyorugiDivisions[gender][divisionKey];
             kyorugiDivisionSelect.appendChild(option);
-            kyorugiDivisionSelect.value = division;
+            kyorugiDivisionSelect.value = kyorugiDivisions[gender][divisionKey];
           }
         }
-        updateWeightCategory();
+        updateWeightClass();
       }
 
-      // 動態更新搏擊量級
-      function updateWeightCategory() {
+      // 更新搏擊量級
+      function updateWeightClass() {
         const kyorugiDivision = document.getElementById('kyorugiDivision').value;
-        const weightCategorySelect = document.getElementById('weightCategory');
-        weightCategorySelect.innerHTML = '<option value="">請選擇量級</option>';
+        const weightClassSelect = document.getElementById('weightClass');
+        weightClassSelect.innerHTML = '<option value="">請選擇搏擊量級</option>';
 
-        if (kyorugiDivision && weightCategories[kyorugiDivision]) {
-          weightCategories[kyorugiDivision].forEach(category => {
-            let option = document.createElement('option');
-            option.value = category;
-            option.text = category;
-            weightCategorySelect.appendChild(option);
+        if (kyorugiDivision && weightClasses[kyorugiDivision]) {
+          weightClasses[kyorugiDivision].forEach(weightClass => {
+            const option = document.createElement('option');
+            option.value = weightClass;
+            option.text = weightClass;
+            weightClassSelect.appendChild(option);
           });
         }
       }
 
-      // 動態更新品勢級別
+      // 更新品勢級別劃分
       function updatePoomsaeDivision() {
-        const birthYear = parseInt(document.getElementById('birthYear').value) || 2019;
+        const birthYear = parseInt(document.getElementById('birthYear').value);
         const gender = Array.from(document.getElementsByName('entry.1854501309')).find(radio => radio.checked)?.value;
         const poomsaeDivisionSelect = document.getElementById('poomsaeDivision');
         poomsaeDivisionSelect.innerHTML = '<option value="">請選擇品勢級別</option>';
 
-        if (gender && birthYear) {
-          let division;
-          if (gender === '男 Male') {
-            if (birthYear >= 2018 && birthYear <= 2019) {
-              division = '男童A組 Boys Group A 6歲至7歲 Age: 6 to 7 (2018年至2019年出生者)';
-            } else if (birthYear >= 2016 && birthYear <= 2017) {
-              division = '男童B組 Boys Group B 8歲至9歲 Age: 8 to 9 (2016年至2017年出生者)';
-            } else if (birthYear >= 2014 && birthYear <= 2015) {
-              division = '男童C組 Boys Group C 10歲至11歲 Age: 10 to 11 (2014年至2015年出生者)';
-            } else if (birthYear <= 2013) {
-              division = '男童D組 Boys Group D 12歲或以上 Age: 12 or above (2013年或以上出生者)';
-            }
-          } else if (gender === '女 Female') {
-            if (birthYear >= 2018 && birthYear <= 2019) {
-              division = '女童E組 Girls Group E 6歲至7歲 Age: 6 to 7 (2018年至2019年出生者)';
-            } else if (birthYear >= 2016 && birthYear <= 2017) {
-              division = '女童F組 Girls Group F 8歲至9歲 Age: 8 to 9 (2016年至2017年出生者)';
-            } else if (birthYear >= 2014 && birthYear <= 2015) {
-              division = '女童G組 Girls Group G 10歲至11歲 Age: 10 to 11 (2014年至2015年出生者)';
-            } else if (birthYear <= 2013) {
-              division = '女童H組 Girls Group H 12歲或以上 Age: 12 or above (2013年或之前出生者)';
-            }
+        if (birthYear && gender && poomsaeDivisions[gender]) {
+          let divisionKey;
+          if (birthYear >= 2018 && birthYear <= 2019) {
+            divisionKey = '2018-2019';
+          } else if (birthYear >= 2016 && birthYear <= 2017) {
+            divisionKey = '2016-2017';
+          } else if (birthYear >= 2014 && birthYear <= 2015) {
+            divisionKey = '2014-2015';
+          } else if (birthYear <= 2013) {
+            divisionKey = '2013';
           }
-          if (division) {
-            let option = document.createElement('option');
-            option.value = division;
-            option.text = division;
+          if (divisionKey && poomsaeDivisions[gender][divisionKey]) {
+            const option = document.createElement('option');
+            option.value = poomsaeDivisions[gender][divisionKey];
+            option.text = poomsaeDivisions[gender][divisionKey];
             poomsaeDivisionSelect.appendChild(option);
-            poomsaeDivisionSelect.value = division;
+            poomsaeDivisionSelect.value = poomsaeDivisions[gender][divisionKey];
           }
         }
         updatePoomsaeEvent();
       }
 
-      // 動態更新參賽品勢
+      // 更新參賽品勢
       function updatePoomsaeEvent() {
         const poomsaeDivision = document.getElementById('poomsaeDivision').value;
         const beltLevel = document.getElementById('beltLevel').value;
         const poomsaeEventSelect = document.getElementById('poomsaeEvent');
-        const gender = Array.from(document.getElementsByName('entry.1854501309')).find(radio => radio.checked)?.value || '';
         poomsaeEventSelect.innerHTML = '<option value="">請選擇參賽品勢</option>';
 
-        if (poomsaeDivision && beltLevel && poomsaeDivisions[poomsaeDivision] && gender) {
-          const divisionCode = poomsaeDivision.match(/[A-H]/)[0];
-          const genderCode = gender === '男 Male' ? 'M' : 'F';
-          const beltIndex = beltMapping[beltLevel];
-          const eventCode = divisionCode + beltIndex + genderCode;
-          const event = poomsaeDivisions[poomsaeDivision].find(e => e.startsWith(eventCode));
-          if (event) {
-            let option = document.createElement('option');
-            option.value = event;
-            option.text = event;
+        if (poomsaeDivision && beltLevel && poomsaeEvents[poomsaeDivision]) {
+          let beltIndex;
+          if (['黃帶 Yellow Belt', '黃綠帶 Yellow-Green Belt'].includes(beltLevel)) {
+            beltIndex = '1-2';
+          } else if (['綠帶 Green Belt', '綠藍帶 Green-Blue Belt'].includes(beltLevel)) {
+            beltIndex = '3-4';
+          } else if (['藍帶 Blue Belt', '藍紅帶 Blue-Red Belt'].includes(beltLevel)) {
+            beltIndex = '5-6';
+          } else if (['紅帶 Red Belt', '紅黑帶 Red-Black Belt'].includes(beltLevel)) {
+            beltIndex = '7-8';
+          } else if (['品一 Poom 1', '品二 Poom 2'].includes(beltLevel)) {
+            beltIndex = '9-10';
+          } else if (beltLevel === '品三或上 Poom 3 or above') {
+            beltIndex = '11';
+          }
+          if (beltIndex && poomsaeEvents[poomsaeDivision][beltIndex]) {
+            const option = document.createElement('option');
+            option.value = poomsaeEvents[poomsaeDivision][beltIndex];
+            option.text = poomsaeEvents[poomsaeDivision][beltIndex];
             poomsaeEventSelect.appendChild(option);
-            poomsaeEventSelect.value = event;
+            poomsaeEventSelect.value = poomsaeEvents[poomsaeDivision][beltIndex];
           }
         }
       }
 
-      // 初始化日期選項
-      populateDateSelects('birthYear', 'birthMonth', 'birthDay', 'birthDate');
-
       // 監聽事件
       document.getElementById('birthYear').addEventListener('change', updateEventOptions);
-      document.getElementById('beltLevel').addEventListener('change', () => {
-        updateEventOptions();
-        updatePoomsaeEvent();
+      document.getElementById('beltLevel').addEventListener('change', updateEventOptions);
+      document.querySelectorAll('input[name="entry.629960054"]').forEach(radio => {
+        radio.addEventListener('change', updateEventFields);
       });
       document.querySelectorAll('input[name="entry.1854501309"]').forEach(radio => {
         radio.addEventListener('change', () => {
@@ -1193,11 +1163,9 @@
           updatePoomsaeDivision();
         });
       });
-      document.querySelectorAll('input[name="entry.629960054"]').forEach(radio => {
-        radio.addEventListener('change', updateFieldStates);
-      });
-      document.getElementById('kyorugiDivision').addEventListener('change', updateWeightCategory);
+      document.getElementById('kyorugiDivision').addEventListener('change', updateWeightClass);
       document.getElementById('poomsaeDivision').addEventListener('change', updatePoomsaeEvent);
+      document.getElementById('beltLevel').addEventListener('change', updatePoomsaeEvent);
     });
   </script>
 </body>
