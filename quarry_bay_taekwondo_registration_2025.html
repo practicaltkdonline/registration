@@ -9,23 +9,23 @@
     <style>
         body {
             font-family: 'Noto Sans TC', Arial, sans-serif;
-            margin: 0; /* 移除預設 margin */
+            margin: 0;
             padding: 20px;
             background: linear-gradient(135deg, #E0F2FE 0%, #F3F4F6 100%);
             color: #1F2937;
             display: flex;
-            justify-content: center; /* 水平居中 */
-            align-items: flex-start; /* 垂直靠上 */
-            min-height: 100vh; /* 確保內容至少填滿視窗高度 */
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
         }
         .form-container {
             background: white;
             padding: 48px;
             border-radius: 16px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-            max-width: 960px; /* 保持最大寬度 */
-            width: 100%; /* 確保容器適應父元素 */
-            margin: 40px 0; /* 上下間距，左右由 body 居中控制 */
+            max-width: 960px;
+            width: 100%;
+            margin: 40px 0;
         }
         .error { border-color: #ef4444; }
         .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem; }
@@ -79,9 +79,9 @@
             text-align: center;
         }
         .date-table td:first-child {
-            background-color: #E0F2FE; /* 浅蓝色背景 */
-            font-weight: bold; /* 加粗字体 */
-            color: #1F2937; /* 深灰色文字 */
+            background-color: #E0F2FE;
+            font-weight: bold;
+            color: #1F2937;
         }
         .date-table td input[type="checkbox"] {
             margin: 0;
@@ -186,14 +186,17 @@
                 <p id="leave-error" class="error-message hidden">請選擇是否請假！</p>
             </div>
             <div id="leave-date-section" class="hidden">
-                <label for="leaveDate" class="block text-gray-700 font-semibold">請假日期（如有）</label>
-                <input id="leaveDate" type="text" placeholder="請輸入日期（如 28/2, 30/3, 16/4……）" class="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" disabled>
-                <p id="leave-date-error" class="error-message hidden">請輸入請假日期！</p>
+                <label class="block text-gray-700 font-semibold">請假日期（如有） *</label>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm text-gray-600">請選擇請假日期</span>
+                    <button type="button" id="selectAllLeaveDates" class="btn py-1 px-3 rounded-md text-sm text-white bg-blue-600 hover:bg-blue-700">全選</button>
+                </div>
+                <div id="leaveDateContainer" class="text-gray-700"></div>
+                <p id="leave-date-error" class="error-message hidden">請選擇至少一個請假日期！</p>
             </div>
             <div id="deduction-section" class="hidden">
-                <label for="deduction" class="block text-gray-700 font-semibold">上期扣減 (堂) *</label>
-                <input id="deduction" type="number" min="0" step="1" value="0" class="w-20 text-center p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                <p id="deduction-error" class="error-message hidden">請輸入非負整數！</p>
+                <label class="block text-gray-700 font-semibold">上期扣減 (堂) *</label>
+                <p id="deduction" class="text-gray-700 mt-1">0</p>
             </div>
             <div>
                 <h3 class="text-lg font-semibold text-gray-700">同意條款</h3>
@@ -228,7 +231,7 @@
             <p><strong>選擇日期：</strong></p>
             <ul id="confirm-dates" class="list-disc text-gray-600 ml-6"></ul>
             <p><strong>上期有否請假：</strong><span id="confirm-leave"></span></p>
-            <p><strong>請假日期（如有）：</strong><span id="confirm-leave-date"></span></p>
+            <p><strong>請假日期（如有）：</strong><span id="confirm-leave-dates"></span></p>
             <p><strong>上期扣減 (堂)：</strong><span id="confirm-deduction"></span></p>
             <p><strong>條款同意：</strong>已閱讀並同意所有條款</p>
         </div>
@@ -251,7 +254,8 @@
         // Google Sheet 連結
         const spreadsheetId = '1IGczhrahIZF2W6_RUUU9ib5vQ1vkLVDIQEObWxEStgU';
         const sheetName = 'QB';
-        const apiUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&tq=SELECT%20G%20WHERE%20G%20IS%20NOT%20NULL%20OFFSET%201&sheet=${encodeURIComponent(sheetName)}`;
+        const apiUrlDates = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&tq=SELECT%20G%20WHERE%20G%20IS%20NOT%20NULL%20OFFSET%201&sheet=${encodeURIComponent(sheetName)}`;
+        const apiUrlLeaveDates = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&tq=SELECT%20H%20WHERE%20H%20IS%20NOT%20NULL%20OFFSET%201&sheet=${encodeURIComponent(sheetName)}`;
 
         // Google Form 提交 URL
         const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScfWNLOP7CqV__g7LtepE9JlAtg49VOWdiWHsSTHWi7gQfiEw/formResponse';
@@ -277,7 +281,20 @@
             { date: '28/9', display: '28日', month: 9 }
         ];
 
-        // 將 dd/mm 轉為 MM月DD日（例如 1/6 -> 06月01日）
+        // 後備請假日期（假設上期為2025年1月-3月，格式為 dd/mm）
+        const fallbackLeaveDates = [
+            { date: '5/1', display: '5日', month: 1 },
+            { date: '12/1', display: '12日', month: 1 },
+            { date: '19/1', display: '19日', month: 1 },
+            { date: '26/1', display: '26日', month: 1 },
+            { date: '2/2', display: '2日', month: 2 },
+            { date: '9/2', display: '9日', month: 2 },
+            { date: '16/2', display: '16日', month: 2 },
+            { date: '2/3', display: '2日', month: 3 },
+            { date: '9/3', display: '9日', month: 3 }
+        ];
+
+        // 將 dd/mm 轉為 MM月DD日
         function toGoogleFormDateFormat(dateStr) {
             const match = dateStr.match(/^(\d{1,2})\/(\d{1,2})$/);
             if (match) {
@@ -299,22 +316,43 @@
             return dateStr;
         }
 
+        // 將 dd/mm 轉為 D/M（去掉前導零）
+        function toGoogleFormLeaveDateFormat(dateStr) {
+            const match = dateStr.match(/^(\d{1,2})\/(\d{1,2})$/);
+            if (match) {
+                const day = parseInt(match[1], 10);
+                const month = parseInt(match[2], 10);
+                return `${day}/${month}`;
+            }
+            return dateStr;
+        }
+
         // 切換複選框狀態
-        function toggleCheckbox(element) {
-            const checkbox = element.querySelector('input[type="checkbox"]');
+        function toggleCheckbox(element, type = 'dates') {
+            const checkbox = element.querySelector(`input[name="${type}"]`);
             if (checkbox && !checkbox.disabled) {
                 checkbox.checked = !checkbox.checked;
             }
-            // 清除日期錯誤狀態
-            if (document.querySelectorAll('input[name="dates"]:checked').length > 0) {
+            if (type === 'dates' && document.querySelectorAll('input[name="dates"]:checked').length > 0) {
                 document.getElementById('date-selection-error').classList.add('hidden');
+            } else if (type === 'leaveDates' && document.querySelectorAll('input[name="leaveDates"]:checked').length > 0) {
+                document.getElementById('leave-date-error').classList.add('hidden');
+            }
+            if (type === 'leaveDates') {
+                updateDeduction();
             }
         }
 
-        // 渲染日期到 dateContainer
-        function renderDates(dates) {
-            const dateContainer = document.getElementById('dateContainer');
-            dateContainer.innerHTML = '';
+        // 更新扣減堂數
+        function updateDeduction() {
+            const selectedLeaveDates = document.querySelectorAll('input[name="leaveDates"]:checked').length;
+            document.getElementById('deduction').textContent = selectedLeaveDates;
+        }
+
+        // 渲染日期到 dateContainer 或 leaveDateContainer
+        function renderDates(dates, containerId, inputName) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
             const datesByMonth = {};
             dates.forEach(({ date, display, month }, index) => {
                 if (!datesByMonth[month]) {
@@ -327,23 +365,21 @@
             table.className = 'date-table';
             const tbody = document.createElement('tbody');
 
-            // 創建表格內容
             Object.keys(datesByMonth).sort((a, b) => a - b).forEach(month => {
                 const row = document.createElement('tr');
                 const monthCell = document.createElement('td');
                 monthCell.textContent = `${month}月`;
                 row.appendChild(monthCell);
 
-                // 填充第二至六欄，缺少的用空元素補齊
                 for (let i = 0; i < 5; i++) {
                     const dateCell = document.createElement('td');
                     if (i < datesByMonth[month].length) {
                         const { date, display, index } = datesByMonth[month][i];
                         dateCell.innerHTML = `
                             <span class="flex-1">${escapeHtml(display)}</span>
-                            <input type="checkbox" id="date-${index}" name="dates" value="${escapeHtml(date)}" class="form-checkbox text-blue-600" onclick="event.stopPropagation()">
+                            <input type="checkbox" id="${inputName}-${index}" name="${inputName}" value="${escapeHtml(date)}" class="form-checkbox text-blue-600" onclick="event.stopPropagation()">
                         `;
-                        dateCell.setAttribute('onclick', 'toggleCheckbox(this)');
+                        dateCell.setAttribute('onclick', `toggleCheckbox(this, '${inputName}')`);
                     }
                     row.appendChild(dateCell);
                 }
@@ -352,7 +388,7 @@
             });
 
             table.appendChild(tbody);
-            dateContainer.appendChild(table);
+            container.appendChild(table);
         }
 
         // 從 Google Sheet 獲取日期並按月份分組
@@ -360,19 +396,20 @@
             const spinner = document.getElementById('loadingSpinner');
             spinner.classList.remove('hidden');
             try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    throw new Error(`無法連接到 Google Sheets，HTTP 狀態碼：${response.status}`);
+                // 獲取報名日期（G 列）
+                const dateResponse = await fetch(apiUrlDates);
+                if (!dateResponse.ok) {
+                    throw new Error(`無法連接到 Google Sheets (報名日期)，HTTP 狀態碼：${dateResponse.status}`);
                 }
-                const text = await response.text();
-                const jsonString = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
-                if (!jsonString || !jsonString[1]) {
-                    throw new Error('無效的 Google Sheets JSONP 回應，請檢查工作表是否公開。');
+                const dateText = await dateResponse.text();
+                const dateJsonString = dateText.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
+                if (!dateJsonString || !dateJsonString[1]) {
+                    throw new Error('無效的 Google Sheets JSONP 回應（報名日期），請檢查工作表是否公開。');
                 }
-                const data = JSON.parse(jsonString[1]);
-                if (data.table && data.table.rows && data.table.rows.length > 0) {
-                    const dates = [];
-                    data.table.rows.forEach((row, index) => {
+                const dateData = JSON.parse(dateJsonString[1]);
+                const dates = [];
+                if (dateData.table && dateData.table.rows && dateData.table.rows.length > 0) {
+                    dateData.table.rows.forEach((row, index) => {
                         const display = row.c[0]?.v;
                         if (display) {
                             const match = display.match(/^(\d{1,2})月(\d{1,2})日$/);
@@ -385,20 +422,52 @@
                             }
                         }
                     });
-                    if (dates.length > 0) {
-                        renderDates(dates);
-                    } else {
-                        alert('工作表中無有效日期資料，日期格式應為 MM月DD日（例如 1月5日）。將使用後備日期。');
-                        renderDates(fallbackDates);
-                    }
+                }
+                if (dates.length > 0) {
+                    renderDates(dates, 'dateContainer', 'dates');
                 } else {
-                    alert('工作表中無有效日期資料，請確認問題並將使用後備日期。');
-                    renderDates(fallbackDates);
+                    alert('工作表中無有效報名日期資料，日期格式應為 MM月DD日（例如 1月5日）。將使用後備日期。');
+                    renderDates(fallbackDates, 'dateContainer', 'dates');
+                }
+
+                // 獲取請假日期（H 列）
+                const leaveDateResponse = await fetch(apiUrlLeaveDates);
+                if (!leaveDateResponse.ok) {
+                    throw new Error(`無法連接到 Google Sheets (請假日期)，HTTP 狀態碼：${leaveDateResponse.status}`);
+                }
+                const leaveDateText = await leaveDateResponse.text();
+                const leaveDateJsonString = leaveDateText.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
+                if (!leaveDateJsonString || !leaveDateJsonString[1]) {
+                    throw new Error('無效的 Google Sheets JSONP 回應（請假日期），請檢查工作表是否公開。');
+                }
+                const leaveDateData = JSON.parse(leaveDateJsonString[1]);
+                const leaveDates = [];
+                if (leaveDateData.table && leaveDateData.table.rows && leaveDateData.table.rows.length > 0) {
+                    leaveDateData.table.rows.forEach((row, index) => {
+                        const display = row.c[0]?.v;
+                        if (display) {
+                            const match = display.match(/^(\d{1,2})月(\d{1,2})日$/);
+                            if (match) {
+                                const month = parseInt(match[1], 10);
+                                const day = parseInt(match[2], 10);
+                                const date = `${day}/${month}`;
+                                const newDisplay = `${day}日`;
+                                leaveDates.push({ date, display: newDisplay, month, index });
+                            }
+                        }
+                    });
+                }
+                if (leaveDates.length > 0) {
+                    renderDates(leaveDates, 'leaveDateContainer', 'leaveDates');
+                } else {
+                    alert('工作表中無有效請假日期資料，日期格式應為 MM月DD日（例如 1月5日）。將使用後備請假日期。');
+                    renderDates(fallbackLeaveDates, 'leaveDateContainer', 'leaveDates');
                 }
             } catch (error) {
-                alert(`載入日期資料失敗：${error.message}\n請確保 Google Sheet 已設為公開，G 列有 MM月DD日 格式的日期（例如 1月5日），並檢查 spreadsheetId 和 sheetName 是否正確。將使用後備日期。\n如需協助，請聯繫 WhatsApp：61504221`);
+                alert(`載入日期資料失敗：${error.message}\n請確保 Google Sheet 已設為公開，G 列和 H 列有 MM月DD日 格式的日期（例如 1月5日），並檢查 spreadsheetId 和 sheetName 是否正確。將使用後備日期。\n如需協助，請聯繫 WhatsApp：61504221`);
                 console.error('Fetch error:', error);
-                renderDates(fallbackDates);
+                renderDates(fallbackDates, 'dateContainer', 'dates');
+                renderDates(fallbackLeaveDates, 'leaveDateContainer', 'leaveDates');
             } finally {
                 spinner.classList.add('hidden');
             }
@@ -422,6 +491,17 @@
             document.getElementById('date-selection-error').classList.add('hidden');
         });
 
+        // 全選請假日期邏輯
+        const selectAllLeaveDatesButton = document.getElementById('selectAllLeaveDates');
+        selectAllLeaveDatesButton.addEventListener('click', () => {
+            const leaveDateCheckboxes = document.querySelectorAll('input[name="leaveDates"]');
+            const allChecked = Array.from(leaveDateCheckboxes).every(cb => cb.checked);
+            leaveDateCheckboxes.forEach(cb => cb.checked = !allChecked);
+            selectAllLeaveDatesButton.textContent = allChecked ? '全選' : '取消全選';
+            document.getElementById('leave-date-error').classList.add('hidden');
+            updateDeduction();
+        });
+
         // 即時驗證欄位
         function validateField(element) {
             const id = element.id;
@@ -438,17 +518,6 @@
                     element.classList.remove('error');
                     errorElement.classList.add('hidden');
                 }
-            } else if (id === 'leaveDate') {
-                if (!element.disabled && element.value.trim()) {
-                    element.classList.remove('error');
-                    errorElement.classList.add('hidden');
-                }
-            } else if (id === 'deduction') {
-                const value = element.value.trim();
-                if (!isNaN(value) && Number.isInteger(Number(value)) && Number(value) >= 0) {
-                    element.classList.remove('error');
-                    errorElement.classList.add('hidden');
-                }
             } else if (id === 'terms') {
                 if (element.checked) {
                     element.classList.remove('error');
@@ -459,35 +528,39 @@
 
         // 請假邏輯
         const leaveRadios = document.querySelectorAll('input[name="leave"]');
-        const leaveDateInput = document.getElementById('leaveDate');
         const leaveDateSection = document.getElementById('leave-date-section');
         const deductionSection = document.getElementById('deduction-section');
-        const deductionInput = document.getElementById('deduction');
 
         leaveRadios.forEach(radio => {
             radio.addEventListener('change', () => {
                 const isYes = radio.value === 'yes';
                 leaveDateSection.classList.toggle('hidden', !isYes);
                 deductionSection.classList.toggle('hidden', !isYes);
-                leaveDateInput.disabled = !isYes;
                 if (!isYes) {
-                    leaveDateInput.value = '';
-                    deductionInput.value = '0';
-                    leaveDateInput.classList.remove('error');
+                    document.querySelectorAll('input[name="leaveDates"]').forEach(cb => cb.checked = false);
+                    document.getElementById('selectAllLeaveDates').textContent = '全選';
+                    document.getElementById('deduction').textContent = '0';
                     document.getElementById('leave-date-error').classList.add('hidden');
-                    deductionInput.classList.remove('error');
-                    document.getElementById('deduction-error').classList.add('hidden');
                 }
                 document.getElementById('leave-error').classList.add('hidden');
+                updateDeduction();
             });
         });
 
         // 綁定即時輸入事件
         document.getElementById('name').addEventListener('input', function() { validateField(this); });
         document.getElementById('phone').addEventListener('input', function() { validateField(this); });
-        document.getElementById('leaveDate').addEventListener('input', function() { validateField(this); });
-        document.getElementById('deduction').addEventListener('input', function() { validateField(this); });
         document.getElementById('terms').addEventListener('change', function() { validateField(this); });
+
+        // 綁定請假日期複選框事件
+        document.addEventListener('change', (event) => {
+            if (event.target.name === 'leaveDates') {
+                updateDeduction();
+                if (document.querySelectorAll('input[name="leaveDates"]:checked').length > 0) {
+                    document.getElementById('leave-date-error').classList.add('hidden');
+                }
+            }
+        });
 
         // 表單驗證與確認頁
         document.getElementById('submitButton').addEventListener('click', () => {
@@ -502,9 +575,12 @@
                 month: parseInt(cb.value.split('/')[1])
             }));
             const leave = document.querySelector('input[name="leave"]:checked')?.value;
-            const leaveDate = document.getElementById('leaveDate').value.trim();
-            const deductionValue = deductionInput.value.trim();
-            const deduction = parseInt(deductionValue, 10);
+            const selectedLeaveDates = Array.from(document.querySelectorAll('input[name="leaveDates"]:checked')).map(cb => ({
+                value: cb.value,
+                display: cb.parentElement.querySelector('span').textContent,
+                month: parseInt(cb.value.split('/')[1])
+            }));
+            const deduction = selectedLeaveDates.length;
             const terms = document.getElementById('terms').checked;
 
             // 重置錯誤狀態
@@ -515,10 +591,7 @@
             document.getElementById('class-error').classList.add('hidden');
             document.getElementById('date-selection-error').classList.add('hidden');
             document.getElementById('leave-error').classList.add('hidden');
-            leaveDateInput.classList.remove('error');
             document.getElementById('leave-date-error').classList.add('hidden');
-            deductionInput.classList.remove('error');
-            document.getElementById('deduction-error').classList.add('hidden');
             document.getElementById('terms').classList.remove('error');
             document.getElementById('terms-error').classList.add('hidden');
 
@@ -558,17 +631,9 @@
             }
 
             // 驗證請假日期
-            if (leave === 'yes' && !leaveDate) {
-                leaveDateInput.classList.add('error');
+            if (leave === 'yes' && selectedLeaveDates.length === 0) {
                 document.getElementById('leave-date-error').classList.remove('hidden');
-                if (!firstErrorElement) firstErrorElement = leaveDateInput;
-            }
-
-            // 驗證扣減
-            if (leave === 'yes' && (isNaN(deduction) || deduction < 0 || !Number.isInteger(Number(deductionValue)))) {
-                deductionInput.classList.add('error');
-                document.getElementById('deduction-error').classList.remove('hidden');
-                if (!firstErrorElement) firstErrorElement = deductionInput;
+                if (!firstErrorElement) firstErrorElement = document.getElementById('leave-date-section');
             }
 
             // 驗證條款
@@ -587,7 +652,7 @@
                 return;
             }
 
-            // 按月份分组并格式化日期
+            // 按月份分組並格式化報名日期
             const datesByMonth = {};
             selectedDates.forEach(date => {
                 if (!datesByMonth[date.month]) {
@@ -596,19 +661,36 @@
                 datesByMonth[date.month].push(date.display.replace('日', ''));
             });
 
-            // 更新确认页日期显示
+            // 更新確認頁報名日期
             const confirmDatesElement = document.getElementById('confirm-dates');
             confirmDatesElement.innerHTML = Object.keys(datesByMonth)
                 .sort((a, b) => a - b)
                 .map(month => `・${month}月${datesByMonth[month].join('日, ') + '日'}`)
                 .join('<br>');
 
+            // 按月份分組並格式化請假日期
+            const leaveDatesByMonth = {};
+            selectedLeaveDates.forEach(date => {
+                if (!leaveDatesByMonth[date.month]) {
+                    leaveDatesByMonth[date.month] = [];
+                }
+                leaveDatesByMonth[date.month].push(date.display.replace('日', ''));
+            });
+
+            // 更新確認頁請假日期
+            const confirmLeaveDatesElement = document.getElementById('confirm-leave-dates');
+            confirmLeaveDatesElement.innerHTML = Object.keys(leaveDatesByMonth).length > 0
+                ? Object.keys(leaveDatesByMonth)
+                    .sort((a, b) => a - b)
+                    .map(month => `・${month}月${leaveDatesByMonth[month].join('日, ') + '日'}`)
+                    .join('<br>')
+                : '無';
+
             // 更新確認頁
             document.getElementById('confirm-name').textContent = name;
             document.getElementById('confirm-phone').textContent = phone;
             document.getElementById('confirm-class').textContent = classSelected === 'junior' ? '初級 3-7歲 白帶至綠帶' : '進階 8歲或以上 綠帶或以上';
             document.getElementById('confirm-leave').textContent = leave === 'yes' ? '有' : '沒有';
-            document.getElementById('confirm-leave-date').textContent = leaveDate || '無';
             document.getElementById('confirm-deduction').textContent = leave === 'yes' ? deduction : '0';
 
             // 儲存數據
@@ -618,8 +700,8 @@
                 class: classSelected,
                 dates: selectedDates,
                 leave,
-                leaveDate,
-                deduction: leave === 'yes' ? deduction : 0
+                leaveDates: selectedLeaveDates,
+                deduction
             };
 
             // 顯示確認頁
@@ -633,7 +715,7 @@
         }
 
         function submitForm() {
-            const { name, phone, class: classSelected, dates, leave, leaveDate, deduction } = window.formData;
+            const { name, phone, class: classSelected, dates, leave, leaveDates, deduction } = window.formData;
 
             // 準備 Google Form 數據
             const formData = new FormData();
@@ -642,7 +724,7 @@
             formData.append('entry.781986668', classSelected === 'junior' ? '初級 3-7歲 白帶至綠帶' : '進階 8歲或以上 綠帶或以上');
             formData.append('entry.1067771173', dates.map(date => toGoogleFormDateFormat(date.value)).join(','));
             formData.append('entry.1731377011', leave === 'yes' ? '有' : '沒有');
-            formData.append('entry.762426758', leaveDate || '');
+            formData.append('entry.762426758', leaveDates.map(date => toGoogleFormLeaveDateFormat(date.value)).join(','));
             formData.append('entry.1394157809', deduction);
 
             // 提交到 Google Form
@@ -680,15 +762,12 @@
             
             leaveRadios.forEach(radio => radio.checked = radio.value === 'no');
             document.getElementById('leave-error').classList.add('hidden');
-            leaveDateInput.value = '';
-            leaveDateInput.disabled = true;
+            document.querySelectorAll('input[name="leaveDates"]').forEach(cb => cb.checked = false);
+            document.getElementById('selectAllLeaveDates').textContent = '全選';
             leaveDateSection.classList.add('hidden');
-            deductionInput.value = '0';
+            document.getElementById('deduction').textContent = '0';
             deductionSection.classList.add('hidden');
-            leaveDateInput.classList.remove('error');
             document.getElementById('leave-date-error').classList.add('hidden');
-            deductionInput.classList.remove('error');
-            document.getElementById('deduction-error').classList.add('hidden');
             
             document.getElementById('terms').checked = false;
             document.getElementById('terms').classList.remove('error');
