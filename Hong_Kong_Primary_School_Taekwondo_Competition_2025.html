@@ -75,6 +75,7 @@
       font-size: 16px;
       background: #ffffff;
       transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+      height: 44px; /* 統一高度 */
     }
     input:focus, select:focus, button:focus {
       outline: none;
@@ -105,7 +106,6 @@
     }
     .category-group {
       display: flex;
-      flex-direction: column;
       gap: 12px;
       padding: 8px 0;
     }
@@ -119,6 +119,7 @@
     .category-group input[type="radio"] {
       width: auto;
       margin-right: 12px;
+      transform: scale(0.78); /* 圈圈大小控制 */
     }
     .category-group label.disabled {
       color: #bdc3c7;
@@ -247,17 +248,22 @@
       input, select, button {
         padding: 10px;
         font-size: 14px;
+        height: 40px; /* 手機上統一高度 */
       }
       .date-group {
-        flex-direction: column;
-        align-items: stretch;
+        display: flex;
+        align-items: center;
         gap: 6px;
       }
       .date-group select {
-        width: 100%;
+        width: 100px;
       }
       .date-group select#birthYear {
-        width: 100%;
+        width: 120px;
+      }
+      .category-group {
+        display: flex;
+        gap: 8px;
       }
       .modal-content {
         width: 95%;
@@ -294,7 +300,7 @@
       </div>
       <div class="form-group">
         <label>屬會名稱 Association *</label>
-        <input list="affiliations" id="affiliation" name="entry.1597491054" required>
+        <input list="affiliations" id="affiliation" name="entry.1597491054" required placeholder="點擊輸入或選擇屬會名稱">
         <datalist id="affiliations">
           <option value="香港仔跆拳道會 Aberdeen TKD Club">
           <option value="技擊跆拳道會 Advanced TKD Association">
@@ -331,7 +337,7 @@
           <option value="尚武聯跆拳道會 Sheung Mo Luen TKD Association">
           <option value="捷擊跆拳道館 TKD Jet Kick Kwan">
           <option value="跆拳道吾道會體育館 TKD Oh Do Hae Gymnasium">
-          <option value="香港胡氏跆拳道會 Wu’s TKD HK Association">
+          <option value="香港胡氏跆拳道會 Wu's TKD HK Association">
           <option value="正武會跆拳道協會 Zheng Wu TKD Association">
           <option value="香港發景跆拳道會 Hong Kong Greatview TKD Club">
           <option value="香港跆拳道柏毅會 Hong Kong TKD Pak Ngai Association">
