@@ -231,7 +231,8 @@
             <p><strong>選擇日期：</strong></p>
             <ul id="confirm-dates" class="list-disc text-gray-600 ml-6"></ul>
             <p><strong>上期有否請假：</strong><span id="confirm-leave"></span></p>
-            <p><strong>請假日期（如有）：</strong><span id="confirm-leave-dates"></span></p>
+            <p><strong>請假日期（如有）：</strong></p>
+            <ul id="confirm-leave-dates" class="list-disc text-gray-600 ml-6"></ul>
             <p><strong>上期扣減 (堂)：</strong><span id="confirm-deduction"></span></p>
             <p><strong>條款同意：</strong>已閱讀並同意所有條款</p>
         </div>
@@ -260,14 +261,6 @@
         // Google Form 提交 URL
         const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScfWNLOP7CqV__g7LtepE9JlAtg49VOWdiWHsSTHWi7gQfiEw/formResponse';
 
-        // 轉義函數
-        function escapeHtml(str) {
-            if (!str) return '';
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        }
-
         // 後備日期（2025年6月-9月星期日，格式為 dd/mm）
         const fallbackDates = [
             { date: '1/6', display: '1日', month: 6 },
@@ -293,6 +286,14 @@
             { date: '2/3', display: '2日', month: 3 },
             { date: '9/3', display: '9日', month: 3 }
         ];
+
+        // 轉義函數
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
 
         // 將 dd/mm 轉為 MM月DD日
         function toGoogleFormDateFormat(dateStr) {
@@ -665,8 +666,8 @@
             const confirmDatesElement = document.getElementById('confirm-dates');
             confirmDatesElement.innerHTML = Object.keys(datesByMonth)
                 .sort((a, b) => a - b)
-                .map(month => `・${month}月${datesByMonth[month].join('日, ') + '日'}`)
-                .join('<br>');
+                .map(month => `<li>${month}月${datesByMonth[month].join('日, ') + '日'}</li>`)
+                .join('');
 
             // 按月份分組並格式化請假日期
             const leaveDatesByMonth = {};
@@ -682,9 +683,9 @@
             confirmLeaveDatesElement.innerHTML = Object.keys(leaveDatesByMonth).length > 0
                 ? Object.keys(leaveDatesByMonth)
                     .sort((a, b) => a - b)
-                    .map(month => `・${month}月${leaveDatesByMonth[month].join('日, ') + '日'}`)
-                    .join('<br>')
-                : '無';
+                    .map(month => `<li>${month}月${leaveDatesByMonth[month].join('日, ') + '日'}</li>`)
+                    .join('')
+                : '<li>無</li>';
 
             // 更新確認頁
             document.getElementById('confirm-name').textContent = name;
