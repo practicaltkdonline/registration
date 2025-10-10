@@ -118,7 +118,7 @@
     .category-group input[type="radio"], .category-group input[type="checkbox"] {
       width: auto;
       margin-right: 0.8rem;
-      transform: scale(0.78);
+      transform: scale(1);
     }
     .category-group label.disabled {
       color: #a0aec0;
@@ -141,8 +141,12 @@
       display: flex;
       align-items: center;
       font-weight: 500;
-      font-size: 1rem;
+      font-size: 0.9rem;
       color: #2d3748;
+      white-space: nowrap;
+    }
+    .membership-group input[type="checkbox"] {
+      transform: scale(1);
     }
     .error {
       color: #e53e3e;
@@ -162,6 +166,7 @@
       align-items: flex-start;
       z-index: 1000;
       padding-top: 2rem;
+      overflow-y: auto;
     }
     .modal-content {
       background-color: #ffffff;
@@ -174,6 +179,7 @@
       flex-direction: column;
       max-height: 80vh;
       overflow-y: auto;
+      margin-bottom: 1rem;
     }
     .modal-scroll {
       flex-grow: 1;
@@ -184,6 +190,14 @@
       font-size: 1rem;
       margin: 0.8rem 0;
       color: #2d3748;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 0.6rem;
+      padding-bottom: 1rem;
+      position: sticky;
+      bottom: 0;
+      background: #ffffff;
     }
     button.confirm, button.return-button {
       background: linear-gradient(90deg, #3182ce, #2b6cb0);
@@ -291,17 +305,24 @@
       .membership-group input[type="text"] {
         min-width: 150px;
       }
+      .membership-group label {
+        font-size: 0.85rem;
+      }
       .modal {
         padding-top: 1rem;
+        padding-bottom: 1rem;
       }
       .modal-content {
         width: 95%;
         padding: 1.2rem;
-        max-height: 85vh;
+        max-height: 90vh;
         border-radius: 0.8rem;
       }
       .modal-content p {
         font-size: 0.9rem;
+      }
+      .modal-buttons {
+        padding-bottom: 0.5rem;
       }
       button.confirm, button.cancel, button.return-button, #submitBtn {
         padding: 0.7rem;
@@ -395,7 +416,7 @@
         <label>會員證/段證編號 Membership No. *</label>
         <div class="membership-group">
           <input type="text" id="membershipNumber" name="entry.274850195" required>
-          <label><input type="checkbox" id="noMembership" name="entry.274850195_noMembership" value="未有會員證/段證"> 未有會員證/段證</label>
+          <label><input type="checkbox" id="noMembership" name="noMembership" value="未有會員證/段證"> 未有會員證/段證</label>
         </div>
         <span id="membershipNumberError" class="error">請輸入會員證/段證編號或勾選“未有會員證/段證”</span>
       </div>
@@ -518,7 +539,7 @@
         <p><strong>緊急聯絡人：</strong> <span id="confirmEmergencyContact"></span></p>
         <p><strong>緊急聯絡人電話：</strong> <span id="confirmEmergencyPhone"></span></p>
       </div>
-      <div style="display: flex; gap: 0.6rem;">
+      <div class="modal-buttons">
         <button class="cancel" onclick="cancelSubmission()">取消</button>
         <button class="confirm" onclick="confirmSubmission()">確認提交</button>
       </div>
@@ -735,16 +756,22 @@
       const formContainer = document.getElementById('mainForm');
       const thankYouPage = document.getElementById('thankYouPage');
       const noMembershipCheckbox = document.getElementById('noMembership');
+      const membershipNumberInput = document.getElementById('membershipNumber');
       const formData = new FormData(form);
 
       // 移除日期子字段，僅保留完整的出生日期
       formData.delete('entry.71284989_year');
       formData.delete('entry.71284989_month');
       formData.delete('entry.71284989_day');
-      
+
+      // 移除 noMembership 字段，因為 Google Forms 不接受此字段
+      formData.delete('noMembership');
+
       // 如果勾選了“未有會員證/段證”，設置會員證編號為該值
       if (noMembershipCheckbox.checked) {
         formData.set('entry.274850195', '未有會員證/段證');
+      } else {
+        formData.set('entry.274850195', membershipNumberInput.value);
       }
 
       try {
