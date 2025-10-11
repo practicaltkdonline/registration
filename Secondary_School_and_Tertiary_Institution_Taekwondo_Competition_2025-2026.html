@@ -165,7 +165,8 @@
       justify-content: center;
       align-items: flex-start;
       z-index: 1000;
-      padding-top: 2rem;
+      padding-top: 1rem;
+      padding-bottom: 1.5rem;
       overflow-y: auto;
     }
     .modal-content {
@@ -177,9 +178,9 @@
       box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
       display: flex;
       flex-direction: column;
-      max-height: 80vh;
+      max-height: 85vh;
       overflow-y: auto;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
     .modal-scroll {
       flex-grow: 1;
@@ -193,11 +194,12 @@
     }
     .modal-buttons {
       display: flex;
-      gap: 0.6rem;
-      padding-bottom: 1rem;
+      gap: 1rem;
+      padding-bottom: 1.5rem;
       position: sticky;
       bottom: 0;
       background: #ffffff;
+      justify-content: center;
     }
     button.confirm, button.return-button {
       background: linear-gradient(90deg, #3182ce, #2b6cb0);
@@ -207,6 +209,10 @@
       padding: 0.8rem;
       border-radius: 0.6rem;
       transition: background 0.3s ease, transform 0.2s ease;
+      min-height: 44px;
+      min-width: 100px;
+      font-size: 1rem;
+      touch-action: manipulation;
     }
     button.confirm:hover, button.return-button:hover {
       background: linear-gradient(90deg, #2b6cb0, #2c5282);
@@ -220,6 +226,10 @@
       border-radius: 0.6rem;
       cursor: pointer;
       transition: background 0.3s ease, transform 0.2s ease;
+      min-height: 44px;
+      min-width: 100px;
+      font-size: 1rem;
+      touch-action: manipulation;
     }
     button.cancel:hover {
       background: #e2e8f0;
@@ -236,6 +246,8 @@
       transition: background 0.3s ease, transform 0.3s ease;
       font-weight: 600;
       font-size: 1.1rem;
+      min-height: 44px;
+      touch-action: manipulation;
     }
     #submitBtn:hover {
       background: linear-gradient(90deg, #2f855a, #276749);
@@ -244,7 +256,7 @@
     #thankYouPage {
       display: none;
       background: #ffffff;
-      padding: 2rem;
+      padding: 1.5rem;
       border-radius: 1.2rem;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
       text-align: center;
@@ -269,7 +281,7 @@
         margin: 0.5rem;
       }
       .form-container, #thankYouPage {
-        padding: 1.2rem;
+        padding: 1.5rem;
         margin: 0.5rem;
         border-radius: 0.8rem;
       }
@@ -310,23 +322,27 @@
       }
       .modal {
         padding-top: 1rem;
-        padding-bottom: 1rem;
+        padding-bottom: 1.5rem;
       }
       .modal-content {
         width: 95%;
         padding: 1.2rem;
-        max-height: 90vh;
+        max-height: 85vh;
         border-radius: 0.8rem;
       }
       .modal-content p {
         font-size: 0.9rem;
       }
       .modal-buttons {
-        padding-bottom: 0.5rem;
+        padding-bottom: 1.5rem;
+        gap: 1rem;
       }
       button.confirm, button.cancel, button.return-button, #submitBtn {
-        padding: 0.7rem;
-        font-size: 0.9rem;
+        padding: 0.8rem;
+        font-size: 0.95rem;
+        min-height: 44px;
+        min-width: 100px;
+        touch-action: manipulation;
       }
     }
   </style>
