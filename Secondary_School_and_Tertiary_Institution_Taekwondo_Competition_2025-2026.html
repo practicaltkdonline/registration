@@ -21,11 +21,19 @@
       padding: 2rem;
       border-radius: 1.2rem;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
     }
     .form-container:hover {
       transform: translateY(-4px);
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+    }
+    .form-container.hidden {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .form-container.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
     .form-header {
       text-align: center;
@@ -50,7 +58,7 @@
       padding: 1.2rem;
       border-radius: 1rem;
       background: #f7fafc;
-      transition: background 0.3s ease, transform 0.2s ease;
+      transition: background 0.3s ease, transform 0.2s ease, opacity 0.3s ease;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
     .form-group:hover {
@@ -148,6 +156,15 @@
     .membership-group input[type="checkbox"] {
       transform: scale(1);
     }
+    .height-weight-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .height-weight-group div {
+      flex: 1;
+      min-width: 150px;
+    }
     .error {
       color: #e53e3e;
       font-size: 0.85rem;
@@ -168,6 +185,12 @@
       padding-top: 1rem;
       padding-bottom: 1.5rem;
       overflow-y: auto;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .modal.active {
+      display: flex;
+      opacity: 1;
     }
     .modal-content {
       background-color: #ffffff;
@@ -181,6 +204,12 @@
       max-height: 85vh;
       overflow-y: auto;
       margin-bottom: 1.5rem;
+      transform: translateY(50px);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .modal.active .modal-content {
+      transform: translateY(0);
+      opacity: 1;
     }
     .modal-scroll {
       flex-grow: 1;
@@ -235,23 +264,28 @@
       background: #e2e8f0;
       transform: translateY(-2px);
     }
-    #submitBtn {
+    #prevBtn, #nextBtn, #submitBtn {
       background: linear-gradient(90deg, #38a169, #2f855a);
       color: white;
-      margin-top: 1.5rem;
+      margin: 0.5rem;
       padding: 1rem;
       border: none;
       border-radius: 0.6rem;
       cursor: pointer;
-      transition: background 0.3s ease, transform 0.3s ease;
+      transition: background 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
       font-weight: 600;
       font-size: 1.1rem;
       min-height: 44px;
       touch-action: manipulation;
     }
-    #submitBtn:hover {
+    #prevBtn:hover, #nextBtn:hover, #submitBtn:hover {
       background: linear-gradient(90deg, #2f855a, #276749);
       transform: translateY(-3px);
+    }
+    #prevBtn:disabled {
+      background: #edf2f7;
+      color: #a0aec0;
+      cursor: not-allowed;
     }
     #thankYouPage {
       display: none;
@@ -260,7 +294,16 @@
       border-radius: 1.2rem;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
       text-align: center;
-      transition: transform 0.3s ease;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    #thankYouPage.visible {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    #thankYouPage.hidden {
+      opacity: 0;
+      transform: translateY(20px);
     }
     #thankYouPage:hover {
       transform: translateY(-4px);
@@ -274,6 +317,58 @@
       font-size: 1rem;
       margin: 1rem 0;
       color: #38a169;
+    }
+    .progress-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    .progress-bar::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #e0e0e0;
+      transform: translateY(-50%);
+      z-index: 1;
+    }
+    .step {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      position: relative;
+      z-index: 2;
+      color: #2d3748;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    .step.active {
+      background: #38a169;
+      color: white;
+    }
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .step-content {
+      display: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .step-content.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
     }
     @media (max-width: 600px) {
       body {
@@ -337,197 +432,234 @@
         padding-bottom: 1.5rem;
         gap: 1rem;
       }
-      button.confirm, button.cancel, button.return-button, #submitBtn {
+      button.confirm, button.cancel, button.return-button, #prevBtn, #nextBtn, #submitBtn {
         padding: 0.8rem;
         font-size: 0.95rem;
         min-height: 44px;
         min-width: 100px;
         touch-action: manipulation;
       }
+      .progress-bar {
+        margin-bottom: 1.5rem;
+      }
+      .step {
+        width: 24px;
+        height: 24px;
+        font-size: 0.9rem;
+      }
+      .height-weight-group {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="form-container" id="mainForm">
+  <div class="form-container visible" id="mainForm">
     <div class="form-header">
       <h1>香港學界跆拳道比賽2025-2026(中學及大專組)</h1>
       <h1>Secondary School and Tertiary Institution Taekwondo Competition 2025-2026</h1>
       <h2>報名表</h2>
     </div>
+    <div class="progress-bar">
+      <div class="step active">1</div>
+      <div class="step">2</div>
+      <div class="step">3</div>
+      <div class="step">4</div>
+    </div>
     <form id="registrationForm">
-      <div class="form-group">
-        <label>就讀學校/院校名稱 School/Institution Name *</label>
-        <input type="text" id="schoolName" name="entry.1714227241" placeholder="以學生證上的中文名稱為準" required>
-        <span id="schoolNameError" class="error">請輸入學校/院校名稱</span>
-      </div>
-      <div class="form-group">
-        <label>學校程度 School Level *</label>
-        <div class="category-group">
-          <label><input type="radio" name="entry.1924363147" value="中學 Secondary School" required> 中學 Secondary School</label>
-          <label><input type="radio" name="entry.1924363147" value="大專院校 Tertiary Institution"> 大專院校 Tertiary Institution</label>
+      <div class="step-content active" data-step="1">
+        <div class="form-group">
+          <label>就讀學校/院校名稱 School/Institution Name *</label>
+          <input type="text" id="schoolName" name="entry.1714227241" placeholder="以學生證上的中文名稱為準" required>
+          <span id="schoolNameError" class="error">請輸入學校/院校名稱</span>
         </div>
-        <span id="schoolLevelError" class="error">請選擇學校程度</span>
-      </div>
-      <div class="form-group">
-        <label>學生證編號 Student ID *</label>
-        <input type="text" id="studentId" name="entry.1820097193" required>
-        <span id="studentIdError" class="error">請輸入學生證編號</span>
-      </div>
-      <div class="form-group">
-        <label>屬會名稱 Association *</label>
-        <input list="affiliations" id="affiliation" name="entry.629960054" required placeholder="點擊輸入或選擇屬會名稱">
-        <datalist id="affiliations">
-          <option value="香港仔跆拳道會 Aberdeen TKD Club">
-          <option value="技擊跆拳道會 Advanced TKD Association">
-          <option value="躍駿跆拳道會 Attack TKD Association">
-          <option value="青雲跆拳道會 Ching Wan TKD Association">
-          <option value="精英跆拳道會 Ching Ying TKD Union">
-          <option value="金柏跆拳道協會 Combat TKD Association">
-          <option value="香港跆拳道東龍會 Eastern Dragon TKD Federation HK">
-          <option value="勵志跆拳道總會 Encouragement TKD Association">
-          <option value="香港智道跆拳總會 HK Chido TKD Association">
-          <option value="香港啟聯跆拳道協會 HK Kai Luen TKD Association">
-          <option value="香港尼泊爾跆拳道會 HK Nepalese TKD Club">
-          <option value="香港實用跆拳道協會 HK Practical TKD Association">
-          <option value="香港跆拳道振武館 HK TKD Chun Mo Kwan">
-          <option value="香港跆拳道勵進會 HK TKD Action Association">
-          <option value="香港跆拳道勵誠會 HK TKD Active Association">
-          <option value="香港跆拳道勵輝會 HK TKD Actual Association">
-          <option value="香港中道跆拳道會 HK Chong Do TKD Association">
-          <option value="香港跆拳道青濤館 HK TKD Chung Do Kwan">
-          <option value="香港跆拳道正道館 HK TKD Jung Do Kwan">
-          <option value="香港跆拳道正心館 HK TKD Jung Sim Kwan">
-          <option value="香港聯盟跆拳道協會 HK United TKD Association">
-          <option value="跆拳道明道會 TKD Bright Way Association">
-          <option value="漢道跆拳道館 Hon Do TKD Kwan">
-          <option value="國際跆拳道香港總會 International TKD HK Association">
-          <option value="韓國跆拳道青道館 Korea TKD Cheung Do Kwan">
-          <option value="樂華跆拳道會 Lok Wah TKD Club">
-          <option value="銘英跆拳道會 Main Pioneer TKD Association">
-          <option value="跆拳道武德會 Moo Duk TKD Hae">
-          <option value="伍華跆拳道會 Ng Wah TKD Club">
-          <option value="毅武聯盟跆拳道 Ngai Mo Alliance TKD">
-          <option value="香港警察跆拳道會 HK Police TKD Club">
-          <option value="香港跆拳道國藝會 Potential TKD HK Association">
-          <option value="尚武聯跆拳道會 Sheung Mo Luen TKD Association">
-          <option value="捷擊跆拳道館 TKD Jet Kick Kwan">
-          <option value="跆拳道吾道會體育館 TKD Oh Do Hae Gymnasium">
-          <option value="香港胡氏跆拳道會 Wu’s TKD HK Association">
-          <option value="正武會跆拳道協會 Zheng Wu TKD Association">
-          <option value="香港發景跆拳道會 Hong Kong Greatview TKD Club">
-          <option value="香港跆拳道柏毅會 Hong Kong TKD Pak Ngai Association">
-          <option value="香港跆拳道嚴濤會 Hong Kong TKD Uhm Do Club">
-          <option value="威格跆拳道會 Warrior TKD Club">
-          <option value="金道跆拳道聯盟 The Kimdo TKD Federation">
-          <option value="金道一跆拳道館 Kim Do Yi TKD Kwan">
-          <option value="樂武跆拳道會 Cheerful TKD Association Limited">
-          <option value="世紀跆拳道會 H.K. Taekwondo Cosmopolitan Club">
-          <option value="燊．跆拳道館 Sun Taekwondo Club">
-          <option value="香港進和跆拳道會 Hong Kong Chun Wo Taekwondo Association">
-          <option value="香港賢薈跆拳道會 Hong Kong Ultimate Taekwondo Club">
-        </datalist>
-        <span id="affiliationError" class="error">請選擇或輸入屬會名稱</span>
-      </div>
-      <div class="form-group">
-        <label>會員證/段證編號 Membership No. *</label>
-        <div class="membership-group">
-          <input type="text" id="membershipNumber" name="entry.274850195" required>
-          <label><input type="checkbox" id="noMembership" name="noMembership" value="未有會員證/段證"> 未有會員證/段證</label>
+        <div class="form-group">
+          <label>學校程度 School Level *</label>
+          <div class="category-group">
+            <label><input type="radio" name="entry.1924363147" value="中學 Secondary School" required> 中學 Secondary School</label>
+            <label><input type="radio" name="entry.1924363147" value="大專院校 Tertiary Institution"> 大專院校 Tertiary Institution</label>
+          </div>
+          <span id="schoolLevelError" class="error">請選擇學校程度</span>
         </div>
-        <span id="membershipNumberError" class="error">請輸入會員證/段證編號或勾選“未有會員證/段證”</span>
+        <div class="form-group">
+          <label>學生證編號 Student ID *</label>
+          <input type="text" id="studentId" name="entry.1820097193" required>
+          <span id="studentIdError" class="error">請輸入學生證編號</span>
+        </div>
       </div>
-      <div class="form-group">
-        <label>中文姓名 Chinese Name *</label>
-        <input type="text" id="chineseName" name="entry.1739837016" placeholder="如沒有請填寫英文姓名 (請以大寫字母填寫)" required oninput="if(!/[\u4e00-\u9fa5]/.test(this.value)) this.value = this.value.toUpperCase()">
-        <span id="chineseNameError" class="error">請輸入中文姓名或英文姓名</span>
+      <div class="step-content" data-step="2">
+        <div class="form-group">
+          <label>中文姓名 Chinese Name *</label>
+          <input type="text" id="chineseName" name="entry.1739837016" placeholder="如沒有請填寫英文姓名 (請以大寫字母填寫)" required oninput="if(!/[\u4e00-\u9fa5]/.test(this.value)) this.value = this.value.toUpperCase()">
+          <span id="chineseNameError" class="error">請輸入中文姓名或英文姓名</span>
+        </div>
+        <div class="form-group">
+          <label>英文姓名 English Name *</label>
+          <input type="text" id="englishName" name="entry.69039678" placeholder="請以大寫字母填寫" required oninput="this.value = this.value.toUpperCase()">
+          <span id="englishNameError" class="error">請輸入英文姓名</span>
+        </div>
+        <div class="form-group">
+          <label>出生日期 Date of Birth YYYY-MM-DD *</label>
+          <div class="date-group">
+            <select id="birthYear" name="entry.71284989_year" required>
+              <option value="">年</option>
+            </select>
+            <span>/</span>
+            <select id="birthMonth" name="entry.71284989_month" required>
+              <option value="">月</option>
+            </select>
+            <span>/</span>
+            <select id="birthDay" name="entry.71284989_day" required>
+              <option value="">日</option>
+            </select>
+          </div>
+          <input type="hidden" id="birthDate" name="entry.71284989">
+          <span id="birthDateError" class="error">請選擇有效的出生日期</span>
+        </div>
+        <div class="form-group">
+          <label>性別 Gender *</label>
+          <div class="category-group">
+            <label><input type="radio" name="entry.269558714" value="男 Male" required> 男 Male</label>
+            <label><input type="radio" name="entry.269558714" value="女 Female"> 女 Female</label>
+          </div>
+          <span id="genderError" class="error">請選擇性別</span>
+        </div>
       </div>
-      <div class="form-group">
-        <label>英文姓名 English Name *</label>
-        <input type="text" id="englishName" name="entry.69039678" placeholder="請以大寫字母填寫" required oninput="this.value = this.value.toUpperCase()">
-        <span id="englishNameError" class="error">請輸入英文姓名</span>
+      <div class="step-content" data-step="3">
+        <div class="form-group">
+          <label>聯絡電話 Telephone Number *</label>
+          <input type="tel" id="phone" name="entry.1045318375" pattern="\d{8}" required>
+          <span id="phoneError" class="error">請輸入有效的8位電話號碼</span>
+        </div>
+        <div class="form-group">
+          <label>緊急聯絡人電話 Emergency Contact Phone *</label>
+          <div class="membership-group">
+            <input type="tel" id="emergencyPhone" name="entry.1294289670" pattern="\d{8}" required>
+            <label><input type="checkbox" id="sameAsPhone" name="sameAsPhone" value="同上"> 同上</label>
+          </div>
+          <span id="emergencyPhoneError" class="error">請輸入有效的8位電話號碼</span>
+        </div>
+        <div class="form-group">
+          <label>緊急聯絡人 Emergency Contact *</label>
+          <input type="text" id="emergencyContact" name="entry.1921234097" required>
+          <span id="emergencyContactError" class="error">請輸入緊急聯絡人</span>
+        </div>
       </div>
-      <div class="form-group">
-        <label>出生日期 Date of Birth YYYY-MM-DD *</label>
-        <div class="date-group">
-          <select id="birthYear" name="entry.71284989_year" required>
-            <option value="">年</option>
+      <div class="step-content" data-step="4">
+        <div class="form-group">
+          <label>屬會名稱 Association *</label>
+          <input list="affiliations" id="affiliation" name="entry.629960054" required placeholder="點擊輸入或選擇屬會名稱">
+          <datalist id="affiliations">
+            <option value="香港仔跆拳道會 Aberdeen TKD Club">
+            <option value="技擊跆拳道會 Advanced TKD Association">
+            <option value="躍駿跆拳道會 Attack TKD Association">
+            <option value="青雲跆拳道會 Ching Wan TKD Association">
+            <option value="精英跆拳道會 Ching Ying TKD Union">
+            <option value="金柏跆拳道協會 Combat TKD Association">
+            <option value="香港跆拳道東龍會 Eastern Dragon TKD Federation HK">
+            <option value="勵志跆拳道總會 Encouragement TKD Association">
+            <option value="香港智道跆拳總會 HK Chido TKD Association">
+            <option value="香港啟聯跆拳道協會 HK Kai Luen TKD Association">
+            <option value="香港尼泊爾跆拳道會 HK Nepalese TKD Club">
+            <option value="香港實用跆拳道協會 HK Practical TKD Association">
+            <option value="香港跆拳道振武館 HK TKD Chun Mo Kwan">
+            <option value="香港跆拳道勵進會 HK TKD Action Association">
+            <option value="香港跆拳道勵誠會 HK TKD Active Association">
+            <option value="香港跆拳道勵輝會 HK TKD Actual Association">
+            <option value="香港中道跆拳道會 HK Chong Do TKD Association">
+            <option value="香港跆拳道青濤館 HK TKD Chung Do Kwan">
+            <option value="香港跆拳道正道館 HK TKD Jung Do Kwan">
+            <option value="香港跆拳道正心館 HK TKD Jung Sim Kwan">
+            <option value="香港聯盟跆拳道協會 HK United TKD Association">
+            <option value="跆拳道明道會 TKD Bright Way Association">
+            <option value="漢道跆拳道館 Hon Do TKD Kwan">
+            <option value="國際跆拳道香港總會 International TKD HK Association">
+            <option value="韓國跆拳道青道館 Korea TKD Cheung Do Kwan">
+            <option value="樂華跆拳道會 Lok Wah TKD Club">
+            <option value="銘英跆拳道會 Main Pioneer TKD Association">
+            <option value="跆拳道武德會 Moo Duk TKD Hae">
+            <option value="伍華跆拳道會 Ng Wah TKD Club">
+            <option value="毅武聯盟跆拳道 Ngai Mo Alliance TKD">
+            <option value="香港警察跆拳道會 HK Police TKD Club">
+            <option value="香港跆拳道國藝會 Potential TKD HK Association">
+            <option value="尚武聯跆拳道會 Sheung Mo Luen TKD Association">
+            <option value="捷擊跆拳道館 TKD Jet Kick Kwan">
+            <option value="跆拳道吾道會體育館 TKD Oh Do Hae Gymnasium">
+            <option value="香港胡氏跆拳道會 Wu’s TKD HK Association">
+            <option value="正武會跆拳道協會 Zheng Wu TKD Association">
+            <option value="香港發景跆拳道會 Hong Kong Greatview TKD Club">
+            <option value="香港跆拳道柏毅會 Hong Kong TKD Pak Ngai Association">
+            <option value="香港跆拳道嚴濤會 Hong Kong TKD Uhm Do Club">
+            <option value="威格跆拳道會 Warrior TKD Club">
+            <option value="金道跆拳道聯盟 The Kimdo TKD Federation">
+            <option value="金道一跆拳道館 Kim Do Yi TKD Kwan">
+            <option value="樂武跆拳道會 Cheerful TKD Association Limited">
+            <option value="世紀跆拳道會 H.K. Taekwondo Cosmopolitan Club">
+            <option value="燊．跆拳道館 Sun Taekwondo Club">
+            <option value="香港進和跆拳道會 Hong Kong Chun Wo Taekwondo Association">
+            <option value="香港賢薈跆拳道會 Hong Kong Ultimate Taekwondo Club">
+          </datalist>
+          <span id="affiliationError" class="error">請選擇或輸入屬會名稱</span>
+        </div>
+        <div class="form-group">
+          <label>會員證/段證編號 Membership No. *</label>
+          <div class="membership-group">
+            <input type="text" id="membershipNumber" name="entry.274850195" required>
+            <label><input type="checkbox" id="noMembership" name="noMembership" value="未有會員證/段證"> 未有會員證/段證</label>
+          </div>
+          <span id="membershipNumberError" class="error">請輸入會員證/段證編號或勾選“未有會員證/段證”</span>
+        </div>
+        <div class="form-group">
+          <label>現有級別 Present Grade Held *</label>
+          <select id="beltLevel" name="entry.1597491054" required>
+            <option value="">請選擇級別</option>
+            <option value="綠帶 Green Belt">綠帶 Green Belt</option>
+            <option value="綠藍帶 Green-Blue Belt">綠藍帶 Green-Blue Belt</option>
+            <option value="藍帶 Blue Belt">藍帶 Blue Belt</option>
+            <option value="藍紅帶 Blue-Red Belt">藍紅帶 Blue-Red Belt</option>
+            <option value="紅帶 Red Belt">紅帶 Red Belt</option>
+            <option value="紅黑帶 Red-Black Belt">紅黑帶 Red-Black Belt</option>
+            <option value="黑帶一品/段 1 Poom/Dan">黑帶一品/段 1 Poom/Dan</option>
+            <option value="黑帶二品/段 2 Poom/Dan">黑帶二品/段 2 Poom/Dan</option>
+            <option value="黑帶三品/段或以上 3 Poom/Dan or above">黑帶三品/段或以上 3 Poom/Dan or above</option>
           </select>
-          <span>/</span>
-          <select id="birthMonth" name="entry.71284989_month" required>
-            <option value="">月</option>
-          </select>
-          <span>/</span>
-          <select id="birthDay" name="entry.71284989_day" required>
-            <option value="">日</option>
-          </select>
+          <span id="beltLevelError" class="error">請選擇現有級別</span>
         </div>
-        <input type="hidden" id="birthDate" name="entry.71284989">
-        <span id="birthDateError" class="error">請選擇有效的出生日期</span>
-      </div>
-      <div class="form-group">
-        <label>性別 Gender *</label>
-        <div class="category-group">
-          <label><input type="radio" name="entry.269558714" value="男 Male" required> 男 Male</label>
-          <label><input type="radio" name="entry.269558714" value="女 Female"> 女 Female</label>
+        <div class="form-group">
+          <label>參賽者身高與體重 Height and Weight *</label>
+          <div class="height-weight-group">
+            <div>
+              <label>身高 Height (cm)</label>
+              <input type="number" id="height" name="entry.703788026" required>
+              <span id="heightError" class="error">請輸入有效的身高</span>
+            </div>
+            <div>
+              <label>體重 Weight (kg)</label>
+              <input type="number" id="weight" name="entry.1666612578" required>
+              <span id="weightError" class="error">請輸入有效的體重</span>
+            </div>
+          </div>
         </div>
-        <span id="genderError" class="error">請選擇性別</span>
+        <div class="form-group">
+          <label>搏擊級別劃分 Kyorugi Division *</label>
+          <select id="kyorugiDivision" name="entry.1084612574" required>
+            <option value="">請選擇搏擊級別</option>
+          </select>
+          <span id="kyorugiDivisionError" class="error">請選擇搏擊級別</span>
+        </div>
+        <div class="form-group">
+          <label>搏擊量級 Weight Class *</label>
+          <select id="weightClass" name="entry.1721761818" required>
+            <option value="">請選擇搏擊量級</option>
+          </select>
+          <span id="weightClassError" class="error">請選擇搏擊量級</span>
+        </div>
       </div>
-      <div class="form-group">
-        <label>聯絡電話 Telephone Number *</label>
-        <input type="tel" id="phone" name="entry.1045318375" pattern="\d{8}" required>
-        <span id="phoneError" class="error">請輸入有效的8位電話號碼</span>
+      <div class="buttons">
+        <button type="button" id="prevBtn" class="btn" disabled>上一步</button>
+        <button type="button" id="nextBtn" class="btn">下一步</button>
+        <button type="button" id="submitBtn" class="btn" style="display: none;" onclick="submitForm()">提交表單</button>
       </div>
-      <div class="form-group">
-        <label>現有級別 Present Grade Held *</label>
-        <select id="beltLevel" name="entry.1597491054" required>
-          <option value="">請選擇級別</option>
-          <option value="綠帶 Green Belt">綠帶 Green Belt</option>
-          <option value="綠藍帶 Green-Blue Belt">綠藍帶 Green-Blue Belt</option>
-          <option value="藍帶 Blue Belt">藍帶 Blue Belt</option>
-          <option value="藍紅帶 Blue-Red Belt">藍紅帶 Blue-Red Belt</option>
-          <option value="紅帶 Red Belt">紅帶 Red Belt</option>
-          <option value="紅黑帶 Red-Black Belt">紅黑帶 Red-Black Belt</option>
-          <option value="黑帶一品/段 1 Poom/Dan">黑帶一品/段 1 Poom/Dan</option>
-          <option value="黑帶二品/段 2 Poom/Dan">黑帶二品/段 2 Poom/Dan</option>
-          <option value="黑帶三品/段或以上 3 Poom/Dan or above">黑帶三品/段或以上 3 Poom/Dan or above</option>
-        </select>
-        <span id="beltLevelError" class="error">請選擇現有級別</span>
-      </div>
-      <div class="form-group">
-        <label>參賽者高度 Height (cm) *</label>
-        <input type="number" id="height" name="entry.703788026" required>
-        <span id="heightError" class="error">請輸入有效的身高</span>
-      </div>
-      <div class="form-group">
-        <label>參賽者重量 Weight (kg) *</label>
-        <input type="number" id="weight" name="entry.1666612578" required>
-        <span id="weightError" class="error">請輸入有效的體重</span>
-      </div>
-      <div class="form-group">
-        <label>搏擊級別劃分 Kyorugi Division *</label>
-        <select id="kyorugiDivision" name="entry.1084612574" required>
-          <option value="">請選擇搏擊級別</option>
-        </select>
-        <span id="kyorugiDivisionError" class="error">請選擇搏擊級別</span>
-      </div>
-      <div class="form-group">
-        <label>搏擊量級 Weight Class *</label>
-        <select id="weightClass" name="entry.1721761818" required>
-          <option value="">請選擇搏擊量級</option>
-        </select>
-        <span id="weightClassError" class="error">請選擇搏擊量級</span>
-      </div>
-      <div class="form-group">
-        <label>緊急聯絡人 Emergency Contact *</label>
-        <input type="text" id="emergencyContact" name="entry.1921234097" required>
-        <span id="emergencyContactError" class="error">請輸入緊急聯絡人</span>
-      </div>
-      <div class="form-group">
-        <label>緊急聯絡人電話 Emergency Contact Phone *</label>
-        <input type="tel" id="emergencyPhone" name="entry.1294289670" pattern="\d{8}" required>
-        <span id="emergencyPhoneError" class="error">請輸入有效的8位電話號碼</span>
-      </div>
-      <button type="button" id="submitBtn" onclick="submitForm()">提交表單</button>
     </form>
   </div>
 
@@ -538,20 +670,20 @@
         <p><strong>就讀學校/院校名稱：</strong> <span id="confirmSchoolName"></span></p>
         <p><strong>學校程度：</strong> <span id="confirmSchoolLevel"></span></p>
         <p><strong>學生證編號：</strong> <span id="confirmStudentId"></span></p>
-        <p><strong>屬會名稱：</strong> <span id="confirmAffiliation"></span></p>
-        <p><strong>會員證/段證編號：</strong> <span id="confirmMembershipNumber"></span></p>
         <p><strong>中文姓名：</strong> <span id="confirmChineseName"></span></p>
         <p><strong>英文姓名：</strong> <span id="confirmEnglishName"></span></p>
         <p><strong>出生日期：</strong> <span id="confirmBirthDate"></span></p>
         <p><strong>性別：</strong> <span id="confirmGender"></span></p>
         <p><strong>聯絡電話：</strong> <span id="confirmPhone"></span></p>
+        <p><strong>緊急聯絡人電話：</strong> <span id="confirmEmergencyPhone"></span></p>
+        <p><strong>緊急聯絡人：</strong> <span id="confirmEmergencyContact"></span></p>
+        <p><strong>屬會名稱：</strong> <span id="confirmAffiliation"></span></p>
+        <p><strong>會員證/段證編號：</strong> <span id="confirmMembershipNumber"></span></p>
         <p><strong>現有級別：</strong> <span id="confirmBeltLevel"></span></p>
         <p><strong>參賽者高度：</strong> <span id="confirmHeight"></span></p>
         <p><strong>參賽者重量：</strong> <span id="confirmWeight"></span></p>
         <p><strong>搏擊級別劃分：</strong> <span id="confirmKyorugiDivision"></span></p>
         <p><strong>搏擊量級：</strong> <span id="confirmWeightClass"></span></p>
-        <p><strong>緊急聯絡人：</strong> <span id="confirmEmergencyContact"></span></p>
-        <p><strong>緊急聯絡人電話：</strong> <span id="confirmEmergencyPhone"></span></p>
       </div>
       <div class="modal-buttons">
         <button class="cancel" onclick="cancelSubmission()">取消</button>
@@ -560,7 +692,7 @@
     </div>
   </div>
 
-  <div id="thankYouPage">
+  <div id="thankYouPage" class="hidden">
     <h2>感謝您的報名！</h2>
     <p>確認後教練將盡快與您聯繫核對資料。</p>
     <p>請將家長同意書、會員證及學生證副本交給教練。</p>
@@ -619,47 +751,46 @@
       '中學女子黑帶BD組 Black Belt Group BD 15歲或以上 Age: 15 or above (2010年或之前出生者)': ['FIN 鰭量級 (42公斤以下)', 'FLY 蠅量級 (42公斤以上而不超過44公斤)', 'BANTAM 雛量級 (44公斤以上而不超過46公斤)', 'FEATHER 羽量級 (46公斤以上而不超過49公斤)', 'LIGHT 輕量級 (49公斤以上而不超過52公斤)', 'WELTER 沉量級 (52公斤以上而不超過55公斤)', 'LIGHT MIDDLE 輕中量級 (55公斤以上而不超過59公斤)', 'MIDDLE 中量級 (59公斤以上而不超過63公斤)', 'LIGHT HEAVY 輕重量級 (63公斤以上而不超過68公斤)', 'HEAVY 重量級 (68公斤以上)']
     };
 
-    // 表單驗證與提交
-    function submitForm() {
-      const confirmModal = document.getElementById('confirmModal');
-      const form = document.getElementById('registrationForm');
-      const schoolNameInput = document.getElementById('schoolName');
-      const schoolLevelRadios = document.getElementsByName('entry.1924363147');
-      const studentIdInput = document.getElementById('studentId');
-      const affiliationInput = document.getElementById('affiliation');
-      const membershipNumberInput = document.getElementById('membershipNumber');
-      const noMembershipCheckbox = document.getElementById('noMembership');
-      const chineseNameInput = document.getElementById('chineseName');
-      const englishNameInput = document.getElementById('englishName');
-      const birthYearSelect = document.getElementById('birthYear');
-      const birthMonthSelect = document.getElementById('birthMonth');
-      const birthDaySelect = document.getElementById('birthDay');
-      const genderRadios = document.getElementsByName('entry.269558714');
-      const phoneInput = document.getElementById('phone');
-      const beltLevelSelect = document.getElementById('beltLevel');
-      const heightInput = document.getElementById('height');
-      const weightInput = document.getElementById('weight');
-      const kyorugiDivisionSelect = document.getElementById('kyorugiDivision');
-      const weightClassSelect = document.getElementById('weightClass');
-      const emergencyContactInput = document.getElementById('emergencyContact');
-      const emergencyPhoneInput = document.getElementById('emergencyPhone');
+    let currentStep = 1;
+    const form = document.getElementById('registrationForm');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const stepContents = document.querySelectorAll('.step-content');
+    const steps = document.querySelectorAll('.step');
 
+    function updateStep(stepNumber, reset = false) {
+      stepContents.forEach(content => {
+        content.classList.remove('active');
+        if (parseInt(content.dataset.step) === stepNumber) {
+          content.classList.add('active');
+        }
+      });
+      steps.forEach((step, index) => {
+        if (index + 1 <= stepNumber) {
+          step.classList.add('active');
+        } else {
+          step.classList.remove('active');
+        }
+      });
+      prevBtn.disabled = stepNumber === 1;
+      nextBtn.style.display = stepNumber === 4 ? 'none' : 'block';
+      submitBtn.style.display = stepNumber === 4 ? 'block' : 'none';
+      if (stepNumber === 4 || reset) {
+        updateKyorugiOptions();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function validateStep(stepNumber) {
       let isValid = true;
       document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
 
-      // 設置日期輸入值
-      if (birthYearSelect.value && birthMonthSelect.value && birthDaySelect.value) {
-        const birthDateInput = document.getElementById('birthDate');
-        birthDateInput.value = `${birthYearSelect.value}-${birthMonthSelect.value.toString().padStart(2, '0')}-${birthDaySelect.value.toString().padStart(2, '0')}`;
-      } else {
-        document.getElementById('birthDate').value = '';
-      }
+      if (stepNumber === 1) {
+        const schoolNameInput = document.getElementById('schoolName');
+        const schoolLevelRadios = document.getElementsByName('entry.1924363147');
+        const studentIdInput = document.getElementById('studentId');
 
-      // 檢查是否為 "test" 模式
-      const isTestMode = schoolNameInput.value.toLowerCase().includes('test');
-
-      // 驗證必填字段
-      if (!isTestMode) {
         if (!schoolNameInput.value.trim()) {
           document.getElementById('schoolNameError').style.display = 'block';
           isValid = false;
@@ -672,14 +803,14 @@
           document.getElementById('studentIdError').style.display = 'block';
           isValid = false;
         }
-        if (!affiliationInput.value.trim()) {
-          document.getElementById('affiliationError').style.display = 'block';
-          isValid = false;
-        }
-        if (!membershipNumberInput.value.trim() && !noMembershipCheckbox.checked) {
-          document.getElementById('membershipNumberError').style.display = 'block';
-          isValid = false;
-        }
+      } else if (stepNumber === 2) {
+        const chineseNameInput = document.getElementById('chineseName');
+        const englishNameInput = document.getElementById('englishName');
+        const birthYearSelect = document.getElementById('birthYear');
+        const birthMonthSelect = document.getElementById('birthMonth');
+        const birthDaySelect = document.getElementById('birthDay');
+        const genderRadios = document.getElementsByName('entry.269558714');
+
         if (!chineseNameInput.value.trim()) {
           document.getElementById('chineseNameError').style.display = 'block';
           isValid = false;
@@ -688,7 +819,7 @@
           document.getElementById('englishNameError').style.display = 'block';
           isValid = false;
         }
-        if (!document.getElementById('birthDate').value) {
+        if (!birthYearSelect.value || !birthMonthSelect.value || !birthDaySelect.value) {
           document.getElementById('birthDateError').style.display = 'block';
           isValid = false;
         }
@@ -696,8 +827,39 @@
           document.getElementById('genderError').style.display = 'block';
           isValid = false;
         }
+      } else if (stepNumber === 3) {
+        const phoneInput = document.getElementById('phone');
+        const emergencyPhoneInput = document.getElementById('emergencyPhone');
+        const emergencyContactInput = document.getElementById('emergencyContact');
+
         if (!phoneInput.value.match(/^\d{8}$/)) {
           document.getElementById('phoneError').style.display = 'block';
+          isValid = false;
+        }
+        if (!emergencyPhoneInput.value.match(/^\d{8}$/)) {
+          document.getElementById('emergencyPhoneError').style.display = 'block';
+          isValid = false;
+        }
+        if (!emergencyContactInput.value.trim()) {
+          document.getElementById('emergencyContactError').style.display = 'block';
+          isValid = false;
+        }
+      } else if (stepNumber === 4) {
+        const affiliationInput = document.getElementById('affiliation');
+        const membershipNumberInput = document.getElementById('membershipNumber');
+        const noMembershipCheckbox = document.getElementById('noMembership');
+        const beltLevelSelect = document.getElementById('beltLevel');
+        const heightInput = document.getElementById('height');
+        const weightInput = document.getElementById('weight');
+        const kyorugiDivisionSelect = document.getElementById('kyorugiDivision');
+        const weightClassSelect = document.getElementById('weightClass');
+
+        if (!affiliationInput.value.trim()) {
+          document.getElementById('affiliationError').style.display = 'block';
+          isValid = false;
+        }
+        if (!membershipNumberInput.value.trim() && !noMembershipCheckbox.checked) {
+          document.getElementById('membershipNumberError').style.display = 'block';
           isValid = false;
         }
         if (!beltLevelSelect.value) {
@@ -720,12 +882,131 @@
           document.getElementById('weightClassError').style.display = 'block';
           isValid = false;
         }
-        if (!emergencyContactInput.value.trim()) {
-          document.getElementById('emergencyContactError').style.display = 'block';
+      }
+      return isValid;
+    }
+
+    nextBtn.addEventListener('click', () => {
+      if (currentStep < 4 && validateStep(currentStep)) {
+        currentStep++;
+        updateStep(currentStep);
+      }
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentStep > 1) {
+        currentStep--;
+        updateStep(currentStep);
+      }
+    });
+
+    // 表單驗證與提交
+    function submitForm() {
+      const confirmModal = document.getElementById('confirmModal');
+      const form = document.getElementById('registrationForm');
+      const schoolNameInput = document.getElementById('schoolName');
+      const schoolLevelRadios = document.getElementsByName('entry.1924363147');
+      const studentIdInput = document.getElementById('studentId');
+      const chineseNameInput = document.getElementById('chineseName');
+      const englishNameInput = document.getElementById('englishName');
+      const birthYearSelect = document.getElementById('birthYear');
+      const birthMonthSelect = document.getElementById('birthMonth');
+      const birthDaySelect = document.getElementById('birthDay');
+      const genderRadios = document.getElementsByName('entry.269558714');
+      const phoneInput = document.getElementById('phone');
+      const emergencyPhoneInput = document.getElementById('emergencyPhone');
+      const emergencyContactInput = document.getElementById('emergencyContact');
+      const affiliationInput = document.getElementById('affiliation');
+      const membershipNumberInput = document.getElementById('membershipNumber');
+      const noMembershipCheckbox = document.getElementById('noMembership');
+      const beltLevelSelect = document.getElementById('beltLevel');
+      const heightInput = document.getElementById('height');
+      const weightInput = document.getElementById('weight');
+      const kyorugiDivisionSelect = document.getElementById('kyorugiDivision');
+      const weightClassSelect = document.getElementById('weightClass');
+
+      let isValid = validateStep(currentStep);
+      document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
+
+      // 設置日期輸入值
+      if (birthYearSelect.value && birthMonthSelect.value && birthDaySelect.value) {
+        const birthDateInput = document.getElementById('birthDate');
+        birthDateInput.value = `${birthYearSelect.value}-${birthMonthSelect.value.toString().padStart(2, '0')}-${birthDaySelect.value.toString().padStart(2, '0')}`;
+      } else {
+        document.getElementById('birthDate').value = '';
+      }
+
+      // 檢查是否為 "test" 模式
+      const isTestMode = schoolNameInput.value.toLowerCase().includes('test');
+
+      // 驗證所有字段
+      if (!isTestMode) {
+        if (!schoolNameInput.value.trim()) {
+          document.getElementById('schoolNameError').style.display = 'block';
+          isValid = false;
+        }
+        if (!Array.from(schoolLevelRadios).some(radio => radio.checked)) {
+          document.getElementById('schoolLevelError').style.display = 'block';
+          isValid = false;
+        }
+        if (!studentIdInput.value.trim()) {
+          document.getElementById('studentIdError').style.display = 'block';
+          isValid = false;
+        }
+        if (!chineseNameInput.value.trim()) {
+          document.getElementById('chineseNameError').style.display = 'block';
+          isValid = false;
+        }
+        if (!englishNameInput.value.trim()) {
+          document.getElementById('englishNameError').style.display = 'block';
+          isValid = false;
+        }
+        if (!document.getElementById('birthDate').value) {
+          document.getElementById('birthDateError').style.display = 'block';
+          isValid = false;
+        }
+        if (!Array.from(genderRadios).some(radio => radio.checked)) {
+          document.getElementById('genderError').style.display = 'block';
+          isValid = false;
+        }
+        if (!phoneInput.value.match(/^\d{8}$/)) {
+          document.getElementById('phoneError').style.display = 'block';
           isValid = false;
         }
         if (!emergencyPhoneInput.value.match(/^\d{8}$/)) {
           document.getElementById('emergencyPhoneError').style.display = 'block';
+          isValid = false;
+        }
+        if (!emergencyContactInput.value.trim()) {
+          document.getElementById('emergencyContactError').style.display = 'block';
+          isValid = false;
+        }
+        if (!affiliationInput.value.trim()) {
+          document.getElementById('affiliationError').style.display = 'block';
+          isValid = false;
+        }
+        if (!membershipNumberInput.value.trim() && !noMembershipCheckbox.checked) {
+          document.getElementById('membershipNumberError').style.display = 'block';
+          isValid = false;
+        }
+        if (!beltLevelSelect.value) {
+          document.getElementById('beltLevelError').style.display = 'block';
+          isValid = false;
+        }
+        if (!heightInput.value || heightInput.value <= 0) {
+          document.getElementById('heightError').style.display = 'block';
+          isValid = false;
+        }
+        if (!weightInput.value || weightInput.value <= 0) {
+          document.getElementById('weightError').style.display = 'block';
+          isValid = false;
+        }
+        if (!kyorugiDivisionSelect.value) {
+          document.getElementById('kyorugiDivisionError').style.display = 'block';
+          isValid = false;
+        }
+        if (!weightClassSelect.value) {
+          document.getElementById('weightClassError').style.display = 'block';
           isValid = false;
         }
       }
@@ -736,22 +1017,22 @@
         document.getElementById('confirmSchoolName').textContent = schoolNameInput.value || '未填寫';
         document.getElementById('confirmSchoolLevel').textContent = Array.from(schoolLevelRadios).find(radio => radio.checked)?.value || '未選擇';
         document.getElementById('confirmStudentId').textContent = studentIdInput.value || '未填寫';
-        document.getElementById('confirmAffiliation').textContent = affiliationInput.value || '未填寫';
-        document.getElementById('confirmMembershipNumber').textContent = noMembershipCheckbox.checked ? '未有會員證/段證' : (membershipNumberInput.value || '未填寫');
         document.getElementById('confirmChineseName').textContent = chineseNameInput.value || '未填寫';
         document.getElementById('confirmEnglishName').textContent = englishNameInput.value || '未填寫';
         document.getElementById('confirmBirthDate').textContent = document.getElementById('birthDate').value || '未填寫';
         document.getElementById('confirmGender').textContent = Array.from(genderRadios).find(radio => radio.checked)?.value || '未選擇';
         document.getElementById('confirmPhone').textContent = phoneInput.value || '未填寫';
+        document.getElementById('confirmEmergencyPhone').textContent = emergencyPhoneInput.value || '未填寫';
+        document.getElementById('confirmEmergencyContact').textContent = emergencyContactInput.value || '未填寫';
+        document.getElementById('confirmAffiliation').textContent = affiliationInput.value || '未填寫';
+        document.getElementById('confirmMembershipNumber').textContent = noMembershipCheckbox.checked ? '未有會員證/段證' : (membershipNumberInput.value || '未填寫');
         document.getElementById('confirmBeltLevel').textContent = beltLevelSelect.value || '未選擇';
         document.getElementById('confirmHeight').textContent = heightInput.value || '未填寫';
         document.getElementById('confirmWeight').textContent = weightInput.value || '未填寫';
         document.getElementById('confirmKyorugiDivision').textContent = kyorugiDivisionSelect.value || '未選擇';
         document.getElementById('confirmWeightClass').textContent = weightClassSelect.value || '未選擇';
-        document.getElementById('confirmEmergencyContact').textContent = emergencyContactInput.value || '未填寫';
-        document.getElementById('confirmEmergencyPhone').textContent = emergencyPhoneInput.value || '未填寫';
 
-        confirmModal.style.display = 'flex';
+        confirmModal.classList.add('active');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         console.log('驗證失敗，未顯示確認模態框');
@@ -760,13 +1041,16 @@
 
     function cancelSubmission() {
       console.log('取消提交，關閉確認模態框');
-      document.getElementById('confirmModal').style.display = 'none';
+      const confirmModal = document.getElementById('confirmModal');
+      confirmModal.classList.remove('active');
+      setTimeout(() => {
+        confirmModal.style.display = 'none';
+      }, 300);
     }
 
     async function confirmSubmission() {
       console.log('確認提交，準備發送表單到 Google Forms');
       const confirmModal = document.getElementById('confirmModal');
-      const form = document.getElementById('registrationForm');
       const formContainer = document.getElementById('mainForm');
       const thankYouPage = document.getElementById('thankYouPage');
       const noMembershipCheckbox = document.getElementById('noMembership');
@@ -778,8 +1062,9 @@
       formData.delete('entry.71284989_month');
       formData.delete('entry.71284989_day');
 
-      // 移除 noMembership 字段，因為 Google Forms 不接受此字段
+      // 移除 noMembership 和 sameAsPhone 字段，因為 Google Forms 不接受此字段
       formData.delete('noMembership');
+      formData.delete('sameAsPhone');
 
       // 如果勾選了“未有會員證/段證”，設置會員證編號為該值
       if (noMembershipCheckbox.checked) {
@@ -803,11 +1088,19 @@
         });
 
         console.log('表單提交請求已發送');
-        confirmModal.style.display = 'none';
-        formContainer.style.display = 'none';
-        thankYouPage.style.display = 'block';
-        document.getElementById('noMembershipReminder').style.display = noMembershipCheckbox.checked ? 'block' : 'none';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        confirmModal.classList.remove('active');
+        setTimeout(() => {
+          confirmModal.style.display = 'none';
+          formContainer.classList.remove('visible');
+          formContainer.classList.add('hidden');
+          setTimeout(() => {
+            formContainer.style.display = 'none';
+            thankYouPage.classList.remove('hidden');
+            thankYouPage.classList.add('visible');
+            document.getElementById('noMembershipReminder').style.display = noMembershipCheckbox.checked ? 'block' : 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }, 300);
+        }, 300);
       } catch (error) {
         console.error('表單提交失敗:', error);
         alert('表單提交失敗，請檢查控制台日誌或聯繫管理員。');
@@ -822,17 +1115,26 @@
       document.getElementById('weightClass').innerHTML = '<option value="">請選擇搏擊量級</option>';
       document.getElementById('noMembership').checked = false;
       document.getElementById('membershipNumber').disabled = false;
-      updateKyorugiOptions();
+      document.getElementById('sameAsPhone').checked = false;
+      document.getElementById('emergencyPhone').disabled = false;
+      currentStep = 1;
+      updateStep(currentStep, true);
     }
 
     function restartForm() {
       console.log('重新報名，顯示表單');
       const thankYouPage = document.getElementById('thankYouPage');
       const formContainer = document.getElementById('mainForm');
-      thankYouPage.style.display = 'none';
-      formContainer.style.display = 'block';
-      resetForm();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      thankYouPage.classList.remove('visible');
+      thankYouPage.classList.add('hidden');
+      setTimeout(() => {
+        thankYouPage.style.display = 'none';
+        formContainer.style.display = 'block';
+        formContainer.classList.remove('hidden');
+        formContainer.classList.add('visible');
+        resetForm();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 300);
     }
 
     // 等待 DOM 完全加載
@@ -1044,8 +1346,27 @@
         }
       });
 
+      // 處理“同上”勾選框
+      const sameAsPhoneCheckbox = document.getElementById('sameAsPhone');
+      const phoneInput = document.getElementById('phone');
+      const emergencyPhoneInput = document.getElementById('emergencyPhone');
+      sameAsPhoneCheckbox.addEventListener('change', () => {
+        if (sameAsPhoneCheckbox.checked) {
+          emergencyPhoneInput.value = phoneInput.value;
+          emergencyPhoneInput.disabled = true;
+        } else {
+          emergencyPhoneInput.disabled = false;
+        }
+      });
+      phoneInput.addEventListener('input', () => {
+        if (sameAsPhoneCheckbox.checked) {
+          emergencyPhoneInput.value = phoneInput.value;
+        }
+      });
+
       // 初始化搏擊級別選項
       updateKyorugiOptions();
+      updateStep(currentStep);
     });
   </script>
 </body>
