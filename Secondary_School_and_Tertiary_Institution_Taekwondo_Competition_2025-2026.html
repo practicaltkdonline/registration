@@ -904,6 +904,9 @@
       const isTestMode = document.getElementById('schoolName').value.toLowerCase().includes('test');
       if (isTestMode) return true;
 
+      // 重置所有錯誤提示
+      document.querySelectorAll('.error').forEach(e => e.style.display = 'none');
+
       switch (step) {
         case 1:
           if (!document.getElementById('schoolName').value.trim()) {
@@ -982,7 +985,6 @@
           }
           break;
       }
-      document.querySelectorAll('.error').forEach(e => e.style.display = 'none');
       return isValid;
     }
 
@@ -1211,6 +1213,8 @@
     function updateWeightClassOptions() {
       const kyorugiDivision = document.getElementById('kyorugiDivision').value;
       const weightClassSelect = document.getElementById('weightClass');
+      const previousValue = weightClassSelect.value; // 保存當前選擇
+
       weightClassSelect.innerHTML = '<option value="">請選擇搏擊量級</option>';
 
       if (kyorugiDivision && weightClasses[kyorugiDivision]) {
@@ -1220,6 +1224,10 @@
           option.text = wc;
           weightClassSelect.appendChild(option);
         });
+        // 恢復之前的選擇（如果仍然有效）
+        if (previousValue && weightClasses[kyorugiDivision].includes(previousValue)) {
+          weightClassSelect.value = previousValue;
+        }
       }
     }
 
@@ -1236,7 +1244,6 @@
       document.querySelectorAll('input[name="entry.269558714"]').forEach(r => r.addEventListener('change', updateKyorugiOptions));
       document.getElementById('birthYear').addEventListener('change', updateKyorugiOptions);
       document.getElementById('kyorugiDivision').addEventListener('change', updateWeightClassOptions);
-      document.getElementById('weight').addEventListener('input', updateWeightClassOptions);
 
       document.getElementById('noMembership').addEventListener('change', () => {
         document.getElementById('membershipNumber').disabled = document.getElementById('noMembership').checked;
