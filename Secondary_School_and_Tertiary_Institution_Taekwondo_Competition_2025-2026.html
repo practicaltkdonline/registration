@@ -100,9 +100,9 @@
       box-shadow: 0 4px 12px rgba(49, 130, 206, 0.4);
     }
     .progress-step.completed {
-      background: linear-gradient(45deg, #38a169, #68d391);
+      background: linear-gradient(45deg, #3182ce, #63b3ed);
       color: white;
-      box-shadow: 0 3px 10px rgba(56, 161, 105, 0.3);
+      box-shadow: 0 3px 10px rgba(49, 130, 206, 0.3); /* Modified: 統一為藍色系陰影 */
     }
     .progress-step:not(.active):not(.completed):hover {
       background: #cbd5e0;
@@ -155,12 +155,12 @@
       color: #a0aec0;
       cursor: not-allowed;
     }
-    .date-group {
+    .date-group, .height-weight-group { /* New: 添加 height-weight-group */
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
-    .date-group select {
+    .date-group select, .height-weight-group input { /* Modified: 支持 height-weight-group */
       width: 7rem;
       max-width: 100%;
     }
@@ -168,7 +168,7 @@
       width: 9rem;
       max-width: 100%;
     }
-    .date-group span {
+    .date-group span, .height-weight-group span { /* Modified: 支持 height-weight-group */
       font-size: 1rem;
       color: #2d3748;
     }
@@ -255,6 +255,8 @@
       font-weight: 600;
       min-height: 44px;
       touch-action: manipulation;
+      flex: 1; /* New: 確保按鈕靈活分配寬度 */
+      max-width: 45%; /* New: 限制每個按鈕最大寬度 */
     }
     .nav-prev {
       background: #edf2f7;
@@ -402,7 +404,7 @@
         height: 2.5rem;
         border-radius: 0.5rem;
       }
-      .date-group {
+      .date-group, .height-weight-group { /* Modified: 支持 height-weight-group */
         gap: 0.4rem;
       }
       .date-group select {
@@ -410,6 +412,10 @@
       }
       .date-group select#birthYear {
         width: 7rem;
+      }
+      .height-weight-group input { /* New: 手機模式下身高/重量輸入框 */
+        flex: 1;
+        max-width: 48%;
       }
       .category-group, .membership-group, .copy-group {
         gap: 0.6rem;
@@ -446,8 +452,9 @@
         touch-action: manipulation;
       }
       .navigation {
-        flex-direction: column;
-        gap: 1rem;
+        flex-direction: row; /* Modified: 改為水平排列 */
+        justify-content: space-between; /* Modified: 確保按鈕間距均勻 */
+        gap: 0.6rem; /* Modified: 減小間距 */
       }
       .progress-bar {
         height: 32px;
@@ -662,13 +669,14 @@
           <span id="beltLevelError" class="error">請選擇現有級別</span>
         </div>
         <div class="form-group">
-          <label>參賽者高度 (cm) *</label>
-          <input type="number" id="height" name="entry.703788026" required>
+          <label>參賽者身高及重量 *</label> <!-- Modified: 合併身高和重量標籤 -->
+          <div class="height-weight-group"> <!-- New: 使用 height-weight-group -->
+            <input type="number" id="height" name="entry.703788026" placeholder="身高" required>
+            <span>cm</span>
+            <input type="number" id="weight" name="entry.1666612578" placeholder="重量" required>
+            <span>kg</span>
+          </div>
           <span id="heightError" class="error">請輸入有效的身高</span>
-        </div>
-        <div class="form-group">
-          <label>參賽者重量 (kg) *</label>
-          <input type="number" id="weight" name="entry.1666612578" required>
           <span id="weightError" class="error">請輸入有效的體重</span>
         </div>
         <div class="form-group">
@@ -708,7 +716,7 @@
         <p><strong>性別：</strong> <span id="confirmGender"></span></p>
         <p><strong>聯絡電話：</strong> <span id="confirmPhone"></span></p>
         <p><strong>現有級別：</strong> <span id="confirmBeltLevel"></span></p>
-        <p><strong>參賽者高度：</strong> <span id="confirmHeight"></span></p>
+        <p><strong>參賽者身高：</strong> <span id="confirmHeight"></span></p>
         <p><strong>參賽者重量：</strong> <span id="confirmWeight"></span></p>
         <p><strong>搏擊級別劃分：</strong> <span id="confirmKyorugiDivision"></span></p>
         <p><strong>搏擊量級：</strong> <span id="confirmWeightClass"></span></p>
@@ -1213,7 +1221,7 @@
     function updateWeightClassOptions() {
       const kyorugiDivision = document.getElementById('kyorugiDivision').value;
       const weightClassSelect = document.getElementById('weightClass');
-      const previousValue = weightClassSelect.value; // 保存當前選擇
+      const previousValue = weightClassSelect.value;
 
       weightClassSelect.innerHTML = '<option value="">請選擇搏擊量級</option>';
 
@@ -1224,7 +1232,6 @@
           option.text = wc;
           weightClassSelect.appendChild(option);
         });
-        // 恢復之前的選擇（如果仍然有效）
         if (previousValue && weightClasses[kyorugiDivision].includes(previousValue)) {
           weightClassSelect.value = previousValue;
         }
