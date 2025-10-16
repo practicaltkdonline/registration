@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>點名考勤系統 v3.3</title>
+  <title>點名考勤系統 v3.4</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -38,12 +38,12 @@
         <button id="btn-copy" class="px-4 py-2 bg-gray-200 rounded ml-2">複製</button>
         <span id="loading-status" class="ml-3 text-gray-500 text-sm"></span>
       </div>
-      <div id="view-table-container" class="mt-4 bg-white rounded shadow p-3 overflow-auto max-h-96">
-        <table id="view-table" class="min-w-full text-sm"></table>
-      </div>
       <div class="mt-4">
         <h3 class="font-semibold">WhatsApp 友好格式：</h3>
         <textarea id="whatsapp-output" class="w-full mt-2 p-2 border rounded h-64" readonly></textarea>
+      </div>
+      <div id="view-table-container" class="mt-4 bg-white rounded shadow p-3 overflow-auto max-h-96">
+        <table id="view-table" class="min-w-full text-sm"></table>
       </div>
     </section>
   </div>
@@ -158,12 +158,8 @@
     function parseDateFlexible(s) {
       if (!s) return null;
       s = String(s).trim();
-
-      // YYYY/MM/DD 或 YYYY-MM-DD
       const ymdMatch = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
       if (ymdMatch) return new Date(Number(ymdMatch[1]), Number(ymdMatch[2])-1, Number(ymdMatch[3]));
-
-      // MM/DD 或 M/D（假設今年）
       const mdMatch = s.match(/^(\d{1,2})[\/\-](\d{1,2})$/);
       if (mdMatch) {
         const today = new Date();
@@ -171,14 +167,13 @@
         const day = Number(mdMatch[2]);
         return new Date(today.getFullYear(), month-1, day);
       }
-
       const d = new Date(s);
       return isNaN(d)?null:d;
     }
 
     function ymd(d){ return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;}
 
-    // === 初始讀取 ===
+    // 初始讀取
     loadAll();
 
     function loadAll(){
@@ -210,52 +205,26 @@
       });
     }
 
-    function openModal(course, time) {
-      modalTitle.textContent = `${course} - ${time}`;
-
-      const dates = [...new Set(
-        classInfoRows
-          .filter(r=>r.course===course && r.time===time)
-          .map(r=>String(r.date||'').split(/[,，]/).map(x=>x.trim()).flat())
-          .flat()
-          .filter(Boolean)
-      )];
-
-      const coaches = [...new Set(
-        classInfoRows
-          .filter(r=>r.course===course && r.time===time)
-          .map(r=>String(r.coach||'').split(/[,，]/).map(x=>x.trim()).flat())
-          .flat()
-          .filter(Boolean)
-      )];
-
-      modalDate.innerHTML = dates.map(d=>`<option value="${d}">${d}</option>`).join('');
-      modalCoaches.innerHTML = coaches.map(c=>`
-        <label class="flex items-center gap-2 p-2 border rounded">
-          <input type="checkbox" class="coach-check" value="${c}" />
-          <span>${c}</span>
-        </label>
-      `).join('');
-
-      // 自動選最近日期
-      if (dates.length>0){
-        const today=new Date();
-        let bestOrig=dates[0], bestDiff=Infinity;
-        dates.forEach(dStr=>{
-          const d=parseDateFlexible(dStr);
-          if(!d) return;
-          const diff=d-today;
-          if(diff>=0 && diff<bestDiff){
-            bestDiff=diff; bestOrig=dStr;
-          }
-        });
-        modalDate.value=bestOrig;
-      }
-
+    function openModal(course,time){
+      modalTitle.textContent=`${course} - ${time}`;
+      const dates=[...new Set(classInfoRows.filter(r=>r.course===course&&r.time===time).map(r=>r.date.split(/[,，]/).map(x=>x.trim())).flat())].filter(Boolean);
+      const coaches=[...new Set(classInfoRows.filter(r=>r.course===course&&r.time===time).map(r=>r.coach.split(/[,，]/).map(x=>x.trim())).flat())].filter(Boolean);
+      // 找出最接近今天的日期
+      const today = new Date();
+      let closest = dates[0];
+      let minDiff = Infinity;
+      dates.forEach(d=>{
+        const dt=parseDateFlexible(d);
+        if(dt){
+          const diff = Math.abs(dt - today);
+          if(diff<minDiff){minDiff=diff; closest=d;}
+        }
+      });
+      modalDate.innerHTML = dates.map(d=>`<option ${d===closest?'selected':''}>${d}</option>`).join('');
+      modalCoaches.innerHTML=coaches.map(c=>`<label class="flex items-center gap-2 p-2 border rounded"><input type="checkbox" class="coach-check" value="${c}"><span>${c}</span></label>`).join('');
       modalEl.classList.remove('hidden'); modalEl.style.display='flex';
       modalSubmit.onclick=()=>submitForm(course,time);
     }
-
     function closeModal(){modalEl.classList.add('hidden');modalEl.style.display='none';}
     modalClose.onclick=modalCancel.onclick=closeModal;
 
@@ -289,7 +258,7 @@
       });
     }
 
-    // 查看考勤
+    // === 查看考勤 ===
     function populateViewSelectors(){
       const courses=[...new Set(sheet1Rows.map(r=>r.course))].filter(Boolean).sort();
       viewCourse.innerHTML='<option value="">--選課程--</option>'+courses.map(c=>`<option>${c}</option>`).join('');
@@ -302,15 +271,12 @@
     btnLoadMonth.onclick=()=>{
       const c=viewCourse.value, y=+viewYear.value, m=+viewMonth.value;
       if(!c)return alert('請選課程');
-
-      const rows=sheet1Rows.map(r=>({...r,d:parseDateFlexible(r.date)}))
-        .filter(r=>r.course===c && r.d && r.d.getFullYear()===y && r.d.getMonth()+1===m);
-
-      if(!rows.length) { viewTable.innerHTML='<tr><td class="p-3">查無資料</td></tr>'; whatsappOutput.value=''; return; }
-
-      // 表格
-      viewTable.innerHTML='<thead class="bg-gray-100"><tr><th class="p-2 text-left">日期</th><th class="p-2 text-left">時間</th><th class="p-2 text-left">教練</th></tr></thead><tbody>'+
-        rows.sort((a,b)=>a.d-b.d).map(r=>`<tr class="border-t"><td class="p-2">${ymd(r.d)}</td><td class="p-2">${r.time}</td><td class="p-2">${r.coach}</td></tr>`).join('')+'</tbody>';
+      const rows=sheet1Rows.map(r=>({...r,d:parseDateFlexible(r.date)})).filter(r=>r.course===c&&r.d&&r.d.getFullYear()===y&&r.d.getMonth()+1===m);
+      if(!rows.length){
+        viewTable.innerHTML='<tr><td class="p-3">查無資料</td></tr>';
+        whatsappOutput.value='';
+        return;
+      }
 
       // Whatsapp 友好格式
       const grouped = {};
@@ -323,22 +289,25 @@
 
       const waLines=[];
       Object.values(grouped).forEach(g=>{
-        waLines.push(`*${g.course}*\n`); // 第一行課程
-        waLines.push(''); // 空行
-        waLines.push(`${y}年${m}月`); // 年月
-        waLines.push(g.time); // 時間
+        waLines.push(`*${g.course}*`); // 課程標題
+        waLines.push(''); // 只留 1 行空行
+        waLines.push(`${y}年${m}月`);
+        waLines.push(g.time);
         Object.entries(g.dates).sort((a,b)=>new Date(a[0])-new Date(b[0])).forEach(([d, coaches])=>{
           waLines.push(d);
           waLines.push([...new Set(coaches)].join(', '));
         });
       });
       whatsappOutput.value = waLines.join('\n');
+
+      // 表格
+      viewTable.innerHTML='<thead class="bg-gray-100"><tr><th class="p-2 text-left">日期</th><th class="p-2 text-left">時間</th><th class="p-2 text-left">教練</th></tr></thead><tbody>'+
+        rows.sort((a,b)=>a.d-b.d).map(r=>`<tr class="border-t"><td class="p-2">${ymd(r.d)}</td><td class="p-2">${r.time}</td><td class="p-2">${r.coach}</td></tr>`).join('')+'</tbody>';
     };
 
     btnCopy.onclick=()=>{
-      const text=whatsappOutput.value;
-      if(!text) return alert('無資料可複製');
-      navigator.clipboard.writeText(text).then(()=>alert('已複製到剪貼簿！'));
+      const rows = whatsappOutput.value + '\n\n' + Array.from(viewTable.querySelectorAll('tr')).map(tr=>Array.from(tr.children).map(td=>td.textContent).join('\t')).join('\n');
+      navigator.clipboard.writeText(rows).then(()=>alert('已複製到剪貼簿！'));
     };
   })();
   </script>
