@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>點名考勤系統 v3.3</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 min-h-screen">
+  <div class="max-w-6xl mx-auto p-6">
+    <header class="mb-6">
+      <h1 class="text-3xl font-bold">點名考勤系統</h1>
+      <p class="text-sm text-gray-500 mt-1">由 Google Sheet 讀取課程資料，送出至 Google Form</p>
+    </header>
+
+    <nav class="mb-6 flex gap-3">
+      <button id="tab-attend" class="tab-btn px-4 py-2 rounded shadow bg-blue-600 text-white">點名</button>
+      <button id="tab-view" class="tab-btn px-4 py-2 rounded shadow bg-white text-gray-800">查看考勤</button>
+    </nav>
+
+    <!-- 點名頁 -->
+    <section id="panel-attend">
+      <h2 class="text-xl font-semibold mb-3">1. 點名</h2>
+      <div id="cards" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- 查看頁 -->
+    <section id="panel-view" class="hidden">
+      <h2 class="text-xl font-semibold mb-3">2. 查看考勤</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+        <select id="view-course" class="p-2 border rounded"></select>
+        <select id="view-year" class="p-2 border rounded"></select>
+        <select id="view-month" class="p-2 border rounded"></select>
+      </div>
+      <div class="mb-2">
+        <button id="btn-load-month" class="px-4 py-2 bg-blue-600 text-white rounded">載入本月資料</button>
+        <button id="btn-copy" class="px-4 py-2 bg-gray-200 rounded ml-2">複製</button>
+        <span id="loading-status" class="ml-3 text-gray-500 text-sm"></span>
+      </div>
+      <div id="view-table-container" class="mt-4 bg-white rounded shadow p-3 overflow-auto max-h-96">
+        <table id="view-table" class="min-w-full text-sm"></table>
+      </div>
+      <div class="mt-4">
+        <h3 class="font-semibold">WhatsApp 友好格式：</h3>
+        <textarea id="whatsapp-output" class="w-full mt-2 p-2 border rounded h-64" readonly></textarea>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/40">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
+      <div class="flex justify-between items-start">
+        <div>
+          <h3 id="modal-title" class="text-lg font-semibold"></h3>
+          <p id="modal-sub" class="text-sm text-gray-500"></p>
+        </div>
+        <button id="modal-close" class="text-gray-500">✕</button>
+      </div>
+      <div class="mt-4">
+        <label class="block text-sm font-medium">選擇日期</label>
+        <select id="modal-date" class="mt-1 p-2 border rounded w-full"></select>
+      </div>
+      <div class="mt-4">
+        <label class="block text-sm font-medium">選擇教練（可多選）</label>
+        <div id="modal-coaches" class="mt-2 grid grid-cols-2 gap-2"></div>
+      </div>
+      <div class="mt-6 flex gap-3 justify-end">
+        <button id="modal-submit" class="px-4 py-2 bg-green-600 text-white rounded">確定送出</button>
+        <button id="modal-cancel" class="px-4 py-2 bg-gray-200 rounded">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 成功提示 -->
+  <div id="toast" class="fixed bottom-4 right-4 hidden bg-green-600 text-white px-4 py-2 rounded shadow-lg">
+    ✅ 已送出並更新資料
+  </div>
+
+  <iframe name="hidden_iframe" style="display:none;"></iframe>
+
+  <script>
+  (function(){
+    const SHEET_ID = '1Rzb2I-0wPNjWOqTKMwx1Z6gVMMVtu2D3ekWwAHvJZUg';
+    const CLASS_INFO_SHEET = 'Class info';
+    const SHEET1_GID = '103185592';
+    const FORM_ID = '1FAIpQLSdTYHzLfQKVxhWpAzfuf8I9amdT_vDoNs843tBD35OnlGc53A';
+    const FORM_ENTRIES = {
+      date: 'entry.176770776',
+      course: 'entry.1115358630',
+      time: 'entry.1251335978',
+      coach: 'entry.1253762114'
+    };
+
+    const cardsEl = document.getElementById('cards');
+    const modalEl = document.getElementById('modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalDate = document.getElementById('modal-date');
+    const modalCoaches = document.getElementById('modal-coaches');
+    const modalSubmit = document.getElementById('modal-submit');
+    const modalClose = document.getElementById('modal-close');
+    const modalCancel = document.getElementById('modal-cancel');
+
+    const tabAttend = document.getElementById('tab-attend');
+    const tabView = document.getElementById('tab-view');
+    const panelAttend = document.getElementById('panel-attend');
+    const panelView = document.getElementById('panel-view');
+
+    const viewCourse = document.getElementById('view-course');
+    const viewYear = document.getElementById('view-year');
+    const viewMonth = document.getElementById('view-month');
+    const btnLoadMonth = document.getElementById('btn-load-month');
+    const btnCopy = document.getElementById('btn-copy');
+    const viewTable = document.getElementById('view-table');
+    const loadingStatus = document.getElementById('loading-status');
+    const whatsappOutput = document.getElementById('whatsapp-output');
+    const toast = document.getElementById('toast');
+
+    let classInfoRows = [];
+    let sheet1Rows = [];
+
+    // === Tabs ===
+    document.querySelectorAll('.tab-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        if(btn===tabAttend){
+          panelAttend.classList.remove('hidden');
+          panelView.classList.add('hidden');
+          tabAttend.classList.add('bg-blue-600','text-white');
+          tabAttend.classList.remove('bg-white','text-gray-800');
+          tabView.classList.add('bg-white','text-gray-800');
+          tabView.classList.remove('bg-blue-600','text-white');
+        } else {
+          panelView.classList.remove('hidden');
+          panelAttend.classList.add('hidden');
+          tabView.classList.add('bg-blue-600','text-white');
+          tabView.classList.remove('bg-white','text-gray-800');
+          tabAttend.classList.add('bg-white','text-gray-800');
+          tabAttend.classList.remove('bg-blue-600','text-white');
+        }
+      });
+    });
+
+    function gvizFetch(sheetOrGid) {
+      const url = /^[0-9]+$/.test(sheetOrGid)
+        ? `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${sheetOrGid}&t=${Date.now()}`
+        : `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(sheetOrGid)}&t=${Date.now()}`;
+      return fetch(url)
+        .then(r => r.text())
+        .then(text => {
+          const jsonText = text.replace(/^[^\(]*\(/, '').replace(/\);?$/, '');
+          const obj = JSON.parse(jsonText);
+          const rows = obj.table.rows.map(r => r.c.map(c => c ? (c.f || c.v || '') : ''));
+          return rows;
+        });
+    }
+
+    function parseDateFlexible(s) {
+      if (!s) return null;
+      s = String(s).trim();
+
+      // YYYY/MM/DD 或 YYYY-MM-DD
+      const ymdMatch = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+      if (ymdMatch) return new Date(Number(ymdMatch[1]), Number(ymdMatch[2])-1, Number(ymdMatch[3]));
+
+      // MM/DD 或 M/D（假設今年）
+      const mdMatch = s.match(/^(\d{1,2})[\/\-](\d{1,2})$/);
+      if (mdMatch) {
+        const today = new Date();
+        const month = Number(mdMatch[1]);
+        const day = Number(mdMatch[2]);
+        return new Date(today.getFullYear(), month-1, day);
+      }
+
+      const d = new Date(s);
+      return isNaN(d)?null:d;
+    }
+
+    function ymd(d){ return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;}
+
+    // === 初始讀取 ===
+    loadAll();
+
+    function loadAll(){
+      Promise.all([gvizFetch(CLASS_INFO_SHEET), gvizFetch(SHEET1_GID)]).then(([classInfo, sheet1])=>{
+        classInfoRows = classInfo.slice(1).map(r=>{
+          const course=r[0]||'', time=r[1]||'', date=r[2]||'', coach=r[3]||'';
+          return {course,time,date,coach};
+        });
+        sheet1Rows = sheet1.slice(1).map(r=>{
+          return {course:r[1]||'',time:r[2]||'',date:r[3]||'',coach:r[4]||''};
+        });
+        renderCards(); populateViewSelectors();
+      });
+    }
+
+    function renderCards(){
+      const seen = new Set();
+      cardsEl.innerHTML = '';
+      classInfoRows.forEach(r=>{
+        const key=r.course+'@@'+r.time;
+        if(!seen.has(key)){
+          seen.add(key);
+          const div=document.createElement('div');
+          div.className='bg-white rounded shadow p-4 flex flex-col justify-between';
+          div.innerHTML=`<div><div class="text-lg font-semibold">${r.course}</div><div class="text-sm text-gray-500 mt-1">${r.time}</div></div><div class="mt-4 text-right"><button class="px-3 py-2 bg-blue-600 text-white rounded btn-open">點進去</button></div>`;
+          div.querySelector('.btn-open').addEventListener('click',()=>openModal(r.course,r.time));
+          cardsEl.appendChild(div);
+        }
+      });
+    }
+
+    function openModal(course, time) {
+      modalTitle.textContent = `${course} - ${time}`;
+
+      const dates = [...new Set(
+        classInfoRows
+          .filter(r=>r.course===course && r.time===time)
+          .map(r=>String(r.date||'').split(/[,，]/).map(x=>x.trim()).flat())
+          .flat()
+          .filter(Boolean)
+      )];
+
+      const coaches = [...new Set(
+        classInfoRows
+          .filter(r=>r.course===course && r.time===time)
+          .map(r=>String(r.coach||'').split(/[,，]/).map(x=>x.trim()).flat())
+          .flat()
+          .filter(Boolean)
+      )];
+
+      modalDate.innerHTML = dates.map(d=>`<option value="${d}">${d}</option>`).join('');
+      modalCoaches.innerHTML = coaches.map(c=>`
+        <label class="flex items-center gap-2 p-2 border rounded">
+          <input type="checkbox" class="coach-check" value="${c}" />
+          <span>${c}</span>
+        </label>
+      `).join('');
+
+      // 自動選最近日期
+      if (dates.length>0){
+        const today=new Date();
+        let bestOrig=dates[0], bestDiff=Infinity;
+        dates.forEach(dStr=>{
+          const d=parseDateFlexible(dStr);
+          if(!d) return;
+          const diff=d-today;
+          if(diff>=0 && diff<bestDiff){
+            bestDiff=diff; bestOrig=dStr;
+          }
+        });
+        modalDate.value=bestOrig;
+      }
+
+      modalEl.classList.remove('hidden'); modalEl.style.display='flex';
+      modalSubmit.onclick=()=>submitForm(course,time);
+    }
+
+    function closeModal(){modalEl.classList.add('hidden');modalEl.style.display='none';}
+    modalClose.onclick=modalCancel.onclick=closeModal;
+
+    function submitForm(course,time){
+      const date=modalDate.value;
+      const coaches=Array.from(document.querySelectorAll('.coach-check:checked')).map(c=>c.value);
+      if(!date||!coaches.length){alert('請選日期與教練');return;}
+      const form=document.createElement('form');
+      form.action=`https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
+      form.method='POST';form.target='hidden_iframe';
+      const add=(n,v)=>{const i=document.createElement('input');i.type='hidden';i.name=n;i.value=v;form.appendChild(i);};
+      add(FORM_ENTRIES.date,date); add(FORM_ENTRIES.course,course); add(FORM_ENTRIES.time,time);
+      coaches.forEach(c=>add(FORM_ENTRIES.coach,c));
+      document.body.appendChild(form); form.submit();
+      closeModal();
+      toastShow();
+      setTimeout(()=>refreshSheet1(),2000);
+    }
+
+    function toastShow(){
+      toast.classList.remove('hidden');
+      setTimeout(()=>toast.classList.add('hidden'),2500);
+    }
+
+    function refreshSheet1(){
+      loadingStatus.textContent='更新中...';
+      gvizFetch(SHEET1_GID).then(rows=>{
+        sheet1Rows = rows.slice(1).map(r=>({course:r[1]||'',time:r[2]||'',date:r[3]||'',coach:r[4]||''}));
+        loadingStatus.textContent='✅ 已更新';
+        setTimeout(()=>loadingStatus.textContent='',2000);
+      });
+    }
+
+    // 查看考勤
+    function populateViewSelectors(){
+      const courses=[...new Set(sheet1Rows.map(r=>r.course))].filter(Boolean).sort();
+      viewCourse.innerHTML='<option value="">--選課程--</option>'+courses.map(c=>`<option>${c}</option>`).join('');
+      const now=new Date();
+      viewYear.innerHTML=`<option>${now.getFullYear()}</option>`;
+      viewMonth.innerHTML=Array.from({length:12},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
+      viewMonth.value=now.getMonth()+1;
+    }
+
+    btnLoadMonth.onclick=()=>{
+      const c=viewCourse.value, y=+viewYear.value, m=+viewMonth.value;
+      if(!c)return alert('請選課程');
+
+      const rows=sheet1Rows.map(r=>({...r,d:parseDateFlexible(r.date)}))
+        .filter(r=>r.course===c && r.d && r.d.getFullYear()===y && r.d.getMonth()+1===m);
+
+      if(!rows.length) { viewTable.innerHTML='<tr><td class="p-3">查無資料</td></tr>'; whatsappOutput.value=''; return; }
+
+      // 表格
+      viewTable.innerHTML='<thead class="bg-gray-100"><tr><th class="p-2 text-left">日期</th><th class="p-2 text-left">時間</th><th class="p-2 text-left">教練</th></tr></thead><tbody>'+
+        rows.sort((a,b)=>a.d-b.d).map(r=>`<tr class="border-t"><td class="p-2">${ymd(r.d)}</td><td class="p-2">${r.time}</td><td class="p-2">${r.coach}</td></tr>`).join('')+'</tbody>';
+
+      // Whatsapp 友好格式
+      const grouped = {};
+      rows.forEach(r=>{
+        const key=r.course+'@@'+r.time;
+        if(!grouped[key]) grouped[key]={course:r.course,time:r.time,dates:{}};
+        if(!grouped[key].dates[ymd(r.d)]) grouped[key].dates[ymd(r.d)]=[];
+        grouped[key].dates[ymd(r.d)].push(r.coach);
+      });
+
+      const waLines=[];
+      Object.values(grouped).forEach(g=>{
+        waLines.push(`*${g.course}*\n`); // 第一行課程
+        waLines.push(''); // 空行
+        waLines.push(`${y}年${m}月`); // 年月
+        waLines.push(g.time); // 時間
+        Object.entries(g.dates).sort((a,b)=>new Date(a[0])-new Date(b[0])).forEach(([d, coaches])=>{
+          waLines.push(d);
+          waLines.push([...new Set(coaches)].join(', '));
+        });
+      });
+      whatsappOutput.value = waLines.join('\n');
+    };
+
+    btnCopy.onclick=()=>{
+      const text=whatsappOutput.value;
+      if(!text) return alert('無資料可複製');
+      navigator.clipboard.writeText(text).then(()=>alert('已複製到剪貼簿！'));
+    };
+  })();
+  </script>
+</body>
+</html>
