@@ -3,77 +3,76 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>點名考勤系統 v3.4</title>
+  <title>點名考勤系統 v3.5</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-50 text-gray-800 min-h-screen">
-  <div class="max-w-6xl mx-auto p-6">
-    <header class="mb-6">
+  <div class="max-w-3xl mx-auto p-4">
+    <header class="mb-4 text-center">
       <h1 class="text-3xl font-bold">點名考勤系統</h1>
       <p class="text-sm text-gray-500 mt-1">由 Google Sheet 讀取課程資料，送出至 Google Form</p>
     </header>
 
-    <nav class="mb-6 flex gap-3">
-      <button id="tab-attend" class="tab-btn px-4 py-2 rounded shadow bg-blue-600 text-white">點名</button>
-      <button id="tab-view" class="tab-btn px-4 py-2 rounded shadow bg-white text-gray-800">查看考勤</button>
+    <nav class="mb-4 flex gap-2 justify-center">
+      <button id="tab-attend" class="tab-btn px-4 py-2 rounded shadow bg-blue-600 text-white text-base">點名</button>
+      <button id="tab-view" class="tab-btn px-4 py-2 rounded shadow bg-white text-gray-800 text-base">查看考勤</button>
     </nav>
 
     <!-- 點名頁 -->
     <section id="panel-attend">
       <h2 class="text-xl font-semibold mb-3">1. 點名</h2>
-      <div id="cards" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+      <div id="cards" class="grid grid-cols-1 gap-4"></div>
     </section>
 
     <!-- 查看頁 -->
     <section id="panel-view" class="hidden">
       <h2 class="text-xl font-semibold mb-3">2. 查看考勤</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-        <select id="view-course" class="p-2 border rounded"></select>
-        <select id="view-year" class="p-2 border rounded"></select>
-        <select id="view-month" class="p-2 border rounded"></select>
+      <div class="flex flex-col sm:flex-row gap-2 mb-3">
+        <select id="view-course" class="p-2 border rounded w-full"></select>
+        <select id="view-year" class="p-2 border rounded w-full"></select>
+        <select id="view-month" class="p-2 border rounded w-full"></select>
+      </div>
+      <div class="flex flex-wrap gap-2 mb-2">
+        <button id="btn-load-month" class="px-4 py-2 bg-blue-600 text-white rounded text-base">載入本月資料</button>
+        <button id="btn-copy" class="px-4 py-2 bg-gray-200 rounded text-base">複製</button>
+        <span id="loading-status" class="ml-2 text-gray-500 text-sm"></span>
       </div>
       <div class="mb-2">
-        <button id="btn-load-month" class="px-4 py-2 bg-blue-600 text-white rounded">載入本月資料</button>
-        <button id="btn-copy" class="px-4 py-2 bg-gray-200 rounded ml-2">複製</button>
-        <span id="loading-status" class="ml-3 text-gray-500 text-sm"></span>
-      </div>
-      <div class="mt-4">
         <h3 class="font-semibold">WhatsApp 友好格式：</h3>
-        <textarea id="whatsapp-output" class="w-full mt-2 p-2 border rounded h-64" readonly></textarea>
+        <textarea id="whatsapp-output" class="w-full mt-1 p-2 border rounded h-60 text-sm md:text-base" readonly></textarea>
       </div>
-      <div id="view-table-container" class="mt-4 bg-white rounded shadow p-3 overflow-auto max-h-96">
-        <table id="view-table" class="min-w-full text-sm"></table>
+      <div id="view-table-container" class="mt-2 bg-white rounded shadow p-2 overflow-auto max-h-[40vh]">
+        <table id="view-table" class="min-w-full text-sm md:text-base"></table>
       </div>
     </section>
   </div>
 
   <!-- Modal -->
-  <div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/40">
-    <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
-      <div class="flex justify-between items-start">
+  <div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/50 p-2">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-4 overflow-auto">
+      <div class="flex justify-between items-start mb-2">
         <div>
           <h3 id="modal-title" class="text-lg font-semibold"></h3>
           <p id="modal-sub" class="text-sm text-gray-500"></p>
         </div>
-        <button id="modal-close" class="text-gray-500">✕</button>
+        <button id="modal-close" class="text-gray-500 text-lg">✕</button>
       </div>
-      <div class="mt-4">
+      <div class="mt-2">
         <label class="block text-sm font-medium">選擇日期</label>
-        <select id="modal-date" class="mt-1 p-2 border rounded w-full"></select>
+        <select id="modal-date" class="mt-1 p-2 border rounded w-full text-base"></select>
       </div>
-      <div class="mt-4">
+      <div class="mt-2">
         <label class="block text-sm font-medium">選擇教練（可多選）</label>
-        <div id="modal-coaches" class="mt-2 grid grid-cols-2 gap-2"></div>
+        <div id="modal-coaches" class="mt-1 grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
       </div>
-      <div class="mt-6 flex gap-3 justify-end">
-        <button id="modal-submit" class="px-4 py-2 bg-green-600 text-white rounded">確定送出</button>
-        <button id="modal-cancel" class="px-4 py-2 bg-gray-200 rounded">取消</button>
+      <div class="mt-3 flex gap-2 justify-end">
+        <button id="modal-submit" class="px-4 py-2 bg-green-600 text-white rounded text-base">確定送出</button>
+        <button id="modal-cancel" class="px-4 py-2 bg-gray-200 rounded text-base">取消</button>
       </div>
     </div>
   </div>
 
-  <!-- 成功提示 -->
   <div id="toast" class="fixed bottom-4 right-4 hidden bg-green-600 text-white px-4 py-2 rounded shadow-lg">
     ✅ 已送出並更新資料
   </div>
@@ -120,7 +119,6 @@
     let classInfoRows = [];
     let sheet1Rows = [];
 
-    // === Tabs ===
     document.querySelectorAll('.tab-btn').forEach(btn=>{
       btn.addEventListener('click',()=>{
         if(btn===tabAttend){
@@ -141,57 +139,45 @@
       });
     });
 
-    function gvizFetch(sheetOrGid) {
+    function gvizFetch(sheetOrGid){
       const url = /^[0-9]+$/.test(sheetOrGid)
         ? `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${sheetOrGid}&t=${Date.now()}`
         : `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(sheetOrGid)}&t=${Date.now()}`;
       return fetch(url)
-        .then(r => r.text())
-        .then(text => {
+        .then(r=>r.text())
+        .then(text=>{
           const jsonText = text.replace(/^[^\(]*\(/, '').replace(/\);?$/, '');
           const obj = JSON.parse(jsonText);
-          const rows = obj.table.rows.map(r => r.c.map(c => c ? (c.f || c.v || '') : ''));
+          const rows = obj.table.rows.map(r=>r.c.map(c=>c ? (c.f||c.v||'') : ''));
           return rows;
         });
     }
 
-    function parseDateFlexible(s) {
-      if (!s) return null;
-      s = String(s).trim();
-      const ymdMatch = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
-      if (ymdMatch) return new Date(Number(ymdMatch[1]), Number(ymdMatch[2])-1, Number(ymdMatch[3]));
-      const mdMatch = s.match(/^(\d{1,2})[\/\-](\d{1,2})$/);
-      if (mdMatch) {
-        const today = new Date();
-        const month = Number(mdMatch[1]);
-        const day = Number(mdMatch[2]);
-        return new Date(today.getFullYear(), month-1, day);
+    function parseDateFlexible(s){
+      if(!s) return null;
+      if(/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(s)) return new Date(s);
+      if(/^\d{1,2}\/\d{1,2}$/.test(s)){
+        const parts=s.split('/');
+        return new Date(new Date().getFullYear(), +parts[0]-1, +parts[1]);
       }
-      const d = new Date(s);
-      return isNaN(d)?null:d;
+      return null;
     }
 
-    function ymd(d){ return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;}
+    function ymd(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 
-    // 初始讀取
     loadAll();
 
     function loadAll(){
       Promise.all([gvizFetch(CLASS_INFO_SHEET), gvizFetch(SHEET1_GID)]).then(([classInfo, sheet1])=>{
-        classInfoRows = classInfo.slice(1).map(r=>{
-          const course=r[0]||'', time=r[1]||'', date=r[2]||'', coach=r[3]||'';
-          return {course,time,date,coach};
-        });
-        sheet1Rows = sheet1.slice(1).map(r=>{
-          return {course:r[1]||'',time:r[2]||'',date:r[3]||'',coach:r[4]||''};
-        });
+        classInfoRows = classInfo.slice(1).map(r=>({course:r[0]||'',time:r[1]||'',date:r[2]||'',coach:r[3]||''}));
+        sheet1Rows = sheet1.slice(1).map(r=>({course:r[1]||'',time:r[2]||'',date:r[3]||'',coach:r[4]||''}));
         renderCards(); populateViewSelectors();
       });
     }
 
     function renderCards(){
       const seen = new Set();
-      cardsEl.innerHTML = '';
+      cardsEl.innerHTML='';
       classInfoRows.forEach(r=>{
         const key=r.course+'@@'+r.time;
         if(!seen.has(key)){
@@ -209,22 +195,23 @@
       modalTitle.textContent=`${course} - ${time}`;
       const dates=[...new Set(classInfoRows.filter(r=>r.course===course&&r.time===time).map(r=>r.date.split(/[,，]/).map(x=>x.trim())).flat())].filter(Boolean);
       const coaches=[...new Set(classInfoRows.filter(r=>r.course===course&&r.time===time).map(r=>r.coach.split(/[,，]/).map(x=>x.trim())).flat())].filter(Boolean);
-      // 找出最接近今天的日期
+
       const today = new Date();
-      let closest = dates[0];
-      let minDiff = Infinity;
+      let closest = dates[0]; let minDiff = Infinity;
       dates.forEach(d=>{
-        const dt=parseDateFlexible(d);
-        if(dt){
-          const diff = Math.abs(dt - today);
-          if(diff<minDiff){minDiff=diff; closest=d;}
+        const dt = parseDateFlexible(d);
+        if(dt && dt >= today){
+          const diff = dt - today;
+          if(diff < minDiff){ minDiff = diff; closest = d; }
         }
       });
+
       modalDate.innerHTML = dates.map(d=>`<option ${d===closest?'selected':''}>${d}</option>`).join('');
       modalCoaches.innerHTML=coaches.map(c=>`<label class="flex items-center gap-2 p-2 border rounded"><input type="checkbox" class="coach-check" value="${c}"><span>${c}</span></label>`).join('');
       modalEl.classList.remove('hidden'); modalEl.style.display='flex';
       modalSubmit.onclick=()=>submitForm(course,time);
     }
+
     function closeModal(){modalEl.classList.add('hidden');modalEl.style.display='none';}
     modalClose.onclick=modalCancel.onclick=closeModal;
 
@@ -239,15 +226,11 @@
       add(FORM_ENTRIES.date,date); add(FORM_ENTRIES.course,course); add(FORM_ENTRIES.time,time);
       coaches.forEach(c=>add(FORM_ENTRIES.coach,c));
       document.body.appendChild(form); form.submit();
-      closeModal();
-      toastShow();
+      closeModal(); toastShow();
       setTimeout(()=>refreshSheet1(),2000);
     }
 
-    function toastShow(){
-      toast.classList.remove('hidden');
-      setTimeout(()=>toast.classList.add('hidden'),2500);
-    }
+    function toastShow(){toast.classList.remove('hidden'); setTimeout(()=>toast.classList.add('hidden'),2500);}
 
     function refreshSheet1(){
       loadingStatus.textContent='更新中...';
@@ -258,7 +241,6 @@
       });
     }
 
-    // === 查看考勤 ===
     function populateViewSelectors(){
       const courses=[...new Set(sheet1Rows.map(r=>r.course))].filter(Boolean).sort();
       viewCourse.innerHTML='<option value="">--選課程--</option>'+courses.map(c=>`<option>${c}</option>`).join('');
@@ -270,45 +252,35 @@
 
     btnLoadMonth.onclick=()=>{
       const c=viewCourse.value, y=+viewYear.value, m=+viewMonth.value;
-      if(!c)return alert('請選課程');
-      const rows=sheet1Rows.map(r=>({...r,d:parseDateFlexible(r.date)})).filter(r=>r.course===c&&r.d&&r.d.getFullYear()===y&&r.d.getMonth()+1===m);
-      if(!rows.length){
-        viewTable.innerHTML='<tr><td class="p-3">查無資料</td></tr>';
-        whatsappOutput.value='';
-        return;
-      }
+      if(!c) return alert('請選課程');
 
-      // Whatsapp 友好格式
-      const grouped = {};
-      rows.forEach(r=>{
-        const key=r.course+'@@'+r.time;
-        if(!grouped[key]) grouped[key]={course:r.course,time:r.time,dates:{}};
-        if(!grouped[key].dates[ymd(r.d)]) grouped[key].dates[ymd(r.d)]=[];
-        grouped[key].dates[ymd(r.d)].push(r.coach);
+      const filtered = sheet1Rows.map(r=>({...r,d:parseDateFlexible(r.date)}))
+        .filter(r=>r.course===c && r.d && r.d.getFullYear()===y && r.d.getMonth()+1===m);
+      if(!filtered.length){ viewTable.innerHTML='<tr><td class="p-2">查無資料</td></tr>'; whatsappOutput.value=''; return; }
+
+      // WhatsApp 友好格式
+      const monthName = `${y}年${m}月`;
+      const time = filtered[0].time;
+      let whatsappText = `*${c}*\n\n${monthName}\n${time}`;
+      const dateMap = {};
+      filtered.forEach(r=>{
+        if(!dateMap[r.date]) dateMap[r.date]=[];
+        dateMap[r.date].push(r.coach);
       });
-
-      const waLines=[];
-      Object.values(grouped).forEach(g=>{
-        waLines.push(`*${g.course}*`); // 課程標題
-        waLines.push(''); // 只留 1 行空行
-        waLines.push(`${y}年${m}月`);
-        waLines.push(g.time);
-        Object.entries(g.dates).sort((a,b)=>new Date(a[0])-new Date(b[0])).forEach(([d, coaches])=>{
-          waLines.push(d);
-          waLines.push([...new Set(coaches)].join(', '));
-        });
+      Object.keys(dateMap).sort().forEach(d=>{
+        whatsappText += `\n${d}\n${dateMap[d].join(', ')}`;
       });
-      whatsappOutput.value = waLines.join('\n');
+      whatsappOutput.value = whatsappText;
 
-      // 表格
+      // 原始表格
       viewTable.innerHTML='<thead class="bg-gray-100"><tr><th class="p-2 text-left">日期</th><th class="p-2 text-left">時間</th><th class="p-2 text-left">教練</th></tr></thead><tbody>'+
-        rows.sort((a,b)=>a.d-b.d).map(r=>`<tr class="border-t"><td class="p-2">${ymd(r.d)}</td><td class="p-2">${r.time}</td><td class="p-2">${r.coach}</td></tr>`).join('')+'</tbody>';
+        filtered.sort((a,b)=>a.d-b.d)
+          .map(r=>`<tr class="border-t"><td class="p-2">${r.date}</td><td class="p-2">${r.time}</td><td class="p-2">${r.coach}</td></tr>`).join('')+
+        '</tbody>';
     };
 
-    btnCopy.onclick=()=>{
-      const rows = whatsappOutput.value + '\n\n' + Array.from(viewTable.querySelectorAll('tr')).map(tr=>Array.from(tr.children).map(td=>td.textContent).join('\t')).join('\n');
-      navigator.clipboard.writeText(rows).then(()=>alert('已複製到剪貼簿！'));
-    };
+    btnCopy.onclick=()=>{ whatsappOutput.select(); document.execCommand('copy'); alert('已複製 WhatsApp 格式內容'); };
+
   })();
   </script>
 </body>
