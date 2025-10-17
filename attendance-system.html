@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>點名考勤系統 v3.5</title>
+  <title>Attendance System v3.8</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -11,12 +11,12 @@
   <div class="max-w-3xl mx-auto p-4">
     <header class="mb-4 text-center">
       <h1 class="text-3xl font-bold">點名考勤系統</h1>
-      <p class="text-sm text-gray-500 mt-1">由 Google Sheet 讀取課程資料，送出至 Google Form</p>
+      <p class="text-sm text-gray-500 mt-1">Google Sheet + Form 整合版</p>
     </header>
 
     <nav class="mb-4 flex gap-2 justify-center">
       <button id="tab-attend" class="tab-btn px-4 py-2 rounded shadow bg-blue-600 text-white text-base">點名</button>
-      <button id="tab-view" class="tab-btn px-4 py-2 rounded shadow bg-white text-gray-800 text-base">查看考勤</button>
+      <button id="tab-view" class="tab-btn px-4 py-2 rounded shadow bg-white text-gray-800 text-base hover:bg-gray-100">查看考勤</button>
     </nav>
 
     <!-- 點名頁 -->
@@ -33,10 +33,9 @@
         <select id="view-year" class="p-2 border rounded w-full"></select>
         <select id="view-month" class="p-2 border rounded w-full"></select>
       </div>
-      <div class="flex flex-wrap gap-2 mb-2">
-        <button id="btn-load-month" class="px-4 py-2 bg-blue-600 text-white rounded text-base">載入本月資料</button>
-        <button id="btn-copy" class="px-4 py-2 bg-gray-200 rounded text-base">複製</button>
-        <span id="loading-status" class="ml-2 text-gray-500 text-sm"></span>
+      <div class="flex flex-wrap gap-2 mb-2 items-center">
+        <span id="loading-status" class="text-gray-500 text-sm">請選擇課程...</span>
+        <button id="btn-copy" class="ml-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-base">複製 WhatsApp 格式</button>
       </div>
       <div class="mb-2">
         <h3 class="font-semibold">WhatsApp 友好格式：</h3>
@@ -50,7 +49,7 @@
 
   <!-- Modal -->
   <div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/50 p-2">
-    <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-4 overflow-auto">
+    <div id="modal-content" class="bg-white rounded-lg shadow-lg w-full max-w-md p-4 overflow-auto">
       <div class="flex justify-between items-start mb-2">
         <div>
           <h3 id="modal-title" class="text-lg font-semibold"></h3>
@@ -67,219 +66,208 @@
         <div id="modal-coaches" class="mt-1 grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
       </div>
       <div class="mt-3 flex gap-2 justify-end">
-        <button id="modal-submit" class="px-4 py-2 bg-green-600 text-white rounded text-base">確定送出</button>
+        <button id="modal-submit" class="px-4 py-2 bg-green-600 text-white rounded text-base">送出點名</button>
         <button id="modal-cancel" class="px-4 py-2 bg-gray-200 rounded text-base">取消</button>
       </div>
     </div>
   </div>
 
-  <div id="toast" class="fixed bottom-4 right-4 hidden bg-green-600 text-white px-4 py-2 rounded shadow-lg">
-    ✅ 已送出並更新資料
-  </div>
-
+  <div id="toast" class="fixed bottom-4 right-4 hidden bg-green-600 text-white px-4 py-2 rounded shadow-lg">✅ 已送出並更新資料</div>
   <iframe name="hidden_iframe" style="display:none;"></iframe>
 
   <script>
   (function(){
-    const SHEET_ID = '1Rzb2I-0wPNjWOqTKMwx1Z6gVMMVtu2D3ekWwAHvJZUg';
-    const CLASS_INFO_SHEET = 'Class info';
-    const SHEET1_GID = '103185592';
-    const FORM_ID = '1FAIpQLSdTYHzLfQKVxhWpAzfuf8I9amdT_vDoNs843tBD35OnlGc53A';
-    const FORM_ENTRIES = {
-      date: 'entry.176770776',
-      course: 'entry.1115358630',
-      time: 'entry.1251335978',
-      coach: 'entry.1253762114'
-    };
+    const SHEET_ID='1Rzb2I-0wPNjWOqTKMwx1Z6gVMMVtu2D3ekWwAHvJZUg';
+    const CLASS_INFO_SHEET='Class info';
+    const SHEET1_GID='103185592';
+    const FORM_ID='1FAIpQLSdTYHzLfQKVxhWpAzfuf8I9amdT_vDoNs843tBD35OnlGc53A';
+    const FORM_ENTRIES={date:'entry.176770776',course:'entry.1115358630',time:'entry.1251335978',coach:'entry.1253762114'};
 
-    const cardsEl = document.getElementById('cards');
-    const modalEl = document.getElementById('modal');
-    const modalTitle = document.getElementById('modal-title');
-    const modalDate = document.getElementById('modal-date');
-    const modalCoaches = document.getElementById('modal-coaches');
-    const modalSubmit = document.getElementById('modal-submit');
-    const modalClose = document.getElementById('modal-close');
-    const modalCancel = document.getElementById('modal-cancel');
+    const cardsEl=document.getElementById('cards');
+    const modalEl=document.getElementById('modal');
+    const modalContent=document.getElementById('modal-content');
+    const modalTitle=document.getElementById('modal-title');
+    const modalDate=document.getElementById('modal-date');
+    const modalCoaches=document.getElementById('modal-coaches');
+    const modalSubmit=document.getElementById('modal-submit');
+    const modalClose=document.getElementById('modal-close');
+    const modalCancel=document.getElementById('modal-cancel');
+    const tabAttend=document.getElementById('tab-attend');
+    const tabView=document.getElementById('tab-view');
+    const panelAttend=document.getElementById('panel-attend');
+    const panelView=document.getElementById('panel-view');
+    const viewCourse=document.getElementById('view-course');
+    const viewYear=document.getElementById('view-year');
+    const viewMonth=document.getElementById('view-month');
+    const btnCopy=document.getElementById('btn-copy');
+    const viewTable=document.getElementById('view-table');
+    const loadingStatus=document.getElementById('loading-status');
+    const whatsappOutput=document.getElementById('whatsapp-output');
+    const toast=document.getElementById('toast');
 
-    const tabAttend = document.getElementById('tab-attend');
-    const tabView = document.getElementById('tab-view');
-    const panelAttend = document.getElementById('panel-attend');
-    const panelView = document.getElementById('panel-view');
+    let classInfoRows=[], sheet1Rows=[], selectedCourse='', selectedTime='';
 
-    const viewCourse = document.getElementById('view-course');
-    const viewYear = document.getElementById('view-year');
-    const viewMonth = document.getElementById('view-month');
-    const btnLoadMonth = document.getElementById('btn-load-month');
-    const btnCopy = document.getElementById('btn-copy');
-    const viewTable = document.getElementById('view-table');
-    const loadingStatus = document.getElementById('loading-status');
-    const whatsappOutput = document.getElementById('whatsapp-output');
-    const toast = document.getElementById('toast');
+    // tab 切換
+    tabAttend.onclick=()=>showAttend();
+    tabView.onclick=()=>showView();
 
-    let classInfoRows = [];
-    let sheet1Rows = [];
+    function showAttend(){
+      panelAttend.classList.remove('hidden');
+      panelView.classList.add('hidden');
+      tabAttend.classList.add('bg-blue-600','text-white');
+      tabView.classList.remove('bg-blue-600','text-white','hover:bg-gray-100');
+      tabView.classList.add('bg-white','text-gray-800');
+    }
+    function showView(){
+      panelView.classList.remove('hidden');
+      panelAttend.classList.add('hidden');
+      tabView.classList.add('bg-blue-600','text-white');
+      tabAttend.classList.remove('bg-blue-600','text-white');
+      tabAttend.classList.add('bg-white','text-gray-800');
+    }
 
-    document.querySelectorAll('.tab-btn').forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        if(btn===tabAttend){
-          panelAttend.classList.remove('hidden');
-          panelView.classList.add('hidden');
-          tabAttend.classList.add('bg-blue-600','text-white');
-          tabAttend.classList.remove('bg-white','text-gray-800');
-          tabView.classList.add('bg-white','text-gray-800');
-          tabView.classList.remove('bg-blue-600','text-white');
-        } else {
-          panelView.classList.remove('hidden');
-          panelAttend.classList.add('hidden');
-          tabView.classList.add('bg-blue-600','text-white');
-          tabView.classList.remove('bg-white','text-gray-800');
-          tabAttend.classList.add('bg-white','text-gray-800');
-          tabAttend.classList.remove('bg-blue-600','text-white');
-        }
+    function gvizFetch(idOrSheet){
+      const url=/^[0-9]+$/.test(idOrSheet)
+        ?`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${idOrSheet}&t=${Date.now()}`
+        :`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(idOrSheet)}&t=${Date.now()}`;
+      return fetch(url).then(r=>r.text()).then(t=>{
+        const json=t.replace(/^[^\(]*\(/,'').replace(/\);?$/,'');
+        const obj=JSON.parse(json);
+        return obj.table.rows.map(r=>r.c.map(c=>c?(c.f||c.v||''):''));
       });
-    });
-
-    function gvizFetch(sheetOrGid){
-      const url = /^[0-9]+$/.test(sheetOrGid)
-        ? `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${sheetOrGid}&t=${Date.now()}`
-        : `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(sheetOrGid)}&t=${Date.now()}`;
-      return fetch(url)
-        .then(r=>r.text())
-        .then(text=>{
-          const jsonText = text.replace(/^[^\(]*\(/, '').replace(/\);?$/, '');
-          const obj = JSON.parse(jsonText);
-          const rows = obj.table.rows.map(r=>r.c.map(c=>c ? (c.f||c.v||'') : ''));
-          return rows;
-        });
     }
 
     function parseDateFlexible(s){
-      if(!s) return null;
-      if(/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(s)) return new Date(s);
-      if(/^\d{1,2}\/\d{1,2}$/.test(s)){
-        const parts=s.split('/');
-        return new Date(new Date().getFullYear(), +parts[0]-1, +parts[1]);
-      }
+      if(!s)return null;
+      if(/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(s))return new Date(s);
+      if(/^\d{1,2}\/\d{1,2}$/.test(s)){const [m,d]=s.split('/');return new Date(new Date().getFullYear(),m-1,d);}
       return null;
     }
 
-    function ymd(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
-
-    loadAll();
-
-    function loadAll(){
-      Promise.all([gvizFetch(CLASS_INFO_SHEET), gvizFetch(SHEET1_GID)]).then(([classInfo, sheet1])=>{
-        classInfoRows = classInfo.slice(1).map(r=>({course:r[0]||'',time:r[1]||'',date:r[2]||'',coach:r[3]||''}));
-        sheet1Rows = sheet1.slice(1).map(r=>({course:r[1]||'',time:r[2]||'',date:r[3]||'',coach:r[4]||''}));
-        renderCards(); populateViewSelectors();
-      });
-    }
+    Promise.all([gvizFetch(CLASS_INFO_SHEET),gvizFetch(SHEET1_GID)]).then(([cRows,sRows])=>{
+      classInfoRows=cRows.slice(1).map(r=>({course:r[0]||'',time:r[1]||'',date:r[2]||'',coach:r[3]||''}));
+      sheet1Rows=sRows.slice(1).map(r=>({course:r[1]||'',time:r[2]||'',date:r[3]||'',coach:r[4]||''}));
+      renderCards(); populateSelectors(); autoLoad();
+    });
 
     function renderCards(){
-      const seen = new Set();
-      cardsEl.innerHTML='';
+      const seen=new Set(); cardsEl.innerHTML='';
       classInfoRows.forEach(r=>{
         const key=r.course+'@@'+r.time;
         if(!seen.has(key)){
           seen.add(key);
           const div=document.createElement('div');
-          div.className='bg-white rounded shadow p-4 flex flex-col justify-between';
-          div.innerHTML=`<div><div class="text-lg font-semibold">${r.course}</div><div class="text-sm text-gray-500 mt-1">${r.time}</div></div><div class="mt-4 text-right"><button class="px-3 py-2 bg-blue-600 text-white rounded btn-open">點進去</button></div>`;
-          div.querySelector('.btn-open').addEventListener('click',()=>openModal(r.course,r.time));
+          div.className='bg-white rounded shadow p-4 relative transition hover:shadow-md';
+          div.innerHTML=`
+            <div class="cursor-pointer">
+              <div class="text-lg font-semibold">${r.course}</div>
+              <div class="text-sm text-gray-500 mt-1">${r.time}</div>
+            </div>
+            <button class="absolute bottom-2 right-2 text-sm px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded">查看考勤</button>
+          `;
+          div.querySelector('div').addEventListener('click',()=>openModal(r.course,r.time));
+          div.querySelector('button').addEventListener('click',e=>{
+            e.stopPropagation();
+            showView();
+            viewCourse.value=r.course;
+            selectedCourse=r.course;
+            selectedTime=r.time;
+            autoLoad();
+          });
           cardsEl.appendChild(div);
         }
       });
     }
 
+    // modal 打開
     function openModal(course,time){
-      modalTitle.textContent=`${course} - ${time}`;
-      const dates=[...new Set(classInfoRows.filter(r=>r.course===course&&r.time===time).map(r=>r.date.split(/[,，]/).map(x=>x.trim())).flat())].filter(Boolean);
-      const coaches=[...new Set(classInfoRows.filter(r=>r.course===course&&r.time===time).map(r=>r.coach.split(/[,，]/).map(x=>x.trim())).flat())].filter(Boolean);
+      selectedCourse=course; selectedTime=time;
+      modalTitle.textContent=course;
+      document.getElementById('modal-sub').textContent=time;
+      const dates=[...new Set(classInfoRows.filter(r=>r.course===course&&r.time===time)
+        .flatMap(r=>r.date.split(/[,，]/).map(x=>x.trim())))].filter(Boolean);
+      const coaches=[...new Set(classInfoRows.filter(r=>r.course===course&&r.time===time)
+        .flatMap(r=>r.coach.split(/[,，]/).map(x=>x.trim())))].filter(Boolean);
 
-      const today = new Date();
-      let closest = dates[0]; let minDiff = Infinity;
+      const today=new Date(); let closest=null,minDiff=Infinity;
       dates.forEach(d=>{
-        const dt = parseDateFlexible(d);
-        if(dt && dt >= today){
-          const diff = dt - today;
-          if(diff < minDiff){ minDiff = diff; closest = d; }
-        }
+        const dt=parseDateFlexible(d);
+        if(dt&&dt>=today){const diff=dt-today;if(diff<minDiff){minDiff=diff;closest=d;}}
       });
-
-      modalDate.innerHTML = dates.map(d=>`<option ${d===closest?'selected':''}>${d}</option>`).join('');
-      modalCoaches.innerHTML=coaches.map(c=>`<label class="flex items-center gap-2 p-2 border rounded"><input type="checkbox" class="coach-check" value="${c}"><span>${c}</span></label>`).join('');
+      modalDate.innerHTML=dates.map(d=>`<option ${d===closest?'selected':''}>${d}</option>`).join('');
+      modalCoaches.innerHTML=coaches.map(c=>`<label class="flex items-center gap-2 p-2 border rounded"><input type="checkbox" value="${c}" class="coach-check"><span>${c}</span></label>`).join('');
       modalEl.classList.remove('hidden'); modalEl.style.display='flex';
-      modalSubmit.onclick=()=>submitForm(course,time);
     }
 
+    // 關閉 Modal
+    modalClose.onclick=modalCancel.onclick=()=>closeModal();
+    modalEl.addEventListener('click',e=>{if(e.target===modalEl)closeModal();});
     function closeModal(){modalEl.classList.add('hidden');modalEl.style.display='none';}
-    modalClose.onclick=modalCancel.onclick=closeModal;
+
+    modalSubmit.onclick=()=>submitForm(selectedCourse,selectedTime);
 
     function submitForm(course,time){
       const date=modalDate.value;
       const coaches=Array.from(document.querySelectorAll('.coach-check:checked')).map(c=>c.value);
-      if(!date||!coaches.length){alert('請選日期與教練');return;}
+      if(!date||!coaches.length)return alert('請選擇日期與教練');
       const form=document.createElement('form');
       form.action=`https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
-      form.method='POST';form.target='hidden_iframe';
+      form.method='POST'; form.target='hidden_iframe';
       const add=(n,v)=>{const i=document.createElement('input');i.type='hidden';i.name=n;i.value=v;form.appendChild(i);};
       add(FORM_ENTRIES.date,date); add(FORM_ENTRIES.course,course); add(FORM_ENTRIES.time,time);
       coaches.forEach(c=>add(FORM_ENTRIES.coach,c));
       document.body.appendChild(form); form.submit();
-      closeModal(); toastShow();
+      toast.classList.remove('hidden'); setTimeout(()=>toast.classList.add('hidden'),2500);
+      closeModal();
       setTimeout(()=>refreshSheet1(),2000);
     }
 
-    function toastShow(){toast.classList.remove('hidden'); setTimeout(()=>toast.classList.add('hidden'),2500);}
-
     function refreshSheet1(){
-      loadingStatus.textContent='更新中...';
       gvizFetch(SHEET1_GID).then(rows=>{
-        sheet1Rows = rows.slice(1).map(r=>({course:r[1]||'',time:r[2]||'',date:r[3]||'',coach:r[4]||''}));
-        loadingStatus.textContent='✅ 已更新';
-        setTimeout(()=>loadingStatus.textContent='',2000);
+        sheet1Rows=rows.slice(1).map(r=>({course:r[1]||'',time:r[2]||'',date:r[3]||'',coach:r[4]||''}));
+        autoLoad();
       });
     }
 
-    function populateViewSelectors(){
+    function populateSelectors(){
       const courses=[...new Set(sheet1Rows.map(r=>r.course))].filter(Boolean).sort();
       viewCourse.innerHTML='<option value="">--選課程--</option>'+courses.map(c=>`<option>${c}</option>`).join('');
       const now=new Date();
       viewYear.innerHTML=`<option>${now.getFullYear()}</option>`;
       viewMonth.innerHTML=Array.from({length:12},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
       viewMonth.value=now.getMonth()+1;
+      [viewCourse,viewYear,viewMonth].forEach(sel=>sel.addEventListener('change',autoLoad));
     }
 
-    btnLoadMonth.onclick=()=>{
+    function autoLoad(){
       const c=viewCourse.value, y=+viewYear.value, m=+viewMonth.value;
-      if(!c) return alert('請選課程');
-
-      const filtered = sheet1Rows.map(r=>({...r,d:parseDateFlexible(r.date)}))
-        .filter(r=>r.course===c && r.d && r.d.getFullYear()===y && r.d.getMonth()+1===m);
-      if(!filtered.length){ viewTable.innerHTML='<tr><td class="p-2">查無資料</td></tr>'; whatsappOutput.value=''; return; }
-
-      // WhatsApp 友好格式
-      const monthName = `${y}年${m}月`;
-      const time = filtered[0].time;
-      let whatsappText = `*${c}*\n\n${monthName}\n${time}`;
-      const dateMap = {};
+      if(!c)return;
+      loadingStatus.textContent='載入中...';
+      const filtered=sheet1Rows.map(r=>({...r,d:parseDateFlexible(r.date)}))
+        .filter(r=>r.course===c&&r.d&&r.d.getFullYear()===y&&r.d.getMonth()+1===m);
+      if(!filtered.length){
+        loadingStatus.textContent='查無資料';
+        viewTable.innerHTML=''; whatsappOutput.value=''; return;
+      }
+      filtered.sort((a,b)=>a.d-b.d);
+      const monthName=`${y}年${m}月`;
+      const time=filtered[0].time;
+      const dateMap={};
       filtered.forEach(r=>{
-        if(!dateMap[r.date]) dateMap[r.date]=[];
+        if(!dateMap[r.date])dateMap[r.date]=[];
         dateMap[r.date].push(r.coach);
       });
-      Object.keys(dateMap).sort().forEach(d=>{
-        whatsappText += `\n${d}\n${dateMap[d].join(', ')}`;
-      });
-      whatsappOutput.value = whatsappText;
+      let text=`*${c}*\n\n${monthName}\n${time}`;
+      Object.keys(dateMap).sort((a,b)=>parseDateFlexible(a)-parseDateFlexible(b))
+        .forEach(d=>{text+=`\n${d}\n${dateMap[d].join(', ')}`;});
+      whatsappOutput.value=text;
+      loadingStatus.textContent=`已載入 ${filtered.length} 筆資料`;
 
-      // 原始表格
       viewTable.innerHTML='<thead class="bg-gray-100"><tr><th class="p-2 text-left">日期</th><th class="p-2 text-left">時間</th><th class="p-2 text-left">教練</th></tr></thead><tbody>'+
-        filtered.sort((a,b)=>a.d-b.d)
-          .map(r=>`<tr class="border-t"><td class="p-2">${r.date}</td><td class="p-2">${r.time}</td><td class="p-2">${r.coach}</td></tr>`).join('')+
-        '</tbody>';
-    };
+        filtered.map(r=>`<tr class="border-t"><td class="p-2">${r.date}</td><td class="p-2">${r.time}</td><td class="p-2">${r.coach}</td></tr>`).join('')+'</tbody>';
+    }
 
-    btnCopy.onclick=()=>{ whatsappOutput.select(); document.execCommand('copy'); alert('已複製 WhatsApp 格式內容'); };
+    btnCopy.onclick=()=>{whatsappOutput.select();document.execCommand('copy');alert('已複製 WhatsApp 格式');};
 
   })();
   </script>
