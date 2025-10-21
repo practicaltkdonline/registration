@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Attendance System v3.8</title>
+  <title>Attendance System v3.9</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -16,7 +16,7 @@
 
     <nav class="mb-4 flex gap-2 justify-center">
       <button id="tab-attend" class="tab-btn px-4 py-2 rounded shadow bg-blue-600 text-white text-base">點名</button>
-      <button id="tab-view" class="tab-btn px-4 py-2 rounded shadow bg-white text-gray-800 text-base hover:bg-gray-100">查看考勤</button>
+      <button id="tab-view" class="tab-btn px-4 py-2 rounded shadow bg-blue text-gray-800 text-base hover:bg-gray-100">查看考勤</button>
     </nav>
 
     <!-- 點名頁 -->
@@ -116,14 +116,14 @@
       panelView.classList.add('hidden');
       tabAttend.classList.add('bg-blue-600','text-white');
       tabView.classList.remove('bg-blue-600','text-white','hover:bg-gray-100');
-      tabView.classList.add('bg-white','text-gray-800');
+      tabView.classList.add('bg-blue','text-gray-800');
     }
     function showView(){
       panelView.classList.remove('hidden');
       panelAttend.classList.add('hidden');
       tabView.classList.add('bg-blue-600','text-white');
       tabAttend.classList.remove('bg-blue-600','text-white');
-      tabAttend.classList.add('bg-white','text-gray-800');
+      tabAttend.classList.add('bg-blue','text-gray-800');
     }
 
     function gvizFetch(idOrSheet){
@@ -166,6 +166,14 @@
       const month = String(dt.getMonth() + 1).padStart(2, '0');
       const day = String(dt.getDate()).padStart(2, '0');
       return `${year}/${month}/${day}`;
+    }
+
+    function formatDateToMMDD(dateStr) {
+      const dt = parseDateFlexible(dateStr);
+      if (!dt) return dateStr; // 若解析失敗，返回原始字串
+      const month = String(dt.getMonth() + 1).padStart(2, '0');
+      const day = String(dt.getDate()).padStart(2, '0');
+      return `${month}/${day}`;
     }
 
     Promise.all([gvizFetch(CLASS_INFO_SHEET),gvizFetch(SHEET1_GID)]).then(([cRows,sRows])=>{
@@ -213,11 +221,22 @@
       const coaches=[...new Set(classInfoRows.filter(r=>r.course===course&&r.time===time)
         .flatMap(r=>r.coach.split(/[,，]/).map(x=>x.trim())))].filter(Boolean);
 
-      const today=new Date(); let closest=null,minDiff=Infinity;
-      dates.forEach(d=>{
-        const dt=parseDateFlexible(d);
-        if(dt&&dt>=today){const diff=dt-today;if(diff<minDiff){minDiff=diff;closest=d;}}
-      });
+      const today = new Date();
+      const todayStr = formatDateToMMDD(`${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()}`);
+      let closest = dates.includes(todayStr) ? todayStr : null;
+      if (!closest) {
+        let minDiff = Infinity;
+        dates.forEach(d => {
+          const dt = parseDateFlexible(d);
+          if (dt && dt >= today) {
+            const diff = dt - today;
+            if (diff < minDiff) {
+              minDiff = diff;
+              closest = d;
+            }
+          }
+        });
+      }
       modalDate.innerHTML=dates.map(d=>`<option ${d===closest?'selected':''}>${d}</option>`).join('');
       modalCoaches.innerHTML=coaches.map(c=>`<label class="flex items-center gap-2 p-2 border rounded"><input type="checkbox" value="${c}" class="coach-check"><span>${c}</span></label>`).join('');
       modalEl.classList.remove('hidden'); modalEl.style.display='flex';
