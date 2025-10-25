@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Attendance System v4.0</title>
+  <title>Attendance System v4.1</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -153,52 +153,49 @@
 
     function parseDateFlexible(s){
       if(!s) return null;
-      if(/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(s)) return new Date(s);
-      if(/^\d{1,2}\/\d{1,2}$/.test(s)){
-        const [m, d] = s.split('/');
-        return new Date(new Date().getFullYear(), m - 1, d);
+      if(/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(s)) {
+        const [year, month, day] = s.split('/').map(Number);
+        return new Date(year, month - 1, day);
       }
       return null;
     }
 
-    function formatDateToYYYYMMDD(dateStr) {
-      const dt = parseDateFlexible(dateStr);
-      if (!dt) return dateStr;
-      const year = dt.getFullYear();
-      const month = String(dt.getMonth() + 1).padStart(2, '0');
-      const day = String(dt.getDate()).padStart(2, '0');
+    function formatDateToYYYYMMDD(date) {
+      if (!(date instanceof Date) || isNaN(date)) return '';
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
       return `${year}/${month}/${day}`;
-    }
-
-    function formatDateToMMDD(dateStr) {
-      const dt = parseDateFlexible(dateStr);
-      if (!dt) return dateStr;
-      const month = String(dt.getMonth() + 1).padStart(2, '0');
-      const day = String(dt.getDate()).padStart(2, '0');
-      return `${month}/${day}`;
     }
 
     function getNextClassDate(course, time) {
       const today = new Date();
+      today.setHours(0, 0, 0, 0); // 設置為當天 00:00:00 以忽略時間
+      const todayStr = formatDateToYYYYMMDD(today);
       const dates = [...new Set(classInfoRows
         .filter(r => r.course === course && r.time === time)
         .flatMap(r => r.date.split(/[,，]/).map(x => x.trim())))
       ].filter(Boolean);
-      let nextDate = null, minDiff = Infinity;
-      dates.forEach(d => {
-        const dt = parseDateFlexible(d);
-        if (dt && dt >= today) {
-          const diff = dt - today;
-          if (diff < minDiff) {
-            minDiff = diff;
-            nextDate = dt;
+      let closest = dates.includes(todayStr) ? todayStr : null;
+      if (!closest) {
+        let minDiff = Infinity;
+        dates.forEach(d => {
+          const dt = parseDateFlexible(d);
+          if (dt && dt >= today) {
+            const diff = dt - today;
+            if (diff < minDiff) {
+              minDiff = diff;
+              closest = d;
+            }
           }
-        }
-      });
-      if (!nextDate) return '';
-      const year = nextDate.getFullYear();
-      const month = String(nextDate.getMonth() + 1).padStart(2, '0');
-      const day = String(nextDate.getDate()).padStart(2, '0');
+        });
+      }
+      if (!closest) return '';
+      const dt = parseDateFlexible(closest);
+      if (!dt) return '';
+      const year = dt.getFullYear();
+      const month = String(dt.getMonth() + 1).padStart(2, '0');
+      const day = String(dt.getDate()).padStart(2, '0');
       return `${year}年${month}月${day}日`;
     }
 
@@ -250,7 +247,8 @@
         .flatMap(r=>r.coach.split(/[,，]/).map(x=>x.trim())))].filter(Boolean);
 
       const today = new Date();
-      const todayStr = formatDateToMMDD(`${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()}`);
+      today.setHours(0, 0, 0, 0); // 設置為當天 00:00:00 以忽略時間
+      const todayStr = formatDateToYYYYMMDD(today);
       let closest = dates.includes(todayStr) ? todayStr : null;
       if (!closest) {
         let minDiff = Infinity;
