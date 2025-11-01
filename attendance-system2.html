@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>點名系統 v5.2｜一鍵搞定</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root { --primary: #2563eb; --success: #10b981; --danger: #ef4444; }
+    .dark { --primary: #3b82f6; --bg: #1f2937; --text: #f3f4f6; }
+    .toast { transition: all 0.3s ease; }
+    .card-hover { transition: transform 0.2s, box-shadow 0.2s; }
+    .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    .skeleton { @apply bg-gray-200 animate-pulse; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen transition-colors duration-300">
+
+  <!-- 深色模式切換 -->
+  <div class="fixed top-4 right-4 z-50">
+    <button id="theme-toggle" class="p-2 bg-white rounded-full shadow-lg hover:shadow-xl transition">
+      <i class="fas fa-moon text-xl"></i>
+    </button>
+  </div>
+
+  <div class="max-w-5xl mx-auto p-4 sm:p-6">
+    <!-- Header -->
+    <header class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-gray-800 flex items-center justify-center gap-2">
+        <i class="fas fa-users text-blue-600"></i> 點名考勤系統 v5.2
+      </h1>
+      <p class="text-gray-600 mt-2">Google Sheet 即時同步 · 行動裝置最佳化</p>
+    </header>
+
+    <!-- 搜尋列 -->
+    <div class="mb-6">
+      <div class="relative">
+        <input type="text" id="search-input" placeholder="搜尋課程名稱..." 
+               class="w-full p-3 pl-10 border rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+        <i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i>
+      </div>
+    </div>
+
+    <!-- Tab 導覽 -->
+    <nav class="flex gap-2 mb-6 overflow-x-auto pb-2">
+      <button class="tab-btn active px-5 py-2.5 rounded-full font-medium transition whitespace-nowrap" data-tab="attend">
+        <i class="fas fa-check-circle mr-1"></i> 點名
+      </button>
+      <button class="tab-btn px-5 py-2.5 rounded-full font-medium transition whitespace-nowrap" data-tab="view">
+        <i class="fas fa-calendar-alt mr-1"></i> 考勤總覽
+      </button>
+    </nav>
+
+    <!-- 點名頁面 -->
+    <section id="panel-attend" class="space-y-4">
+      <div id="loading-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="bg-white p-5 rounded-xl shadow skeleton h-32"></div>
+        <div class="bg-white p-5 rounded-xl shadow skeleton h-32"></div>
+        <div class="bg-white p-5 rounded-xl shadow skeleton h-32"></div>
+      </div>
+      <div id="cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
+    </section>
+
+    <!-- 考勤總覽頁面 -->
+    <section id="panel-view" class="hidden space-y-4">
+      <div class="bg-white p-4 rounded-xl shadow">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <select id="view-course" class="p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"></select>
+          <select id="view-year" class="p-3 border rounded-lg"></select>
+          <select id="view-month" class="p-3 border rounded-lg"></select>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl shadow space-y-3">
+        <div class="flex items-center justify-between">
+          <span id="loading-status" class="text-sm text-gray-500">請選擇課程</span>
+          <button id="btn-copy-wa" class="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition text-sm">
+            <i class="fab fa-whatsapp mr-1"></i> WhatsApp
+          </button>
+        </div>
+
+        <!-- 月曆檢視 -->
+        <div id="calendar-view" class="grid grid-cols-7 gap-1 text-center text-xs"></div>
+
+        <!-- 表格檢視 -->
+        <div id="table-view" class="mt-4 overflow-x-auto max-h-96">
+          <table class="w-full text-sm"></table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="fixed inset-0 hidden flex items-center justify-center bg-black/60 p-4 z-50">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 transform transition-all scale-95">
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <h3 id="modal-title" class="text-xl font-bold text-gray-800"></h3>
+          <p id="modal-time" class="text-sm text-gray-600 mt-1"></p>
+        </div>
+        <button id="modal-close" class="text-gray-500 hover:text-gray-700">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <!-- 日期選擇 -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">上課日期</label>
+        <select id="modal-date" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"></select>
+      </div>
+
+      <!-- 教練選擇 -->
+      <div class="mb-5">
+        <label class="block text-sm font-medium text-gray-700 mb-2">授課教練</label>
+        <div id="modal-coaches" class="space-y-2 max-h-40 overflow-y-auto"></div>
+      </div>
+
+      <!-- 按鈕 -->
+      <div class="flex gap-3 justify-end">
+        <button id="modal-cancel" class="px-5 py-2.5 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+          取消
+        </button>
+        <button id="modal-submit" class="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+          <i class="fas fa-paper-plane"></i> 送出點名
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 hidden bg-green-600 text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-2 transform translate-y-10 transition-all">
+    <i class="fas fa-check-circle"></i> <span>點名已送出！</span>
+  </div>
+
+  <iframe name="hidden_iframe" class="hidden"></iframe>
+
+  <script>
+  // ==== 設定 ====
+  const CONFIG = {
+    SHEET_ID: '1Rzb2I-0wPNjWOqTKMwx1Z6gVMMVtu2D3ekWwAHvJZUg',
+    CLASS_INFO_SHEET: 'Class info',
+    SHEET1_GID: '103185592',
+    FORM_ID: '1FAIpQLSdTYHzLfQKVxhWpAzfuf8I9amdT_vDoNs843tBD35OnlGc53A',
+    FORM_ENTRIES: {
+      date: 'entry.176770776',
+      course: 'entry.1115358630',
+      time: 'entry.1251335978',
+      coach: 'entry.1253762114'
+    }
+  };
+
+  // ==== 全域變數 ====
+  let classInfo = [], attendance = [];
+
+  // ==== DOM 元素 ====
+  const els = {
+    cards: document.getElementById('cards-container'),
+    loadingCards: document.getElementById('loading-cards'),
+    search: document.getElementById('search-input'),
+    tabs: document.querySelectorAll('.tab-btn'),
+    panels: { attend: document.getElementById('panel-attend'), view: document.getElementById('panel-view') },
+    view: {
+      course: document.getElementById('view-course'),
+      year: document.getElementById('view-year'),
+      month: document.getElementById('view-month'),
+      status: document.getElementById('loading-status'),
+      calendar: document.getElementById('calendar-view'),
+      table: document.getElementById('table-view').querySelector('table'),
+      copyWA: document.getElementById('btn-copy-wa')
+    },
+    modal: {
+      el: document.getElementById('modal'),
+      title: document.getElementById('modal-title'),
+      time: document.getElementById('modal-time'),
+      date: document.getElementById('modal-date'),
+      coaches: document.getElementById('modal-coaches'),
+      submit: document.getElementById('modal-submit'),
+      cancel: document.getElementById('modal-cancel'),
+      close: document.getElementById('modal-close')
+    },
+    toast: document.getElementById('toast'),
+    themeBtn: document.getElementById('theme-toggle')
+  };
+
+  // ==== 初始化 ====
+  init();
+
+  function init() {
+    setupTheme();
+    setupTabs();
+    setupSearch();
+    loadData();
+  }
+
+  // ==== 主題切換 ====
+  function setupTheme() {
+    const isDark = localStorage.getItem('dark') === 'true';
+    document.documentElement.classList.toggle('dark', isDark);
+    els.themeBtn.innerHTML = isDark ? '<i class="fas fa-sun text-yellow-400"></i>' : '<i class="fas fa-moon"></i>';
+    els.themeBtn.onclick = () => {
+      const willDark = !document.documentElement.classList.contains('dark');
+      document.documentElement.classList.toggle('dark', willDark);
+      localStorage.setItem('dark', willDark);
+      els.themeBtn.innerHTML = willDark ? '<i class="fas fa-sun text-yellow-400"></i>' : '<i class="fas fa-moon"></i>';
+    };
+  }
+
+  // ==== Tab 切換 ====
+  function setupTabs() {
+    els.tabs.forEach(btn => {
+      btn.onclick = () => {
+        els.tabs.forEach(b => b.classList.remove('active', 'bg-blue-600', 'text-white'));
+        els.tabs.forEach(b => b.classList.add('bg-gray-200', 'text-gray-700'));
+        btn.classList.add('active', 'bg-blue-600', 'text-white');
+        btn.classList.remove('bg-gray-200', 'text-gray-700');
+        Object.values(els.panels).forEach(p => p.classList.add('hidden'));
+        els.panels[btn.dataset.tab].classList.remove('hidden');
+        if (btn.dataset.tab === 'view') loadView();
+      };
+    });
+  }
+
+  // ==== 搜尋功能 ====
+  function setupSearch() {
+    els.search.oninput = () => {
+      const term = els.search.value.toLowerCase();
+      const cards = els.cards.querySelectorAll('.course-card');
+      cards.forEach(card => {
+        card.style.display = card.textContent.toLowerCase().includes(term) ? '' : 'none';
+      });
+    };
+  }
+
+  // ==== 載入資料 ====
+  function loadData() {
+    Promise.all([
+      gvizFetch(CONFIG.CLASS_INFO_SHEET),
+      gvizFetch(CONFIG.SHEET1_GID)
+    ]).then(([classRows, attRows]) => {
+      classInfo = classRows.slice(1).map(r => ({
+        course: r[0] || '', time: r[1] || '', date: r[2] || '', coach: r[3] || ''
+      }));
+      attendance = attRows.slice(1).map(r => ({
+        course: r[1] || '', time: r[2] || '', date: r[3] || '', coach: r[4] || ''
+      }));
+      renderCards();
+      populateViewSelectors();
+      els.loadingCards.classList.add('hidden');
+      els.cards.classList.remove('hidden');
+    }).catch(err => showToast(err.message, 'error'));
+  }
+
+  // ==== 渲染課程卡片 ====
+  function renderCards() {
+    const seen = new Set();
+    els.cards.innerHTML = '';
+    classInfo.forEach(info => {
+      const key = `${info.course}@@${info.time}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+
+      const nextDate = getNextClassDate(info.course, info.time);
+      const card = document.createElement('div');
+      card.className = 'course-card bg-white p-5 rounded-xl shadow card-hover cursor-pointer';
+      card.innerHTML = `
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="text-lg font-bold text-gray-800">${info.course}</h3>
+          <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">${info.time}</span>
+        </div>
+        <p class="text-sm text-gray-600 mb-3">${nextDate ? '下堂：' + nextDate : '無排課'}</p>
+        <div class="flex gap-2">
+          <button class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:from-blue-600 hover:to-blue-700 transition shadow">
+            <i class="fas fa-edit mr-1"></i> 點名
+          </button>
+          <button class="view-attendance px-4 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      `;
+
+      card.querySelector('button').onclick = () => openModal(info.course, info.time);
+      card.querySelector('.view-attendance').onclick = (e) => {
+        e.stopPropagation();
+        switchTab('view');
+        els.view.course.value = info.course;
+        loadView();
+      };
+      els.cards.appendChild(card);
+    });
+  }
+
+  // ==== 開啟 Modal：智慧預選日期 ====
+  function openModal(course, time) {
+    els.modal.title.textContent = course;
+    els.modal.time.textContent = time;
+
+    const dates = getUniqueDates(course, time);
+    const coaches = getUniqueCoaches(course, time);
+
+    const todayStr = dayjs().format('YYYY/MM/DD');
+    let defaultDate = '';
+
+    if (dates.includes(todayStr)) {
+      defaultDate = todayStr;
+    } else {
+      const futureDates = dates
+        .map(d => ({ str: d, obj: dayjs(d, 'YYYY/MM/DD') }))
+        .filter(d => d.obj.isValid() && d.obj.isAfter(dayjs(), 'day'));
+      if (futureDates.length > 0) {
+        defaultDate = futureDates.sort((a, b) => a.obj - b.obj)[0].str;
+      } else if (dates.length > 0) {
+        defaultDate = dates.sort((a, b) => dayjs(a, 'YYYY/MM/DD') - dayjs(b, 'YYYY/MM/DD'))[0];
+      }
+    }
+
+    els.modal.date.innerHTML = dates
+      .sort((a, b) => dayjs(a, 'YYYY/MM/DD') - dayjs(b, 'YYYY/MM/DD'))
+      .map(d => `<option value="${d}" ${d === defaultDate ? 'selected' : ''}>${formatDisplayDate(d)}</option>`)
+      .join('');
+
+    els.modal.coaches.innerHTML = coaches.map(c => `
+      <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition">
+        <input type="checkbox" value="${c}" class="mr-3 h-4 w-4 text-blue-600 rounded focus:ring-blue-500">
+        <span class="font-medium">${c}</span>
+      </label>
+    `).join('');
+
+    els.modal.el.classList.remove('hidden');
+    setTimeout(() => els.modal.el.querySelector('.scale-95').classList.replace('scale-95', 'scale-100'), 10);
+  }
+
+  // ==== 送出點名 ====
+  els.modal.submit.onclick = () => {
+    const date = els.modal.date.value;
+    const coaches = Array.from(els.modal.coaches.querySelectorAll('input:checked')).map(i => i.value);
+    if (!date || !coaches.length) return alert('請選擇日期與教練');
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `https://docs.google.com/forms/d/e/${CONFIG.FORM_ID}/formResponse`;
+    form.target = 'hidden_iframe';
+
+    const add = (name, value) => {
+      const input = document.createElement('input');
+      input.type = 'hidden'; input.name = name; input.value = value;
+      form.appendChild(input);
+    };
+
+    add(CONFIG.FORM_ENTRIES.date, date);
+    add(CONFIG.FORM_ENTRIES.course, els.modal.title.textContent);
+    add(CONFIG.FORM_ENTRIES.time, els.modal.time.textContent);
+    coaches.forEach(c => add(CONFIG.FORM_ENTRIES.coach, c));
+
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+
+    closeModal();
+    showToast('點名已送出！資料更新中...', 'success');
+    setTimeout(() => loadData(), 1500);
+  };
+
+  function closeModal() {
+    els.modal.el.classList.add('hidden');
+  }
+
+  // ==== 工具函數 ====
+  function gvizFetch(sheet) {
+    const url = /^[0-9]+$/.test(sheet)
+      ? `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?gid=${sheet}&t=${Date.now()}`
+      : `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(sheet)}&t=${Date.now()}`;
+    return fetch(url).then(r => r.text()).then(t => {
+      const json = t.replace(/^[^(]*\(/, '').replace(/\);?$/, '');
+      return JSON.parse(json).table.rows.map(r => r.c?.map(c => c?.f ?? c?.v ?? '') || []);
+    });
+  }
+
+  function getNextClassDate(course, time) {
+    const dates = getUniqueDates(course, time);
+    const today = dayjs().format('YYYY/MM/DD');
+    if (dates.includes(today)) return '今天';
+    const future = dates.filter(d => dayjs(d, 'YYYY/MM/DD').isAfter(dayjs(), 'day'));
+    if (future.length > 0) {
+      return formatDisplayDate(future.sort((a, b) => dayjs(a) - dayjs(b))[0]);
+    }
+    return '';
+  }
+
+  function getUniqueDates(course, time) {
+    return [...new Set(classInfo.filter(r => r.course === course && r.time === time)
+      .flatMap(r => r.date.split(/[,，]/).map(d => d.trim())))]
+      .filter(Boolean);
+  }
+
+  function getUniqueCoaches(course, time) {
+    return [...new Set(classInfo.filter(r => r.course === course && r.time === time)
+      .flatMap(r => r.coach.split(/[,，]/).map(c => c.trim())))]
+      .filter(Boolean);
+  }
+
+  function formatDisplayDate(yyyyMMdd) {
+    const d = dayjs(yyyyMMdd, 'YYYY/MM/DD', true);
+    if (!d.isValid()) return yyyyMMdd;
+    const week = ['日', '一', '二', '三', '四', '五', '六'][d.day()];
+    return `${d.format('YYYY年M月D日')} 星期${week}`;
+  }
+
+  function showToast(msg, type = 'success') {
+    els.toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i> <span>${msg}</span>`;
+    els.toast.className = `fixed bottom-6 right-6 ${type === 'success' ? 'bg-green-600' : 'bg-red-600'} text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-2 opacity-100 translate-y-0 transition-all`;
+    setTimeout(() => {
+      els.toast.classList.add('opacity-0', 'translate-y-10');
+      setTimeout(() => els.toast.classList.add('hidden'), 300);
+    }, 2500);
+  }
+
+  // ==== 考勤總覽 ====
+  function populateViewSelectors() {
+    const courses = [...new Set(attendance.map(r => r.course))].filter(Boolean).sort();
+    els.view.course.innerHTML = '<option value="">-- 選擇課程 --</option>' + courses.map(c => `<option>${c}</option>`).join('');
+    const year = dayjs().year();
+    els.view.year.innerHTML = `<option>${year}</option><option>${year-1}</option>`;
+    els.view.month.innerHTML = Array.from({length:12},(_,i)=>`<option value="${i+1}">${i+1}月</option>`).join('');
+    els.view.month.value = dayjs().month() + 1;
+
+    [els.view.course, els.view.year, els.view.month].forEach(el => el.onchange = loadView);
+    els.view.copyWA.onclick = () => copyToClipboard(generateWhatsAppText(), 'WhatsApp');
+  }
+
+  function loadView() {
+    const course = els.view.course.value;
+    const year = +els.view.year.value;
+    const month = +els.view.month.value;
+    if (!course) return;
+
+    els.view.status.textContent = '載入中...';
+    const records = attendance
+      .filter(r => r.course === course && r.date)
+      .map(r => ({ ...r, dateObj: dayjs(r.date, 'YYYY/MM/DD', true) }))
+      .filter(r => r.dateObj.isValid() && r.dateObj.year() === year && r.dateObj.month() + 1 === month);
+
+    if (!records.length) {
+      els.view.status.textContent = '查無資料';
+      els.view.calendar.innerHTML = '';
+      els.view.table.innerHTML = '';
+      return;
+    }
+
+    renderCalendar(records, year, month);
+    renderTable(records);
+    els.view.status.textContent = `共 ${records.length} 筆記錄`;
+  }
+
+  function renderCalendar(records, year, month) {
+    const start = dayjs(`${year}-${month}-01`);
+    const daysInMonth = start.daysInMonth();
+    const firstDay = start.day();
+    const today = dayjs().format('YYYY-MM-DD');
+
+    let html = '<div class="col-span-7 flex text-xs font-bold text-gray-600 mb-1"><div class="flex-1 text-center">日</div><div class="flex-1 text-center">一</div><div class="flex-1 text-center">二</div><div class="flex-1 text-center">三</div><div class="flex-1 text-center">四</div><div class="flex-1 text-center">五</div><div class="flex-1 text-center">六</div></div>';
+
+    for (let i = 0; i < firstDay; i++) html += '<div></div>';
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateStr = `${year}/${String(month).padStart(2,'0')}/${String(day).padStart(2,'0')}`;
+      const dateObj = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      const dayRecords = records.filter(r => r.date === dateStr);
+      const isToday = dateObj === today;
+
+      const countText = dayRecords.length > 0 ? `${dayRecords.length}筆` : '';
+
+      html += `<div class="text-center p-1 ${isToday ? 'ring-2 ring-blue-500 rounded' : ''}">
+        <div class="font-medium text-xs">${day}</div>
+        ${countText ? `<div class="text-xs text-green-600">${countText}</div>` : ''}
+      </div>`;
+    }
+    els.view.calendar.innerHTML = html;
+  }
+
+  function renderTable(records) {
+    const html = `
+      <thead class="bg-gray-50 text-left text-xs font-medium text-gray-700">
+        <tr><th class="p-3">日期</th><th class="p-3">時間</th><th class="p-3">教練</th></tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+        ${records.map(r => `
+          <tr class="hover:bg-gray-50">
+            <td class="p-3 text-sm">${formatDisplayDate(r.date)}</td>
+            <td class="p-3 text-sm">${r.time}</td>
+            <td class="p-3 text-sm">${r.coach}</td>
+          </tr>
+        `).join('')}
+      </tbody>`;
+    els.view.table.innerHTML = html;
+  }
+
+  // ==== WhatsApp 格式 ====
+  function generateWhatsAppText() {
+    const records = getCurrentViewRecords();
+    if (!records.length) return '';
+
+    const course = els.view.course.value;
+    const time = records[0].time;
+    const monthStr = `${els.view.year.value}年${els.view.month.value}月`;
+    const firstDate = records[0].date;
+    const weekDay = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'][dayjs(firstDate, 'YYYY/MM/DD').day()];
+
+    let text = `📢 *${course}*\n\n🗓️ ${monthStr} 逢${weekDay}\n${time}\n\n`;
+
+    const byDate = {};
+    records.forEach(r => {
+      if (!byDate[r.date]) byDate[r.date] = [];
+      byDate[r.date].push(r.coach);
+    });
+
+    Object.keys(byDate)
+      .sort((a, b) => dayjs(a, 'YYYY/MM/DD') - dayjs(b, 'YYYY/MM/DD'))
+      .forEach(d => {
+        text += `✅ *${d}*\n${byDate[d].join(', ')}\n\n`;
+      });
+
+    return text.trim();
+  }
+
+  function getCurrentViewRecords() {
+    const course = els.view.course.value;
+    const year = +els.view.year.value;
+    const month = +els.view.month.value;
+    return attendance
+      .filter(r => r.course === course && r.date)
+      .map(r => ({ ...r, dateObj: dayjs(r.date, 'YYYY/MM/DD', true) }))
+      .filter(r => r.dateObj.isValid() && r.dateObj.year() === year && r.dateObj.month() + 1 === month);
+  }
+
+  function copyToClipboard(text, platform) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast(`已複製 ${platform} 格式！`);
+    });
+  }
+
+  function switchTab(tab) {
+    document.querySelector(`.tab-btn[data-tab="${tab}"]`).click();
+  }
+
+  // ==== 關閉 Modal ====
+  [els.modal.close, els.modal.cancel, els.modal.el].forEach(el => {
+    el.onclick = (e) => {
+      if (e.target === el || e.target === els.modal.cancel || e.target === els.modal.close) closeModal();
+    };
+  });
+  </script>
+</body>
+</html>
