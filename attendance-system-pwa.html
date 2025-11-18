@@ -4,6 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Attendance System v4.1</title>
+  <!-- PWA 必備 meta -->
+<meta name="theme-color" content="#3b82f6">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+<!-- 讓 iOS 圖示更圓角 -->
+<link rel="apple-touch-startup-image" href="icon-512.png">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen">
@@ -325,6 +334,15 @@
     }
     btnCopy.onclick=()=>{whatsappOutput.select();document.execCommand('copy');alert('已複製 WhatsApp 格式');};
   })();
+
+    // 註冊 Service Worker（離線快取）
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('SW registered'))
+        .catch(err => console.log('SW error', err));
+    });
+  }
   </script>
 </body>
 </html>
