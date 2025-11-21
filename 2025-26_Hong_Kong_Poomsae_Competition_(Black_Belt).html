@@ -12,9 +12,10 @@
     .form-header{text-align:center;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:2px solid #edf2f7}
     .form-header h1{font-size:1.8rem;font-weight:700;color:#1a202c;margin:0}
     .form-header h2{font-size:1.1rem;font-weight:500;color:#718096;margin-top:.5rem}
-    .progress-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;position:relative;height:40px}
-    .progress-bar::before{content:'';position:absolute;top:50%;left:20px;right:20px;height:4px;background:#e2e8f0;transform:translateY(-50%);z-index:1;border-radius:2px}
-    .progress-line-fill{position:absolute;top:50%;left:20px;height:4px;background:linear-gradient(90deg,#3182ce,#63b3ed);transform:translateY(-50%);z-index:1;transition:width .5s ease-in-out;border-radius:2px;box-shadow:0 0 6px rgba(49,130,206,.4)}
+    .progress-container{position:relative;margin-bottom:2.5rem}
+    .progress-bar{display:flex;justify-content:space-between;align-items:center;position:relative;height:40px}
+    .progress-bar::before{content:'';position:absolute;top:50%;left:0;right:0;height:4px;background:#e2e8f0;transform:translateY(-50%);z-index:1;border-radius:2px}
+    .progress-line-fill{position:absolute;top:50%;left:0;height:4px;background:linear-gradient(90deg,#3182ce,#63b3ed);transform:translateY(-50%);z-index:1;transition:width .5s ease-in-out;border-radius:2px;box-shadow:0 0 6px rgba(49,130,206,.4);width:0%}
     .progress-step{width:40px;height:40px;border-radius:50%;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;color:#4a5568;position:relative;z-index:2;transition:all .3s;box-shadow:0 2px 4px rgba(0,0,0,.1)}
     .progress-step.active{background:linear-gradient(45deg,#3182ce,#63b3ed);color:#fff;transform:scale(1.1);box-shadow:0 4px 12px rgba(49,130,206,.4)}
     .progress-step.completed{background:linear-gradient(45deg,#3182ce,#63b3ed);color:#fff;box-shadow:0 3px 10px rgba(49,130,206,.3)}
@@ -22,8 +23,8 @@
     .step.active{display:block}
     .form-group{margin-bottom:1.5rem;padding:1.2rem;border-radius:1rem;background:#f7fafc;transition:background .3s,transform .2s;box-shadow:0 2px 8px rgba(0,0,0,.05)}
     .form-group:hover{background:#edf2f7;transform:translateY(-2px)}
-    .conditional{margin-top:1rem;padding-left:1.5rem;border-left:4px solid #3182ce;display:none;background:#f8fbff;border-radius:0 .8rem .8rem .8rem}
-    .conditional.show{display:block;animation:fadeIn .4s}
+    .conditional{margin-top:1.5rem;padding:1.5rem;border-left:5px solid #3182ce;background:#f8fbff;border-radius:.8rem;display:none;animation:fadeIn .4s}
+    .conditional.show{display:block}
     @keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
     label{display:block;margin-bottom:.5rem;font-weight:600;font-size:1rem;color:#2d3748}
     input,select,button{width:100%;padding:.8rem;border:1px solid #e2e8f0;border-radius:.6rem;box-sizing:border-box;font-size:1rem;background:#fff;transition:all .3s;height:2.8rem}
@@ -76,32 +77,31 @@
     <h2>報名表</h2>
   </div>
 
-  <div class="progress-bar">
-    <div class="progress-line-fill" id="progressLineFill" style="width:0%"></div>
-    <div class="progress-step active" data-step="1">1</div>
-    <div class="progress-step" data-step="2">2</div>
-    <div class="progress-step" data-step="3">3</div>
-    <div class="progress-step" data-step="4">4</div>
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div class="progress-line-fill" id="progressLineFill"></div>
+      <div class="progress-step active" data-step="1">1</div>
+      <div class="progress-step" data-step="2">2</div>
+      <div class="progress-step" data-step="3">3</div>
+      <div class="progress-step" data-step="4">4</div>
+    </div>
   </div>
 
   <form id="registrationForm">
     <!-- 步驟一：個人資料 -->
     <div class="step active" data-step="1">
       <h3>步驟一：個人資料</h3>
-
       <div class="form-group">
         <label>中文姓名 <span class="required-star">*</span></label>
         <input type="text" id="chineseName" name="entry.1000000001" placeholder="如沒有請填寫英文姓名" required
                oninput="if(!/[\u4e00-\u9fa5]/.test(this.value)) this.value=this.value.toUpperCase()">
         <span class="error" id="chineseNameError">請輸入中文姓名或英文姓名</span>
       </div>
-
       <div class="form-group">
         <label>英文姓名 <span class="required-star">*</span></label>
         <input type="text" id="englishName" name="entry.1000000002" placeholder="請以大寫字母填寫" required oninput="this.value=this.value.toUpperCase()">
         <span class="error" id="englishNameError">請輸入英文姓名</span>
       </div>
-
       <div class="form-group">
         <label>出生日期 <span class="required-star">*</span></label>
         <div class="date-group">
@@ -114,7 +114,6 @@
         <input type="hidden" id="birthDate" name="entry.1000000003">
         <span class="error" id="birthDateError">請選擇出生日期</span>
       </div>
-
       <div class="form-group">
         <label>性別 <span class="required-star">*</span></label>
         <div class="category-group">
@@ -123,25 +122,21 @@
         </div>
         <span class="error" id="genderError">請選擇性別</span>
       </div>
-
       <div class="form-group">
         <label>國籍 <span class="required-star">*</span></label>
         <input type="text" id="nationality" name="entry.1000000005" required>
         <span class="error" id="nationalityError">請輸入國籍</span>
       </div>
-
       <div class="form-group">
         <label>聯絡電話 <span class="required-star">*</span></label>
         <input type="tel" id="phone" name="entry.1000000006" pattern="\d{8}" required>
         <span class="error" id="phoneError">請輸入8位數字電話</span>
       </div>
-
       <div class="form-group">
-        <label>緊急聯絡人 <span class="required-star">*</span></label>
+        <label>緊急聯絡人姓名 <span class="required-star">*</span></label>
         <input type="text" id="emergencyContact" name="entry.1000000007" required>
-        <span class="error" id="emergencyContactError">請輸入緊急聯絡人</span>
+        <span class="error" id="emergencyContactError">請輸入緊急聯絡人姓名</span>
       </div>
-
       <div class="form-group">
         <label>緊急聯絡人電話 <span class="required-star">*</span></label>
         <div class="copy-group">
@@ -150,7 +145,6 @@
         </div>
         <span class="error" id="emergencyPhoneError">請輸入8位數字電話</span>
       </div>
-
       <div class="navigation">
         <button type="button" class="nav-prev" disabled>上一步</button>
         <button type="button" class="nav-next" onclick="nextStep()">下一步</button>
@@ -160,7 +154,6 @@
     <!-- 步驟二：級別資料 -->
     <div class="step" data-step="2">
       <h3>步驟二：級別資料</h3>
-
       <div class="form-group">
         <label>屬會名稱 <span class="required-star">*</span></label>
         <input list="affiliations" id="affiliation" name="entry.1000000009" required placeholder="請輸入或選擇屬會名稱">
@@ -183,7 +176,7 @@
           <option value="香港跆拳道勵輝會 HK TKD Actual Association">
           <option value="香港中道跆拳道會 HK Chong Do TKD Association">
           <option value="香港跆拳道青濤館 HK TKD Chung Do Kwan">
-          <option value="香港跆拳道正道館 HK TKD Jung Do Kwan">
+          <option value="香港跆拳道正道道館 HK TKD Jung Do Kwan">
           <option value="香港跆拳道正心館 HK TKD Jung Sim Kwan">
           <option value="香港聯盟跆拳道協會 HK United TKD Association">
           <option value="跆拳道明道會 TKD Bright Way Association">
@@ -216,11 +209,12 @@
       </div>
 
       <div class="form-group">
-        <label>段證編號</label>
+        <label>段證編號 <span class="required-star">*</span></label>
         <div class="copy-group">
-          <input type="text" id="danNumber" name="entry.1000000010">
+          <input type="text" id="danNumber" name="entry.1000000010" required>
           <label><input type="checkbox" id="noDan"> 未有段證</label>
         </div>
+        <span class="error" id="danNumberError">請輸入段證編號或勾選「未有段證」</span>
       </div>
 
       <div class="form-group">
@@ -275,14 +269,18 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label>個人組別</label>
-        <select id="individualDivision" name="entry.1000000013"></select>
+      <!-- 個人組別 -->
+      <div class="conditional" id="individualSection">
+        <div class="form-group">
+          <label>個人組別（自動輸入）</label>
+          <select id="individualDivision" name="entry.1000000013"></select>
+        </div>
       </div>
 
+      <!-- 混雙組別 -->
       <div class="conditional" id="pairSection">
         <div class="form-group">
-          <label>混雙組別（自動帶入）</label>
+          <label>混雙組別（自動輸入）</label>
           <select id="pairDivision" name="entry.1000000014"></select>
         </div>
         <div class="form-group">
@@ -292,9 +290,10 @@
         </div>
       </div>
 
+      <!-- 團體組別 -->
       <div class="conditional" id="teamSection">
         <div class="form-group">
-          <label>團體組別（自動帶入）</label>
+          <label>團體組別（自動輸入）</label>
           <select id="teamDivision" name="entry.1000000016"></select>
         </div>
         <div class="form-group">
@@ -416,8 +415,8 @@
     if (currentStep === 4) updateFinalSummary();
   }
 
-  function nextStep() { if (validateStep(currentStep)) { currentStep++; updateProgress(); updateAllDivisions(); toggleConditionalSections(); } }
-  function prevStep() { currentStep--; updateProgress(); toggleConditionalSections(); }
+  function nextStep() { if (validateStep(currentStep)) { currentStep++; updateProgress(); updateAllDivisions(); toggleAllSections(); } }
+  function prevStep() { currentStep--; updateProgress(); toggleAllSections(); }
 
   function getAgeGroup(year) {
     if (year >= 2014 && year <= 2015) return "2014-2015";
@@ -441,27 +440,30 @@
                           : poomsaeDivisions.individual.female[ageKey] || poomsaeDivisions.individual.female.default;
     document.getElementById('individualDivision').innerHTML = `<option value="${indDiv}" selected>${indDiv}</option>`;
 
-    // 混雙（無10-11歲）
-    if (ageKey !== "2014-2015") {
-      const pairDiv = poomsaeDivisions.pair[ageKey] || poomsaeDivisions.pair.default;
-      document.getElementById('pairDivision').innerHTML = `<option value="${pairDiv}" selected>${pairDiv}</option>`;
+    // 混雙 & 團體（10-11歲禁用）
+    if (ageKey === "2014-2015") {
+      document.getElementById('eventPair').disabled = true;
+      document.getElementById('eventTeam').disabled = true;
+      document.getElementById('eventPair').checked = false;
+      document.getElementById('eventTeam').checked = false;
+      document.getElementById('pairDivision').innerHTML = '<option value="">此年齡段不可參加混雙</option>';
+      document.getElementById('teamDivision').innerHTML = '<option value="">此年齡段不可參加團體</option>';
     } else {
-      document.getElementById('pairDivision').innerHTML = '<option value="">此年齡段無混雙組別</option>';
-    }
-
-    // 團體（無10-11歲）
-    if (ageKey !== "2014-2015") {
+      document.getElementById('eventPair').disabled = false;
+      document.getElementById('eventTeam').disabled = false;
+      const pairDiv = poomsaeDivisions.pair[ageKey] || poomsaeDivisions.pair.default;
       const teamDiv = isMale ? poomsaeDivisions.team.male[ageKey] || poomsaeDivisions.team.male.default
                              : poomsaeDivisions.team.female[ageKey] || poomsaeDivisions.team.female.default;
+      document.getElementById('pairDivision').innerHTML = `<option value="${pairDiv}" selected>${pairDiv}</option>`;
       document.getElementById('teamDivision').innerHTML = `<option value="${teamDiv}" selected>${teamDiv}</option>`;
-    } else {
-      document.getElementById('teamDivision').innerHTML = '<option value="">此年齡段無團體組別</option>';
     }
 
+    toggleAllSections();
     if (currentStep === 4) updateFinalSummary();
   }
 
-  function toggleConditionalSections() {
+  function toggleAllSections() {
+    document.getElementById('individualSection').classList.toggle('show', document.getElementById('eventIndividual').checked);
     document.getElementById('pairSection').classList.toggle('show', document.getElementById('eventPair').checked);
     document.getElementById('teamSection').classList.toggle('show', document.getElementById('eventTeam').checked);
   }
@@ -472,35 +474,25 @@
     let valid = true;
     document.querySelectorAll('.error').forEach(e => e.style.display = 'none');
 
-    if (step === 1) {
-      if (!document.getElementById('chineseName').value.trim()) { document.getElementById('chineseNameError').style.display = 'block'; valid = false; }
-      if (!document.getElementById('englishName').value.trim()) { document.getElementById('englishNameError').style.display = 'block'; valid = false; }
-      if (!document.getElementById('birthDate').value) { document.getElementById('birthDateError').style.display = 'block'; valid = false; }
-      if (!document.querySelector('input[name="entry.1000000004"]:checked')) { document.getElementById('genderError').style.display = 'block'; valid = false; }
-      if (!document.getElementById('nationality').value.trim()) { document.getElementById('nationalityError').style.display = 'block'; valid = false; }
-      if (!document.getElementById('phone').value.match(/^\d{8}$/)) { document.getElementById('phoneError').style.display = 'block'; valid = false; }
-      if (!document.getElementById('emergencyContact').value.trim()) { document.getElementById('emergencyContactError').style.display = 'block'; valid = false; }
-      if (!document.getElementById('emergencyPhone').value.match(/^\d{8}$/)) { document.getElementById('emergencyPhoneError').style.display = 'block'; valid = false; }
-    }
     if (step === 2) {
-      if (!document.getElementById('affiliation').value.trim()) { document.getElementById('affiliationError').style.display = 'block'; valid = false; }
-      if (!document.getElementById('danDate').value) { document.getElementById('danDateError').style.display = 'block'; valid = false; }
-      if (!document.getElementById('currentDan').value) { document.getElementById('currentDanError').style.display = 'block'; valid = false; }
+      if (!document.getElementById('noDan').checked && !document.getElementById('danNumber').value.trim()) {
+        document.getElementById('danNumberError').style.display = 'block'; valid = false;
+      }
     }
     if (step === 3) {
       const hasIndividual = document.getElementById('eventIndividual').checked;
       const hasPair = document.getElementById('eventPair').checked;
       const hasTeam = document.getElementById('eventTeam').checked;
-
       if (!hasIndividual && !hasPair && !hasTeam) {
         alert('請至少選擇一個參加項目'); valid = false;
       }
       if (hasPair && !document.getElementById('pairPartner').value.trim()) {
         document.getElementById('pairPartnerError').style.display = 'block'; valid = false;
       }
-      if (hasTeam) {
-        if (!document.getElementById('teamMember1').value.trim()) { document.getElementById('teamMember1Error').style.display = 'block'; valid = false; }
-        if (!document.getElementById('teamMember2').value.trim()) { document.getElementById('teamMember2Error').style.display = 'block'; valid = false; }
+      if (hasTeam && (!document.getElementById('teamMember1').value.trim() || !document.getElementById('teamMember2').value.trim())) {
+        if (!document.getElementById('teamMember1').value.trim()) document.getElementById('teamMember1Error').style.display = 'block';
+        if (!document.getElementById('teamMember2').value.trim()) document.getElementById('teamMember2Error').style.display = 'block';
+        valid = false;
       }
     }
     return valid;
@@ -517,26 +509,19 @@
       <p><strong>英文姓名：</strong> ${document.getElementById('englishName').value || '未填'}</p>
       <p><strong>出生日期：</strong> ${document.getElementById('birthDate').value || '未選'}</p>
       <p><strong>性別：</strong> ${document.querySelector('input[name="entry.1000000004"]:checked')?.value || '未選'}</p>
-      <p><strong>國籍：</strong> ${document.getElementById('nationality').value || '未填'}</p>
-      <p><strong>聯絡電話：</strong> ${document.getElementById('phone').value || '未填'}</p>
-      <p><strong>緊急聯絡人：</strong> ${document.getElementById('emergencyContact').value || '未填'}（${document.getElementById('emergencyPhone').value || '未填'}）</p>
-      <p><strong>屬會名稱：</strong> ${document.getElementById('affiliation').value || '未選'}</p>
-      <p><strong>段證編號：</strong> ${document.getElementById('noDan').checked ? '未有段證' : (document.getElementById('danNumber').value || '未填')}</p>
-      <p><strong>段證申請日期：</strong> ${document.getElementById('danDate').value || '未選'}</p>
-      <p><strong>現有級別：</strong> ${document.getElementById('currentDan').value || '未選'}</p>
       <p><strong>參加項目：</strong> ${events.length ? events.join('、') : '未選擇'}</p>`;
 
     if (document.getElementById('eventIndividual').checked) {
-      html += `<p><strong>　└ 個人組別：</strong> ${document.getElementById('individualDivision').value || '尚未產生'}</p>`;
+      html += `<p><strong>　└ 個人組別：</strong> ${document.getElementById('individualDivision').value}</p>`;
     }
     if (document.getElementById('eventPair').checked) {
-      html += `<p><strong>　└ 混雙組別：</strong> ${document.getElementById('pairDivision').value || '尚未產生'}</p>
-               <p><strong>　　　└ 混雙隊員：</strong> ${document.getElementById('pairPartner').value || '未填'}</p>`;
+      html += `<p><strong>　└ 混雙組別：</strong> ${document.getElementById('pairDivision').value}</p>
+               <p><strong>　　　└ 混雙隊員：</strong> ${document.getElementById('pairPartner').value}</p>`;
     }
     if (document.getElementById('eventTeam').checked) {
-      html += `<p><strong>　└ 團體組別：</strong> ${document.getElementById('teamDivision').value || '尚未產生'}</p>
-               <p><strong>　　　└ 團體隊員1：</strong> ${document.getElementById('teamMember1').value || '未填'}</p>
-               <p><strong>　　　└ 團體隊員2：</strong> ${document.getElementById('teamMember2').value || '未填'}</p>`;
+      html += `<p><strong>　└ 團體組別：</strong> ${document.getElementById('teamDivision').value}</p>
+               <p><strong>　　　└ 團體隊員1：</strong> ${document.getElementById('teamMember1').value}</p>
+               <p><strong>　　　└ 團體隊員2：</strong> ${document.getElementById('teamMember2').value}</p>`;
     }
 
     document.getElementById('finalSummary').innerHTML = html;
@@ -557,25 +542,21 @@
     if (!document.getElementById('eventTeam').checked) { formData.delete('entry.1000000016'); formData.delete('entry.1000000017'); formData.delete('entry.1000000018'); }
 
     try {
-      await fetch('https://docs.google.com/forms/d/e/你的真實表單ID/formResponse', {
-        method: 'POST',
-        mode: 'no-cors',
-        body: formData
-      });
+      await fetch('https://docs.google.com/forms/d/e/你的真實表單ID/formResponse', { method: 'POST', mode: 'no-cors', body: formData });
     } catch(e) {}
     document.getElementById('confirmModal').style.display = 'none';
     document.getElementById('mainForm').style.display = 'none';
     document.getElementById('thankYouPage').style.display = 'flex';
   }
 
-  function populateDate(selectYear, selectMonth, selectDay, hiddenInput, minYear = 1940) {
+  function populateDate(selectYear, selectMonth, selectDay, hiddenInput) {
     const yearSel = document.getElementById(selectYear);
     const monthSel = document.getElementById(selectMonth);
     const daySel = document.getElementById(selectDay);
     const hidden = document.getElementById(hiddenInput);
     const maxYear = selectYear === 'birthYear' ? 2015 : new Date().getFullYear();
 
-    for (let y = maxYear; y >= minYear; y--) {
+    for (let y = maxYear; y >= 1940; y--) {
       let opt = document.createElement('option'); opt.value = y; opt.text = y;
       yearSel.appendChild(opt);
     }
@@ -583,7 +564,6 @@
       let opt = document.createElement('option'); opt.value = m; opt.text = m;
       monthSel.appendChild(opt);
     }
-
     function updateDays() {
       const year = parseInt(yearSel.value);
       const month = parseInt(monthSel.value);
@@ -604,12 +584,14 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     updateProgress();
-    populateDate('birthYear', 'birthMonth', 'birthDay', 'birthDate', 1940);
-    populateDate('danYear', 'danMonth', 'danDay', 'danDate', 1980);
+    populateDate('birthYear', 'birthMonth', 'birthDay', 'birthDate');
+    populateDate('danYear', 'danMonth', 'danDay', 'danDate');
 
     document.getElementById('noDan').onchange = function() {
-      document.getElementById('danNumber').disabled = this.checked;
-      if (this.checked) document.getElementById('danNumber').value = '';
+      const danInput = document.getElementById('danNumber');
+      danInput.disabled = this.checked;
+      danInput.required = !this.checked;
+      if (this.checked) danInput.value = '';
     };
 
     document.getElementById('copyPhone').onchange = function() {
@@ -622,16 +604,12 @@
     document.getElementById('eventIndividual').onchange =
     document.getElementById('eventPair').onchange =
     document.getElementById('eventTeam').onchange = () => {
-      toggleConditionalSections();
-      updateAllDivisions();
+      toggleAllSections();
       if (currentStep === 4) updateFinalSummary();
     };
 
     document.getElementById('birthYear').onchange =
-    document.querySelectorAll('input[name="entry.1000000004"]').forEach(r => r.onchange = () => {
-      updateAllDivisions();
-      if (currentStep === 4) updateFinalSummary();
-    });
+    document.querySelectorAll('input[name="entry.1000000004"]').forEach(r => r.onchange = updateAllDivisions);
 
     updateAllDivisions();
   });
