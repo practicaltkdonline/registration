@@ -539,12 +539,41 @@
 
   function submitForm() {
     if (!validateStep(4)) return;
-    updateEventField(); // 確保參加項目有正確送出
 
-    const formData = new FormData(document.getElementById('registrationForm'));
-    formData.set('entry.69039678', document.getElementById('birthDate').value);
-    formData.set('entry.1924363147', document.getElementById('danDate').value);
-    if (document.getElementById('noDan').checked) formData.set('entry.629960054', '未有段證');
+    // 關鍵修正：只把勾選的項目相關欄位加入 FormData
+    const formData = new FormData();
+    
+    // 基本資料（永遠都要送）
+    formData.append('entry.1714227241', document.getElementById('chineseName').value);
+    formData.append('entry.1739837016', document.getElementById('englishName').value);
+    formData.append('entry.69039678', document.getElementById('birthDate').value);
+    formData.append('entry.71284989', document.querySelector('input[name="entry.71284989"]:checked').value);
+    formData.append('entry.269558714', document.getElementById('nationality').value);
+    formData.append('entry.1045318375', document.getElementById('phone').value);
+    formData.append('entry.1820097193', document.getElementById('emergencyContact').value);
+    formData.append('entry.274850195', document.getElementById('emergencyPhone').value);
+    formData.append('entry.1597491054', document.getElementById('affiliation').value);
+    formData.append('entry.629960054', document.getElementById('noDan').checked ? '未有段證' : document.getElementById('danNumber').value);
+    formData.append('entry.1924363147', document.getElementById('danDate').value);
+    formData.append('entry.703788026', document.getElementById('currentDan').value);
+
+    // 參加項目文字（永遠送）
+    updateEventField();
+    formData.append('entry.1666612578', document.getElementById('eventField').value);
+
+    // 只送勾選的項目相關欄位
+    if (document.getElementById('eventIndividual').checked) {
+      formData.append('entry.1084612574', document.getElementById('individualDivision').value);
+    }
+    if (document.getElementById('eventPair').checked) {
+      formData.append('entry.1721761818', document.getElementById('pairDivision').value);
+      formData.append('entry.1921234097', document.getElementById('pairPartner').value);
+    }
+    if (document.getElementById('eventTeam').checked) {
+      formData.append('entry.1294289670', document.getElementById('teamDivision').value);
+      formData.append('entry.228238123', document.getElementById('teamMember1').value);
+      formData.append('entry.1642921107', document.getElementById('teamMember2').value);
+    }
 
     fetch('https://docs.google.com/forms/d/e/1FAIpQLSedVdHN65Sx7p9Mz8-ZxtY9w88kEUar5U2Q5GnwPODfxifpYw/formResponse', {
       method: 'POST',
