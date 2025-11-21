@@ -48,7 +48,7 @@
     .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.75);justify-content:center;align-items:flex-start;z-index:1000;padding:2rem 1rem;overflow-y:auto}
     .modal-content{background:#fff;padding:2rem;border-radius:1.2rem;max-width:600px;width:90%;max-height:85vh;overflow-y:auto;box-shadow:0 10px 28px rgba(0,0,0,.2)}
     .modal-content h2{margin-top:0;color:#1a202c}
-    .confirm-summary{background:#f8fbff;padding:1.5rem;border-radius:1rem;border-left:5px solid #3182ce;margin:1rem 0;line-height:1.8}
+    .confirm-summary{background:#f8fbff;padding:1.5rem;border-radius:1rem;border-left:5px solid #3182ce;margin:1rem 0;line-height:1.9}
     .confirm-summary strong{color:#1a202c}
     .modal-buttons{display:flex;gap:1rem;margin-top:2rem;justify-content:center;position:sticky;bottom:0;background:#fff;padding:1rem 0}
     button.confirm,button.cancel,button.return-button{padding:.8rem 1.5rem;border:none;border-radius:.6rem;cursor:pointer;min-height:44px;min-width:120px;font-size:1rem}
@@ -77,7 +77,7 @@
   </div>
 
   <div class="progress-bar">
-    <div class="progress-line-fill" id="progressLineFill"></div>
+    <div class="progress-line-fill" id="progressLineFill" style="width:0%"></div>
     <div class="progress-step active" data-step="1">1</div>
     <div class="progress-step" data-step="2">2</div>
     <div class="progress-step" data-step="3">3</div>
@@ -91,7 +91,7 @@
 
       <div class="form-group">
         <label>中文姓名 <span class="required-star">*</span></label>
-        <input type="text" id="chineseName" name="entry.1000000001" placeholder="如沒有請填寫英文姓名 (請以大寫字母填寫)" required
+        <input type="text" id="chineseName" name="entry.1000000001" placeholder="如沒有請填寫英文姓名" required
                oninput="if(!/[\u4e00-\u9fa5]/.test(this.value)) this.value=this.value.toUpperCase()">
         <span class="error" id="chineseNameError">請輸入中文姓名或英文姓名</span>
       </div>
@@ -105,11 +105,11 @@
       <div class="form-group">
         <label>出生日期 <span class="required-star">*</span></label>
         <div class="date-group">
-          <select id="birthYear" name="entry.1000000003_year" required><option value="">年</option></select>
+          <select id="birthYear" required><option value="">年</option></select>
           <span>/</span>
-          <select id="birthMonth" name="entry.1000000003_month" required><option value="">月</option></select>
+          <select id="birthMonth" required><option value="">月</option></select>
           <span>/</span>
-          <select id="birthDay" name="entry.1000000003_day" required><option value="">日</option></select>
+          <select id="birthDay" required><option value="">日</option></select>
         </div>
         <input type="hidden" id="birthDate" name="entry.1000000003">
         <span class="error" id="birthDateError">請選擇出生日期</span>
@@ -165,31 +165,72 @@
         <label>屬會名稱 <span class="required-star">*</span></label>
         <input list="affiliations" id="affiliation" name="entry.1000000009" required placeholder="請輸入或選擇屬會名稱">
         <datalist id="affiliations">
-          <!-- 所有屬會略，保持不變 -->
           <option value="香港實用跆拳道協會 HK Practical TKD Association">
           <option value="香港仔跆拳道會 Aberdeen TKD Club">
-          <!-- ... 其餘 40+ 個保持原樣 ... -->
+          <option value="技擊跆拳道會 Advanced TKD Association">
+          <option value="躍駿跆拳道會 Attack TKD Association">
+          <option value="青雲跆拳道會 Ching Wan TKD Association">
+          <option value="精英跆拳道會 Ching Ying TKD Union">
+          <option value="金柏跆拳道協會 Combat TKD Association">
+          <option value="香港跆拳道東龍會 Eastern Dragon TKD Federation HK">
+          <option value="勵志跆拳道總會 Encouragement TKD Association">
+          <option value="香港智道跆拳總會 HK Chido TKD Association">
+          <option value="香港啟聯跆拳道協會 HK Kai Luen TKD Association">
+          <option value="香港尼泊爾跆拳道會 HK Nepalese TKD Club">
+          <option value="香港跆拳道振武館 HK TKD Chun Mo Kwan">
+          <option value="香港跆拳道勵進會 HK TKD Action Association">
+          <option value="香港跆拳道勵誠會 HK TKD Active Association">
+          <option value="香港跆拳道勵輝會 HK TKD Actual Association">
+          <option value="香港中道跆拳道會 HK Chong Do TKD Association">
+          <option value="香港跆拳道青濤館 HK TKD Chung Do Kwan">
+          <option value="香港跆拳道正道館 HK TKD Jung Do Kwan">
+          <option value="香港跆拳道正心館 HK TKD Jung Sim Kwan">
+          <option value="香港聯盟跆拳道協會 HK United TKD Association">
+          <option value="跆拳道明道會 TKD Bright Way Association">
+          <option value="漢道跆拳道館 Hon Do TKD Kwan">
+          <option value="國際跆拳道香港總會 International TKD HK Association">
+          <option value="韓國跆拳道青道館 Korea TKD Cheung Do Kwan">
+          <option value="樂華跆拳道會 Lok Wah TKD Club">
+          <option value="銘英跆拳道會 Main Pioneer TKD Association">
+          <option value="跆拳道武德會 Moo Duk TKD Hae">
+          <option value="伍華跆拳道會 Ng Wah TKD Club">
+          <option value="毅武聯盟跆拳道 Ngai Mo Alliance TKD">
+          <option value="香港警察跆拳道會 HK Police TKD Club">
+          <option value="香港跆拳道國藝會 Potential TKD HK Association">
+          <option value="跆拳道吾道會體育館 TKD Oh Do Hae Gymnasium">
+          <option value="香港胡氏跆拳道會 Wu’s TKD HK Association">
+          <option value="正武會跆拳道協會 Zheng Wu TKD Association">
+          <option value="香港發景跆拳道會 Hong Kong Greatview TKD Club">
+          <option value="香港跆拳道柏毅會 Hong Kong TKD Pak Ngai Association">
+          <option value="香港跆拳道嚴濤會 Hong Kong TKD Uhm Do Club">
+          <option value="威格跆拳道會 Warrior TKD Club">
+          <option value="金道跆拳道聯盟 The Kimdo TKD Federation">
+          <option value="金道一跆拳道館 Kim Do Yi TKD Kwan">
+          <option value="樂武跆拳道會 Cheerful TKD Association Limited">
+          <option value="世紀跆拳道會 H.K. Taekwondo Cosmopolitan Club">
+          <option value="燊．跆拳道館 Sun Taekwondo Club">
+          <option value="香港進和跆拳道會 Hong Kong Chun Wo Taekwondo Association">
+          <option value="香港賢薈跆拳道會 Hong Kong Ultimate Taekwondo Club">
         </datalist>
         <span class="error" id="affiliationError">請選擇或輸入屬會名稱</span>
       </div>
 
       <div class="form-group">
-        <label>段證編號 <span class="required-star">*</span></label>
+        <label>段證編號</label>
         <div class="copy-group">
-          <input type="text" id="danNumber" name="entry.1000000010" required>
+          <input type="text" id="danNumber" name="entry.1000000010">
           <label><input type="checkbox" id="noDan"> 未有段證</label>
         </div>
-        <span class="error" id="danNumberError">請輸入段證編號或勾選未有段證</span>
       </div>
 
       <div class="form-group">
         <label>段證申請日期（如申請中請填申請當日日期）<span class="required-star">*</span></label>
         <div class="date-group">
-          <select id="danYear" name="entry.1000000011_year" required><option value="">年</option></select>
+          <select id="danYear" required><option value="">年</option></select>
           <span>/</span>
-          <select id="danMonth" name="entry.1000000011_month" required><option value="">月</option></select>
+          <select id="danMonth" required><option value="">月</option></select>
           <span>/</span>
-          <select id="danDay" name="entry.1000000011_day" required><option value="">日</option></select>
+          <select id="danDay" required><option value="">日</option></select>
         </div>
         <input type="hidden" id="danDate" name="entry.1000000011">
         <span class="error" id="danDateError">請選擇段證申請日期</span>
@@ -228,18 +269,15 @@
       <div class="form-group">
         <label>參加項目（可多選）<span class="required-star">*</span></label>
         <div class="category-group">
-          <label><input type="checkbox" id="eventIndividual" value="個人"> 個人</label>
-          <label><input type="checkbox" id="eventPair" value="混雙"> 混雙</label>
-          <label><input type="checkbox" id="eventTeam" value="團體"> 團體</label>
+          <label><input type="checkbox" id="eventIndividual"> 個人</label>
+          <label><input type="checkbox" id="eventPair"> 混雙</label>
+          <label><input type="checkbox" id="eventTeam"> 團體</label>
         </div>
       </div>
 
       <div class="form-group">
-        <label>個人組別 <span class="required-star">*</span></label>
-        <select id="individualDivision" name="entry.1000000013" required>
-          <option value="">請選擇出生日期與性別後自動帶入</option>
-        </select>
-        <span class="error" id="individualDivisionError">請確認個人組別已自動帶入</span>
+        <label>個人組別</label>
+        <select id="individualDivision" name="entry.1000000013"></select>
       </div>
 
       <div class="conditional" id="pairSection">
@@ -399,14 +437,16 @@
     const ageKey = getAgeGroup(year);
 
     // 個人
-    const individualDiv = isMale ? poomsaeDivisions.individual.male[ageKey] || poomsaeDivisions.individual.male.default
-                                 : poomsaeDivisions.individual.female[ageKey] || poomsaeDivisions.individual.female.default;
-    document.getElementById('individualDivision').innerHTML = `<option value="${individualDiv}" selected>${individualDiv}</option>`;
+    const indDiv = isMale ? poomsaeDivisions.individual.male[ageKey] || poomsaeDivisions.individual.male.default
+                          : poomsaeDivisions.individual.female[ageKey] || poomsaeDivisions.individual.female.default;
+    document.getElementById('individualDivision').innerHTML = `<option value="${indDiv}" selected>${indDiv}</option>`;
 
     // 混雙（無10-11歲）
     if (ageKey !== "2014-2015") {
       const pairDiv = poomsaeDivisions.pair[ageKey] || poomsaeDivisions.pair.default;
       document.getElementById('pairDivision').innerHTML = `<option value="${pairDiv}" selected>${pairDiv}</option>`;
+    } else {
+      document.getElementById('pairDivision').innerHTML = '<option value="">此年齡段無混雙組別</option>';
     }
 
     // 團體（無10-11歲）
@@ -414,6 +454,8 @@
       const teamDiv = isMale ? poomsaeDivisions.team.male[ageKey] || poomsaeDivisions.team.male.default
                              : poomsaeDivisions.team.female[ageKey] || poomsaeDivisions.team.female.default;
       document.getElementById('teamDivision').innerHTML = `<option value="${teamDiv}" selected>${teamDiv}</option>`;
+    } else {
+      document.getElementById('teamDivision').innerHTML = '<option value="">此年齡段無團體組別</option>';
     }
 
     if (currentStep === 4) updateFinalSummary();
@@ -442,7 +484,6 @@
     }
     if (step === 2) {
       if (!document.getElementById('affiliation').value.trim()) { document.getElementById('affiliationError').style.display = 'block'; valid = false; }
-      if (!document.getElementById('danNumber').value.trim() && !document.getElementById('noDan').checked) { document.getElementById('danNumberError').style.display = 'block'; valid = false; }
       if (!document.getElementById('danDate').value) { document.getElementById('danDateError').style.display = 'block'; valid = false; }
       if (!document.getElementById('currentDan').value) { document.getElementById('currentDanError').style.display = 'block'; valid = false; }
     }
@@ -454,19 +495,12 @@
       if (!hasIndividual && !hasPair && !hasTeam) {
         alert('請至少選擇一個參加項目'); valid = false;
       }
-      if (hasIndividual && !document.getElementById('individualDivision').value) {
-        document.getElementById('individualDivisionError').style.display = 'block'; valid = false;
-      }
       if (hasPair && !document.getElementById('pairPartner').value.trim()) {
         document.getElementById('pairPartnerError').style.display = 'block'; valid = false;
       }
       if (hasTeam) {
-        if (!document.getElementById('teamMember1').value.trim()) {
-          document.getElementById('teamMember1Error').style.display = 'block'; valid = false;
-        }
-        if (!document.getElementById('teamMember2').value.trim()) {
-          document.getElementById('teamMember  Error').style.display = 'block'; valid = false;
-        }
+        if (!document.getElementById('teamMember1').value.trim()) { document.getElementById('teamMember1Error').style.display = 'block'; valid = false; }
+        if (!document.getElementById('teamMember2').value.trim()) { document.getElementById('teamMember2Error').style.display = 'block'; valid = false; }
       }
     }
     return valid;
@@ -478,32 +512,34 @@
     if (document.getElementById('eventPair').checked) events.push('混雙');
     if (document.getElementById('eventTeam').checked) events.push('團體');
 
-    let summary = `
-      <p><strong>中文姓名：</strong> ${document.getElementById('chineseName').value}</p>
-      <p><strong>英文姓名：</strong> ${document.getElementById('englishName').value}</p>
-      <p><strong>出生日期：</strong> ${document.getElementById('birthDate').value}</p>
-      <p><strong>性別：</strong> ${document.querySelector('input[name="entry.1000000004"]:checked')?.value}</p>
-      <p><strong>聯絡電話：</strong> ${document.getElementById('phone').value}</p>
-      <p><strong>屬會名稱：</strong> ${document.getElementById('affiliation').value}</p>
-      <p><strong>段證編號：</strong> ${document.getElementById('noDan').checked ? '未有段證' : document.getElementById('danNumber').value}</p>
-      <p><strong>段證申請日期：</strong> ${document.getElementById('danDate').value}</p>
-      <p><strong>現有級別：</strong> ${document.getElementById('currentDan').value}</p>
-      <p><strong>參加項目：</strong> ${events.length ? events.join('、') : '無'}</p>`;
+    let html = `
+      <p><strong>中文姓名：</strong> ${document.getElementById('chineseName').value || '未填'}</p>
+      <p><strong>英文姓名：</strong> ${document.getElementById('englishName').value || '未填'}</p>
+      <p><strong>出生日期：</strong> ${document.getElementById('birthDate').value || '未選'}</p>
+      <p><strong>性別：</strong> ${document.querySelector('input[name="entry.1000000004"]:checked')?.value || '未選'}</p>
+      <p><strong>國籍：</strong> ${document.getElementById('nationality').value || '未填'}</p>
+      <p><strong>聯絡電話：</strong> ${document.getElementById('phone').value || '未填'}</p>
+      <p><strong>緊急聯絡人：</strong> ${document.getElementById('emergencyContact').value || '未填'}（${document.getElementById('emergencyPhone').value || '未填'}）</p>
+      <p><strong>屬會名稱：</strong> ${document.getElementById('affiliation').value || '未選'}</p>
+      <p><strong>段證編號：</strong> ${document.getElementById('noDan').checked ? '未有段證' : (document.getElementById('danNumber').value || '未填')}</p>
+      <p><strong>段證申請日期：</strong> ${document.getElementById('danDate').value || '未選'}</p>
+      <p><strong>現有級別：</strong> ${document.getElementById('currentDan').value || '未選'}</p>
+      <p><strong>參加項目：</strong> ${events.length ? events.join('、') : '未選擇'}</p>`;
 
     if (document.getElementById('eventIndividual').checked) {
-      summary += `<p><strong>　個人組別：</strong> ${document.getElementById('individualDivision').value}</p>`;
+      html += `<p><strong>　└ 個人組別：</strong> ${document.getElementById('individualDivision').value || '尚未產生'}</p>`;
     }
     if (document.getElementById('eventPair').checked) {
-      summary += `<p><strong>　混雙組別：</strong> ${document.getElementById('pairDivision').value}</p>
-                  <p><strong>　混雙隊員：</strong> ${document.getElementById('pairPartner').value}</p>`;
+      html += `<p><strong>　└ 混雙組別：</strong> ${document.getElementById('pairDivision').value || '尚未產生'}</p>
+               <p><strong>　　　└ 混雙隊員：</strong> ${document.getElementById('pairPartner').value || '未填'}</p>`;
     }
     if (document.getElementById('eventTeam').checked) {
-      summary += `<p><strong>　團體組別：</strong> ${document.getElementById('teamDivision').value}</p>
-                  <p><strong>　團體隊員1：</strong> ${document.getElementById('teamMember1').value}</p>
-                  <p><strong>　團體隊員2：</strong> ${document.getElementById('teamMember2').value}</p>`;
+      html += `<p><strong>　└ 團體組別：</strong> ${document.getElementById('teamDivision').value || '尚未產生'}</p>
+               <p><strong>　　　└ 團體隊員1：</strong> ${document.getElementById('teamMember1').value || '未填'}</p>
+               <p><strong>　　　└ 團體隊員2：</strong> ${document.getElementById('teamMember2').value || '未填'}</p>`;
     }
 
-    document.getElementById('finalSummary').innerHTML = summary;
+    document.getElementById('finalSummary').innerHTML = html;
   }
 
   function submitForm() {
@@ -521,7 +557,11 @@
     if (!document.getElementById('eventTeam').checked) { formData.delete('entry.1000000016'); formData.delete('entry.1000000017'); formData.delete('entry.1000000018'); }
 
     try {
-      await fetch('https://docs.google.com/forms/d/e/你的真實表單ID/formResponse', { method: 'POST', mode: 'no-cors', body: formData });
+      await fetch('https://docs.google.com/forms/d/e/你的真實表單ID/formResponse', {
+        method: 'POST',
+        mode: 'no-cors',
+        body: formData
+      });
     } catch(e) {}
     document.getElementById('confirmModal').style.display = 'none';
     document.getElementById('mainForm').style.display = 'none';
@@ -534,9 +574,8 @@
     const daySel = document.getElementById(selectDay);
     const hidden = document.getElementById(hiddenInput);
     const maxYear = selectYear === 'birthYear' ? 2015 : new Date().getFullYear();
-    const startYear = selectYear === 'birthYear' ? 2015 : maxYear;
 
-    for (let y = startYear; y >= minYear; y--) {
+    for (let y = maxYear; y >= minYear; y--) {
       let opt = document.createElement('option'); opt.value = y; opt.text = y;
       yearSel.appendChild(opt);
     }
@@ -544,6 +583,7 @@
       let opt = document.createElement('option'); opt.value = m; opt.text = m;
       monthSel.appendChild(opt);
     }
+
     function updateDays() {
       const year = parseInt(yearSel.value);
       const month = parseInt(monthSel.value);
@@ -581,10 +621,18 @@
 
     document.getElementById('eventIndividual').onchange =
     document.getElementById('eventPair').onchange =
-    document.getElementById('eventTeam').onchange = () => { toggleConditionalSections(); updateAllDivisions(); };
+    document.getElementById('eventTeam').onchange = () => {
+      toggleConditionalSections();
+      updateAllDivisions();
+      if (currentStep === 4) updateFinalSummary();
+    };
 
-    document.getElementById('birthYear').onchange = 
-    document.querySelectorAll('input[name="entry.1000000004"]').forEach(r => r.onchange = updateAllDivisions);
+    document.getElementById('birthYear').onchange =
+    document.querySelectorAll('input[name="entry.1000000004"]').forEach(r => r.onchange = () => {
+      updateAllDivisions();
+      if (currentStep === 4) updateFinalSummary();
+    });
+
     updateAllDivisions();
   });
 </script>
