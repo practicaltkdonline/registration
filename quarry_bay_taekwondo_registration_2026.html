@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>鰂魚涌跆拳道班報名表</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans TC', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #E0F2FE 0%, #F3F4F6 100%);
+            color: #1F2937;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .form-container {
+            background: white;
+            padding: 48px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            max-width: 960px;
+            width: 100%;
+            margin: 40px 0;
+        }
+        .error { border-color: #ef4444; }
+        .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem; }
+        .course-row:hover { background-color: #f3f4f6; transition: background-color 0.2s; }
+        .course-row { cursor: pointer; }
+        .btn { transition: transform 0.2s, background-color: 0.2s; }
+        .btn:hover { transform: scale(1.05); }
+        .course-card {
+            border: 1px solid #D1D5DB;
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #F3F4F6;
+        }
+        .course-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+        }
+        .course-card.selected {
+            border: 2px solid #3B82F6;
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+            background-color: #E0F2FE;
+        }
+        .month-group h3 {
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+            .form-container {
+                padding: 24px;
+                margin: 16px 0;
+            }
+            h1 { font-size: 1.5rem; }
+            .course-card {
+                padding: 12px;
+            }
+            .month-group h3 {
+                font-size: 1rem;
+            }
+        }
+        .date-table {
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+        .date-table td {
+            padding: 8px;
+            text-align: center;
+        }
+        .date-table td:first-child {
+            background-color: #E0F2FE;
+            font-weight: bold;
+            color: #1F2937;
+        }
+        .date-table td input[type="checkbox"] {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1 class="text-3xl font-bold text-center text-gray-800">鰂魚涌跆拳道班報名表</h1>
+        <div class="text-left text-gray-600 mt-4">
+            <p>家長你好！</p>
+            <p class="mt-2">🥋 <span class="font-bold">鰂魚涌跆拳道班報名表</span> 🥋</p>
+            <p class="mt-4"><span class="font-bold">課程詳情</span></p>
+            <p class="mt-2">📍 <span class="font-bold">地點</span>：鰂魚涌市政大樓6樓舞蹈室</p>
+            <p>📅 <span class="font-bold">逢星期日上課</span>，分為以下兩個時段：</p>
+            <ul class="list-none mt-2">
+                <li class="ml-4"><span class="font-bold">初級班</span> (3-7歲，白帶至綠帶)</li>
+                <li class="ml-4">⏰ 1月開始回復正常為12:00pm - 1:00pm </li>
+                <li class="ml-4 mt-2"><span class="font-bold">進階班</span> (8歲或以上，綠帶或以上)</li>
+                <li class="ml-4">⏰ 1月開始回復正常為12:30pm - 2:00pm </li>
+            </ul>
+            
+            <p>💰<span class="font-bold">費用</span>：每節課堂 </p>
+            <ul class="list-none mt-2">
+                <li class="ml-4">1小時 $120</li>
+                <li class="ml-4">1.5小時 $140</li>
+            </ul>
+
+            <p><span class="font-bold">收費方式</span></p>
+            <p>分為 <span class="font-bold">4期</span> 收費：</p>
+            <ul class="list-none mt-2">
+                <li class="ml-4">📆 1月 - 3月</li>
+                <li class="ml-4">📆 4月 - 6月</li>
+                <li class="ml-4">📆 7月 - 9月</li>
+                <li class="ml-4">📆 10月 - 12月</li>
+            </ul>
+            <p class="mt-4"><span class="font-bold">付款方式</span> 💵</p>
+            <ol class="list-decimal ml-4 mt-2">
+                <li><span class="font-bold">FPS</span></li>
+                <ul class="list-none ml-4">
+                    <li>戶口編號：<span class="font-bold">163115645</span></li>
+                    <li>名稱：<span class="font-bold">Practical Club Consultants Company Limited</span></li>
+                    <li>付款訊息：請寫上小朋友全名</li>
+                    <li>完成後請截圖並 WhatsApp 教練確認 ✅</li>
+                </ul>
+                <li class="mt-2"><span class="font-bold">支票</span></li>
+                <ul class="list-none ml-4">
+                    <li>抬頭：<span class="font-bold">香港實用跆拳道協會</span></li>
+                </ul>
+                <li class="mt-2"><span class="font-bold">現金</span></li>
+                <ul class="list-none ml-4">
+                    <li>於第一堂課或之前交給教練</li>
+                </ul>
+            </ol>
+            <p class="mt-4">📞 如有任何查詢，歡迎聯繫 歐Sir！</p>
+            <p>📱 WhatsApp: <a href="https://wa.me/85261504221?text=" target="_blank" class="text-blue-600 hover:underline">61504221</a></p>
+        </div>
+        <div id="loadingSpinner" class="w-10 h-10 mx-auto my-4 border-4 border-t-transparent border-blue-600 rounded-full animate-spin hidden"></div>
+        <div class="space-y-6 mt-6">
+            <div>
+                <label for="name" class="block text-gray-700 font-semibold">學員姓名 *</label>
+                <input id="name" type="text" class="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                <p id="name-error" class="error-message hidden">請輸入學員姓名！</p>
+            </div>
+            <div>
+                <label for="phone" class="block text-gray-700 font-semibold">聯絡電話 *</label>
+                <input id="phone" type="tel" class="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                <p id="phone-error" class="error-message hidden">請輸入有效的8位電話號碼！</p>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">所選班別 *</label>
+                <div class="grid grid-cols-1 gap-4 mt-4">
+                    <div class="course-card" data-value="junior" onclick="selectClass(this)">
+                        <h3 class="text-lg font-semibold">初級班</h3>
+                        <p class="text-gray-600">3-7歲 白帶至綠帶</p>
+                        <p class="text-gray-600">[1月開始回復正常為12:00pm - 1:00pm]</p>
+                    </div>
+                    <div class="course-card" data-value="advanced" onclick="selectClass(this)">
+                        <h3 class="text-lg font-semibold">進階班</h3>
+                        <p class="text-gray-600">8歲或以上 綠帶或以上</p>
+                        <p class="text-gray-600">[1月開始回復正常為12:30pm - 2:00pm]</p>
+                    </div>
+                </div>
+                <p id="class-error" class="error-message hidden">請選擇班別！</p>
+                <input type="hidden" id="class" required>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">請選擇日期 *</label>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm text-gray-600">至少選擇一個日期</span>
+                    <button type="button" id="selectAll" class="btn py-1 px-3 rounded-md text-sm text-white bg-blue-600 hover:bg-blue-700">全選</button>
+                </div>
+                <div id="dateContainer" class="text-gray-700"></div>
+                <p id="date-selection-error" class="error-message hidden">請選擇至少一個日期！</p>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold">上期有否請假 *</label>
+                <div class="mt-2 space-x-4">
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="leave" value="yes" class="form-radio text-blue-600" required>
+                        <span class="ml-2 text-sm text-gray-700">有</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="leave" value="no" class="form-radio text-blue-600" checked>
+                        <span class="ml-2 text-sm text-gray-700">沒有</span>
+                    </label>
+                </div>
+                <p id="leave-error" class="error-message hidden">請選擇是否請假！</p>
+            </div>
+            <div id="leave-date-section" class="hidden">
+                <label class="block text-gray-700 font-semibold">請假日期（如有） *</label>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm text-gray-600">請選擇請假日期</span>
+                    <button type="button" id="selectAllLeaveDates" class="btn py-1 px-3 rounded-md text-sm text-white bg-blue-600 hover:bg-blue-700">全選</button>
+                </div>
+                <div id="leaveDateContainer" class="text-gray-700"></div>
+                <p id="leave-date-error" class="error-message hidden">請選擇至少一個請假日期！</p>
+            </div>
+            <div id="deduction-section" class="hidden">
+                <label class="block text-gray-700 font-semibold">上期扣減 (堂) *</label>
+                <p id="deduction" class="text-gray-700 mt-1">0</p>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold text-gray-700">同意條款</h3>
+                <div class="mt-4">
+                    <p class="text-gray-600">請閱讀以下條款並同意：</p>
+                    <ol class="list-decimal text-gray-600 ml-4">
+                        <li class="mt-2">課程名額有限，若報名人數過多，教練將根據報名或學員水平進行篩選。</li>
+                        <li class="mt-2">課程內容可能因學員水平作出調整。</li>
+                        <li class="mt-2">若天文台懸掛八號或以上颱風或黑色暴雨警告，當天課程將取消。紅雨或黃雨則課程照常進行。教練會透過WhatsApp通知進一步安排。</li>
+                        <li class="mt-2">為確保安全，參加者必須遵守教練指示。違反守則者，教練保留權利要求其立即退出課程，所繳費用不予退還。參加者亦需確認自身健康狀況適合參與。</li>
+                        <li class="mt-2">若學員需請假，請提前通過WhatsApp通知教練，經確認後可於下一期學費中扣減相關費用。</li>
+                    </ol>
+                    <div class="mt-2 flex items-center">
+                        <input type="checkbox" id="terms" name="terms" class="form-checkbox mr-2 text-blue-600" required>
+                        <label for="terms" class="text-gray-700">我已閱讀並同意上述條款</label>
+                    </div>
+                    <p id="terms-error" class="error-message hidden">請同意條款！</p>
+                </div>
+            </div>
+            <div class="flex justify-between items-center gap-4">
+                <button onclick="clearForm()" class="btn bg-gray-300 text-gray-700 px-6 py-3 rounded-md hover:bg-gray-400">清除表單</button>
+                <button id="submitButton" type="button" class="btn bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700">下一步</button>
+            </div>
+        </div>
+    </div>
+    <div id="confirm-section" class="form-container mt-4 hidden">
+        <h2 class="text-xl font-semibold text-center text-gray-700">請確認您的報名資料</h2>
+        <div class="text-gray-600 space-y-2 mt-4">
+            <p><strong>學員姓名：</strong><span id="confirm-name"></span></p>
+            <p><strong>聯絡電話：</strong><span id="confirm-phone"></span></p>
+            <p><strong>班別：</strong><span id="confirm-class"></span></p>
+            <p><strong>選擇日期：</strong></p>
+            <ul id="confirm-dates" class="list-disc text-gray-600 ml-6"></ul>
+            <p><strong>上期有否請假：</strong><span id="confirm-leave"></span></p>
+            <p><strong>請假日期（如有）：</strong></p>
+            <ul id="confirm-leave-dates" class="list-disc text-gray-600 ml-6"></ul>
+            <p><strong>上期扣減 (堂)：</strong><span id="confirm-deduction"></span></p>
+            <p><strong>條款同意：</strong>已閱讀並同意所有條款</p>
+        </div>
+        <div class="flex justify-between mt-4 gap-4">
+            <button onclick="returnToForm()" class="btn bg-gray-300 text-gray-700 px-6 py-3 rounded-md hover:bg-gray-400">返回</button>
+            <button onclick="submitForm()" class="btn bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700">提交</button>
+        </div>
+    </div>
+    <div id="thankyou-section" class="form-container text-center mt-6 hidden">
+        <h2 class="text-2xl font-bold text-center mb-4">報名成功提交！ 📝</h2>
+        <p class="text-4xl mt-2">✅</p>
+        <p class="text-gray-600 mt-2">您將透過WhatsApp收到確認訊息及付款詳情。</p>
+        <p class="text-gray-600">完成付款後，報名將正式確認！</p>
+        <div class="mt-4">
+            <button onclick="clearForm()" class="btn bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700">重新報名</button>
+        </div>
+    </div>
+
+    <script>
+        // Google Sheet 連結
+        const spreadsheetId = '1IGczhrahIZF2W6_RUUU9ib5vQ1vkLVDIQEObWxEStgU';
+        const sheetName = 'QB';
+        const apiUrlDates = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&tq=SELECT%20G%20WHERE%20G%20IS%20NOT%20NULL%20OFFSET%201&sheet=${encodeURIComponent(sheetName)}`;
+        const apiUrlLeaveDates = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&tq=SELECT%20H%20WHERE%20H%20IS%20NOT%20NULL%20OFFSET%201&sheet=${encodeURIComponent(sheetName)}`;
+
+        // Google Form 提交 URL
+        const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScfWNLOP7CqV__g7LtepE9JlAtg49VOWdiWHsSTHWi7gQfiEw/formResponse';
+
+        // 後備日期（2025年6月-9月星期日，格式為 dd/mm）
+        const fallbackDates = [
+            { date: '1/6', display: '1日', month: 6 },
+            { date: '8/6', display: '8日', month: 6 },
+            { date: '15/6', display: '15日', month: 6 },
+            { date: '22/6', display: '22日', month: 6 },
+            { date: '29/6', display: '29日', month: 6 },
+            { date: '6/7', display: '6日', month: 7 },
+            { date: '20/7', display: '20日', month: 7 },
+            { date: '14/9', display: '14日', month: 9 },
+            { date: '28/9', display: '28日', month: 9 }
+        ];
+
+        // 後備請假日期（假設上期為2025年1月-3月，格式為 dd/mm）
+        const fallbackLeaveDates = [
+            { date: '5/1', display: '5日', month: 1 },
+            { date: '12/1', display: '12日', month: 1 },
+            { date: '19/1', display: '19日', month: 1 },
+            { date: '26/1', display: '26日', month: 1 },
+            { date: '2/2', display: '2日', month: 2 },
+            { date: '9/2', display: '9日', month: 2 },
+            { date: '16/2', display: '16日', month: 2 },
+            { date: '2/3', display: '2日', month: 3 },
+            { date: '9/3', display: '9日', month: 3 }
+        ];
+
+        // 轉義函數
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // 將 dd/mm 轉為 MM月DD日
+        function toGoogleFormDateFormat(dateStr) {
+            const match = dateStr.match(/^(\d{1,2})\/(\d{1,2})$/);
+            if (match) {
+                const day = parseInt(match[1], 10).toString().padStart(2, '0');
+                const month = parseInt(match[2], 10).toString().padStart(2, '0');
+                return `${month}月${day}日`;
+            }
+            return dateStr;
+        }
+
+        // 將 MM月DD日 轉為 dd/mm
+        function toBackendFormat(dateStr) {
+            const match = dateStr.match(/^(\d{1,2})月(\d{1,2})日$/);
+            if (match) {
+                const month = parseInt(match[1], 10);
+                const day = parseInt(match[2], 10);
+                return `${day}/${month}`;
+            }
+            return dateStr;
+        }
+
+        // 將 dd/mm 轉為 D/M（去掉前導零）
+        function toGoogleFormLeaveDateFormat(dateStr) {
+            const match = dateStr.match(/^(\d{1,2})\/(\d{1,2})$/);
+            if (match) {
+                const day = parseInt(match[1], 10);
+                const month = parseInt(match[2], 10);
+                return `${day}/${month}`;
+            }
+            return dateStr;
+        }
+
+        // 切換複選框狀態
+        function toggleCheckbox(element, type = 'dates') {
+            const checkbox = element.querySelector(`input[name="${type}"]`);
+            if (checkbox && !checkbox.disabled) {
+                checkbox.checked = !checkbox.checked;
+            }
+            if (type === 'dates' && document.querySelectorAll('input[name="dates"]:checked').length > 0) {
+                document.getElementById('date-selection-error').classList.add('hidden');
+            } else if (type === 'leaveDates' && document.querySelectorAll('input[name="leaveDates"]:checked').length > 0) {
+                document.getElementById('leave-date-error').classList.add('hidden');
+            }
+            if (type === 'leaveDates') {
+                updateDeduction();
+            }
+        }
+
+        // 更新扣減堂數
+        function updateDeduction() {
+            const selectedLeaveDates = document.querySelectorAll('input[name="leaveDates"]:checked').length;
+            document.getElementById('deduction').textContent = selectedLeaveDates;
+        }
+
+        // 渲染日期到 dateContainer 或 leaveDateContainer
+        function renderDates(dates, containerId, inputName) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            const datesByMonth = {};
+            dates.forEach(({ date, display, month }, index) => {
+                if (!datesByMonth[month]) {
+                    datesByMonth[month] = [];
+                }
+                datesByMonth[month].push({ date, display, index });
+            });
+
+            const table = document.createElement('table');
+            table.className = 'date-table';
+            const tbody = document.createElement('tbody');
+
+            Object.keys(datesByMonth).sort((a, b) => a - b).forEach(month => {
+                const row = document.createElement('tr');
+                const monthCell = document.createElement('td');
+                monthCell.textContent = `${month}月`;
+                row.appendChild(monthCell);
+
+                for (let i = 0; i < 5; i++) {
+                    const dateCell = document.createElement('td');
+                    if (i < datesByMonth[month].length) {
+                        const { date, display, index } = datesByMonth[month][i];
+                        dateCell.innerHTML = `
+                            <span class="flex-1">${escapeHtml(display)}</span>
+                            <input type="checkbox" id="${inputName}-${index}" name="${inputName}" value="${escapeHtml(date)}" class="form-checkbox text-blue-600" onclick="event.stopPropagation()">
+                        `;
+                        dateCell.setAttribute('onclick', `toggleCheckbox(this, '${inputName}')`);
+                    }
+                    row.appendChild(dateCell);
+                }
+
+                tbody.appendChild(row);
+            });
+
+            table.appendChild(tbody);
+            container.appendChild(table);
+        }
+
+        // 從 Google Sheet 獲取日期並按月份分組
+        async function fetchSheetData() {
+            const spinner = document.getElementById('loadingSpinner');
+            spinner.classList.remove('hidden');
+            try {
+                // 獲取報名日期（G 列）
+                const dateResponse = await fetch(apiUrlDates);
+                if (!dateResponse.ok) {
+                    throw new Error(`無法連接到 Google Sheets (報名日期)，HTTP 狀態碼：${dateResponse.status}`);
+                }
+                const dateText = await dateResponse.text();
+                const dateJsonString = dateText.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
+                if (!dateJsonString || !dateJsonString[1]) {
+                    throw new Error('無效的 Google Sheets JSONP 回應（報名日期），請檢查工作表是否公開。');
+                }
+                const dateData = JSON.parse(dateJsonString[1]);
+                const dates = [];
+                if (dateData.table && dateData.table.rows && dateData.table.rows.length > 0) {
+                    dateData.table.rows.forEach((row, index) => {
+                        const display = row.c[0]?.v;
+                        if (display) {
+                            const match = display.match(/^(\d{1,2})月(\d{1,2})日$/);
+                            if (match) {
+                                const month = parseInt(match[1], 10);
+                                const day = parseInt(match[2], 10);
+                                const date = `${day}/${month}`;
+                                const newDisplay = `${day}日`;
+                                dates.push({ date, display: newDisplay, month, index });
+                            }
+                        }
+                    });
+                }
+                if (dates.length > 0) {
+                    renderDates(dates, 'dateContainer', 'dates');
+                } else {
+                    alert('工作表中無有效報名日期資料，日期格式應為 MM月DD日（例如 1月5日）。將使用後備日期。');
+                    renderDates(fallbackDates, 'dateContainer', 'dates');
+                }
+
+                // 獲取請假日期（H 列）
+                const leaveDateResponse = await fetch(apiUrlLeaveDates);
+                if (!leaveDateResponse.ok) {
+                    throw new Error(`無法連接到 Google Sheets (請假日期)，HTTP 狀態碼：${leaveDateResponse.status}`);
+                }
+                const leaveDateText = await leaveDateResponse.text();
+                const leaveDateJsonString = leaveDateText.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
+                if (!leaveDateJsonString || !leaveDateJsonString[1]) {
+                    throw new Error('無效的 Google Sheets JSONP 回應（請假日期），請檢查工作表是否公開。');
+                }
+                const leaveDateData = JSON.parse(leaveDateJsonString[1]);
+                const leaveDates = [];
+                if (leaveDateData.table && leaveDateData.table.rows && leaveDateData.table.rows.length > 0) {
+                    leaveDateData.table.rows.forEach((row, index) => {
+                        const display = row.c[0]?.v;
+                        if (display) {
+                            const match = display.match(/^(\d{1,2})月(\d{1,2})日$/);
+                            if (match) {
+                                const month = parseInt(match[1], 10);
+                                const day = parseInt(match[2], 10);
+                                const date = `${day}/${month}`;
+                                const newDisplay = `${day}日`;
+                                leaveDates.push({ date, display: newDisplay, month, index });
+                            }
+                        }
+                    });
+                }
+                if (leaveDates.length > 0) {
+                    renderDates(leaveDates, 'leaveDateContainer', 'leaveDates');
+                } else {
+                    alert('工作表中無有效請假日期資料，日期格式應為 MM月DD日（例如 1月5日）。將使用後備請假日期。');
+                    renderDates(fallbackLeaveDates, 'leaveDateContainer', 'leaveDates');
+                }
+            } catch (error) {
+                alert(`載入日期資料失敗：${error.message}\n請確保 Google Sheet 已設為公開，G 列和 H 列有 MM月DD日 格式的日期（例如 1月5日），並檢查 spreadsheetId 和 sheetName 是否正確。將使用後備日期。\n如需協助，請聯繫 WhatsApp：61504221`);
+                console.error('Fetch error:', error);
+                renderDates(fallbackDates, 'dateContainer', 'dates');
+                renderDates(fallbackLeaveDates, 'leaveDateContainer', 'leaveDates');
+            } finally {
+                spinner.classList.add('hidden');
+            }
+        }
+
+        // 班別選擇
+        function selectClass(card) {
+            document.querySelectorAll('.course-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            document.getElementById('class').value = card.dataset.value;
+            document.getElementById('class-error').classList.add('hidden');
+        }
+
+        // 全選日期邏輯
+        const selectAllButton = document.getElementById('selectAll');
+        selectAllButton.addEventListener('click', () => {
+            const dateCheckboxes = document.querySelectorAll('input[name="dates"]');
+            const allChecked = Array.from(dateCheckboxes).every(cb => cb.checked);
+            dateCheckboxes.forEach(cb => cb.checked = !allChecked);
+            selectAllButton.textContent = allChecked ? '全選' : '取消全選';
+            document.getElementById('date-selection-error').classList.add('hidden');
+        });
+
+        // 全選請假日期邏輯
+        const selectAllLeaveDatesButton = document.getElementById('selectAllLeaveDates');
+        selectAllLeaveDatesButton.addEventListener('click', () => {
+            const leaveDateCheckboxes = document.querySelectorAll('input[name="leaveDates"]');
+            const allChecked = Array.from(leaveDateCheckboxes).every(cb => cb.checked);
+            leaveDateCheckboxes.forEach(cb => cb.checked = !allChecked);
+            selectAllLeaveDatesButton.textContent = allChecked ? '全選' : '取消全選';
+            document.getElementById('leave-date-error').classList.add('hidden');
+            updateDeduction();
+        });
+
+        // 即時驗證欄位
+        function validateField(element) {
+            const id = element.id;
+            const errorElement = document.getElementById(`${id}-error`);
+
+            if (id === 'name') {
+                if (element.value.trim()) {
+                    element.classList.remove('error');
+                    errorElement.classList.add('hidden');
+                }
+            } else if (id === 'phone') {
+                const phoneRegex = /^\d{8}$/;
+                if (phoneRegex.test(element.value.trim())) {
+                    element.classList.remove('error');
+                    errorElement.classList.add('hidden');
+                }
+            } else if (id === 'terms') {
+                if (element.checked) {
+                    element.classList.remove('error');
+                    errorElement.classList.add('hidden');
+                }
+            }
+        }
+
+        // 請假邏輯
+        const leaveRadios = document.querySelectorAll('input[name="leave"]');
+        const leaveDateSection = document.getElementById('leave-date-section');
+        const deductionSection = document.getElementById('deduction-section');
+
+        leaveRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                const isYes = radio.value === 'yes';
+                leaveDateSection.classList.toggle('hidden', !isYes);
+                deductionSection.classList.toggle('hidden', !isYes);
+                if (!isYes) {
+                    document.querySelectorAll('input[name="leaveDates"]').forEach(cb => cb.checked = false);
+                    document.getElementById('selectAllLeaveDates').textContent = '全選';
+                    document.getElementById('deduction').textContent = '0';
+                    document.getElementById('leave-date-error').classList.add('hidden');
+                }
+                document.getElementById('leave-error').classList.add('hidden');
+                updateDeduction();
+            });
+        });
+
+        // 綁定即時輸入事件
+        document.getElementById('name').addEventListener('input', function() { validateField(this); });
+        document.getElementById('phone').addEventListener('input', function() { validateField(this); });
+        document.getElementById('terms').addEventListener('change', function() { validateField(this); });
+
+        // 綁定請假日期複選框事件
+        document.addEventListener('change', (event) => {
+            if (event.target.name === 'leaveDates') {
+                updateDeduction();
+                if (document.querySelectorAll('input[name="leaveDates"]:checked').length > 0) {
+                    document.getElementById('leave-date-error').classList.add('hidden');
+                }
+            }
+        });
+
+        // 表單驗證與確認頁
+        document.getElementById('submitButton').addEventListener('click', () => {
+            const nameInput = document.getElementById('name');
+            const name = nameInput.value.trim();
+            const phoneInput = document.getElementById('phone');
+            const phone = phoneInput.value.trim();
+            const classSelected = document.getElementById('class').value;
+            const selectedDates = Array.from(document.querySelectorAll('input[name="dates"]:checked')).map(cb => ({
+                value: cb.value,
+                display: cb.parentElement.querySelector('span').textContent,
+                month: parseInt(cb.value.split('/')[1])
+            }));
+            const leave = document.querySelector('input[name="leave"]:checked')?.value;
+            const selectedLeaveDates = Array.from(document.querySelectorAll('input[name="leaveDates"]:checked')).map(cb => ({
+                value: cb.value,
+                display: cb.parentElement.querySelector('span').textContent,
+                month: parseInt(cb.value.split('/')[1])
+            }));
+            const deduction = selectedLeaveDates.length;
+            const terms = document.getElementById('terms').checked;
+
+            // 重置錯誤狀態
+            nameInput.classList.remove('error');
+            document.getElementById('name-error').classList.add('hidden');
+            phoneInput.classList.remove('error');
+            document.getElementById('phone-error').classList.add('hidden');
+            document.getElementById('class-error').classList.add('hidden');
+            document.getElementById('date-selection-error').classList.add('hidden');
+            document.getElementById('leave-error').classList.add('hidden');
+            document.getElementById('leave-date-error').classList.add('hidden');
+            document.getElementById('terms').classList.remove('error');
+            document.getElementById('terms-error').classList.add('hidden');
+
+            let firstErrorElement = null;
+
+            // 驗證姓名
+            if (!name) {
+                nameInput.classList.add('error');
+                document.getElementById('name-error').classList.remove('hidden');
+                firstErrorElement = nameInput;
+            }
+
+            // 驗證電話
+            const phoneRegex = /^\d{8}$/;
+            if (!phoneRegex.test(phone)) {
+                phoneInput.classList.add('error');
+                document.getElementById('phone-error').classList.remove('hidden');
+                if (!firstErrorElement) firstErrorElement = phoneInput;
+            }
+
+            // 驗證班別
+            if (!classSelected) {
+                document.getElementById('class-error').classList.remove('hidden');
+                if (!firstErrorElement) firstErrorElement = document.getElementById('class-error');
+            }
+
+            // 驗證日期
+            if (selectedDates.length === 0) {
+                document.getElementById('date-selection-error').classList.remove('hidden');
+                if (!firstErrorElement) firstErrorElement = document.getElementById('date-selection-error');
+            }
+
+            // 驗證請假
+            if (!leave) {
+                document.getElementById('leave-error').classList.remove('hidden');
+                if (!firstErrorElement) firstErrorElement = document.getElementById('leave-error');
+            }
+
+            // 驗證請假日期
+            if (leave === 'yes' && selectedLeaveDates.length === 0) {
+                document.getElementById('leave-date-error').classList.remove('hidden');
+                if (!firstErrorElement) firstErrorElement = document.getElementById('leave-date-section');
+            }
+
+            // 驗證條款
+            if (!terms) {
+                document.getElementById('terms').classList.add('error');
+                document.getElementById('terms-error').classList.remove('hidden');
+                if (!firstErrorElement) firstErrorElement = document.getElementById('terms');
+            }
+
+            // 如果有錯誤，滾動到第一個錯誤欄位並聚焦
+            if (firstErrorElement) {
+                firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (firstErrorElement.tagName === 'INPUT' || firstErrorElement.tagName === 'TEXTAREA') {
+                    firstErrorElement.focus();
+                }
+                return;
+            }
+
+            // 按月份分組並格式化報名日期
+            const datesByMonth = {};
+            selectedDates.forEach(date => {
+                if (!datesByMonth[date.month]) {
+                    datesByMonth[date.month] = [];
+                }
+                datesByMonth[date.month].push(date.display.replace('日', ''));
+            });
+
+            // 更新確認頁報名日期
+            const confirmDatesElement = document.getElementById('confirm-dates');
+            confirmDatesElement.innerHTML = Object.keys(datesByMonth)
+                .sort((a, b) => a - b)
+                .map(month => `<li>${month}月${datesByMonth[month].join('日, ') + '日'}</li>`)
+                .join('');
+
+            // 按月份分組並格式化請假日期
+            const leaveDatesByMonth = {};
+            selectedLeaveDates.forEach(date => {
+                if (!leaveDatesByMonth[date.month]) {
+                    leaveDatesByMonth[date.month] = [];
+                }
+                leaveDatesByMonth[date.month].push(date.display.replace('日', ''));
+            });
+
+            // 更新確認頁請假日期
+            const confirmLeaveDatesElement = document.getElementById('confirm-leave-dates');
+            confirmLeaveDatesElement.innerHTML = Object.keys(leaveDatesByMonth).length > 0
+                ? Object.keys(leaveDatesByMonth)
+                    .sort((a, b) => a - b)
+                    .map(month => `<li>${month}月${leaveDatesByMonth[month].join('日, ') + '日'}</li>`)
+                    .join('')
+                : '<li>無</li>';
+
+            // 更新確認頁
+            document.getElementById('confirm-name').textContent = name;
+            document.getElementById('confirm-phone').textContent = phone;
+            document.getElementById('confirm-class').textContent = classSelected === 'junior' ? '初級 3-7歲 白帶至綠帶' : '進階 8歲或以上 綠帶或以上';
+            document.getElementById('confirm-leave').textContent = leave === 'yes' ? '有' : '沒有';
+            document.getElementById('confirm-deduction').textContent = leave === 'yes' ? deduction : '0';
+
+            // 儲存數據
+            window.formData = {
+                name,
+                phone,
+                class: classSelected,
+                dates: selectedDates,
+                leave,
+                leaveDates: selectedLeaveDates,
+                deduction
+            };
+
+            // 顯示確認頁
+            document.querySelector('.form-container').classList.add('hidden');
+            document.getElementById('confirm-section').classList.remove('hidden');
+        });
+
+        function returnToForm() {
+            document.getElementById('confirm-section').classList.add('hidden');
+            document.querySelector('.form-container').classList.remove('hidden');
+        }
+
+        function submitForm() {
+            const { name, phone, class: classSelected, dates, leave, leaveDates, deduction } = window.formData;
+
+            // 準備 Google Form 數據
+            const formData = new FormData();
+            formData.append('entry.1485466301', name);
+            formData.append('entry.1919163075', phone);
+            formData.append('entry.781986668', classSelected === 'junior' ? '初級 3-7歲 白帶至綠帶' : '進階 8歲或以上 綠帶或以上');
+            formData.append('entry.1067771173', dates.map(date => toGoogleFormDateFormat(date.value)).join(','));
+            formData.append('entry.1731377011', leave === 'yes' ? '有' : '沒有');
+            formData.append('entry.762426758', leaveDates.map(date => toGoogleFormLeaveDateFormat(date.value)).join(','));
+            formData.append('entry.1394157809', deduction);
+
+            // 提交到 Google Form
+            fetch(googleFormUrl, {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors'
+            })
+            .then(() => {
+                document.getElementById('confirm-section').classList.add('hidden');
+                document.getElementById('thankyou-section').classList.remove('hidden');
+            })
+            .catch(error => {
+                alert(`提交失敗：${error.message}\n請檢查控制台錯誤訊息並聯繫支援。`);
+                console.error('Submit error:', error);
+            });
+        }
+
+        function clearForm() {
+            document.getElementById('name').value = '';
+            document.getElementById('name').classList.remove('error');
+            document.getElementById('name-error').classList.add('hidden');
+            
+            document.getElementById('phone').value = '';
+            document.getElementById('phone').classList.remove('error');
+            document.getElementById('phone-error').classList.add('hidden');
+            
+            document.getElementById('class').value = '';
+            document.getElementById('class-error').classList.add('hidden');
+            document.querySelectorAll('.course-card').forEach(c => c.classList.remove('selected'));
+            
+            document.querySelectorAll('input[name="dates"]').forEach(cb => cb.checked = false);
+            document.getElementById('date-selection-error').classList.add('hidden');
+            selectAllButton.textContent = '全選';
+            
+            leaveRadios.forEach(radio => radio.checked = radio.value === 'no');
+            document.getElementById('leave-error').classList.add('hidden');
+            document.querySelectorAll('input[name="leaveDates"]').forEach(cb => cb.checked = false);
+            document.getElementById('selectAllLeaveDates').textContent = '全選';
+            leaveDateSection.classList.add('hidden');
+            document.getElementById('deduction').textContent = '0';
+            deductionSection.classList.add('hidden');
+            document.getElementById('leave-date-error').classList.add('hidden');
+            
+            document.getElementById('terms').checked = false;
+            document.getElementById('terms').classList.remove('error');
+            document.getElementById('terms-error').classList.add('hidden');
+            
+            document.getElementById('thankyou-section').classList.add('hidden');
+            document.getElementById('confirm-section').classList.add('hidden');
+            document.querySelector('.form-container').classList.remove('hidden');
+            
+            window.formData = null;
+        }
+
+        // 初次載入日期資料
+        fetchSheetData();
+    </script>
+</body>
+</html>
