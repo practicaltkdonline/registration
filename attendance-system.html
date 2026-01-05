@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Attendance System v4.1</title>
+  <title>Attendance System v4.2</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen">
@@ -77,7 +77,6 @@
     const FORM_ENTRIES={date:'entry.176770776',course:'entry.1115358630',time:'entry.1251335978',coach:'entry.1253762114'};
     const cardsEl=document.getElementById('cards');
     const modalEl=document.getElementById('modal');
-    const modalContent=document.getElementById('modal-content');
     const modalTitle=document.getElementById('modal-title');
     const modalDate=document.getElementById('modal-date');
     const modalCoaches=document.getElementById('modal-coaches');
@@ -97,6 +96,7 @@
     const whatsappOutput=document.getElementById('whatsapp-output');
     const toast=document.getElementById('toast');
     let classInfoRows=[], sheet1Rows=[], selectedCourse='', selectedTime='';
+
     // tab 切換
     tabAttend.onclick=()=>showAttend();
     tabView.onclick=()=>showView();
@@ -116,10 +116,11 @@
       tabAttend.classList.remove('bg-blue-500','text-white');
       tabAttend.classList.add('bg-gray-300','text-gray-800','hover:bg-gray-400');
     }
+
     function gvizFetch(idOrSheet){
       const url=/^[0-9]+$/.test(idOrSheet)
-        ?`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${idOrSheet}&t=${Date.now()}`
-        :`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(idOrSheet)}&t=${Date.now()}`;
+        ? `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${idOrSheet}&t=${Date.now()}`
+        : `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(idOrSheet)}&t=${Date.now()}`;
       return fetch(url)
         .then(r => {
           if (!r.ok) throw new Error('無法載入 Google Sheets 資料');
@@ -138,14 +139,18 @@
           return [];
         });
     }
+
+    // 加強版日期解析：支援 yyyy/m/d 和 yyyy/mm/dd 兩種格式
     function parseDateFlexible(s){
       if(!s) return null;
-      if(/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(s)) {
-        const [year, month, day] = s.split('/').map(Number);
-        return new Date(year, month - 1, day);
+      const match = s.toString().match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+      if(match){
+        const [, year, month, day] = match;
+        return new Date(Number(year), Number(month)-1, Number(day));
       }
       return null;
     }
+
     function formatDateToYYYYMMDD(date) {
       if (!(date instanceof Date) || isNaN(date)) return '';
       const year = date.getFullYear();
@@ -153,6 +158,7 @@
       const day = String(date.getDate()).padStart(2, '0');
       return `${year}/${month}/${day}`;
     }
+
     function getNextClassDate(course, time) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -183,11 +189,27 @@
       const day = String(dt.getDate()).padStart(2, '0');
       return `${year}年${month}月${day}日`;
     }
-    Promise.all([gvizFetch(CLASS_INFO_SHEET),gvizFetch(SHEET1_GID)]).then(([cRows,sRows])=>{
-      classInfoRows=cRows.slice(1).map(r=>({course:r[0]||'',time:r[1]||'',date:r[2]||'',coach:r[3]||''}));
-      sheet1Rows=sRows.slice(1).map(r=>({course:r[1]||'',time:r[2]||'',date:r[3]||'',coach:r[4]||''}));
-      renderCards(); populateSelectors(); autoLoad();
+
+    Promise.all([gvizFetch(CLASS_INFO_SHEET), gvizFetch(SHEET1_GID)]).then(([cRows, sRows]) => {
+      classInfoRows = cRows.slice(1).map(r => ({
+        course: r[0] || '',
+        time: r[1] || '',
+        date: r[2] || '',
+        coach: r[3] || ''
+      }));
+
+      sheet1Rows = sRows.slice(1).map(r => ({
+        course: r[1] || '',
+        time: r[2] || '',
+        date: r[3] || '',
+        coach: r[4] || ''
+      }));
+
+      renderCards();
+      populateSelectors();
+      autoLoad();
     });
+
     function renderCards(){
       const seen=new Set(); cardsEl.innerHTML='';
       classInfoRows.forEach(r=>{
@@ -218,7 +240,7 @@
         }
       });
     }
-    // modal 打開
+
     function openModal(course,time){
       selectedCourse=course; selectedTime=time;
       modalTitle.textContent=course;
@@ -244,34 +266,32 @@
           }
         });
       }
-      // 修正：明確設定 value 屬性
-      modalDate.innerHTML = dates.map(d => 
+      modalDate.innerHTML = dates.map(d =>
         `<option value="${d}" ${d === closest ? 'selected' : ''}>${d}</option>`
       ).join('');
       modalCoaches.innerHTML=coaches.map(c=>`<label class="flex items-center gap-2 p-2 border rounded"><input type="checkbox" value="${c}" class="coach-check"><span>${c}</span></label>`).join('');
-      modalEl.classList.remove('hidden'); modalEl.style.display='flex';
+      modalEl.classList.remove('hidden');
+      modalEl.style.display='flex';
     }
-    // 關閉 Modal
+
     modalClose.onclick=modalCancel.onclick=()=>closeModal();
     modalEl.addEventListener('click',e=>{if(e.target===modalEl)closeModal();});
-    function closeModal(){modalEl.classList.add('hidden');modalEl.style.display='none';}
-    modalSubmit.onclick=()=>submitForm(selectedCourse,selectedTime);
-    
-    // 修正：直接使用 modalDate.value，不再轉換
-    function submitForm(course,time){
-      const date = modalDate.value.trim(); // 直接取值
-      const coaches = Array.from(document.querySelectorAll('.coach-check:checked')).map(c => c.value);
+    function closeModal(){modalEl.classList.add('hidden'); modalEl.style.display='none';}
 
+    modalSubmit.onclick=()=>submitForm(selectedCourse,selectedTime);
+
+    function submitForm(course,time){
+      const date = modalDate.value.trim();
+      const coaches = Array.from(document.querySelectorAll('.coach-check:checked')).map(c => c.value);
       if (!date || !coaches.length) {
         alert('請選擇日期與教練');
         return;
       }
-
       const form=document.createElement('form');
       form.action=`https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
       form.method='POST'; form.target='hidden_iframe';
       const add=(n,v)=>{const i=document.createElement('input');i.type='hidden';i.name=n;i.value=v;form.appendChild(i);};
-      add(FORM_ENTRIES.date, date); // 直接送出 YYYY/MM/DD
+      add(FORM_ENTRIES.date, date);
       add(FORM_ENTRIES.course, course);
       add(FORM_ENTRIES.time, time);
       coaches.forEach(c => add(FORM_ENTRIES.coach, c));
@@ -282,48 +302,119 @@
       closeModal();
       setTimeout(() => refreshSheet1(), 2000);
     }
+
     function refreshSheet1(){
       gvizFetch(SHEET1_GID).then(rows=>{
-        sheet1Rows=rows.slice(1).map(r=>({course:r[1]||'',time:r[2]||'',date:r[3]||'',coach:r[4]||''}));
+        sheet1Rows=rows.slice(1).map(r=>({
+          course: r[1]||'', time: r[2]||'', date: r[3]||'', coach: r[4]||''
+        }));
         autoLoad();
       });
     }
+
     function populateSelectors(){
       const courses=[...new Set(sheet1Rows.map(r=>r.course))].filter(Boolean).sort();
       viewCourse.innerHTML='<option value="">--選課程--</option>'+courses.map(c=>`<option>${c}</option>`).join('');
-      const now=new Date();
-      viewYear.innerHTML=`<option>${now.getFullYear()}</option>`;
+
+      const currentYear = new Date().getFullYear();
+      const startYear = 2025;
+      const years = [];
+      for(let y = startYear; y <= currentYear + 1; y++) {
+        years.push(y);
+      }
+      viewYear.innerHTML = years.map(y => `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`).join('');
+
       viewMonth.innerHTML=Array.from({length:12},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
-      viewMonth.value=now.getMonth()+1;
+      viewMonth.value = new Date().getMonth() + 1;
+
       [viewCourse,viewYear,viewMonth].forEach(sel=>sel.addEventListener('change',autoLoad));
     }
+
     function autoLoad(){
       const c=viewCourse.value, y=+viewYear.value, m=+viewMonth.value;
-      if(!c) return;
+      if(!c || !y || !m) {
+        loadingStatus.textContent='請選擇課程、年份、月份';
+        viewTable.innerHTML=''; 
+        whatsappOutput.value=''; 
+        return;
+      }
       loadingStatus.textContent='載入中...';
-      const filtered=sheet1Rows.map(r=>({...r,d:parseDateFlexible(r.date)}))
-        .filter(r=>r.course===c&&r.d&&r.d.getFullYear()===y&&r.d.getMonth()+1===m);
-      if(!filtered.length){
-        loadingStatus.textContent='查無資料';
+
+      // 找出該課程在 Class info 中的時間
+      const classInfo = classInfoRows.find(r => r.course === c);
+      const time = classInfo ? classInfo.time : '';
+
+      // 從 Class info 取出該課程所有預定日期，並過濾出指定年月的
+      const scheduledDates = [...new Set(classInfoRows
+        .filter(r => r.course === c)
+        .flatMap(r => r.date.split(/[,，]/).map(x => x.trim())))
+      ].filter(Boolean)
+       .map(d => parseDateFlexible(d))
+       .filter(dt => dt && dt.getFullYear() === y && dt.getMonth() + 1 === m)
+       .sort((a,b) => a - b)
+       .map(dt => {
+         // 保持原樣輸出（不補零），以匹配 Sheet 顯示格式
+         const year = dt.getFullYear();
+         const month = dt.getMonth() + 1;
+         const day = dt.getDate();
+         return `${year}/${month}/${day}`;
+       });
+
+      if(scheduledDates.length === 0){
+        loadingStatus.textContent='該月份無預定上課日期';
         viewTable.innerHTML=''; whatsappOutput.value=''; return;
       }
-      filtered.sort((a,b)=>a.d-b.d);
-      const monthName=`${y}年${m}月`;
-      const time=filtered[0].time;
-      const dateMap={};
-      filtered.forEach(r=>{
-        if(!dateMap[r.date]) dateMap[r.date]=[];
-        dateMap[r.date].push(r.coach);
+
+      // 建立實際點名記錄的 map：date -> coaches 陣列
+      const attendanceMap = {};
+      sheet1Rows
+        .filter(r => r.course === c)
+        .forEach(r => {
+          const dt = parseDateFlexible(r.date);
+          if(dt && dt.getFullYear() === y && dt.getMonth() + 1 === m){
+            const dateStr = r.date.trim(); // 使用原始字串（yyyy/m/d）
+            if(!attendanceMap[dateStr]) attendanceMap[dateStr] = [];
+            attendanceMap[dateStr].push(r.coach);
+          }
+        });
+
+      // 產生 WhatsApp 文字
+      const monthName = `${y}年${m}月`;
+      let text = `*${c}*\n`;
+      if(time) text += `${time}\n\n`;
+      text += `*${monthName}*\n`;
+
+      scheduledDates.forEach(d => {
+        const coaches = attendanceMap[d] || [];
+        text += `${d}\n`;
+        text += coaches.length > 0 ? coaches.join(', ') + '\n' : '-\n';
       });
-      let text=`*${c}*\n\n${monthName}\n${time}`;
-      Object.keys(dateMap).sort((a,b)=>parseDateFlexible(a)-parseDateFlexible(b))
-        .forEach(d=>{text+=`\n${d}\n${dateMap[d].join(', ')}`;});
-      whatsappOutput.value=text;
-      loadingStatus.textContent=`已載入 ${filtered.length} 筆資料`;
-      viewTable.innerHTML='<thead class="bg-gray-100"><tr><th class="p-2 text-left">日期</th><th class="p-2 text-left">時間</th><th class="p-2 text-left">教練</th></tr></thead><tbody>'+
-        filtered.map(r=>`<tr class="border-t"><td class="p-2">${r.date}</td><td class="p-2">${r.time}</td><td class="p-2">${r.coach}</td></tr>`).join('')+'</tbody>';
+
+      whatsappOutput.value = text.trim();
+
+      // 表格顯示實際點名記錄
+      const recorded = sheet1Rows
+        .filter(r => r.course === c)
+        .map(r => ({...r, dt: parseDateFlexible(r.date)}))
+        .filter(r => r.dt && r.dt.getFullYear() === y && r.dt.getMonth() + 1 === m)
+        .sort((a,b) => a.dt - b.dt);
+
+      if(recorded.length === 0){
+        viewTable.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-gray-500">本月尚未有點名記錄</td></tr>';
+      } else {
+        viewTable.innerHTML='<thead class="bg-gray-100"><tr><th class="p-2 text-left">日期</th><th class="p-2 text-left">時間</th><th class="p-2 text-left">教練</th></tr></thead><tbody>'+
+          recorded.map(r=>`<tr class="border-t"><td class="p-2">${r.date}</td><td class="p-2">${r.time}</td><td class="p-2">${r.coach}</td></tr>`).join('')+'</tbody>';
+      }
+
+      loadingStatus.textContent=`已載入（預定 ${scheduledDates.length} 堂，實際點名 ${recorded.length} 筆）`;
     }
-    btnCopy.onclick=()=>{whatsappOutput.select();document.execCommand('copy');alert('已複製 WhatsApp 格式');};
+
+    btnCopy.onclick=()=>{
+      whatsappOutput.select();
+      document.execCommand('copy');
+      alert('已複製 WhatsApp 格式');
+    };
+
   })();
   </script>
 </body>
