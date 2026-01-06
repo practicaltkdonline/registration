@@ -190,7 +190,7 @@
         <span id="dojoError" class="error">請選擇或輸入道場</span>
       </div>
       <div class="form-group">
-        <label>參加教練班的目的</label>
+        <label class="no-asterisk">參加教練班的目的</label>
         <div class="radio-group">
           <label class="no-asterisk"><input type="radio" name="purpose" value="因為有負責教班" onchange="updatePurpose()"> 因為有負責教班</label>
           <label class="no-asterisk"><input type="radio" name="purpose" value="沒有教班但想增值自己" onchange="updatePurpose()"> 沒有教班但想增值自己</label>
@@ -201,7 +201,7 @@
         <span id="purposeError" class="error">請選擇一項參加目的</span>
       </div>
       <div class="form-group" id="challengeGroup">
-        <label>教學上遇到的困難</label>
+        <label class="no-asterisk">教學上遇到的困難</label>
         <div class="checkbox-group">
           <label class="no-asterisk"><input type="checkbox" value="突發情況處理"> 突發情況處理</label>
           <label class="no-asterisk"><input type="checkbox" value="小朋友唔聽話"> 小朋友唔聽話</label>
@@ -214,12 +214,12 @@
         <span id="challengeError" class="error">請至少選擇一項教學困難</span>
       </div>
       <div class="form-group">
-        <label for="detailedChallenges">具體描述一下遇到的困難情況</label>
-        <textarea id="detailedChallenges" name="entry.1312882810" required></textarea>
+        <label class="no-asterisk" for="detailedChallenges">具體描述一下遇到的困難情況</label>
+        <textarea id="detailedChallenges" name="entry.1312882810"></textarea>
         <span id="detailedChallengesError" class="error">請輸入你的描述</span>
       </div>
       <div class="form-group" id="learningGroup">
-        <label>想於教練班中學到什麼</label>
+        <label class="no-asterisk">想於教練班中學到什麼</label>
         <div class="checkbox-group">
           <label class="no-asterisk"><input type="checkbox" value="踢腳的技巧"> 踢腳的技巧</label>
           <label class="no-asterisk"><input type="checkbox" value="教學流程"> 教學流程</label>
@@ -233,19 +233,19 @@
         <span id="learningError" class="error">請至少選擇一項學習內容</span>
       </div>
       <div class="form-group">
-        <label for="jumpSideKickDecomposition">你如何分解jump side kick的動作去教給小朋友？可以簡單描述一下步驟</label>
-        <textarea id="jumpSideKickDecomposition" name="entry.194670589" required></textarea>
+        <label class="no-asterisk" for="jumpSideKickDecomposition">你如何分解jump side kick的動作去教給小朋友？可以簡單描述一下步驟</label>
+        <textarea id="jumpSideKickDecomposition" name="entry.194670589"></textarea>
         <span id="jumpSideKickDecompositionError" class="error">請輸入你的描述</span>
       </div>
       <div class="form-group">
-        <label for="jumpSideKickCommonProblems">教小朋友學習jump side kick時，最常遇到的問題是什麼？你如何解決這些問題？</label>
-        <textarea id="jumpSideKickCommonProblems" name="entry.465791582" required></textarea>
+        <label class="no-asterisk" for="jumpSideKickCommonProblems">教小朋友學習jump side kick時，最常遇到的問題是什麼？你如何解決這些問題？</label>
+        <textarea id="jumpSideKickCommonProblems" name="entry.465791582"></textarea>
         <span id="jumpSideKickCommonProblemsError" class="error">請輸入你的描述</span>
       </div>
       <div class="form-group">
-        <label>會否抽空參加教練培訓班</label>
+        <label class="no-asterisk">會否抽空參加教練培訓班</label>
         <div class="radio-group">
-          <label class="no-asterisk"><input type="radio" name="attend" value="會" required> 會</label>
+          <label class="no-asterisk"><input type="radio" name="attend" value="會"> 會</label>
           <label class="no-asterisk"><input type="radio" name="attend" value="否"> 否</label>
         </div>
         <input type="hidden" id="attend" name="entry.673172076">
@@ -399,41 +399,6 @@
       // Validate dojo
       if (!dojoSelect.value || (dojoSelect.value === '其他' && !customDojoInput.value.trim())) {
         dojoError.style.display = 'block';
-        isValid = false;
-      }
-      // Validate purpose
-      if (!purposeInput.value || (document.querySelector('input[name="purpose"][value="其他"]:checked') && !customPurposeInput.value.trim())) {
-        purposeError.style.display = 'block';
-        isValid = false;
-      }
-      // Validate challenges
-      if (!challengeInput.value) {
-        challengeError.style.display = 'block';
-        isValid = false;
-      }
-      // Validate detailed challenges
-      if (!detailedChallengesInput.value.trim()) {
-        detailedChallengesError.style.display = 'block';
-        isValid = false;
-      }
-      // Validate learning
-      if (!learningInput.value) {
-        learningError.style.display = 'block';
-        isValid = false;
-      }
-      // Validate jump side kick decomposition
-      if (!jumpSideKickDecompositionInput.value.trim()) {
-        jumpSideKickDecompositionError.style.display = 'block';
-        isValid = false;
-      }
-      // Validate jump side kick common problems
-      if (!jumpSideKickCommonProblemsInput.value.trim()) {
-        jumpSideKickCommonProblemsError.style.display = 'block';
-        isValid = false;
-      }
-      // Validate attend
-      if (!attendInput.value) {
-        attendError.style.display = 'block';
         isValid = false;
       }
       if (isValid) {
