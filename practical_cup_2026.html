@@ -29,7 +29,7 @@
     input,select,button{width:100%;padding:.8rem;border:1px solid #e2e8f0;border-radius:.6rem;box-sizing:border-box;font-size:1rem;background:#fff;transition:all .3s;height:2.8rem}
     input:focus,select:focus{outline:none;border-color:#3182ce;box-shadow:0 0 6px rgba(49,130,206,.4);background:#f8fbff}
     .date-group{display:flex;align-items:center;gap:.5rem}
-    .date-group select{width:8rem}
+    .date-group input{width:8rem}
     .date-group span{font-size:1rem;color:#2d3748}
     .category-group{display:flex;gap:1.5rem;flex-wrap:wrap;padding:.5rem 0}
     .category-group label{display:flex;align-items:center;font-weight:500;cursor:pointer;font-size:1rem}
@@ -46,7 +46,7 @@
     .nav-next,#submitBtn{background:linear-gradient(90deg,#3182ce,#2b6cb0);color:#fff}
     .nav-next:hover,#submitBtn:hover{background:linear-gradient(90deg,#2b6cb0,#2c5282)}
     #thankYouPage{display:none;background:#fff;padding:3rem 2rem;border-radius:1.2rem;box-shadow:0 8px 24px rgba(0,0,0,.12);text-align:center;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:500px;z-index:9999}
-    #feeSummary{font-weight:bold;color:#c53030;margin:1.5rem 0;padding:1rem;background:#fff5f5;border-radius:0.8rem;border:1px solid #feb2b2;}
+    #feeSummary{font-weight:bold;color:#3182ce;margin:1.5rem 0;padding:1rem;background:#ecf3ff;border-radius:0.8rem;border:1px solid #63b3ed;}
     .note{font-size:0.95rem;color:#718096;margin-top:0.5rem;}
     .strikethrough {text-decoration: line-through; color:#999; margin-right:0.5rem;}
     .required-star{color:#e53e3e}
@@ -84,20 +84,20 @@
 
       <div class="form-group">
         <label>英文姓名 <span class="required-star">*</span></label>
-        <input type="text" id="englishName" name="entry.XXXXXXX" placeholder="請以大寫字母填寫" required oninput="this.value=this.value.toUpperCase()">
+        <input type="text" id="englishName" name="entry.XXXXXXX" placeholder="請填寫英文姓名" required>
       </div>
 
       <div class="form-group">
         <label>出生日期 <span class="required-star">*</span></label>
         <div class="date-group">
-          <select id="birthYear" required><option value="">年</option></select>
+          <input type="number" id="birthYear" min="1" max="2026" placeholder="年" required>
           <span>/</span>
-          <select id="birthMonth" required><option value="">月</option></select>
+          <input type="number" id="birthMonth" min="1" max="12" placeholder="月" required>
           <span>/</span>
-          <select id="birthDay" required><option value="">日</option></select>
+          <input type="number" id="birthDay" min="1" max="31" placeholder="日" required>
         </div>
         <input type="hidden" id="birthDate" name="entry.XXXXXXX">
-        <span class="error" id="birthDateError">請選擇出生日期</span>
+        <span class="error" id="birthDateError">請輸入有效出生日期</span>
       </div>
 
       <div class="form-group">
@@ -158,6 +158,7 @@
           <option value="柴灣-銘仁道場">
           <option value="啟業中心">
         </datalist>
+        <span class="error" id="dojoError">請選擇或輸入道場</span>
       </div>
 
       <div class="form-group">
@@ -171,6 +172,7 @@
           <option value="羅懿朗教練">
           <option value="高啟謙教練">
         </datalist>
+        <span class="error" id="coachError">請選擇或輸入教練</span>
       </div>
 
       <div class="form-group">
@@ -191,6 +193,7 @@
           <option value="黑帶三段 或 品三">黑帶三段 或 品三</option>
           <option value="黑帶三段以上">黑帶三段以上</option>
         </select>
+        <span class="error" id="currentLevelError">請選擇現有級別</span>
       </div>
 
       <div class="navigation">
@@ -230,6 +233,7 @@
             <option value="專業組 藍紅或紅黑帶 太極七章">專業組 藍紅或紅黑帶 太極七章</option>
             <option value="專業組 黑帶及品段 太極七章及太白">專業組 黑帶及品段 太極七章及太白</option>
           </select>
+          <span class="error" id="indPoomsaeGroupError">請選擇品勢(個人)組別</span>
         </div>
       </div>
 
@@ -242,6 +246,7 @@
             <option value="品段組 太極三章至高麗">品段組 太極三章至高麗</option>
             <option value="黑帶組 太極四章至太白">黑帶組 太極四章至太白</option>
           </select>
+          <span class="error" id="indAllRoundGroupError">請選擇全能品勢(個人)組別</span>
         </div>
       </div>
 
@@ -256,6 +261,7 @@
             <option value="色帶/黑帶 太極六章">色帶/黑帶 太極六章</option>
             <option value="黑帶 高麗">黑帶 高麗</option>
           </select>
+          <span class="error" id="indSeniorGroupError">請選擇長者(個人)組別</span>
         </div>
       </div>
 
@@ -298,10 +304,12 @@
             <option value="PF:14 歲或以下,按年齡組別分組 品帶 太極六章 及 高麗">PF:14 歲或以下,按年齡組別分組 品帶 太極六章 及 高麗</option>
             <option value="PG:15 歲或以上 黑帶 太極七章 及 太白">PG:15 歲或以上 黑帶 太極七章 及 太白</option>
           </select>
+          <span class="error" id="pairPoomsaeGroupError">請選擇品勢(混雙)組別</span>
         </div>
         <div class="form-group">
           <label>隊員姓名（中文）</label>
           <input type="text" id="pairPartner" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
+          <span class="error" id="pairPartnerError">請輸入混雙隊員姓名</span>
         </div>
       </div>
 
@@ -323,14 +331,17 @@
             <option value="TF:14 歲或以下,按年齡組別分組 品帶 太極六章 及 高麗">TF:14 歲或以下,按年齡組別分組 品帶 太極六章 及 高麗</option>
             <option value="TG:15 歲或以上 黑帶 太極七章 及 太白">TG:15 歲或以上 黑帶 太極七章 及 太白</option>
           </select>
+          <span class="error" id="teamPoomsaeGroupError">請選擇品勢(團體)組別</span>
         </div>
         <div class="form-group">
           <label>隊員姓名1（中文）</label>
           <input type="text" id="teamMember1" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
+          <span class="error" id="teamMember1Error">請輸入團體隊員1姓名</span>
         </div>
         <div class="form-group">
           <label>隊員姓名2（中文）</label>
           <input type="text" id="teamMember2" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
+          <span class="error" id="teamMember2Error">請輸入團體隊員2姓名</span>
         </div>
       </div>
 
@@ -343,10 +354,12 @@
         <div class="form-group">
           <label>隊員姓名1（中文）</label>
           <input type="text" id="teamAll1" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
+          <span class="error" id="teamAll1Error">請輸入全能品勢(團體)隊員1姓名</span>
         </div>
         <div class="form-group">
           <label>隊員姓名2（中文）</label>
           <input type="text" id="teamAll2" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
+          <span class="error" id="teamAll2Error">請輸入全能品勢(團體)隊員2姓名</span>
         </div>
         <div class="form-group">
           <label>隊員姓名3（中文）（非必填）</label>
@@ -506,7 +519,7 @@ function calculateFee(){
   // 全能個人
   if(hasIndA){
     const price = hasIndP ? 100 : 300;
-    const disp  = hasIndP ? '<span class="strikethrough">$300</span> $100' : '$300';
+    const disp  = hasIndP ? '<span class="strikethrough">$300</span>$100' : '$300';
     total += price;
     lines.push(`全能品勢(個人) ${disp}`);
   }
@@ -519,7 +532,7 @@ function calculateFee(){
 
   // 混雙 / 團體 優惠價
   const teamPrice = (hasIndP || hasIndA) ? 150 : 200;
-  const teamDisp  = (hasIndP || hasIndA) ? '<span class="strikethrough">$200</span> $150' : '$200';
+  const teamDisp  = (hasIndP || hasIndA) ? '<span class="strikethrough">$200</span>$150' : '$200';
 
   if(hasPair){
     total += teamPrice;
@@ -541,23 +554,9 @@ function calculateFee(){
   }
   if(hasSide){
     const price = hasFront ? 100 : 150;
-    const disp  = hasFront ? '<span class="strikethrough">$150</span> $100' : '$150';
+    const disp  = hasFront ? '<span class="strikethrough">$150</span>$100' : '$150';
     total += price;
     lines.push(`競速(橫踢) ${disp}`);
-  }
-
-  // 優惠組合提示（僅顯示，不改變總額計算）
-  let promo = [];
-  if(hasIndP && hasIndA) promo.push('組合1：品勢(個人)+全能品勢(個人) $400');
-  if(hasIndP && (hasPair||hasTeam)) promo.push('組合2：品勢(個人)+品勢(混雙/團體) $450');
-  if(hasIndA && (hasPair||hasTeam)) promo.push('組合3：全能品勢(個人)+品勢(混雙/團體) $450');
-  if(hasIndP && hasIndA && (hasPair||hasTeam)) promo.push('組合4：品勢(個人)+全能品勢(個人)+品勢(混雙/團體) $550');
-  if((hasIndP||hasIndA) && hasPair && hasTeam) promo.push('組合5：品勢(個人)/全能品勢(個人)+品勢(混雙)+品勢(團體) $600');
-  if(hasIndP && hasIndA && hasPair && hasTeam) promo.push('組合6：品勢(個人)+全能品勢(個人)+品勢(混雙)+品勢(團體) $700');
-  if(hasFront && hasSide) promo.push('組合7：競速(前踢)+競速(橫踢) $250');
-
-  if(promo.length>0){
-    lines.push(`<br><strong>已符合優惠組合：</strong><br>${promo.join('<br>')}`);
   }
 
   return {total, lines};
@@ -584,14 +583,106 @@ function validateStep(step){
       document.getElementById('chineseNameError').style.display='block';
       valid=false;
     }
-    if(!document.getElementById('birthDate').value) valid=false;
-    if(!document.querySelector('input[name="gender"]:checked')) valid=false;
-    if(!document.getElementById('phone').value.match(/^\d{8}$/)) valid=false;
-    if(!document.getElementById('emergencyContact').value.trim()) valid=false;
-    if(!document.getElementById('emergencyPhone').value.match(/^\d{8}$/)) valid=false;
+    if(!document.getElementById('birthDate').value) {
+      document.getElementById('birthDateError').style.display='block';
+      valid=false;
+    }
+    if(!document.querySelector('input[name="gender"]:checked')) {
+      document.getElementById('genderError').style.display='block';
+      valid=false;
+    }
+    if(!document.getElementById('phone').value.match(/^\d{8}$/)) {
+      document.getElementById('phoneError').style.display='block';
+      valid=false;
+    }
+    if(!document.getElementById('emergencyContact').value.trim()) {
+      document.getElementById('emergencyContactError').style.display='block';
+      valid=false;
+    }
+    if(!document.getElementById('emergencyPhone').value.match(/^\d{8}$/)) {
+      document.getElementById('emergencyPhoneError').style.display='block';
+      valid=false;
+    }
   }
 
-  // 其他步驟可視需要增加必填驗證，這裡先保持簡單
+  if(step===2){
+    if(!document.getElementById('dojo').value.trim()){
+      document.getElementById('dojoError').style.display = 'block';
+      valid = false;
+    }
+    if(!document.getElementById('coach').value.trim()){
+      document.getElementById('coachError').style.display = 'block';
+      valid = false;
+    }
+    if(!document.getElementById('currentLevel').value){
+      document.getElementById('currentLevelError').style.display = 'block';
+      valid = false;
+    }
+  }
+
+  if(step===3){
+    const hasIndP = document.getElementById('indPoomsae').checked;
+    const hasIndA = document.getElementById('indAllRound').checked;
+    const hasIndS = document.getElementById('indSenior').checked;
+    if(hasIndP && !document.getElementById('indPoomsaeGroup').value){
+      document.getElementById('indPoomsaeGroupError').style.display = 'block';
+      valid = false;
+    }
+    if(hasIndA && !document.getElementById('indAllRoundGroup').value){
+      document.getElementById('indAllRoundGroupError').style.display = 'block';
+      valid = false;
+    }
+    if(hasIndS && !document.getElementById('indSeniorGroup').value){
+      document.getElementById('indSeniorGroupError').style.display = 'block';
+      valid = false;
+    }
+  }
+
+  if(step===4){
+    const hasPair = document.getElementById('pairPoomsae').checked;
+    const hasTeam = document.getElementById('teamPoomsae').checked;
+    const hasAll = document.getElementById('teamAllRound').checked;
+
+    if(hasPair){
+      if(!document.getElementById('pairPoomsaeGroup').value){
+        document.getElementById('pairPoomsaeGroupError').style.display = 'block';
+        valid = false;
+      }
+      if(!document.getElementById('pairPartner').value.trim()){
+        document.getElementById('pairPartnerError').style.display = 'block';
+        valid = false;
+      }
+    }
+
+    if(hasTeam){
+      if(!document.getElementById('teamPoomsaeGroup').value){
+        document.getElementById('teamPoomsaeGroupError').style.display = 'block';
+        valid = false;
+      }
+      if(!document.getElementById('teamMember1').value.trim()){
+        document.getElementById('teamMember1Error').style.display = 'block';
+        valid = false;
+      }
+      if(!document.getElementById('teamMember2').value.trim()){
+        document.getElementById('teamMember2Error').style.display = 'block';
+        valid = false;
+      }
+    }
+
+    if(hasAll){
+      if(!document.getElementById('teamAll1').value.trim()){
+        document.getElementById('teamAll1Error').style.display = 'block';
+        valid = false;
+      }
+      if(!document.getElementById('teamAll2').value.trim()){
+        document.getElementById('teamAll2Error').style.display = 'block';
+        valid = false;
+      }
+      // 3 and 4 are optional
+    }
+  }
+
+  // Step 5 has no additional fields
 
   return valid;
 }
@@ -652,59 +743,37 @@ function submitForm(){
   document.getElementById('thankYouPage').style.display = 'block';
 }
 
-function populateDate(){
-  const ySel = document.getElementById('birthYear');
-  const mSel = document.getElementById('birthMonth');
-  const dSel = document.getElementById('birthDay');
+function validateDate(){
+  const y = parseInt(document.getElementById('birthYear').value);
+  const m = parseInt(document.getElementById('birthMonth').value);
+  const d = parseInt(document.getElementById('birthDay').value);
   const hidden = document.getElementById('birthDate');
+  const error = document.getElementById('birthDateError');
 
-  const thisYear = new Date().getFullYear();
-  for(let y=thisYear; y>=2015; y--){
-    let opt = document.createElement('option');
-    opt.value = y;
-    opt.text = y;
-    ySel.appendChild(opt);
+  if(isNaN(y) || isNaN(m) || isNaN(d) || y < 1 || y>2026 || m<1 || m>12 || d<1 || d>31){
+    hidden.value = '';
+    error.style.display = 'block';
+    return;
   }
 
-  for(let m=1;m<=12;m++){
-    let opt = document.createElement('option');
-    opt.value = m;
-    opt.text = m;
-    mSel.appendChild(opt);
+  const daysInMonth = new Date(y, m, 0).getDate();
+  if(d > daysInMonth){
+    hidden.value = '';
+    error.style.display = 'block';
+    return;
   }
 
-  function updateDays(){
-    const y = parseInt(ySel.value);
-    const m = parseInt(mSel.value);
-    if(!y || !m){
-      dSel.innerHTML = '<option value="">日</option>';
-      hidden.value = '';
-      return;
-    }
-    const days = new Date(y,m,0).getDate();
-    const prev = dSel.value;
-    dSel.innerHTML = '<option value="">日</option>';
-    for(let d=1;d<=days;d++){
-      let opt = document.createElement('option');
-      opt.value = d; opt.text = d;
-      dSel.appendChild(opt);
-    }
-    if(prev && prev<=days) dSel.value = prev;
-
-    if(y && m && dSel.value){
-      hidden.value = `${y}-${String(m).padStart(2,'0')}-${String(dSel.value).padStart(2,'0')}`;
-    } else {
-      hidden.value = '';
-    }
-  }
-
-  ySel.onchange = mSel.onchange = dSel.onchange = updateDays;
-  updateDays();
+  hidden.value = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  error.style.display = 'none';
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
   updateProgress();
-  populateDate();
+
+  const birthYear = document.getElementById('birthYear');
+  const birthMonth = document.getElementById('birthMonth');
+  const birthDay = document.getElementById('birthDay');
+  birthYear.oninput = birthMonth.oninput = birthDay.oninput = validateDate;
 
   document.getElementById('copyPhone').onchange = function(){
     if(this.checked) document.getElementById('emergencyPhone').value = document.getElementById('phone').value;
