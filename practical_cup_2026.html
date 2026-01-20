@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>2026年實用盃跆拳道邀請賽 | 報名表</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body{font-family:'Noto Sans TC',Arial,sans-serif;max-width:900px;margin:1rem auto;padding:1rem;background:linear-gradient(135deg,#e6f0fa,#d9e6f5);color:#2d3748;line-height:1.7;min-height:100vh}
+    .form-container{background:#fff;padding:2rem;border-radius:1.2rem;box-shadow:0 8px 24px rgba(0,0,0,.12);transition:transform .3s,box-shadow .3s}
+    .form-container:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.18)}
+    .form-header{text-align:center;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:2px solid #edf2f7}
+    .form-header h1{font-size:1.8rem;font-weight:700;color:#1a202c;margin:0}
+    .form-header h2{font-size:1.1rem;font-weight:500;color:#718096;margin-top:.5rem}
+    .progress-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;position:relative;height:40px}
+    .progress-bar::before{content:'';position:absolute;top:50%;left:0;right:0;height:4px;background:#e2e8f0;transform:translateY(-50%);z-index:1;border-radius:2px}
+    .progress-line-fill{position:absolute;top:50%;left:0;height:4px;background:linear-gradient(90deg,#3182ce,#63b3ed);transform:translateY(-50%);z-index:1;transition:width .5s ease-in-out;border-radius:2px;box-shadow:0 0 6px rgba(49,130,206,0.4)}
+    .progress-step{width:40px;height:40px;border-radius:50%;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;color:#4a5568;position:relative;z-index:2;transition:all .3s;box-shadow:0 2px 4px rgba(0,0,0,.1)}
+    .progress-step.active{background:linear-gradient(45deg,#3182ce,#63b3ed);color:#fff;transform:scale(1.1);box-shadow:0 4px 12px rgba(49,130,206,.4)}
+    .progress-step.completed{background:linear-gradient(45deg,#3182ce,#63b3ed);color:#fff;box-shadow:0 3px 10px rgba(49,130,206,.3)}
+    .step{display:none}
+    .step.active{display:block}
+    .form-group{margin-bottom:1.5rem;padding:1.2rem;border-radius:1rem;background:#f7fafc;transition:background .3s,transform .2s;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+    .form-group:hover{background:#edf2f7;transform:translateY(-2px)}
+    .conditional{margin-top:1rem;padding-left:1.5rem;border-left:4px solid #3182ce;display:none;background:#f8fbff;border-radius:0 .8rem .8rem .8rem}
+    .conditional.show{display:block;animation:fadeIn .4s}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+    label{display:block;margin-bottom:.5rem;font-weight:600;font-size:1rem;color:#2d3748}
+    input,select,button{width:100%;padding:.8rem;border:1px solid #e2e8f0;border-radius:.6rem;box-sizing:border-box;font-size:1rem;background:#fff;transition:all .3s;height:2.8rem}
+    input:focus,select:focus{outline:none;border-color:#3182ce;box-shadow:0 0 6px rgba(49,130,206,.4);background:#f8fbff}
+    .date-group{display:flex;align-items:center;gap:.5rem}
+    .date-group select{width:8rem}
+    .date-group span{font-size:1rem;color:#2d3748}
+    .category-group{display:flex;gap:1.5rem;flex-wrap:wrap;padding:.5rem 0}
+    .category-group label{display:flex;align-items:center;font-weight:500;cursor:pointer;font-size:1rem}
+    .category-group input[type="checkbox"],.category-group input[type="radio"]{width:18px;height:18px;margin-right:.8rem;cursor:pointer}
+    .copy-group{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+    .copy-group input[type="text"],.copy-group input[type="tel"]{flex:1;min-width:200px}
+    .copy-group label{display:flex;align-items:center;white-space:nowrap;font-weight:500;font-size:1rem;cursor:pointer}
+    .copy-group input[type="checkbox"]{width:18px;height:18px;margin-right:.5rem}
+    .error{color:#e53e3e;font-size:.85rem;margin-top:.4rem;display:none}
+    .navigation{display:flex;justify-content:space-between;margin-top:2rem;gap:1rem}
+    .navigation button{padding:.8rem 1.5rem;border:none;border-radius:.6rem;cursor:pointer;font-weight:600;min-height:44px;flex:1;max-width:45%}
+    .nav-prev{background:#edf2f7;color:#718096}
+    .nav-prev:hover{background:#e2e8f0}
+    .nav-next,#submitBtn{background:linear-gradient(90deg,#3182ce,#2b6cb0);color:#fff}
+    .nav-next:hover,#submitBtn:hover{background:linear-gradient(90deg,#2b6cb0,#2c5282)}
+    #thankYouPage{display:none;background:#fff;padding:3rem 2rem;border-radius:1.2rem;box-shadow:0 8px 24px rgba(0,0,0,.12);text-align:center;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:500px;z-index:9999}
+    #feeSummary{font-weight:bold;color:#c53030;margin:1.5rem 0;padding:1rem;background:#fff5f5;border-radius:0.8rem;border:1px solid #feb2b2;}
+    .note{font-size:0.95rem;color:#718096;margin-top:0.5rem;}
+    .strikethrough {text-decoration: line-through; color:#999; margin-right:0.5rem;}
+    .required-star{color:#e53e3e}
+  </style>
+</head>
+<body>
+
+<div class="form-container" id="mainForm">
+  <div class="form-header">
+    <h1>2026年實用盃跆拳道邀請賽</h1>
+    <h2>報名表</h2>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-line-fill" id="progressLineFill"></div>
+    <div class="progress-step active" data-step="1">1</div>
+    <div class="progress-step" data-step="2">2</div>
+    <div class="progress-step" data-step="3">3</div>
+    <div class="progress-step" data-step="4">4</div>
+    <div class="progress-step" data-step="5">5</div>
+    <div class="progress-step" data-step="6">6</div>
+  </div>
+
+  <form id="registrationForm">
+
+    <!-- 步驟 1：個人資料 -->
+    <div class="step active" data-step="1">
+      <h3>步驟一：個人資料</h3>
+
+      <div class="form-group">
+        <label>中文姓名 <span class="required-star">*</span></label>
+        <input type="text" id="chineseName" name="entry.XXXXXXX" placeholder="如沒有請填寫英文姓名" required>
+        <span class="error" id="chineseNameError">請輸入中文姓名或英文姓名</span>
+      </div>
+
+      <div class="form-group">
+        <label>英文姓名 <span class="required-star">*</span></label>
+        <input type="text" id="englishName" name="entry.XXXXXXX" placeholder="請以大寫字母填寫" required oninput="this.value=this.value.toUpperCase()">
+      </div>
+
+      <div class="form-group">
+        <label>出生日期 <span class="required-star">*</span></label>
+        <div class="date-group">
+          <select id="birthYear" required><option value="">年</option></select>
+          <span>/</span>
+          <select id="birthMonth" required><option value="">月</option></select>
+          <span>/</span>
+          <select id="birthDay" required><option value="">日</option></select>
+        </div>
+        <input type="hidden" id="birthDate" name="entry.XXXXXXX">
+        <span class="error" id="birthDateError">請選擇出生日期</span>
+      </div>
+
+      <div class="form-group">
+        <label>性別 <span class="required-star">*</span></label>
+        <div class="category-group">
+          <label><input type="radio" name="gender" value="男" required> 男</label>
+          <label><input type="radio" name="gender" value="女"> 女</label>
+        </div>
+        <span class="error" id="genderError">請選擇性別</span>
+      </div>
+
+      <div class="form-group">
+        <label>聯絡電話 <span class="required-star">*</span></label>
+        <input type="tel" id="phone" name="entry.XXXXXXX" pattern="\d{8}" required placeholder="8位數字">
+        <span class="error" id="phoneError">請輸入8位數字電話</span>
+      </div>
+
+      <div class="form-group">
+        <label>緊急聯絡人姓名 <span class="required-star">*</span></label>
+        <input type="text" id="emergencyContact" name="entry.XXXXXXX" required>
+        <span class="error" id="emergencyContactError">請輸入緊急聯絡人姓名</span>
+      </div>
+
+      <div class="form-group">
+        <label>緊急聯絡人電話 <span class="required-star">*</span></label>
+        <div class="copy-group">
+          <input type="tel" id="emergencyPhone" name="entry.XXXXXXX" pattern="\d{8}" required placeholder="8位數字">
+          <label><input type="checkbox" id="copyPhone"> 同上</label>
+        </div>
+        <span class="error" id="emergencyPhoneError">請輸入8位數字電話</span>
+      </div>
+
+      <div class="navigation">
+        <button type="button" class="nav-prev" disabled>上一步</button>
+        <button type="button" class="nav-next" onclick="nextStep()">下一步</button>
+      </div>
+    </div>
+
+    <!-- 步驟 2：級別資料 -->
+    <div class="step" data-step="2">
+      <h3>步驟二：級別資料</h3>
+
+      <div class="form-group">
+        <label>道場 <span class="required-star">*</span></label>
+        <input list="dojos" id="dojo" name="entry.XXXXXXX" required placeholder="請輸入或選擇道場">
+        <datalist id="dojos">
+          <option value="觀塘總館">
+          <option value="紅磡-培匠訓練中心">
+          <option value="鰂魚涌體育館">
+          <option value="北角官立小學">
+          <option value="大角嘴天主教小學">
+          <option value="佛教林金殿紀念小學">
+          <option value="炮台山道場">
+          <option value="筲箕灣道場">
+          <option value="長沙灣道場">
+          <option value="元朗道場">
+          <option value="九龍灣-啟駿道場">
+          <option value="柴灣-銘仁道場">
+          <option value="啟業中心">
+        </datalist>
+      </div>
+
+      <div class="form-group">
+        <label>所屬教練 <span class="required-star">*</span></label>
+        <input list="coaches" id="coach" name="entry.XXXXXXX" required placeholder="請輸入或選擇教練">
+        <datalist id="coaches">
+          <option value="歐其煬教練">
+          <option value="蔡劍堯教練">
+          <option value="李立富教練">
+          <option value="蔡尚霖教練">
+          <option value="羅懿朗教練">
+          <option value="高啟謙教練">
+        </datalist>
+      </div>
+
+      <div class="form-group">
+        <label>現有級別 <span class="required-star">*</span></label>
+        <select id="currentLevel" name="entry.XXXXXXX" required>
+          <option value="">請選擇</option>
+          <option value="白帶">白帶</option>
+          <option value="黃帶">黃帶</option>
+          <option value="黃綠帶">黃綠帶</option>
+          <option value="綠帶">綠帶</option>
+          <option value="綠藍帶">綠藍帶</option>
+          <option value="藍帶">藍帶</option>
+          <option value="藍紅帶">藍紅帶</option>
+          <option value="紅帶">紅帶</option>
+          <option value="紅黑帶">紅黑帶</option>
+          <option value="黑帶一段 或 品一">黑帶一段 或 品一</option>
+          <option value="黑帶二段 或 品二">黑帶二段 或 品二</option>
+          <option value="黑帶三段 或 品三">黑帶三段 或 品三</option>
+          <option value="黑帶三段以上">黑帶三段以上</option>
+        </select>
+      </div>
+
+      <div class="navigation">
+        <button type="button" class="nav-prev" onclick="prevStep()">上一步</button>
+        <button type="button" class="nav-next" onclick="nextStep()">下一步</button>
+      </div>
+    </div>
+
+    <!-- 步驟 3：個人項目 -->
+    <div class="step" data-step="3">
+      <h3>步驟三：個人項目</h3>
+      <p class="note">如不參加個人項目可按下一步跳過</p>
+
+      <div class="form-group">
+        <label>參加項目（可多選）</label>
+        <div class="category-group">
+          <label><input type="checkbox" id="indPoomsae" onclick="toggleSections(); updateFee()"> 品勢(個人)</label>
+          <label><input type="checkbox" id="indAllRound" onclick="toggleSections(); updateFee()"> 全能品勢(個人)</label>
+          <label><input type="checkbox" id="indSenior" onclick="toggleSections(); updateFee()"> 長者(個人)</label>
+        </div>
+        <input type="hidden" id="personalEvents" name="entry.XXXXXXX">
+      </div>
+
+      <div class="conditional" id="indPoomsaeSection">
+        <div class="form-group">
+          <label>品勢(個人) 組別</label>
+          <select id="indPoomsaeGroup" name="entry.XXXXXXX">
+            <option value="">請選擇</option>
+            <option value="新手組 白至黃綠帶 太極一章">新手組 白至黃綠帶 太極一章</option>
+            <option value="新手組 黃綠至綠藍帶 太極三章">新手組 黃綠至綠藍帶 太極三章</option>
+            <option value="新手組 綠藍至藍紅帶 太極五章">新手組 綠藍至藍紅帶 太極五章</option>
+            <option value="新手組 藍紅或紅黑帶 太極七章">新手組 藍紅或紅黑帶 太極七章</option>
+            <option value="新手組 黑帶及品段 太極六章及高麗">新手組 黑帶及品段 太極六章及高麗</option>
+            <option value="專業組 白至黃綠帶 太極一章">專業組 白至黃綠帶 太極一章</option>
+            <option value="專業組 黃綠至綠藍帶 太極三章">專業組 黃綠至綠藍帶 太極三章</option>
+            <option value="專業組 綠藍至藍紅帶 太極五章">專業組 綠藍至藍紅帶 太極五章</option>
+            <option value="專業組 藍紅或紅黑帶 太極七章">專業組 藍紅或紅黑帶 太極七章</option>
+            <option value="專業組 黑帶及品段 太極七章及太白">專業組 黑帶及品段 太極七章及太白</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="conditional" id="indAllRoundSection">
+        <div class="form-group">
+          <label>全能品勢(個人) 組別</label>
+          <select id="indAllRoundGroup" name="entry.XXXXXXX">
+            <option value="">請選擇</option>
+            <option value="色帶組 太極一章至八章">色帶組 太極一章至八章</option>
+            <option value="品段組 太極三章至高麗">品段組 太極三章至高麗</option>
+            <option value="黑帶組 太極四章至太白">黑帶組 太極四章至太白</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="conditional" id="indSeniorSection">
+        <div class="form-group">
+          <label>長者(個人) 組別</label>
+          <select id="indSeniorGroup" name="entry.XXXXXXX">
+            <option value="">請選擇</option>
+            <option value="色帶 太極一章">色帶 太極一章</option>
+            <option value="色帶 太極四章">色帶 太極四章</option>
+            <option value="色帶 太極五章">色帶 太極五章</option>
+            <option value="色帶/黑帶 太極六章">色帶/黑帶 太極六章</option>
+            <option value="黑帶 高麗">黑帶 高麗</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="navigation">
+        <button type="button" class="nav-prev" onclick="prevStep()">上一步</button>
+        <button type="button" class="nav-next" onclick="nextStep()">下一步</button>
+      </div>
+    </div>
+
+    <!-- 步驟 4：混雙及團體項目 -->
+    <div class="step" data-step="4">
+      <h3>步驟四：混雙及團體項目</h3>
+      <p class="note">如不參加混雙或團體項目可按下一步跳過</p>
+
+      <div class="form-group">
+        <label>參加項目（可多選）</label>
+        <div class="category-group">
+          <label><input type="checkbox" id="pairPoomsae" onclick="toggleSections(); updateFee()"> 品勢(混雙)</label>
+          <label><input type="checkbox" id="teamPoomsae" onclick="toggleSections(); updateFee()"> 品勢(團體)</label>
+          <label><input type="checkbox" id="teamAllRound" onclick="toggleSections(); updateFee()"> 全能品勢(團體)</label>
+        </div>
+        <input type="hidden" id="teamEvents" name="entry.XXXXXXX">
+      </div>
+
+      <div class="conditional" id="pairPoomsaeSection">
+        <div class="form-group">
+          <label>品勢(混雙) 組別</label>
+          <select id="pairPoomsaeGroup" name="entry.XXXXXXX">
+            <option value="">請選擇</option>
+            <option value="PA_1:6-8 歲 (2018-2020) 黃綠帶或以下 太極一章">PA_1:6-8 歲 (2018-2020) 黃綠帶或以下 太極一章</option>
+            <option value="PA_2:6-8 歲 (2018-2020) 綠帶至紅黑帶 太極三章">PA_2:6-8 歲 (2018-2020) 綠帶至紅黑帶 太極三章</option>
+            <option value="PB_1:9-11 歲 (2015-2017) 綠藍帶或以下 太極二章">PB_1:9-11 歲 (2015-2017) 綠藍帶或以下 太極二章</option>
+            <option value="PB_2:9-11 歲 (2015-2017) 藍帶至紅黑帶 太極五章">PB_2:9-11 歲 (2015-2017) 藍帶至紅黑帶 太極五章</option>
+            <option value="PC_1:12-14 歲 (2012-2014) 綠藍帶或以下 太極三章">PC_1:12-14 歲 (2012-2014) 綠藍帶或以下 太極三章</option>
+            <option value="PC_2:12-14 歲 (2012-2014) 藍帶至紅黑帶 太極六章">PC_2:12-14 歲 (2012-2014) 藍帶至紅黑帶 太極六章</option>
+            <option value="PD_1:15-17 歲 (2009-2011) 藍紅帶或以下 太極四章">PD_1:15-17 歲 (2009-2011) 藍紅帶或以下 太極四章</option>
+            <option value="PD_2:15-17 歲 (2009-2011) 紅帶至紅黑帶 太極七章">PD_2:15-17 歲 (2009-2011) 紅帶至紅黑帶 太極七章</option>
+            <option value="PE_1:18 歲以上 (2008 或以前) 藍紅帶或以下 太極四章">PE_1:18 歲以上 (2008 或以前) 藍紅帶或以下 太極四章</option>
+            <option value="PE_2:18 歲以上 (2008 或以前) 紅帶至紅黑帶 太極八章">PE_2:18 歲以上 (2008 或以前) 紅帶至紅黑帶 太極八章</option>
+            <option value="PF:14 歲或以下,按年齡組別分組 品帶 太極六章 及 高麗">PF:14 歲或以下,按年齡組別分組 品帶 太極六章 及 高麗</option>
+            <option value="PG:15 歲或以上 黑帶 太極七章 及 太白">PG:15 歲或以上 黑帶 太極七章 及 太白</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>隊員姓名（中文）</label>
+          <input type="text" id="pairPartner" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
+        </div>
+      </div>
+
+      <div class="conditional" id="teamPoomsaeSection">
+        <div class="form-group">
+          <label>品勢(團體) 組別</label>
+          <select id="teamPoomsaeGroup" name="entry.XXXXXXX">
+            <option value="">請選擇</option>
+            <option value="TA_1:6-8 歲 (2018-2020) 黃綠帶或以下 太極一章">TA_1:6-8 歲 (2018-2020) 黃綠帶或以下 太極一章</option>
+            <option value="TA_2:6-8 歲 (2018-2020) 綠帶至紅黑帶 太極三章">TA_2:6-8 歲 (2018-2020) 綠帶至紅黑帶 太極三章</option>
+            <option value="TB_1:9-11 歲 (2015-2017) 綠藍帶或以下 太極二章">TB_1:9-11 歲 (2015-2017) 綠藍帶或以下 太極二章</option>
+            <option value="TB_2:9-11 歲 (2015-2017) 藍帶至紅黑帶 太極五章">TB_2:9-11 歲 (2015-2017) 藍帶至紅黑帶 太極五章</option>
+            <option value="TC_1:12-14 歲 (2012-2014) 綠藍帶或以下 太極三章">TC_1:12-14 歲 (2012-2014) 綠藍帶或以下 太極三章</option>
+            <option value="TC_2:12-14 歲 (2012-2014) 藍帶至紅黑帶 太極六章">TC_2:12-14 歲 (2012-2014) 藍帶至紅黑帶 太極六章</option>
+            <option value="TD_1:15-17 歲 (2009-2011) 藍紅帶或以下 太極四章">TD_1:15-17 歲 (2009-2011) 藍紅帶或以下 太極四章</option>
+            <option value="TD_2:15-17 歲 (2009-2011) 紅帶至紅黑帶 太極七章">TD_2:15-17 歲 (2009-2011) 紅帶至紅黑帶 太極七章</option>
+            <option value="TE_1:18 歲以上 (2008 或以前) 藍紅帶或以下 太極四章">TE_1:18 歲以上 (2008 或以前) 藍紅帶或以下 太極四章</option>
+            <option value="TE_2:18 歲以上 (2008 或以前) 紅帶至紅黑帶 太極八章">TE_2:18 歲以上 (2008 或以前) 紅帶至紅黑帶 太極八章</option>
+            <option value="TF:14 歲或以下,按年齡組別分組 品帶 太極六章 及 高麗">TF:14 歲或以下,按年齡組別分組 品帶 太極六章 及 高麗</option>
+            <option value="TG:15 歲或以上 黑帶 太極七章 及 太白">TG:15 歲或以上 黑帶 太極七章 及 太白</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>隊員姓名1（中文）</label>
+          <input type="text" id="teamMember1" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
+        </div>
+        <div class="form-group">
+          <label>隊員姓名2（中文）</label>
+          <input type="text" id="teamMember2" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
+        </div>
+      </div>
+
+      <div class="conditional" id="teamAllRoundSection">
+        <div class="form-group">
+          <label>全能品勢(團體) 組別</label>
+          <input type="text" value="全能團體 太極一章至八章" readonly>
+          <input type="hidden" id="teamAllRoundGroup" name="entry.XXXXXXX" value="全能團體 太極一章至八章">
+        </div>
+        <div class="form-group">
+          <label>隊員姓名1（中文）</label>
+          <input type="text" id="teamAll1" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
+        </div>
+        <div class="form-group">
+          <label>隊員姓名2（中文）</label>
+          <input type="text" id="teamAll2" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
+        </div>
+        <div class="form-group">
+          <label>隊員姓名3（中文）（非必填）</label>
+          <input type="text" id="teamAll3" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
+        </div>
+        <div class="form-group">
+          <label>隊員姓名4（中文）（非必填）</label>
+          <input type="text" id="teamAll4" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
+        </div>
+      </div>
+
+      <div class="navigation">
+        <button type="button" class="nav-prev" onclick="prevStep()">上一步</button>
+        <button type="button" class="nav-next" onclick="nextStep()">下一步</button>
+      </div>
+    </div>
+
+    <!-- 步驟 5：競速項目 -->
+    <div class="step" data-step="5">
+      <h3>步驟五：競速項目</h3>
+      <p class="note">如不參加競速項目可按下一步跳過</p>
+
+      <div class="form-group">
+        <label>參加項目（可多選）</label>
+        <div class="category-group">
+          <label><input type="checkbox" id="speedFront" onclick="toggleSections(); updateFee()"> 競速(前踢)</label>
+          <label><input type="checkbox" id="speedSide" onclick="toggleSections(); updateFee()"> 競速(橫踢)</label>
+        </div>
+        <input type="hidden" id="speedEvents" name="entry.XXXXXXX">
+      </div>
+
+      <div class="navigation">
+        <button type="button" class="nav-prev" onclick="prevStep()">上一步</button>
+        <button type="button" class="nav-next" onclick="nextStep()">下一步</button>
+      </div>
+    </div>
+
+    <!-- 步驟 6：確認及提交 -->
+    <div class="step" data-step="6">
+      <h3>步驟六：確認及提交</h3>
+
+      <div id="finalSummary" style="background:#f8fbff;padding:1.5rem;border-radius:1rem;border-left:5px solid #3182ce;line-height:1.8;margin-bottom:1.5rem"></div>
+
+      <div id="feeSummary">
+        <div style="font-size:1.2rem;margin-bottom:0.8rem">報名費用總額： <span id="totalFee">HK$0</span></div>
+        <div id="feeBreakdown" style="font-size:0.95rem;line-height:1.6"></div>
+      </div>
+
+      <div class="navigation">
+        <button type="button" class="nav-prev" onclick="prevStep()">上一步</button>
+        <button type="button" id="submitBtn" onclick="submitForm()">提交報名</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<div id="thankYouPage">
+  <h2>感謝您的報名！</h2>
+  <p>確認後教練 / 負責人將盡快與您聯繫核對資料。</p>
+  <p>請準備好相關證明文件（如有需要）交給所屬教練。</p>
+  <button class="return-button" onclick="location.reload()" style="padding:0.8rem 1.8rem;border:none;border-radius:0.6rem;cursor:pointer;background:linear-gradient(90deg,#3182ce,#2b6cb0);color:#fff;font-size:1.1rem;margin-top:1.5rem">重新填寫</button>
+</div>
+
+<script>
+let currentStep = 1;
+const totalSteps = 6;
+
+function updateProgress() {
+  const steps = document.querySelectorAll('.progress-step');
+  const first = steps[0].offsetLeft;
+  const last  = steps[steps.length-1].offsetLeft;
+  const distance = last - first;
+  const progress = ((currentStep - 1) / (totalSteps - 1)) * distance;
+  document.getElementById('progressLineFill').style.width = progress + 'px';
+
+  steps.forEach((s,i)=>{
+    const n = i+1;
+    s.classList.toggle('active', n===currentStep);
+    s.classList.toggle('completed', n<currentStep);
+  });
+
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+  document.querySelector('.nav-prev').disabled = currentStep===1;
+
+  if(currentStep===6){
+    updateFinalSummary();
+    updateFee();
+  }
+}
+
+function nextStep(){
+  if(validateStep(currentStep)){
+    currentStep++;
+    updateProgress();
+    toggleSections();
+  }
+}
+
+function prevStep(){
+  currentStep--;
+  updateProgress();
+  toggleSections();
+}
+
+function toggleSections(){
+  document.getElementById('indPoomsaeSection').classList.toggle('show', document.getElementById('indPoomsae').checked);
+  document.getElementById('indAllRoundSection').classList.toggle('show', document.getElementById('indAllRound').checked);
+  document.getElementById('indSeniorSection').classList.toggle('show', document.getElementById('indSenior').checked);
+
+  document.getElementById('pairPoomsaeSection').classList.toggle('show', document.getElementById('pairPoomsae').checked);
+  document.getElementById('teamPoomsaeSection').classList.toggle('show', document.getElementById('teamPoomsae').checked);
+  document.getElementById('teamAllRoundSection').classList.toggle('show', document.getElementById('teamAllRound').checked);
+
+  updateEventFields();
+  updateFee();
+  if(currentStep===6) updateFinalSummary();
+}
+
+function updateEventFields(){
+  const p = [];
+  if(document.getElementById('indPoomsae').checked) p.push('品勢(個人)');
+  if(document.getElementById('indAllRound').checked) p.push('全能品勢(個人)');
+  if(document.getElementById('indSenior').checked) p.push('長者(個人)');
+  document.getElementById('personalEvents').value = p.join('、') || '無';
+
+  const t = [];
+  if(document.getElementById('pairPoomsae').checked) t.push('品勢(混雙)');
+  if(document.getElementById('teamPoomsae').checked) t.push('品勢(團體)');
+  if(document.getElementById('teamAllRound').checked) t.push('全能品勢(團體)');
+  document.getElementById('teamEvents').value = t.join('、') || '無';
+
+  const s = [];
+  if(document.getElementById('speedFront').checked) s.push('競速(前踢)');
+  if(document.getElementById('speedSide').checked) s.push('競速(橫踢)');
+  document.getElementById('speedEvents').value = s.join('、') || '無';
+}
+
+function calculateFee(){
+  const hasIndP = document.getElementById('indPoomsae').checked;
+  const hasIndA = document.getElementById('indAllRound').checked;
+  const hasPair  = document.getElementById('pairPoomsae').checked;
+  const hasTeam  = document.getElementById('teamPoomsae').checked;
+  const hasFront = document.getElementById('speedFront').checked;
+  const hasSide  = document.getElementById('speedSide').checked;
+
+  let total = 0;
+  let lines = [];
+
+  // 個人品勢
+  if(hasIndP){
+    total += 300;
+    lines.push('品勢(個人) $300');
+  }
+
+  // 全能個人
+  if(hasIndA){
+    const price = hasIndP ? 100 : 300;
+    const disp  = hasIndP ? '<span class="strikethrough">$300</span> $100' : '$300';
+    total += price;
+    lines.push(`全能品勢(個人) ${disp}`);
+  }
+
+  // 長者
+  if(document.getElementById('indSenior').checked){
+    total += 150;
+    lines.push('長者(個人) $150');
+  }
+
+  // 混雙 / 團體 優惠價
+  const teamPrice = (hasIndP || hasIndA) ? 150 : 200;
+  const teamDisp  = (hasIndP || hasIndA) ? '<span class="strikethrough">$200</span> $150' : '$200';
+
+  if(hasPair){
+    total += teamPrice;
+    lines.push(`品勢(混雙) ${teamDisp}`);
+  }
+  if(hasTeam){
+    total += teamPrice;
+    lines.push(`品勢(團體) ${teamDisp}`);
+  }
+  if(document.getElementById('teamAllRound').checked){
+    total += 0;
+    lines.push('全能品勢(團體) Free');
+  }
+
+  // 競速
+  if(hasFront){
+    total += 150;
+    lines.push('競速(前踢) $150');
+  }
+  if(hasSide){
+    const price = hasFront ? 100 : 150;
+    const disp  = hasFront ? '<span class="strikethrough">$150</span> $100' : '$150';
+    total += price;
+    lines.push(`競速(橫踢) ${disp}`);
+  }
+
+  // 優惠組合提示（僅顯示，不改變總額計算）
+  let promo = [];
+  if(hasIndP && hasIndA) promo.push('組合1：品勢(個人)+全能品勢(個人) $400');
+  if(hasIndP && (hasPair||hasTeam)) promo.push('組合2：品勢(個人)+品勢(混雙/團體) $450');
+  if(hasIndA && (hasPair||hasTeam)) promo.push('組合3：全能品勢(個人)+品勢(混雙/團體) $450');
+  if(hasIndP && hasIndA && (hasPair||hasTeam)) promo.push('組合4：品勢(個人)+全能品勢(個人)+品勢(混雙/團體) $550');
+  if((hasIndP||hasIndA) && hasPair && hasTeam) promo.push('組合5：品勢(個人)/全能品勢(個人)+品勢(混雙)+品勢(團體) $600');
+  if(hasIndP && hasIndA && hasPair && hasTeam) promo.push('組合6：品勢(個人)+全能品勢(個人)+品勢(混雙)+品勢(團體) $700');
+  if(hasFront && hasSide) promo.push('組合7：競速(前踢)+競速(橫踢) $250');
+
+  if(promo.length>0){
+    lines.push(`<br><strong>已符合優惠組合：</strong><br>${promo.join('<br>')}`);
+  }
+
+  return {total, lines};
+}
+
+function updateFee(){
+  const {total, lines} = calculateFee();
+  document.getElementById('totalFee').textContent = `HK$${total}`;
+  document.getElementById('feeBreakdown').innerHTML = lines.join('<br>') || '尚未選擇任何項目';
+}
+
+function validateStep(step){
+  if(document.getElementById('chineseName').value.trim().toLowerCase()==='test'){
+    return true;
+  }
+
+  let valid = true;
+  document.querySelectorAll('.error').forEach(e=>e.style.display='none');
+
+  if(step===1){
+    const cn = document.getElementById('chineseName').value.trim();
+    const en = document.getElementById('englishName').value.trim();
+    if(!cn && !en){
+      document.getElementById('chineseNameError').style.display='block';
+      valid=false;
+    }
+    if(!document.getElementById('birthDate').value) valid=false;
+    if(!document.querySelector('input[name="gender"]:checked')) valid=false;
+    if(!document.getElementById('phone').value.match(/^\d{8}$/)) valid=false;
+    if(!document.getElementById('emergencyContact').value.trim()) valid=false;
+    if(!document.getElementById('emergencyPhone').value.match(/^\d{8}$/)) valid=false;
+  }
+
+  // 其他步驟可視需要增加必填驗證，這裡先保持簡單
+
+  return valid;
+}
+
+function updateFinalSummary(){
+  let html = `
+    <p><strong>中文姓名：</strong> ${document.getElementById('chineseName').value || '未填'}</p>
+    <p><strong>英文姓名：</strong> ${document.getElementById('englishName').value || '未填'}</p>
+    <p><strong>出生日期：</strong> ${document.getElementById('birthDate').value || '未選'}</p>
+    <p><strong>性別：</strong> ${document.querySelector('input[name="gender"]:checked')?.value || '未選'}</p>
+    <p><strong>聯絡電話：</strong> ${document.getElementById('phone').value || '未填'}</p>
+    <p><strong>緊急聯絡人：</strong> ${document.getElementById('emergencyContact').value || '未填'}（${document.getElementById('emergencyPhone').value || '未填'}）</p>
+    <p><strong>道場：</strong> ${document.getElementById('dojo').value || '未選'}</p>
+    <p><strong>教練：</strong> ${document.getElementById('coach').value || '未選'}</p>
+    <p><strong>現有級別：</strong> ${document.getElementById('currentLevel').value || '未選'}</p>
+    <p><strong>個人項目：</strong> ${document.getElementById('personalEvents').value || '無'}</p>`;
+
+  if(document.getElementById('indPoomsae').checked) html += `<p style="margin-left:1rem">└ ${document.getElementById('indPoomsaeGroup').value || '未選'}</p>`;
+  if(document.getElementById('indAllRound').checked) html += `<p style="margin-left:1rem">└ ${document.getElementById('indAllRoundGroup').value || '未選'}</p>`;
+  if(document.getElementById('indSenior').checked)   html += `<p style="margin-left:1rem">└ ${document.getElementById('indSeniorGroup').value || '未選'}</p>`;
+
+  html += `<p><strong>混雙/團體項目：</strong> ${document.getElementById('teamEvents').value || '無'}</p>`;
+
+  if(document.getElementById('pairPoomsae').checked){
+    html += `<p style="margin-left:1rem">└ ${document.getElementById('pairPoomsaeGroup').value || '未選'}</p>
+             <p style="margin-left:2rem">隊員：${document.getElementById('pairPartner').value || '未填'}</p>`;
+  }
+  if(document.getElementById('teamPoomsae').checked){
+    html += `<p style="margin-left:1rem">└ ${document.getElementById('teamPoomsaeGroup').value || '未選'}</p>
+             <p style="margin-left:2rem">隊員1：${document.getElementById('teamMember1').value || '未填'}</p>
+             <p style="margin-left:2rem">隊員2：${document.getElementById('teamMember2').value || '未填'}</p>`;
+  }
+  if(document.getElementById('teamAllRound').checked){
+    const members = [1,2,3,4].map(i=>document.getElementById(`teamAll${i}`).value.trim()).filter(v=>v).join('、 ') || '未填';
+    html += `<p style="margin-left:1rem">└ 全能團體 太極一章至八章</p>
+             <p style="margin-left:2rem">隊員：${members}</p>`;
+  }
+
+  html += `<p><strong>競速項目：</strong> ${document.getElementById('speedEvents').value || '無'}</p>`;
+
+  document.getElementById('finalSummary').innerHTML = html;
+}
+
+function submitForm(){
+  if(!validateStep(6)) return;
+
+  updateEventFields();
+
+  const formData = new FormData(document.getElementById('registrationForm'));
+
+  fetch('https://docs.google.com/forms/d/e/您的表單ID/formResponse', {
+    method: 'POST',
+    mode: 'no-cors',
+    body: formData
+  });
+
+  document.getElementById('mainForm').style.display = 'none';
+  document.getElementById('thankYouPage').style.display = 'block';
+}
+
+function populateDate(){
+  const ySel = document.getElementById('birthYear');
+  const mSel = document.getElementById('birthMonth');
+  const dSel = document.getElementById('birthDay');
+  const hidden = document.getElementById('birthDate');
+
+  const thisYear = new Date().getFullYear();
+  for(let y=thisYear; y>=2015; y--){
+    let opt = document.createElement('option');
+    opt.value = y;
+    opt.text = y;
+    ySel.appendChild(opt);
+  }
+
+  for(let m=1;m<=12;m++){
+    let opt = document.createElement('option');
+    opt.value = m;
+    opt.text = m;
+    mSel.appendChild(opt);
+  }
+
+  function updateDays(){
+    const y = parseInt(ySel.value);
+    const m = parseInt(mSel.value);
+    if(!y || !m){
+      dSel.innerHTML = '<option value="">日</option>';
+      hidden.value = '';
+      return;
+    }
+    const days = new Date(y,m,0).getDate();
+    const prev = dSel.value;
+    dSel.innerHTML = '<option value="">日</option>';
+    for(let d=1;d<=days;d++){
+      let opt = document.createElement('option');
+      opt.value = d; opt.text = d;
+      dSel.appendChild(opt);
+    }
+    if(prev && prev<=days) dSel.value = prev;
+
+    if(y && m && dSel.value){
+      hidden.value = `${y}-${String(m).padStart(2,'0')}-${String(dSel.value).padStart(2,'0')}`;
+    } else {
+      hidden.value = '';
+    }
+  }
+
+  ySel.onchange = mSel.onchange = dSel.onchange = updateDays;
+  updateDays();
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  updateProgress();
+  populateDate();
+
+  document.getElementById('copyPhone').onchange = function(){
+    if(this.checked) document.getElementById('emergencyPhone').value = document.getElementById('phone').value;
+  };
+
+  document.getElementById('phone').oninput = function(){
+    if(document.getElementById('copyPhone').checked){
+      document.getElementById('emergencyPhone').value = this.value;
+    }
+  };
+
+  updateFee();
+  toggleSections();
+});
+</script>
+</body>
+</html>
