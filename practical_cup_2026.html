@@ -70,7 +70,8 @@
     <div class="progress-step" data-step="6">6</div>
   </div>
 
-  <form id="registrationForm">
+  <!-- 修正重點：使用傳統 form action + hidden iframe 提交 -->
+  <form id="registrationForm" action="https://docs.google.com/forms/d/e/1FAIpQLSfp2nzjmdax52ituSc3FXl4T9_z2JUX4auxy6AAwuhZ8ok_LQ/formResponse" method="POST" target="hidden_iframe">
 
     <!-- 步驟 1：個人資料 -->
     <div class="step active" data-step="1">
@@ -214,7 +215,6 @@
           <label><input type="checkbox" id="indAllRound" onclick="toggleSections(); updateFee()"> 全能品勢(個人)</label>
           <label><input type="checkbox" id="indSenior" onclick="toggleSections(); updateFee()"> 長者(個人)</label>
         </div>
-        <input type="hidden" id="personalEvents" name="entry.703788026">
       </div>
 
       <div class="conditional" id="indPoomsaeSection">
@@ -283,7 +283,6 @@
           <label><input type="checkbox" id="teamPoomsae" onclick="toggleSections(); updateFee()"> 品勢(團體)</label>
           <label><input type="checkbox" id="teamAllRound" onclick="toggleSections(); updateFee()"> 全能品勢(團體)</label>
         </div>
-        <input type="hidden" id="teamEvents" name="entry.703788026">
       </div>
 
       <!-- 混雙（只有一個隊員） -->
@@ -464,7 +463,6 @@
           <label><input type="checkbox" id="speedFront" onclick="toggleSections(); updateFee()"> 競速(前踢)</label>
           <label><input type="checkbox" id="speedSide" onclick="toggleSections(); updateFee()"> 競速(橫踢)</label>
         </div>
-        <input type="hidden" id="speedEvents" name="entry.703788026">
       </div>
 
       <div class="navigation">
@@ -484,9 +482,10 @@
         <div id="feeBreakdown" style="font-size:0.95rem;line-height:1.6"></div>
       </div>
 
+      <!-- 隱藏欄位 -->
+      <input type="hidden" id="allEventsField" name="entry.703788026">
       <input type="hidden" name="entry.803159846" value="">
       <input type="hidden" name="entry.2060538814" value="0">
-      <input type="hidden" id="allEventsField" name="entry.703788026">
 
       <div class="navigation">
         <button type="button" class="nav-prev" onclick="prevStep()">上一步</button>
@@ -495,6 +494,9 @@
     </div>
 
   </form>
+
+  <!-- 隱藏 iframe，用於接收提交回應並觸發跳轉 -->
+  <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(isSubmitting){ document.getElementById('mainForm').style.display='none'; document.getElementById('thankYouPage').style.display='block'; isSubmitting=false; document.getElementById('submitBtn').disabled=false; document.getElementById('submitBtn').textContent='提交報名'; }"></iframe>
 </div>
 
 <div id="thankYouPage">
@@ -507,7 +509,7 @@
 <script>
 let currentStep = 1;
 const totalSteps = 6;
-let isSubmitting = false; // 防止重複提交
+let isSubmitting = false;
 
 function updateProgress() {
   const steps = document.querySelectorAll('.progress-step');
@@ -561,6 +563,7 @@ function toggleSections(){
   if(currentStep===6) updateFinalSummary();
 }
 
+// 修正重點：確保沒有開頭逗號，過濾空值，並強制清空殘留
 function updateEventFields(){
   const allEvents = [];
 
@@ -575,7 +578,14 @@ function updateEventFields(){
   if(document.getElementById('speedFront').checked) allEvents.push('競速(前踢)');
   if(document.getElementById('speedSide').checked) allEvents.push('競速(橫踢)');
 
-  document.getElementById('allEventsField').value = allEvents.join('、') || '無';
+  // 過濾空值、移除多餘空格，並加入分隔符
+  const eventsStr = allEvents.filter(item => item && item.trim()).join('、').trim() || '無';
+
+  // 強制設定值，避免任何殘留
+  const field = document.getElementById('allEventsField');
+  if(field) {
+    field.value = eventsStr;
+  }
 }
 
 function calculateFee(){
@@ -780,7 +790,7 @@ function validateStep(step){
       }
     }
 
-    // 新增：至少選一個項目
+    // 至少選一個項目
     const hasAnyEvent = document.getElementById('indPoomsae').checked ||
                         document.getElementById('indAllRound').checked ||
                         document.getElementById('indSenior').checked ||
@@ -855,35 +865,24 @@ function updateFinalSummary(){
 }
 
 function submitForm(){
-  if(isSubmitting) return; // 防止重複點擊
+  if(isSubmitting) return;
   if(!validateStep(6)) return;
 
   isSubmitting = true;
-  document.getElementById('submitBtn').disabled = true;
-  document.getElementById('submitBtn').textContent = '送出中...';
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = '送出中...';
 
   updateEventFields();
 
   const {total, lines} = calculateFee();
-  document.querySelector('input[name="entry.803159846"]').value = lines.join('\n').trim();
-  document.querySelector('input[name="entry.2060538814"]').value = total;
+  const feeDetailInput = document.querySelector('input[name="entry.803159846"]');
+  const feeTotalInput = document.querySelector('input[name="entry.2060538814"]');
+  if(feeDetailInput) feeDetailInput.value = lines.join('\n').trim();
+  if(feeTotalInput) feeTotalInput.value = total;
 
-  const formData = new FormData(document.getElementById('registrationForm'));
-
-  fetch('https://docs.google.com/forms/d/e/1FAIpQLSfp2nzjmdax52ituSc3FXl4T9_z2JUX4auxy6AAwuhZ8ok_LQ/formResponse', {
-    method: 'POST',
-    mode: 'no-cors',
-    body: formData
-  }).catch(err => {
-    console.error('提交時發生錯誤:', err);
-  });
-
-  // 延遲跳轉（確保資料送出）
-  setTimeout(() => {
-    document.getElementById('mainForm').style.display = 'none';
-    document.getElementById('thankYouPage').style.display = 'block';
-    isSubmitting = false;
-  }, 800); // 800ms 足夠送出，且使用者感覺順暢
+  // 直接提交表單（傳統方式）
+  document.getElementById('registrationForm').submit();
 }
 
 function validateDate(){
@@ -929,6 +928,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
       document.getElementById('emergencyPhone').value = this.value;
     }
   };
+
+  // 頁面載入時強制更新一次，避免初始殘留逗號
+  updateEventFields();
 
   updateFee();
   toggleSections();
