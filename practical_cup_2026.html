@@ -35,7 +35,7 @@
     .category-group label{display:flex;align-items:center;font-weight:500;cursor:pointer;font-size:1rem}
     .category-group input[type="checkbox"],.category-group input[type="radio"]{width:18px;height:18px;margin-right:.8rem;cursor:pointer}
     .copy-group{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
-    .copy-group input[type="text"],.copy-group input[type="tel"]{flex:1;min-width:200px}
+    .copy-group input[type="text"],.copy-group input[type="tel"],.copy-group input[type="number"]{flex:1;min-width:200px}
     .copy-group label{display:flex;align-items:center;white-space:nowrap;font-weight:500;font-size:1rem;cursor:pointer}
     .copy-group input[type="checkbox"]{width:18px;height:18px;margin-right:.5rem}
     .error{color:#e53e3e;font-size:.85rem;margin-top:.4rem;display:none}
@@ -78,13 +78,13 @@
 
       <div class="form-group">
         <label>中文姓名 <span class="required-star">*</span></label>
-        <input type="text" id="chineseName" name="entry.XXXXXXX" placeholder="如沒有請填寫英文姓名" required>
+        <input type="text" id="chineseName" name="entry.1714227241" placeholder="如沒有請填寫英文姓名" required>
         <span class="error" id="chineseNameError">請輸入中文姓名或英文姓名</span>
       </div>
 
       <div class="form-group">
         <label>英文姓名 <span class="required-star">*</span></label>
-        <input type="text" id="englishName" name="entry.XXXXXXX" placeholder="請填寫英文姓名" required>
+        <input type="text" id="englishName" name="entry.1739837016" placeholder="請填寫英文姓名" required>
       </div>
 
       <div class="form-group">
@@ -96,35 +96,35 @@
           <span>/</span>
           <input type="number" id="birthDay" min="1" max="31" placeholder="日" required>
         </div>
-        <input type="hidden" id="birthDate" name="entry.XXXXXXX">
+        <input type="hidden" id="birthDate" name="entry.69039678">
         <span class="error" id="birthDateError">請輸入有效出生日期</span>
       </div>
 
       <div class="form-group">
         <label>性別 <span class="required-star">*</span></label>
         <div class="category-group">
-          <label><input type="radio" name="gender" value="男" required> 男</label>
-          <label><input type="radio" name="gender" value="女"> 女</label>
+          <label><input type="radio" name="entry.71284989" value="男" required> 男</label>
+          <label><input type="radio" name="entry.71284989" value="女"> 女</label>
         </div>
         <span class="error" id="genderError">請選擇性別</span>
       </div>
 
       <div class="form-group">
         <label>聯絡電話 <span class="required-star">*</span></label>
-        <input type="tel" id="phone" name="entry.XXXXXXX" pattern="\d{8}" required placeholder="8位數字">
+        <input type="tel" id="phone" name="entry.269558714" pattern="\d{8}" required placeholder="8位數字">
         <span class="error" id="phoneError">請輸入8位數字電話</span>
       </div>
 
       <div class="form-group">
         <label>緊急聯絡人姓名 <span class="required-star">*</span></label>
-        <input type="text" id="emergencyContact" name="entry.XXXXXXX" required>
+        <input type="text" id="emergencyContact" name="entry.1045318375" required>
         <span class="error" id="emergencyContactError">請輸入緊急聯絡人姓名</span>
       </div>
 
       <div class="form-group">
         <label>緊急聯絡人電話 <span class="required-star">*</span></label>
         <div class="copy-group">
-          <input type="tel" id="emergencyPhone" name="entry.XXXXXXX" pattern="\d{8}" required placeholder="8位數字">
+          <input type="tel" id="emergencyPhone" name="entry.1820097193" pattern="\d{8}" required placeholder="8位數字">
           <label><input type="checkbox" id="copyPhone"> 同上</label>
         </div>
         <span class="error" id="emergencyPhoneError">請輸入8位數字電話</span>
@@ -142,7 +142,7 @@
 
       <div class="form-group">
         <label>道場 <span class="required-star">*</span></label>
-        <input list="dojos" id="dojo" name="entry.XXXXXXX" required placeholder="請輸入或選擇道場">
+        <input list="dojos" id="dojo" name="entry.1597491054" required placeholder="請輸入或選擇道場">
         <datalist id="dojos">
           <option value="觀塘總館">
           <option value="紅磡-培匠訓練中心">
@@ -163,7 +163,7 @@
 
       <div class="form-group">
         <label>所屬教練 <span class="required-star">*</span></label>
-        <input list="coaches" id="coach" name="entry.XXXXXXX" required placeholder="請輸入或選擇教練">
+        <input list="coaches" id="coach" name="entry.629960054" required placeholder="請輸入或選擇教練">
         <datalist id="coaches">
           <option value="歐其煬教練">
           <option value="蔡劍堯教練">
@@ -177,7 +177,7 @@
 
       <div class="form-group">
         <label>現有級別 <span class="required-star">*</span></label>
-        <select id="currentLevel" name="entry.XXXXXXX" required>
+        <select id="currentLevel" name="entry.1924363147" required>
           <option value="">請選擇</option>
           <option value="白帶">白帶</option>
           <option value="黃帶">黃帶</option>
@@ -214,13 +214,13 @@
           <label><input type="checkbox" id="indAllRound" onclick="toggleSections(); updateFee()"> 全能品勢(個人)</label>
           <label><input type="checkbox" id="indSenior" onclick="toggleSections(); updateFee()"> 長者(個人)</label>
         </div>
-        <input type="hidden" id="personalEvents" name="entry.XXXXXXX">
+        <input type="hidden" id="personalEvents" name="entry.703788026">
       </div>
 
       <div class="conditional" id="indPoomsaeSection">
         <div class="form-group">
           <label>品勢(個人) 組別</label>
-          <select id="indPoomsaeGroup" name="entry.XXXXXXX">
+          <select id="indPoomsaeGroup" name="entry.1666612578">
             <option value="">請選擇</option>
             <option value="新手組 白至黃綠帶 太極一章">新手組 白至黃綠帶 太極一章</option>
             <option value="新手組 黃綠至綠藍帶 太極三章">新手組 黃綠至綠藍帶 太極三章</option>
@@ -240,7 +240,7 @@
       <div class="conditional" id="indAllRoundSection">
         <div class="form-group">
           <label>全能品勢(個人) 組別</label>
-          <select id="indAllRoundGroup" name="entry.XXXXXXX">
+          <select id="indAllRoundGroup" name="entry.1084612574">
             <option value="">請選擇</option>
             <option value="色帶組 太極一章至八章">色帶組 太極一章至八章</option>
             <option value="品段組 太極三章至高麗">品段組 太極三章至高麗</option>
@@ -253,7 +253,7 @@
       <div class="conditional" id="indSeniorSection">
         <div class="form-group">
           <label>長者(個人) 組別</label>
-          <select id="indSeniorGroup" name="entry.XXXXXXX">
+          <select id="indSeniorGroup" name="entry.1721761818">
             <option value="">請選擇</option>
             <option value="色帶 太極一章">色帶 太極一章</option>
             <option value="色帶 太極四章">色帶 太極四章</option>
@@ -283,13 +283,14 @@
           <label><input type="checkbox" id="teamPoomsae" onclick="toggleSections(); updateFee()"> 品勢(團體)</label>
           <label><input type="checkbox" id="teamAllRound" onclick="toggleSections(); updateFee()"> 全能品勢(團體)</label>
         </div>
-        <input type="hidden" id="teamEvents" name="entry.XXXXXXX">
+        <input type="hidden" id="teamEvents" name="entry.703788026">
       </div>
 
+      <!-- 混雙（只有一個隊員） -->
       <div class="conditional" id="pairPoomsaeSection">
         <div class="form-group">
           <label>品勢(混雙) 組別</label>
-          <select id="pairPoomsaeGroup" name="entry.XXXXXXX">
+          <select id="pairPoomsaeGroup" name="entry.1921234097">
             <option value="">請選擇</option>
             <option value="PA_1:6-8 歲 (2018-2020) 黃綠帶或以下 太極一章">PA_1:6-8 歲 (2018-2020) 黃綠帶或以下 太極一章</option>
             <option value="PA_2:6-8 歲 (2018-2020) 綠帶至紅黑帶 太極三章">PA_2:6-8 歲 (2018-2020) 綠帶至紅黑帶 太極三章</option>
@@ -306,17 +307,31 @@
           </select>
           <span class="error" id="pairPoomsaeGroupError">請選擇品勢(混雙)組別</span>
         </div>
+
         <div class="form-group">
-          <label>隊員姓名（中文）</label>
-          <input type="text" id="pairPartner" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
-          <span class="error" id="pairPartnerError">請輸入混雙隊員姓名</span>
+          <label>隊伍名稱 <span class="required-star">*</span></label>
+          <input type="text" id="pairTeamName" name="entry.1294289670" placeholder="請輸入隊伍名稱">
+          <span class="error" id="pairTeamNameError">請輸入隊伍名稱</span>
+        </div>
+
+        <div class="form-group">
+          <label>隊員姓名（中文） <span class="required-star">*</span></label>
+          <input type="text" id="pairMemberName" name="entry.228238123" placeholder="請輸入中文姓名">
+          <span class="error" id="pairMemberNameError">請輸入隊員姓名</span>
+        </div>
+
+        <div class="form-group">
+          <label>隊員出生年份 <span class="required-star">*</span></label>
+          <input type="number" id="pairMemberYear" name="entry.1642921107" min="1900" max="2026" placeholder="例如 2010">
+          <span class="error" id="pairMemberYearError">請輸入隊員出生年份</span>
         </div>
       </div>
 
+      <!-- 品勢(團體) -->
       <div class="conditional" id="teamPoomsaeSection">
         <div class="form-group">
           <label>品勢(團體) 組別</label>
-          <select id="teamPoomsaeGroup" name="entry.XXXXXXX">
+          <select id="teamPoomsaeGroup" name="entry.1513747738">
             <option value="">請選擇</option>
             <option value="TA_1:6-8 歲 (2018-2020) 黃綠帶或以下 太極一章">TA_1:6-8 歲 (2018-2020) 黃綠帶或以下 太極一章</option>
             <option value="TA_2:6-8 歲 (2018-2020) 綠帶至紅黑帶 太極三章">TA_2:6-8 歲 (2018-2020) 綠帶至紅黑帶 太極三章</option>
@@ -333,41 +348,102 @@
           </select>
           <span class="error" id="teamPoomsaeGroupError">請選擇品勢(團體)組別</span>
         </div>
+
         <div class="form-group">
-          <label>隊員姓名1（中文）</label>
-          <input type="text" id="teamMember1" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
+          <label>隊伍類型 <span class="required-star">*</span></label>
+          <select id="teamType" name="entry.1658066954">
+            <option value="">請選擇</option>
+            <option value="男子團體色帶組">男子團體色帶組</option>
+            <option value="女子團體色帶組">女子團體色帶組</option>
+            <option value="男子團體黑帶組">男子團體黑帶組</option>
+            <option value="女子團體黑帶組">女子團體黑帶組</option>
+          </select>
+          <span class="error" id="teamTypeError">請選擇隊伍類型</span>
+        </div>
+
+        <div class="form-group">
+          <label>隊伍名稱 <span class="required-star">*</span></label>
+          <input type="text" id="teamPoomsaeName" name="entry.1944117171" placeholder="請輸入隊伍名稱">
+          <span class="error" id="teamPoomsaeNameError">請輸入隊伍名稱</span>
+        </div>
+
+        <div class="form-group">
+          <label>隊員姓名1（中文） <span class="required-star">*</span></label>
+          <input type="text" id="teamMember1" name="entry.1770242452" placeholder="請輸入中文姓名">
           <span class="error" id="teamMember1Error">請輸入團體隊員1姓名</span>
         </div>
         <div class="form-group">
-          <label>隊員姓名2（中文）</label>
-          <input type="text" id="teamMember2" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
+          <label>隊員1 出生年份 <span class="required-star">*</span></label>
+          <input type="number" id="teamMember1Year" name="entry.1979956004" min="1900" max="2026" placeholder="例如 2010">
+          <span class="error" id="teamMember1YearError">請輸入隊員1出生年份</span>
+        </div>
+
+        <div class="form-group">
+          <label>隊員姓名2（中文） <span class="required-star">*</span></label>
+          <input type="text" id="teamMember2" name="entry.87785369" placeholder="請輸入中文姓名">
           <span class="error" id="teamMember2Error">請輸入團體隊員2姓名</span>
+        </div>
+        <div class="form-group">
+          <label>隊員2 出生年份 <span class="required-star">*</span></label>
+          <input type="number" id="teamMember2Year" name="entry.1569453495" min="1900" max="2026" placeholder="例如 2010">
+          <span class="error" id="teamMember2YearError">請輸入隊員2出生年份</span>
         </div>
       </div>
 
+      <!-- 全能品勢(團體) -->
       <div class="conditional" id="teamAllRoundSection">
         <div class="form-group">
           <label>全能品勢(團體) 組別</label>
           <input type="text" value="全能團體 太極一章至八章" readonly>
-          <input type="hidden" id="teamAllRoundGroup" name="entry.XXXXXXX" value="全能團體 太極一章至八章">
+          <input type="hidden" id="teamAllRoundGroup" name="entry.1432488808" value="全能團體 太極一章至八章">
         </div>
+
         <div class="form-group">
-          <label>隊員姓名1（中文）</label>
-          <input type="text" id="teamAll1" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
+          <label>隊伍名稱 <span class="required-star">*</span></label>
+          <input type="text" id="teamAllName" name="entry.1194705010" placeholder="請輸入隊伍名稱">
+          <span class="error" id="teamAllNameError">請輸入隊伍名稱</span>
+        </div>
+
+        <div class="form-group">
+          <label>隊員1 姓名（中文） <span class="required-star">*</span></label>
+          <input type="text" id="teamAll1" name="entry.932523430" placeholder="請輸入中文姓名">
           <span class="error" id="teamAll1Error">請輸入全能品勢(團體)隊員1姓名</span>
         </div>
         <div class="form-group">
-          <label>隊員姓名2（中文）</label>
-          <input type="text" id="teamAll2" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
+          <label>隊員1 出生年份 <span class="required-star">*</span></label>
+          <input type="number" id="teamAll1Year" name="entry.752628581" min="1900" max="2026" placeholder="例如 2010">
+          <span class="error" id="teamAll1YearError">請輸入隊員1出生年份</span>
+        </div>
+
+        <div class="form-group">
+          <label>隊員2 姓名（中文） <span class="required-star">*</span></label>
+          <input type="text" id="teamAll2" name="entry.1718516776" placeholder="請輸入中文姓名">
           <span class="error" id="teamAll2Error">請輸入全能品勢(團體)隊員2姓名</span>
         </div>
         <div class="form-group">
-          <label>隊員姓名3（中文）（非必填）</label>
-          <input type="text" id="teamAll3" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
+          <label>隊員2 出生年份 <span class="required-star">*</span></label>
+          <input type="number" id="teamAll2Year" name="entry.1088874844" min="1900" max="2026" placeholder="例如 2010">
+          <span class="error" id="teamAll2YearError">請輸入隊員2出生年份</span>
+        </div>
+
+        <div class="form-group">
+          <label>隊員3 姓名（中文）（非必填）</label>
+          <input type="text" id="teamAll3" name="entry.87931004" placeholder="請輸入中文姓名">
         </div>
         <div class="form-group">
-          <label>隊員姓名4（中文）（非必填）</label>
-          <input type="text" id="teamAll4" name="entry.XXXXXXX" placeholder="請輸入中文姓名">
+          <label>隊員3 出生年份（若填姓名則必填）</label>
+          <input type="number" id="teamAll3Year" name="entry.224454800" min="1900" max="2026" placeholder="例如 2010">
+          <span class="error" id="teamAll3YearError">隊員3已填姓名，請輸入出生年份</span>
+        </div>
+
+        <div class="form-group">
+          <label>隊員4 姓名（中文）（非必填）</label>
+          <input type="text" id="teamAll4" name="entry.1542750697" placeholder="請輸入中文姓名">
+        </div>
+        <div class="form-group">
+          <label>隊員4 出生年份（若填姓名則必填）</label>
+          <input type="number" id="teamAll4Year" name="entry.448129781" min="1900" max="2026" placeholder="例如 2010">
+          <span class="error" id="teamAll4YearError">隊員4已填姓名，請輸入出生年份</span>
         </div>
       </div>
 
@@ -388,7 +464,7 @@
           <label><input type="checkbox" id="speedFront" onclick="toggleSections(); updateFee()"> 競速(前踢)</label>
           <label><input type="checkbox" id="speedSide" onclick="toggleSections(); updateFee()"> 競速(橫踢)</label>
         </div>
-        <input type="hidden" id="speedEvents" name="entry.XXXXXXX">
+        <input type="hidden" id="speedEvents" name="entry.703788026">
       </div>
 
       <div class="navigation">
@@ -408,6 +484,10 @@
         <div id="feeBreakdown" style="font-size:0.95rem;line-height:1.6"></div>
       </div>
 
+      <input type="hidden" name="entry.803159846" value="">
+      <input type="hidden" name="entry.2060538814" value="0">
+      <input type="hidden" id="allEventsField" name="entry.703788026">
+
       <div class="navigation">
         <button type="button" class="nav-prev" onclick="prevStep()">上一步</button>
         <button type="button" id="submitBtn" onclick="submitForm()">提交報名</button>
@@ -421,12 +501,13 @@
   <h2>感謝您的報名！</h2>
   <p>確認後教練 / 負責人將盡快與您聯繫核對資料。</p>
   <p>請準備好相關證明文件（如有需要）交給所屬教練。</p>
-  <button class="return-button" onclick="location.reload()" style="padding:0.8rem 1.8rem;border:none;border-radius:0.6rem;cursor:pointer;background:linear-gradient(90deg,#3182ce,#2b6cb0);color:#fff;font-size:1.1rem;margin-top:1.5rem">重新填寫</button>
+  <button class="return-button" onclick="location.reload()">重新填寫</button>
 </div>
 
 <script>
 let currentStep = 1;
 const totalSteps = 6;
+let isSubmitting = false; // 防止重複提交
 
 function updateProgress() {
   const steps = document.querySelectorAll('.progress-step');
@@ -481,80 +562,55 @@ function toggleSections(){
 }
 
 function updateEventFields(){
-  const p = [];
-  if(document.getElementById('indPoomsae').checked) p.push('品勢(個人)');
-  if(document.getElementById('indAllRound').checked) p.push('全能品勢(個人)');
-  if(document.getElementById('indSenior').checked) p.push('長者(個人)');
-  document.getElementById('personalEvents').value = p.join('、') || '無';
+  const allEvents = [];
 
-  const t = [];
-  if(document.getElementById('pairPoomsae').checked) t.push('品勢(混雙)');
-  if(document.getElementById('teamPoomsae').checked) t.push('品勢(團體)');
-  if(document.getElementById('teamAllRound').checked) t.push('全能品勢(團體)');
-  document.getElementById('teamEvents').value = t.join('、') || '無';
+  if(document.getElementById('indPoomsae').checked) allEvents.push('品勢(個人)');
+  if(document.getElementById('indAllRound').checked) allEvents.push('全能品勢(個人)');
+  if(document.getElementById('indSenior').checked) allEvents.push('長者(個人)');
 
-  const s = [];
-  if(document.getElementById('speedFront').checked) s.push('競速(前踢)');
-  if(document.getElementById('speedSide').checked) s.push('競速(橫踢)');
-  document.getElementById('speedEvents').value = s.join('、') || '無';
+  if(document.getElementById('pairPoomsae').checked) allEvents.push('品勢(混雙)');
+  if(document.getElementById('teamPoomsae').checked) allEvents.push('品勢(團體)');
+  if(document.getElementById('teamAllRound').checked) allEvents.push('全能品勢(團體)');
+
+  if(document.getElementById('speedFront').checked) allEvents.push('競速(前踢)');
+  if(document.getElementById('speedSide').checked) allEvents.push('競速(橫踢)');
+
+  document.getElementById('allEventsField').value = allEvents.join('、') || '無';
 }
 
 function calculateFee(){
   const hasIndP = document.getElementById('indPoomsae').checked;
   const hasIndA = document.getElementById('indAllRound').checked;
+  const hasSenior = document.getElementById('indSenior').checked;
   const hasPair  = document.getElementById('pairPoomsae').checked;
   const hasTeam  = document.getElementById('teamPoomsae').checked;
+  const hasAllTeam = document.getElementById('teamAllRound').checked;
   const hasFront = document.getElementById('speedFront').checked;
   const hasSide  = document.getElementById('speedSide').checked;
 
   let total = 0;
   let lines = [];
 
-  // 個人品勢
-  if(hasIndP){
-    total += 300;
-    lines.push('品勢(個人) $300');
-  }
-
-  // 全能個人
+  if(hasIndP){ total += 300; lines.push('品勢(個人) $300'); }
   if(hasIndA){
     const price = hasIndP ? 100 : 300;
-    const disp  = hasIndP ? '<span class="strikethrough">$300</span>$100' : '$300';
+    const disp  = hasIndP ? '<span class="strikethrough">$300</span> $100' : '$300';
     total += price;
     lines.push(`全能品勢(個人) ${disp}`);
   }
+  if(hasSenior){ total += 150; lines.push('長者(個人) $150'); }
 
-  // 長者
-  if(document.getElementById('indSenior').checked){
-    total += 150;
-    lines.push('長者(個人) $150');
-  }
-
-  // 混雙 / 團體 優惠價
   const teamPrice = (hasIndP || hasIndA) ? 150 : 200;
-  const teamDisp  = (hasIndP || hasIndA) ? '<span class="strikethrough">$200</span>$150' : '$200';
+  const teamDisp  = (hasIndP || hasIndA) ? '<span class="strikethrough">$200</span> $150' : '$200';
 
-  if(hasPair){
-    total += teamPrice;
-    lines.push(`品勢(混雙) ${teamDisp}`);
-  }
-  if(hasTeam){
-    total += teamPrice;
-    lines.push(`品勢(團體) ${teamDisp}`);
-  }
-  if(document.getElementById('teamAllRound').checked){
-    total += 0;
-    lines.push('全能品勢(團體) Free');
-  }
+  if(hasPair){ total += teamPrice; lines.push(`品勢(混雙) ${teamDisp}`); }
+  if(hasTeam){ total += teamPrice; lines.push(`品勢(團體) ${teamDisp}`); }
+  if(hasAllTeam){ total += 0; lines.push('全能品勢(團體) Free'); }
 
-  // 競速
-  if(hasFront){
-    total += 150;
-    lines.push('競速(前踢) $150');
-  }
+  if(hasFront){ total += 150; lines.push('競速(前踢) $150'); }
   if(hasSide){
     const price = hasFront ? 100 : 150;
-    const disp  = hasFront ? '<span class="strikethrough">$150</span>$100' : '$150';
+    const disp  = hasFront ? '<span class="strikethrough">$150</span> $100' : '$150';
     total += price;
     lines.push(`競速(橫踢) ${disp}`);
   }
@@ -587,7 +643,7 @@ function validateStep(step){
       document.getElementById('birthDateError').style.display='block';
       valid=false;
     }
-    if(!document.querySelector('input[name="gender"]:checked')) {
+    if(!document.querySelector('input[name="entry.71284989"]:checked')) {
       document.getElementById('genderError').style.display='block';
       valid=false;
     }
@@ -641,15 +697,23 @@ function validateStep(step){
   if(step===4){
     const hasPair = document.getElementById('pairPoomsae').checked;
     const hasTeam = document.getElementById('teamPoomsae').checked;
-    const hasAll = document.getElementById('teamAllRound').checked;
+    const hasAll  = document.getElementById('teamAllRound').checked;
 
     if(hasPair){
       if(!document.getElementById('pairPoomsaeGroup').value){
         document.getElementById('pairPoomsaeGroupError').style.display = 'block';
         valid = false;
       }
-      if(!document.getElementById('pairPartner').value.trim()){
-        document.getElementById('pairPartnerError').style.display = 'block';
+      if(!document.getElementById('pairTeamName').value.trim()){
+        document.getElementById('pairTeamNameError').style.display = 'block';
+        valid = false;
+      }
+      if(!document.getElementById('pairMemberName').value.trim()){
+        document.getElementById('pairMemberNameError').style.display = 'block';
+        valid = false;
+      }
+      if(!document.getElementById('pairMemberYear').value.trim()){
+        document.getElementById('pairMemberYearError').style.display = 'block';
         valid = false;
       }
     }
@@ -659,30 +723,78 @@ function validateStep(step){
         document.getElementById('teamPoomsaeGroupError').style.display = 'block';
         valid = false;
       }
+      if(!document.getElementById('teamType').value){
+        document.getElementById('teamTypeError').style.display = 'block';
+        valid = false;
+      }
+      if(!document.getElementById('teamPoomsaeName').value.trim()){
+        document.getElementById('teamPoomsaeNameError').style.display = 'block';
+        valid = false;
+      }
       if(!document.getElementById('teamMember1').value.trim()){
         document.getElementById('teamMember1Error').style.display = 'block';
+        valid = false;
+      }
+      if(!document.getElementById('teamMember1Year').value.trim()){
+        document.getElementById('teamMember1YearError').style.display = 'block';
         valid = false;
       }
       if(!document.getElementById('teamMember2').value.trim()){
         document.getElementById('teamMember2Error').style.display = 'block';
         valid = false;
       }
+      if(!document.getElementById('teamMember2Year').value.trim()){
+        document.getElementById('teamMember2YearError').style.display = 'block';
+        valid = false;
+      }
     }
 
     if(hasAll){
+      if(!document.getElementById('teamAllName').value.trim()){
+        document.getElementById('teamAllNameError').style.display = 'block';
+        valid = false;
+      }
       if(!document.getElementById('teamAll1').value.trim()){
         document.getElementById('teamAll1Error').style.display = 'block';
+        valid = false;
+      }
+      if(!document.getElementById('teamAll1Year').value.trim()){
+        document.getElementById('teamAll1YearError').style.display = 'block';
         valid = false;
       }
       if(!document.getElementById('teamAll2').value.trim()){
         document.getElementById('teamAll2Error').style.display = 'block';
         valid = false;
       }
-      // 3 and 4 are optional
+      if(!document.getElementById('teamAll2Year').value.trim()){
+        document.getElementById('teamAll2YearError').style.display = 'block';
+        valid = false;
+      }
+      if(document.getElementById('teamAll3').value.trim() && !document.getElementById('teamAll3Year').value.trim()){
+        document.getElementById('teamAll3YearError').style.display = 'block';
+        valid = false;
+      }
+      if(document.getElementById('teamAll4').value.trim() && !document.getElementById('teamAll4Year').value.trim()){
+        document.getElementById('teamAll4YearError').style.display = 'block';
+        valid = false;
+      }
+    }
+
+    // 新增：至少選一個項目
+    const hasAnyEvent = document.getElementById('indPoomsae').checked ||
+                        document.getElementById('indAllRound').checked ||
+                        document.getElementById('indSenior').checked ||
+                        document.getElementById('pairPoomsae').checked ||
+                        document.getElementById('teamPoomsae').checked ||
+                        document.getElementById('teamAllRound').checked ||
+                        document.getElementById('speedFront').checked ||
+                        document.getElementById('speedSide').checked;
+
+    if(step===6 && !hasAnyEvent){
+      alert('請至少選擇一個參加項目');
+      valid = false;
     }
   }
-
-  // Step 5 has no additional fields
 
   return valid;
 }
@@ -692,55 +804,86 @@ function updateFinalSummary(){
     <p><strong>中文姓名：</strong> ${document.getElementById('chineseName').value || '未填'}</p>
     <p><strong>英文姓名：</strong> ${document.getElementById('englishName').value || '未填'}</p>
     <p><strong>出生日期：</strong> ${document.getElementById('birthDate').value || '未選'}</p>
-    <p><strong>性別：</strong> ${document.querySelector('input[name="gender"]:checked')?.value || '未選'}</p>
+    <p><strong>性別：</strong> ${document.querySelector('input[name="entry.71284989"]:checked')?.value || '未選'}</p>
     <p><strong>聯絡電話：</strong> ${document.getElementById('phone').value || '未填'}</p>
     <p><strong>緊急聯絡人：</strong> ${document.getElementById('emergencyContact').value || '未填'}（${document.getElementById('emergencyPhone').value || '未填'}）</p>
     <p><strong>道場：</strong> ${document.getElementById('dojo').value || '未選'}</p>
     <p><strong>教練：</strong> ${document.getElementById('coach').value || '未選'}</p>
     <p><strong>現有級別：</strong> ${document.getElementById('currentLevel').value || '未選'}</p>
-    <p><strong>個人項目：</strong> ${document.getElementById('personalEvents').value || '無'}</p>`;
+    <p><strong>所有參加項目：</strong> ${document.getElementById('allEventsField').value || '無'}</p>`;
 
-  if(document.getElementById('indPoomsae').checked) html += `<p style="margin-left:1rem">└ ${document.getElementById('indPoomsaeGroup').value || '未選'}</p>`;
-  if(document.getElementById('indAllRound').checked) html += `<p style="margin-left:1rem">└ ${document.getElementById('indAllRoundGroup').value || '未選'}</p>`;
-  if(document.getElementById('indSenior').checked)   html += `<p style="margin-left:1rem">└ ${document.getElementById('indSeniorGroup').value || '未選'}</p>`;
-
-  html += `<p><strong>混雙/團體項目：</strong> ${document.getElementById('teamEvents').value || '無'}</p>`;
+  if(document.getElementById('indPoomsae').checked) html += `<p style="margin-left:1rem">└ 品勢(個人)：${document.getElementById('indPoomsaeGroup').value || '未選'}</p>`;
+  if(document.getElementById('indAllRound').checked) html += `<p style="margin-left:1rem">└ 全能品勢(個人)：${document.getElementById('indAllRoundGroup').value || '未選'}</p>`;
+  if(document.getElementById('indSenior').checked)   html += `<p style="margin-left:1rem">└ 長者(個人)：${document.getElementById('indSeniorGroup').value || '未選'}</p>`;
 
   if(document.getElementById('pairPoomsae').checked){
-    html += `<p style="margin-left:1rem">└ ${document.getElementById('pairPoomsaeGroup').value || '未選'}</p>
-             <p style="margin-left:2rem">隊員：${document.getElementById('pairPartner').value || '未填'}</p>`;
-  }
-  if(document.getElementById('teamPoomsae').checked){
-    html += `<p style="margin-left:1rem">└ ${document.getElementById('teamPoomsaeGroup').value || '未選'}</p>
-             <p style="margin-left:2rem">隊員1：${document.getElementById('teamMember1').value || '未填'}</p>
-             <p style="margin-left:2rem">隊員2：${document.getElementById('teamMember2').value || '未填'}</p>`;
-  }
-  if(document.getElementById('teamAllRound').checked){
-    const members = [1,2,3,4].map(i=>document.getElementById(`teamAll${i}`).value.trim()).filter(v=>v).join('、 ') || '未填';
-    html += `<p style="margin-left:1rem">└ 全能團體 太極一章至八章</p>
-             <p style="margin-left:2rem">隊員：${members}</p>`;
+    html += `<p style="margin-left:1rem">└ 品勢(混雙)：${document.getElementById('pairPoomsaeGroup').value || '未選'}</p>
+             <p style="margin-left:2rem">隊伍名稱：${document.getElementById('pairTeamName').value || '未填'}</p>
+             <p style="margin-left:2rem">隊員：${document.getElementById('pairMemberName').value || '未填'}（${document.getElementById('pairMemberYear').value || ''}年）</p>`;
   }
 
-  html += `<p><strong>競速項目：</strong> ${document.getElementById('speedEvents').value || '無'}</p>`;
+  if(document.getElementById('teamPoomsae').checked){
+    html += `<p style="margin-left:1rem">└ 品勢(團體)：${document.getElementById('teamPoomsaeGroup').value || '未選'}</p>
+             <p style="margin-left:2rem">隊伍類型：${document.getElementById('teamType').value || '未選'}</p>
+             <p style="margin-left:2rem">隊伍名稱：${document.getElementById('teamPoomsaeName').value || '未填'}</p>
+             <p style="margin-left:2rem">隊員1：${document.getElementById('teamMember1').value || '未填'}（${document.getElementById('teamMember1Year').value || ''}年）</p>
+             <p style="margin-left:2rem">隊員2：${document.getElementById('teamMember2').value || '未填'}（${document.getElementById('teamMember2Year').value || ''}年）</p>`;
+  }
+
+  if(document.getElementById('teamAllRound').checked){
+    let members = [];
+    for(let i=1; i<=4; i++){
+      const name = document.getElementById(`teamAll${i}`).value.trim();
+      if(name){
+        const year = document.getElementById(`teamAll${i}Year`).value || '';
+        members.push(`${name}（${year}年）`);
+      }
+    }
+    html += `<p style="margin-left:1rem">└ 全能品勢(團體)：全能團體 太極一章至八章</p>
+             <p style="margin-left:2rem">隊伍名稱：${document.getElementById('teamAllName').value || '未填'}</p>
+             <p style="margin-left:2rem">隊員：${members.length ? members.join('、 ') : '未填'}</p>`;
+  }
+
+  if(document.getElementById('speedFront').checked || document.getElementById('speedSide').checked){
+    const speedItems = [];
+    if(document.getElementById('speedFront').checked) speedItems.push('競速(前踢)');
+    if(document.getElementById('speedSide').checked) speedItems.push('競速(橫踢)');
+    html += `<p><strong>競速項目：</strong> ${speedItems.join('、 ')}</p>`;
+  }
 
   document.getElementById('finalSummary').innerHTML = html;
 }
 
 function submitForm(){
+  if(isSubmitting) return; // 防止重複點擊
   if(!validateStep(6)) return;
+
+  isSubmitting = true;
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('submitBtn').textContent = '送出中...';
 
   updateEventFields();
 
+  const {total, lines} = calculateFee();
+  document.querySelector('input[name="entry.803159846"]').value = lines.join('\n').trim();
+  document.querySelector('input[name="entry.2060538814"]').value = total;
+
   const formData = new FormData(document.getElementById('registrationForm'));
 
-  fetch('https://docs.google.com/forms/d/e/您的表單ID/formResponse', {
+  fetch('https://docs.google.com/forms/d/e/1FAIpQLSfp2nzjmdax52ituSc3FXl4T9_z2JUX4auxy6AAwuhZ8ok_LQ/formResponse', {
     method: 'POST',
     mode: 'no-cors',
     body: formData
+  }).catch(err => {
+    console.error('提交時發生錯誤:', err);
   });
 
-  document.getElementById('mainForm').style.display = 'none';
-  document.getElementById('thankYouPage').style.display = 'block';
+  // 延遲跳轉（確保資料送出）
+  setTimeout(() => {
+    document.getElementById('mainForm').style.display = 'none';
+    document.getElementById('thankYouPage').style.display = 'block';
+    isSubmitting = false;
+  }, 800); // 800ms 足夠送出，且使用者感覺順暢
 }
 
 function validateDate(){
@@ -753,6 +896,7 @@ function validateDate(){
   if(isNaN(y) || isNaN(m) || isNaN(d) || y < 1 || y>2026 || m<1 || m>12 || d<1 || d>31){
     hidden.value = '';
     error.style.display = 'block';
+    error.textContent = '請輸入有效出生日期';
     return;
   }
 
@@ -760,6 +904,7 @@ function validateDate(){
   if(d > daysInMonth){
     hidden.value = '';
     error.style.display = 'block';
+    error.textContent = `${y}年${m}月沒有${d}日，請修正`;
     return;
   }
 
