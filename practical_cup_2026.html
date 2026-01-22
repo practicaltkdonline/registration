@@ -51,11 +51,12 @@
     .strikethrough {text-decoration: line-through; color:#999; margin-right:0.5rem;}
     .required-star{color:#e53e3e}
 
-    /* 新增：隊員姓名與出生年份並列布局 */
+    /* 隊員姓名與出生年份並列布局 - 電腦與手機都強制水平排列 */
     .member-row {
       display: flex;
-      gap: 1rem;
+      gap: 0.8rem;
       align-items: flex-start;
+      flex-wrap: nowrap; /* 永遠不換行 */
     }
     .member-row .form-group {
       margin-bottom: 0;
@@ -63,11 +64,27 @@
       background: none;
       box-shadow: none;
     }
-    .member-row .form-group:nth-child(1) { flex: 7; } /* 姓名佔70% */
-    .member-row .form-group:nth-child(2) { flex: 3; } /* 出生年份佔30% */
+    .member-row .form-group:first-child { flex: 7; } /* 姓名佔70% */
+    .member-row .form-group:last-child { flex: 3; }   /* 年份佔30% */
+
+    /* 手機版微調：縮小間距、字體，讓並排更舒適 */
     @media (max-width: 600px) {
-      .member-row { flex-direction: column; gap: 0.5rem; }
-      .member-row .form-group { flex: 1; }
+      .member-row {
+        gap: 0.5rem;
+      }
+      .member-row input {
+        font-size: 0.95rem;
+        padding: 0.7rem;
+      }
+      .member-row label {
+        font-size: 0.9rem;
+      }
+      .form-group {
+        margin-bottom: 1rem; /* 手機版減小垂直間距 */
+      }
+      .conditional {
+        padding-left: 1rem; /* 手機版減小左邊距 */
+      }
     }
   </style>
 </head>
@@ -75,7 +92,7 @@
 
 <div class="form-container" id="mainForm">
   <div class="form-header">
-    <h1>2026年實用盃跆拳道邀請賽</h1>
+    <h1>實用盃跆拳道邀請賽2026</h1>
     <h2>報名表</h2>
   </div>
 
@@ -89,7 +106,6 @@
     <div class="progress-step" data-step="6">6</div>
   </div>
 
-  <!-- 使用傳統 form action + hidden iframe 提交 -->
   <form id="registrationForm" action="https://docs.google.com/forms/d/e/1FAIpQLSfp2nzjmdax52ituSc3FXl4T9_z2JUX4auxy6AAwuhZ8ok_LQ/formResponse" method="POST" target="hidden_iframe">
 
     <!-- 步驟 1：個人資料 -->
@@ -304,7 +320,7 @@
         </div>
       </div>
 
-      <!-- 混雙（只有一個隊員） -->
+      <!-- 混雙 -->
       <div class="conditional" id="pairPoomsaeSection">
         <div class="form-group">
           <label>品勢(混雙) 組別</label>
@@ -326,23 +342,21 @@
           <span class="error" id="pairPoomsaeGroupError">請選擇品勢(混雙)組別</span>
         </div>
 
-        <div class="member-row">
-          <div class="form-group">
-            <label>隊伍名稱 <span class="required-star">*</span></label>
-            <input type="text" id="pairTeamName" name="entry.1294289670" placeholder="請輸入隊伍名稱">
-            <span class="error" id="pairTeamNameError">請輸入隊伍名稱</span>
-          </div>
+        <div class="form-group">
+          <label>隊伍名稱 <span class="required-star">*</span></label>
+          <input type="text" id="pairTeamName" name="entry.1294289670" placeholder="請輸入隊伍名稱">
+          <span class="error" id="pairTeamNameError">請輸入隊伍名稱</span>
         </div>
 
         <div class="member-row">
           <div class="form-group">
             <label>隊員姓名 <span class="required-star">*</span></label>
-            <input type="text" id="pairMemberName" name="entry.228238123" placeholder="請輸入姓名">
+            <input type="text" id="pairMemberName" name="entry.228238123" placeholder="姓名">
             <span class="error" id="pairMemberNameError">請輸入隊員姓名</span>
           </div>
           <div class="form-group">
             <label>出生年份 <span class="required-star">*</span></label>
-            <input type="number" id="pairMemberYear" name="entry.1642921107" min="1900" max="2026" placeholder="例: 2010">
+            <input type="number" id="pairMemberYear" name="entry.1642921107" min="1900" max="2026" placeholder="例:2010">
             <span class="error" id="pairMemberYearError">請輸入出生年份</span>
           </div>
         </div>
@@ -529,7 +543,7 @@
 
   </form>
 
-  <!-- 隱藏 iframe，用於接收提交回應並觸發跳轉 -->
+  <!-- 隱藏 iframe -->
   <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(isSubmitting){ document.getElementById('mainForm').style.display='none'; document.getElementById('thankYouPage').style.display='block'; isSubmitting=false; document.getElementById('submitBtn').disabled=false; document.getElementById('submitBtn').textContent='提交報名'; }"></iframe>
 </div>
 
@@ -819,7 +833,6 @@ function validateStep(step){
       }
     }
 
-    // 至少選一個項目
     const hasAnyEvent = document.getElementById('indPoomsae').checked ||
                         document.getElementById('indAllRound').checked ||
                         document.getElementById('indSenior').checked ||
@@ -858,15 +871,15 @@ function updateFinalSummary(){
   if(document.getElementById('pairPoomsae').checked){
     html += `<p style="margin-left:1rem">└ 品勢(混雙)：${document.getElementById('pairPoomsaeGroup').value || '未選'}</p>
              <p style="margin-left:2rem">隊伍名稱：${document.getElementById('pairTeamName').value || '未填'}</p>
-             <p style="margin-left:2rem">隊員姓名/出生年份：${document.getElementById('pairMemberName').value || '未填'}（${document.getElementById('pairMemberYear').value || ''}年）</p>`;
+             <p style="margin-left:2rem">隊員姓名 / 出生年份：${document.getElementById('pairMemberName').value || '未填'}（${document.getElementById('pairMemberYear').value || ''}年）</p>`;
   }
 
   if(document.getElementById('teamPoomsae').checked){
     html += `<p style="margin-left:1rem">└ 品勢(團體)：${document.getElementById('teamPoomsaeGroup').value || '未選'}</p>
              <p style="margin-left:2rem">隊伍類型：${document.getElementById('teamType').value || '未選'}</p>
              <p style="margin-left:2rem">隊伍名稱：${document.getElementById('teamPoomsaeName').value || '未填'}</p>
-             <p style="margin-left:2rem">隊員1姓名/出生年份：${document.getElementById('teamMember1').value || '未填'}（${document.getElementById('teamMember1Year').value || ''}年）</p>
-             <p style="margin-left:2rem">隊員2姓名/出生年份：${document.getElementById('teamMember2').value || '未填'}（${document.getElementById('teamMember2Year').value || ''}年）</p>`;
+             <p style="margin-left:2rem">隊員1姓名 / 出生年份：${document.getElementById('teamMember1').value || '未填'}（${document.getElementById('teamMember1Year').value || ''}年）</p>
+             <p style="margin-left:2rem">隊員2姓名 / 出生年份：${document.getElementById('teamMember2').value || '未填'}（${document.getElementById('teamMember2Year').value || ''}年）</p>`;
   }
 
   if(document.getElementById('teamAllRound').checked){
@@ -910,7 +923,6 @@ function submitForm(){
   if(feeDetailInput) feeDetailInput.value = lines.join('\n').trim();
   if(feeTotalInput) feeTotalInput.value = total;
 
-  // 直接提交表單
   document.getElementById('registrationForm').submit();
 }
 
@@ -958,7 +970,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
   };
 
-  updateEventFields(); // 初始清空
+  updateEventFields();
   updateFee();
   toggleSections();
 });
