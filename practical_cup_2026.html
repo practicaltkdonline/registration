@@ -50,6 +50,25 @@
     .note{font-size:0.95rem;color:#718096;margin-top:0.5rem;}
     .strikethrough {text-decoration: line-through; color:#999; margin-right:0.5rem;}
     .required-star{color:#e53e3e}
+
+    /* 新增：隊員姓名與出生年份並列布局 */
+    .member-row {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .member-row .form-group {
+      margin-bottom: 0;
+      padding: 0;
+      background: none;
+      box-shadow: none;
+    }
+    .member-row .form-group:nth-child(1) { flex: 7; } /* 姓名佔70% */
+    .member-row .form-group:nth-child(2) { flex: 3; } /* 出生年份佔30% */
+    @media (max-width: 600px) {
+      .member-row { flex-direction: column; gap: 0.5rem; }
+      .member-row .form-group { flex: 1; }
+    }
   </style>
 </head>
 <body>
@@ -70,7 +89,7 @@
     <div class="progress-step" data-step="6">6</div>
   </div>
 
-  <!-- 修正重點：使用傳統 form action + hidden iframe 提交 -->
+  <!-- 使用傳統 form action + hidden iframe 提交 -->
   <form id="registrationForm" action="https://docs.google.com/forms/d/e/1FAIpQLSfp2nzjmdax52ituSc3FXl4T9_z2JUX4auxy6AAwuhZ8ok_LQ/formResponse" method="POST" target="hidden_iframe">
 
     <!-- 步驟 1：個人資料 -->
@@ -307,22 +326,25 @@
           <span class="error" id="pairPoomsaeGroupError">請選擇品勢(混雙)組別</span>
         </div>
 
-        <div class="form-group">
-          <label>隊伍名稱 <span class="required-star">*</span></label>
-          <input type="text" id="pairTeamName" name="entry.1294289670" placeholder="請輸入隊伍名稱">
-          <span class="error" id="pairTeamNameError">請輸入隊伍名稱</span>
+        <div class="member-row">
+          <div class="form-group">
+            <label>隊伍名稱 <span class="required-star">*</span></label>
+            <input type="text" id="pairTeamName" name="entry.1294289670" placeholder="請輸入隊伍名稱">
+            <span class="error" id="pairTeamNameError">請輸入隊伍名稱</span>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>隊員姓名（中文） <span class="required-star">*</span></label>
-          <input type="text" id="pairMemberName" name="entry.228238123" placeholder="請輸入中文姓名">
-          <span class="error" id="pairMemberNameError">請輸入隊員姓名</span>
-        </div>
-
-        <div class="form-group">
-          <label>隊員出生年份 <span class="required-star">*</span></label>
-          <input type="number" id="pairMemberYear" name="entry.1642921107" min="1900" max="2026" placeholder="例如 2010">
-          <span class="error" id="pairMemberYearError">請輸入隊員出生年份</span>
+        <div class="member-row">
+          <div class="form-group">
+            <label>隊員姓名 <span class="required-star">*</span></label>
+            <input type="text" id="pairMemberName" name="entry.228238123" placeholder="請輸入姓名">
+            <span class="error" id="pairMemberNameError">請輸入隊員姓名</span>
+          </div>
+          <div class="form-group">
+            <label>出生年份 <span class="required-star">*</span></label>
+            <input type="number" id="pairMemberYear" name="entry.1642921107" min="1900" max="2026" placeholder="例: 2010">
+            <span class="error" id="pairMemberYearError">請輸入出生年份</span>
+          </div>
         </div>
       </div>
 
@@ -366,26 +388,30 @@
           <span class="error" id="teamPoomsaeNameError">請輸入隊伍名稱</span>
         </div>
 
-        <div class="form-group">
-          <label>隊員姓名1（中文） <span class="required-star">*</span></label>
-          <input type="text" id="teamMember1" name="entry.1770242452" placeholder="請輸入中文姓名">
-          <span class="error" id="teamMember1Error">請輸入團體隊員1姓名</span>
-        </div>
-        <div class="form-group">
-          <label>隊員1 出生年份 <span class="required-star">*</span></label>
-          <input type="number" id="teamMember1Year" name="entry.1979956004" min="1900" max="2026" placeholder="例如 2010">
-          <span class="error" id="teamMember1YearError">請輸入隊員1出生年份</span>
+        <div class="member-row">
+          <div class="form-group">
+            <label>隊員1姓名 <span class="required-star">*</span></label>
+            <input type="text" id="teamMember1" name="entry.1770242452" placeholder="姓名">
+            <span class="error" id="teamMember1Error">請輸入隊員1姓名</span>
+          </div>
+          <div class="form-group">
+            <label>出生年份 <span class="required-star">*</span></label>
+            <input type="number" id="teamMember1Year" name="entry.1979956004" min="1900" max="2026" placeholder="例:2010">
+            <span class="error" id="teamMember1YearError">請輸入出生年份</span>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>隊員姓名2（中文） <span class="required-star">*</span></label>
-          <input type="text" id="teamMember2" name="entry.87785369" placeholder="請輸入中文姓名">
-          <span class="error" id="teamMember2Error">請輸入團體隊員2姓名</span>
-        </div>
-        <div class="form-group">
-          <label>隊員2 出生年份 <span class="required-star">*</span></label>
-          <input type="number" id="teamMember2Year" name="entry.1569453495" min="1900" max="2026" placeholder="例如 2010">
-          <span class="error" id="teamMember2YearError">請輸入隊員2出生年份</span>
+        <div class="member-row">
+          <div class="form-group">
+            <label>隊員2姓名 <span class="required-star">*</span></label>
+            <input type="text" id="teamMember2" name="entry.87785369" placeholder="姓名">
+            <span class="error" id="teamMember2Error">請輸入隊員2姓名</span>
+          </div>
+          <div class="form-group">
+            <label>出生年份 <span class="required-star">*</span></label>
+            <input type="number" id="teamMember2Year" name="entry.1569453495" min="1900" max="2026" placeholder="例:2010">
+            <span class="error" id="teamMember2YearError">請輸入出生年份</span>
+          </div>
         </div>
       </div>
 
@@ -403,46 +429,54 @@
           <span class="error" id="teamAllNameError">請輸入隊伍名稱</span>
         </div>
 
-        <div class="form-group">
-          <label>隊員1 姓名（中文） <span class="required-star">*</span></label>
-          <input type="text" id="teamAll1" name="entry.932523430" placeholder="請輸入中文姓名">
-          <span class="error" id="teamAll1Error">請輸入全能品勢(團體)隊員1姓名</span>
-        </div>
-        <div class="form-group">
-          <label>隊員1 出生年份 <span class="required-star">*</span></label>
-          <input type="number" id="teamAll1Year" name="entry.752628581" min="1900" max="2026" placeholder="例如 2010">
-          <span class="error" id="teamAll1YearError">請輸入隊員1出生年份</span>
-        </div>
-
-        <div class="form-group">
-          <label>隊員2 姓名（中文） <span class="required-star">*</span></label>
-          <input type="text" id="teamAll2" name="entry.1718516776" placeholder="請輸入中文姓名">
-          <span class="error" id="teamAll2Error">請輸入全能品勢(團體)隊員2姓名</span>
-        </div>
-        <div class="form-group">
-          <label>隊員2 出生年份 <span class="required-star">*</span></label>
-          <input type="number" id="teamAll2Year" name="entry.1088874844" min="1900" max="2026" placeholder="例如 2010">
-          <span class="error" id="teamAll2YearError">請輸入隊員2出生年份</span>
+        <div class="member-row">
+          <div class="form-group">
+            <label>隊員1姓名 <span class="required-star">*</span></label>
+            <input type="text" id="teamAll1" name="entry.932523430" placeholder="姓名">
+            <span class="error" id="teamAll1Error">請輸入隊員1姓名</span>
+          </div>
+          <div class="form-group">
+            <label>出生年份 <span class="required-star">*</span></label>
+            <input type="number" id="teamAll1Year" name="entry.752628581" min="1900" max="2026" placeholder="例:2010">
+            <span class="error" id="teamAll1YearError">請輸入出生年份</span>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>隊員3 姓名（中文）（非必填）</label>
-          <input type="text" id="teamAll3" name="entry.87931004" placeholder="請輸入中文姓名">
-        </div>
-        <div class="form-group">
-          <label>隊員3 出生年份（若填姓名則必填）</label>
-          <input type="number" id="teamAll3Year" name="entry.224454800" min="1900" max="2026" placeholder="例如 2010">
-          <span class="error" id="teamAll3YearError">隊員3已填姓名，請輸入出生年份</span>
+        <div class="member-row">
+          <div class="form-group">
+            <label>隊員2姓名 <span class="required-star">*</span></label>
+            <input type="text" id="teamAll2" name="entry.1718516776" placeholder="姓名">
+            <span class="error" id="teamAll2Error">請輸入隊員2姓名</span>
+          </div>
+          <div class="form-group">
+            <label>出生年份 <span class="required-star">*</span></label>
+            <input type="number" id="teamAll2Year" name="entry.1088874844" min="1900" max="2026" placeholder="例:2010">
+            <span class="error" id="teamAll2YearError">請輸入出生年份</span>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>隊員4 姓名（中文）（非必填）</label>
-          <input type="text" id="teamAll4" name="entry.1542750697" placeholder="請輸入中文姓名">
+        <div class="member-row">
+          <div class="form-group">
+            <label>隊員3姓名（非必填）</label>
+            <input type="text" id="teamAll3" name="entry.87931004" placeholder="姓名">
+          </div>
+          <div class="form-group">
+            <label>出生年份</label>
+            <input type="number" id="teamAll3Year" name="entry.224454800" min="1900" max="2026" placeholder="例:2010">
+            <span class="error" id="teamAll3YearError">隊員3已填姓名，請輸入出生年份</span>
+          </div>
         </div>
-        <div class="form-group">
-          <label>隊員4 出生年份（若填姓名則必填）</label>
-          <input type="number" id="teamAll4Year" name="entry.448129781" min="1900" max="2026" placeholder="例如 2010">
-          <span class="error" id="teamAll4YearError">隊員4已填姓名，請輸入出生年份</span>
+
+        <div class="member-row">
+          <div class="form-group">
+            <label>隊員4姓名（非必填）</label>
+            <input type="text" id="teamAll4" name="entry.1542750697" placeholder="姓名">
+          </div>
+          <div class="form-group">
+            <label>出生年份</label>
+            <input type="number" id="teamAll4Year" name="entry.448129781" min="1900" max="2026" placeholder="例:2010">
+            <span class="error" id="teamAll4YearError">隊員4已填姓名，請輸入出生年份</span>
+          </div>
         </div>
       </div>
 
@@ -563,7 +597,6 @@ function toggleSections(){
   if(currentStep===6) updateFinalSummary();
 }
 
-// 修正重點：確保沒有開頭逗號，過濾空值，並強制清空殘留
 function updateEventFields(){
   const allEvents = [];
 
@@ -578,14 +611,10 @@ function updateEventFields(){
   if(document.getElementById('speedFront').checked) allEvents.push('競速(前踢)');
   if(document.getElementById('speedSide').checked) allEvents.push('競速(橫踢)');
 
-  // 過濾空值、移除多餘空格，並加入分隔符
   const eventsStr = allEvents.filter(item => item && item.trim()).join('、').trim() || '無';
 
-  // 強制設定值，避免任何殘留
   const field = document.getElementById('allEventsField');
-  if(field) {
-    field.value = eventsStr;
-  }
+  if(field) field.value = eventsStr;
 }
 
 function calculateFee(){
@@ -829,15 +858,15 @@ function updateFinalSummary(){
   if(document.getElementById('pairPoomsae').checked){
     html += `<p style="margin-left:1rem">└ 品勢(混雙)：${document.getElementById('pairPoomsaeGroup').value || '未選'}</p>
              <p style="margin-left:2rem">隊伍名稱：${document.getElementById('pairTeamName').value || '未填'}</p>
-             <p style="margin-left:2rem">隊員：${document.getElementById('pairMemberName').value || '未填'}（${document.getElementById('pairMemberYear').value || ''}年）</p>`;
+             <p style="margin-left:2rem">隊員姓名/出生年份：${document.getElementById('pairMemberName').value || '未填'}（${document.getElementById('pairMemberYear').value || ''}年）</p>`;
   }
 
   if(document.getElementById('teamPoomsae').checked){
     html += `<p style="margin-left:1rem">└ 品勢(團體)：${document.getElementById('teamPoomsaeGroup').value || '未選'}</p>
              <p style="margin-left:2rem">隊伍類型：${document.getElementById('teamType').value || '未選'}</p>
              <p style="margin-left:2rem">隊伍名稱：${document.getElementById('teamPoomsaeName').value || '未填'}</p>
-             <p style="margin-left:2rem">隊員1：${document.getElementById('teamMember1').value || '未填'}（${document.getElementById('teamMember1Year').value || ''}年）</p>
-             <p style="margin-left:2rem">隊員2：${document.getElementById('teamMember2').value || '未填'}（${document.getElementById('teamMember2Year').value || ''}年）</p>`;
+             <p style="margin-left:2rem">隊員1姓名/出生年份：${document.getElementById('teamMember1').value || '未填'}（${document.getElementById('teamMember1Year').value || ''}年）</p>
+             <p style="margin-left:2rem">隊員2姓名/出生年份：${document.getElementById('teamMember2').value || '未填'}（${document.getElementById('teamMember2Year').value || ''}年）</p>`;
   }
 
   if(document.getElementById('teamAllRound').checked){
@@ -881,7 +910,7 @@ function submitForm(){
   if(feeDetailInput) feeDetailInput.value = lines.join('\n').trim();
   if(feeTotalInput) feeTotalInput.value = total;
 
-  // 直接提交表單（傳統方式）
+  // 直接提交表單
   document.getElementById('registrationForm').submit();
 }
 
@@ -929,9 +958,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
   };
 
-  // 頁面載入時強制更新一次，避免初始殘留逗號
-  updateEventFields();
-
+  updateEventFields(); // 初始清空
   updateFee();
   toggleSections();
 });
