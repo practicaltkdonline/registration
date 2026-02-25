@@ -310,12 +310,10 @@
     <p id="thankYouMessage2"></p>
     <button class="return-button" onclick="restartForm()">重新報名</button>
   </div>
-
   <script>
     // ==================== 道場 (dojo) 多選處理 ====================
     const customDojoInput = document.getElementById('customDojo');
     const dojoHidden = document.getElementById('dojo');
-
     function toggleCustomDojo() {
       const otherCheckbox = document.querySelector('#dojoGroup input[value="其他"]');
       if (otherCheckbox && otherCheckbox.checked) {
@@ -327,7 +325,6 @@
       }
       updateDojo();
     }
-
     function updateDojo() {
       const checkboxes = document.querySelectorAll('#dojoGroup input[type="checkbox"]');
       const selected = [];
@@ -342,11 +339,9 @@
       });
       dojoHidden.value = selected.join(', ');
     }
-
     // ==================== 學習內容 (learning) 多選處理 ====================
     const customLearningInput = document.getElementById('customLearning');
     const learningHidden = document.getElementById('learning');
-
     function toggleCustomLearning() {
       const otherCheckbox = document.querySelector('#learningGroup input[value="其他"]');
       if (otherCheckbox && otherCheckbox.checked) {
@@ -358,7 +353,6 @@
       }
       updateLearning();
     }
-
     function updateLearning() {
       const checkboxes = document.querySelectorAll('#learningGroup input[type="checkbox"]');
       const selected = [];
@@ -373,7 +367,6 @@
       });
       learningHidden.value = selected.join(', ');
     }
-
     // ==================== 目的 (purpose) 單選 + 其他 ====================
     const customPurposeInput = document.getElementById('customPurpose');
     function updatePurpose() {
@@ -392,7 +385,6 @@
       }
     }
     customPurposeInput.addEventListener('input', updatePurpose);
-
     // ==================== 想成為類型 (wantType) ====================
     const customWantTypeInput = document.getElementById('customWantType');
     function updateWantType() {
@@ -403,7 +395,6 @@
         document.getElementById('wantType').value = '';
       }
     }
-
     // ==================== Slider ====================
     function updateFightingValue(val) {
       document.getElementById('fightingValue').textContent = val;
@@ -413,13 +404,11 @@
       document.getElementById('poomsaeValue').textContent = val;
       document.getElementById('poomsae').value = val;
     }
-
     // ==================== 出席 ====================
     function updateAttend() {
       const selected = document.querySelector('input[name="attend"]:checked');
       document.getElementById('attend').value = selected ? selected.value : '';
     }
-
     // ==================== 事件綁定 ====================
     document.querySelectorAll('#dojoGroup input[type="checkbox"]').forEach(cb => {
       cb.addEventListener('change', () => {
@@ -428,7 +417,6 @@
       });
     });
     customDojoInput.addEventListener('input', updateDojo);
-
     document.querySelectorAll('#learningGroup input[type="checkbox"]').forEach(cb => {
       cb.addEventListener('change', () => {
         toggleCustomLearning();
@@ -436,14 +424,11 @@
       });
     });
     customLearningInput.addEventListener('input', updateLearning);
-
     document.querySelectorAll('input[name="purpose"]').forEach(r => r.addEventListener('change', updatePurpose));
     document.querySelectorAll('input[name="wantType"]').forEach(r => r.addEventListener('change', updateWantType));
     document.querySelectorAll('input[name="attend"]').forEach(r => r.addEventListener('change', updateAttend));
-
     // ==================== 表單提交與驗證 ====================
     const form = document.getElementById('registrationForm');
-
     const nameError = document.getElementById('nameError');
     const dojoError = document.getElementById('dojoError');
     const purposeError = document.getElementById('purposeError');
@@ -452,59 +437,47 @@
     const recentDifficultiesError = document.getElementById('recentDifficultiesError');
     const solutionError = document.getElementById('solutionError');
     const attendError = document.getElementById('attendError');
-
     const formContainer = document.getElementById('formContainer');
     const thankYouPage = document.getElementById('thankYouPage');
     const thankYouMessage1 = document.getElementById('thankYouMessage1');
     const thankYouMessage2 = document.getElementById('thankYouMessage2');
-
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       let isValid = true;
-
       [nameError, dojoError, purposeError, wantTypeError, learningError,
        recentDifficultiesError, solutionError, attendError].forEach(el => el.style.display = 'none');
-
       if (!document.getElementById('name').value.trim()) {
         nameError.style.display = 'block';
         isValid = false;
       }
-
       if (!dojoHidden.value.trim()) {
         dojoError.style.display = 'block';
         isValid = false;
       }
-
       if (!document.getElementById('purpose').value.trim()) {
         purposeError.style.display = 'block';
         isValid = false;
       }
-
       if (!document.getElementById('wantType').value.trim()) {
         wantTypeError.style.display = 'block';
         isValid = false;
       }
-
       if (!learningHidden.value.trim()) {
         learningError.style.display = 'block';
         isValid = false;
       }
-
       if (!document.getElementById('recentDifficulties').value.trim()) {
         recentDifficultiesError.style.display = 'block';
         isValid = false;
       }
-
       if (!document.getElementById('solution').value.trim()) {
         solutionError.style.display = 'block';
         isValid = false;
       }
-
       if (!document.getElementById('attend').value.trim()) {
         attendError.style.display = 'block';
         isValid = false;
       }
-
       if (isValid) {
         const attendVal = document.getElementById('attend').value;
         if (attendVal === '是') {
@@ -514,9 +487,7 @@
           thankYouMessage1.textContent = '感謝您的寶貴意見，這將幫助我們設計出更優質的課程內容。';
           thankYouMessage2.textContent = '期待您下次有空參加培訓課程。';
         }
-
         const formData = new FormData(form);
-
         try {
           await fetch('https://docs.google.com/forms/d/e/1FAIpQLScYvNT-0CrOJZM40uJerJCh6U6xyaAHIfma2Z9RaSeZiIpjqQ/formResponse', {
             method: 'POST',
@@ -530,11 +501,9 @@
           console.error('提交失敗:', error);
           alert('表單提交失敗，請稍後再試。');
         }
-
         resetForm();
       }
     });
-
     function resetForm() {
       form.reset();
       document.querySelectorAll('.error').forEach(el => el.style.display = 'none');
@@ -546,17 +515,21 @@
       document.getElementById('poomsaeValue').textContent = '5';
       document.getElementById('fightingLevel').value = 5;
       document.getElementById('poomsaeLevel').value = 5;
+      updateFightingValue(5);
+      updatePoomsaeValue(5);
       document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
       document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
       dojoHidden.value = '';
       learningHidden.value = '';
     }
-
     function restartForm() {
       thankYouPage.style.display = 'none';
       formContainer.style.display = 'block';
       resetForm();
     }
+    // 初始設定 slider 值
+    updateFightingValue(5);
+    updatePoomsaeValue(5);
   </script>
 </body>
 </html>
