@@ -151,6 +151,31 @@
     }
     input[type="range"] {
       flex: 1;
+      accent-color: #3182ce;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 9999px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #3182ce;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: #3182ce;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
     .slider-value {
       font-weight: bold;
@@ -228,7 +253,7 @@
       <div class="form-group">
         <label class="no-asterisk">你對搏擊教學的熟悉程度 (1-10)</label>
         <div class="slider-container">
-          <input type="range" min="1" max="10" value="5" id="fightingLevel" oninput="updateFightingValue(this.value)">
+          <input type="range" min="1" max="10" value="5" step="1" id="fightingLevel" oninput="updateFightingValue(this.value)">
           <span class="slider-value" id="fightingValue">5</span>
         </div>
         <input type="hidden" id="fighting" name="entry.465791582">
@@ -236,7 +261,7 @@
       <div class="form-group">
         <label class="no-asterisk">你對品勢教學的熟悉程度 (1-10)</label>
         <div class="slider-container">
-          <input type="range" min="1" max="10" value="5" id="poomsaeLevel" oninput="updatePoomsaeValue(this.value)">
+          <input type="range" min="1" max="10" value="5" step="1" id="poomsaeLevel" oninput="updatePoomsaeValue(this.value)">
           <span class="slider-value" id="poomsaeValue">5</span>
         </div>
         <input type="hidden" id="poomsae" name="entry.1737428654">
