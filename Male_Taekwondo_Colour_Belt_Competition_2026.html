@@ -51,11 +51,10 @@
     button.return-button{padding:.8rem 1.5rem;border:none;border-radius:.6rem;cursor:pointer;background:linear-gradient(90deg,#3182ce,#2b6cb0);color:#fff;font-size:1rem}
     button.return-button:hover{background:linear-gradient(90deg,#2b6cb0,#2c5282);transform:translateY(-2px)}
     .required-star{color:#e53e3e}
-    @media(max-width:600px){
-      .date-group select{width:6.5rem}
-      .form-group{padding:.9rem}
-      .navigation{gap:.6rem}
-    }
+
+    /* 確認頁長文字美化 */
+    .confirm-summary p { margin: 0.6rem 0; line-height: 1.6; }
+    .confirm-summary .long-text { white-space: pre-line; word-break: break-all; }
   </style>
 </head>
 <body>
@@ -277,7 +276,7 @@
       updateProgress();
       toggleConditionalSections();
       updateAllDivisions();
-      if (currentStep === 4) setTimeout(updateFinalSummary, 50);
+      if (currentStep === 4) setTimeout(updateFinalSummary, 100);
     }
   }
 
@@ -313,8 +312,9 @@
     const sparringSelect = document.getElementById('sparringDivision');
     const previousSparringValue = sparringSelect.value;
 
-    // 搏擊選項（讓用戶自行選擇）
+    // ==================== 搏擊組別（完整選項） ====================
     let sparringHTML = `<option value="">請選擇重量級</option>`;
+
     if (sparringGroup === "A") {
       sparringHTML += `
         <option value="搏擊 男子組A組 Male Group A, 12歲至14歲 Age: 12 to 14 (2012年至2014年出生者), FIN 鰭量級 (27公斤以上而不超過31公斤)">FIN 鰭量級 (27公斤以上而不超過31公斤)</option>
@@ -353,7 +353,7 @@
     sparringSelect.innerHTML = sparringHTML;
     if (previousSparringValue) sparringSelect.value = previousSparringValue;
 
-    // ==================== 品勢組別（按您最新要求） ====================
+    // ==================== 品勢組別（含太極章數） ====================
     let poomsaeText = "";
     const group = poomsaeGroup;
 
@@ -452,10 +452,12 @@
       <p><strong>參加項目：</strong> ${events.length ? events.join('、') : '未選擇'}</p>`;
 
     if (document.getElementById('eventSparring').checked) {
-      html += `<p><strong>　└ 搏擊組別：</strong> ${document.getElementById('sparringDivision').value || '尚未選擇'}</p>`;
+      const sparringVal = document.getElementById('sparringDivision').value || '尚未選擇';
+      html += `<p><strong>　└ 搏擊組別：</strong><span class="long-text">${sparringVal.replace(/, /g, '<br>')}</span></p>`;
     }
     if (document.getElementById('eventPoomsae').checked) {
-      html += `<p><strong>　└ 品勢組別：</strong> ${document.getElementById('poomsaeDivision').value || '尚未產生'}</p>`;
+      const poomsaeVal = document.getElementById('poomsaeDivision').value || '尚未產生';
+      html += `<p><strong>　└ 品勢組別：</strong><span class="long-text">${poomsaeVal.replace(/, /g, '<br>')}</span></p>`;
     }
 
     document.getElementById('finalSummary').innerHTML = html;
