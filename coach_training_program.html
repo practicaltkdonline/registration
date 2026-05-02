@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>教練培訓班(2026年第一期)報名表</title>
+  <title>教練培訓班(2026年第二期)報名表</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -75,9 +75,9 @@
     }
     textarea {
       resize: vertical;
-      min-height: 100px;
+      min-height: 120px;
     }
-    .checkbox-group, .radio-group {
+    .checkbox-group {
       display: flex;
       flex-direction: column;
       gap: 14px;
@@ -85,14 +85,15 @@
       background: #f7fafc;
       border-radius: 8px;
     }
-    .checkbox-group label, .radio-group label {
+    .checkbox-group label {
       display: flex;
       align-items: center;
       font-weight: normal;
       font-size: 16px;
       margin-bottom: 0;
     }
-    .checkbox-group input[type="checkbox"], .radio-group input[type="radio"] {
+    .checkbox-group input[type="checkbox"],
+    .checkbox-group input[type="radio"] {
       width: auto;
       margin-right: 12px;
       accent-color: #3182ce;
@@ -103,9 +104,8 @@
       margin-top: 8px;
       display: none;
     }
-    #customDojo, #customPurpose, #customWantType, #customLearning {
+    #customDojo {
       margin-top: 12px;
-      display: none;
     }
     #thankYouPage {
       display: none;
@@ -144,53 +144,12 @@
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(49, 130, 206, 0.4);
     }
-    .slider-container {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    input[type="range"] {
-      flex: 1;
-      accent-color: #3182ce;
-      height: 8px;
-      background: #e2e8f0;
-      border-radius: 9999px;
-      outline: none;
-      -webkit-appearance: none;
-    }
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 20px;
-      height: 20px;
-      background: #3182ce;
-      border-radius: 50%;
-      cursor: pointer;
-      border: 2px solid white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    input[type="range"]::-moz-range-thumb {
-      width: 20px;
-      height: 20px;
-      background: #3182ce;
-      border-radius: 50%;
-      cursor: pointer;
-      border: 2px solid white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    .slider-value {
-      font-weight: bold;
-      min-width: 40px;
-      text-align: center;
-    }
     @media (max-width: 600px) {
       .form-container, #thankYouPage {
         padding: 24px;
       }
       .form-header h1 {
         font-size: 24px;
-      }
-      .form-header p {
-        font-size: 14px;
       }
     }
   </style>
@@ -200,15 +159,17 @@
     <div class="form-header">
       <h1>教練培訓班(2026年第一期)報名表</h1>
       <p>歡迎各位報名參加教練培訓班（2026年第一期）！</p>
-      <p>本表單旨在收集您的基本資訊、參加目的及學習期望，</p>
-      <p>以便我們設計更符合需求的課程內容。</p>
+      <p>本表單旨在收集您的基本資訊及學習需求，以便我們設計更符合需求的課程內容。</p>
     </div>
     <form id="registrationForm">
+      <!-- 1. 姓名 -->
       <div class="form-group">
         <label for="name">姓名</label>
         <input type="text" id="name" name="entry.214935030" required>
         <span id="nameError" class="error">請輸入姓名</span>
       </div>
+
+      <!-- 2. 所屬道場 -->
       <div class="form-group">
         <label class="no-asterisk">所屬道場（可多選）</label>
         <div class="checkbox-group" id="dojoGroup">
@@ -228,92 +189,69 @@
         <input type="hidden" id="dojo" name="entry.1854538383">
         <span id="dojoError" class="error">請至少選擇一項道場</span>
       </div>
+
+      <!-- 3. 踢腳動作 -->
       <div class="form-group">
-        <label class="no-asterisk">參加教練班的目的</label>
-        <div class="radio-group">
-          <label class="no-asterisk"><input type="radio" name="purpose" value="有負責教班要進修" onchange="updatePurpose()"> 有負責教班要進修</label>
-          <label class="no-asterisk"><input type="radio" name="purpose" value="沒有教班但想增值自己" onchange="updatePurpose()"> 沒有教班但想增值自己</label>
-          <label class="no-asterisk"><input type="radio" name="purpose" value="其他" onchange="updatePurpose()"> 其他（請手動輸入）</label>
-          <input type="text" id="customPurpose" placeholder="請輸入其他目的" style="display: none;">
-        </div>
-        <input type="hidden" id="purpose" name="entry.467309351">
-        <span id="purposeError" class="error">請選擇一項參加目的</span>
+        <label for="kicking">那些踢腳動作想於教練班中學習？</label>
+        <textarea id="kicking" name="entry.991224280" placeholder="例如：後踢、旋踢、雙飛踢等" required></textarea>
+        <span id="kickingError" class="error">請填寫您想學習的踢腳動作</span>
       </div>
+
+      <!-- 4. 搏擊技術 -->
       <div class="form-group">
-        <label class="no-asterisk">想成為哪一類型教練？</label>
-        <div class="radio-group">
-          <label class="no-asterisk"><input type="radio" name="wantType" value="搏擊教練" onchange="updateWantType()"> 搏擊教練</label>
-          <label class="no-asterisk"><input type="radio" name="wantType" value="品勢教練" onchange="updateWantType()"> 品勢教練</label>
-          <label class="no-asterisk"><input type="radio" name="wantType" value="前線教練(即恆常班教練)" onchange="updateWantType()"> 前線教練(即恆常班教練)</label>
-          <input type="text" id="customWantType" placeholder="請輸入其他類型" style="display: none;">
-        </div>
-        <input type="hidden" id="wantType" name="entry.194670589">
-        <span id="wantTypeError" class="error">請選擇一項教練類型</span>
+        <label for="fightingTech">什麼搏擊技術想於教練班中學習？</label>
+        <textarea id="fightingTech" name="entry.1515933178" placeholder="例如：拳法組合、膝擊、防守反擊等" required></textarea>
+        <span id="fightingTechError" class="error">請填寫您想學習的搏擊技術</span>
       </div>
+
+      <!-- 5. 品勢 -->
       <div class="form-group">
-        <label class="no-asterisk">你對搏擊教學的熟悉程度 (1-10)</label>
-        <div class="slider-container">
-          <input type="range" min="1" max="10" value="5" step="1" id="fightingLevel" oninput="updateFightingValue(this.value)">
-          <span class="slider-value" id="fightingValue">5</span>
-        </div>
-        <input type="hidden" id="fighting" name="entry.465791582">
+        <label for="poomsae">那一套品勢最想於教練班中學習到？</label>
+        <textarea id="poomsae" name="entry.100433372" placeholder="例如：太極一章、高麗品勢等" required></textarea>
+        <span id="poomsaeError" class="error">請填寫您最想學習的品勢</span>
       </div>
+
+      <!-- 6. 近期困難 -->
       <div class="form-group">
-        <label class="no-asterisk">你對品勢教學的熟悉程度 (1-10)</label>
-        <div class="slider-container">
-          <input type="range" min="1" max="10" value="5" step="1" id="poomsaeLevel" oninput="updatePoomsaeValue(this.value)">
-          <span class="slider-value" id="poomsaeValue">5</span>
-        </div>
-        <input type="hidden" id="poomsae" name="entry.1737428654">
+        <label for="recentDifficulties">描述一下近期教學上遇到的困難是什麼？</label>
+        <textarea id="recentDifficulties" name="entry.1952138955" required></textarea>
+        <span id="recentDifficultiesError" class="error">請輸入您的描述</span>
       </div>
+
+      <!-- 7. 如何解決 -->
       <div class="form-group">
-        <label class="no-asterisk">想於教練班中學到什麼（可多選）</label>
-        <div class="checkbox-group" id="learningGroup">
-          <label class="no-asterisk"><input type="checkbox" value="踢腳技巧"> 踢腳技巧</label>
-          <label class="no-asterisk"><input type="checkbox" value="搏擊"> 搏擊</label>
-          <label class="no-asterisk"><input type="checkbox" value="品勢"> 品勢</label>
-          <label class="no-asterisk"><input type="checkbox" value="體能訓練"> 體能訓練</label>
-          <label class="no-asterisk"><input type="checkbox" value="教學內容安排及流程"> 教學內容安排及流程</label>
-          <label class="no-asterisk"><input type="checkbox" value="家長溝通"> 家長溝通</label>
-          <label class="no-asterisk"><input type="checkbox" value="突發情況的處理"> 突發情況的處理</label>
-          <label class="no-asterisk"><input type="checkbox" value="其他"> 其他（請手動輸入）</label>
-        </div>
-        <input type="text" id="customLearning" placeholder="請輸入其他學習內容" style="display: none;">
-        <input type="hidden" id="learning" name="entry.991224280">
-        <span id="learningError" class="error">請至少選擇一項學習內容</span>
+        <label for="solution">你如何解決？</label>
+        <textarea id="solution" name="entry.597453107" required></textarea>
+        <span id="solutionError" class="error">請輸入您的解決方法</span>
       </div>
-      <div class="form-group">
-        <label class="no-asterisk" for="recentDifficulties">描述一下近期教學上遇到的困難是什麼？</label>
-        <textarea id="recentDifficulties" name="entry.1952138955"></textarea>
-        <span id="recentDifficultiesError" class="error">請輸入你的描述</span>
-      </div>
-      <div class="form-group">
-        <label class="no-asterisk" for="solution">你如何解決？</label>
-        <textarea id="solution" name="entry.597453107"></textarea>
-        <span id="solutionError" class="error">請輸入你的解決方法</span>
-      </div>
+
+      <!-- 8. 是否出席（已修正） -->
       <div class="form-group">
         <label class="no-asterisk">會否出席今期教練培訓班？</label>
-        <div class="radio-group">
+        <div class="checkbox-group">
           <label class="no-asterisk"><input type="radio" name="attend" value="是" onchange="updateAttend()"> 是</label>
           <label class="no-asterisk"><input type="radio" name="attend" value="否" onchange="updateAttend()"> 否</label>
         </div>
         <input type="hidden" id="attend" name="entry.673172076">
         <span id="attendError" class="error">請選擇是否出席</span>
       </div>
+
       <button type="submit">提交表單</button>
     </form>
   </div>
+
   <div id="thankYouPage">
     <h2>感謝您的回覆！</h2>
     <p id="thankYouMessage1"></p>
     <p id="thankYouMessage2"></p>
-    <button class="return-button" onclick="restartForm()">重新報名</button>
+    <button class="return-button" onclick="restartForm()">重新填寫</button>
   </div>
+
   <script>
-    // ==================== 道場 (dojo) 多選處理 ====================
+    // 道場多選
     const customDojoInput = document.getElementById('customDojo');
     const dojoHidden = document.getElementById('dojo');
+
     function toggleCustomDojo() {
       const otherCheckbox = document.querySelector('#dojoGroup input[value="其他"]');
       if (otherCheckbox && otherCheckbox.checked) {
@@ -325,91 +263,26 @@
       }
       updateDojo();
     }
+
     function updateDojo() {
       const checkboxes = document.querySelectorAll('#dojoGroup input[type="checkbox"]');
       const selected = [];
       checkboxes.forEach(cb => {
         if (cb.checked) {
-          if (cb.value !== '其他') {
-            selected.push(cb.value);
-          } else if (customDojoInput.value.trim()) {
-            selected.push(customDojoInput.value.trim());
-          }
+          if (cb.value !== '其他') selected.push(cb.value);
+          else if (customDojoInput.value.trim()) selected.push(customDojoInput.value.trim());
         }
       });
       dojoHidden.value = selected.join(', ');
     }
-    // ==================== 學習內容 (learning) 多選處理 ====================
-    const customLearningInput = document.getElementById('customLearning');
-    const learningHidden = document.getElementById('learning');
-    function toggleCustomLearning() {
-      const otherCheckbox = document.querySelector('#learningGroup input[value="其他"]');
-      if (otherCheckbox && otherCheckbox.checked) {
-        customLearningInput.style.display = 'block';
-        customLearningInput.focus();
-      } else {
-        customLearningInput.style.display = 'none';
-        customLearningInput.value = '';
-      }
-      updateLearning();
-    }
-    function updateLearning() {
-      const checkboxes = document.querySelectorAll('#learningGroup input[type="checkbox"]');
-      const selected = [];
-      checkboxes.forEach(cb => {
-        if (cb.checked) {
-          if (cb.value !== '其他') {
-            selected.push(cb.value);
-          } else if (customLearningInput.value.trim()) {
-            selected.push(customLearningInput.value.trim());
-          }
-        }
-      });
-      learningHidden.value = selected.join(', ');
-    }
-    // ==================== 目的 (purpose) 單選 + 其他 ====================
-    const customPurposeInput = document.getElementById('customPurpose');
-    function updatePurpose() {
-      const selected = document.querySelector('input[name="purpose"]:checked');
-      if (selected) {
-        if (selected.value === '其他') {
-          customPurposeInput.style.display = 'block';
-          document.getElementById('purpose').value = customPurposeInput.value.trim() || '其他';
-        } else {
-          customPurposeInput.style.display = 'none';
-          customPurposeInput.value = '';
-          document.getElementById('purpose').value = selected.value;
-        }
-      } else {
-        document.getElementById('purpose').value = '';
-      }
-    }
-    customPurposeInput.addEventListener('input', updatePurpose);
-    // ==================== 想成為類型 (wantType) ====================
-    const customWantTypeInput = document.getElementById('customWantType');
-    function updateWantType() {
-      const selected = document.querySelector('input[name="wantType"]:checked');
-      if (selected) {
-        document.getElementById('wantType').value = selected.value;
-      } else {
-        document.getElementById('wantType').value = '';
-      }
-    }
-    // ==================== Slider ====================
-    function updateFightingValue(val) {
-      document.getElementById('fightingValue').textContent = val;
-      document.getElementById('fighting').value = val;
-    }
-    function updatePoomsaeValue(val) {
-      document.getElementById('poomsaeValue').textContent = val;
-      document.getElementById('poomsae').value = val;
-    }
-    // ==================== 出席 ====================
+
+    // 是否出席
     function updateAttend() {
       const selected = document.querySelector('input[name="attend"]:checked');
       document.getElementById('attend').value = selected ? selected.value : '';
     }
-    // ==================== 事件綁定 ====================
+
+    // 事件綁定
     document.querySelectorAll('#dojoGroup input[type="checkbox"]').forEach(cb => {
       cb.addEventListener('change', () => {
         toggleCustomDojo();
@@ -417,119 +290,66 @@
       });
     });
     customDojoInput.addEventListener('input', updateDojo);
-    document.querySelectorAll('#learningGroup input[type="checkbox"]').forEach(cb => {
-      cb.addEventListener('change', () => {
-        toggleCustomLearning();
-        updateLearning();
-      });
-    });
-    customLearningInput.addEventListener('input', updateLearning);
-    document.querySelectorAll('input[name="purpose"]').forEach(r => r.addEventListener('change', updatePurpose));
-    document.querySelectorAll('input[name="wantType"]').forEach(r => r.addEventListener('change', updateWantType));
-    document.querySelectorAll('input[name="attend"]').forEach(r => r.addEventListener('change', updateAttend));
-    // ==================== 表單提交與驗證 ====================
+
+    // 表單提交驗證
     const form = document.getElementById('registrationForm');
-    const nameError = document.getElementById('nameError');
-    const dojoError = document.getElementById('dojoError');
-    const purposeError = document.getElementById('purposeError');
-    const wantTypeError = document.getElementById('wantTypeError');
-    const learningError = document.getElementById('learningError');
-    const recentDifficultiesError = document.getElementById('recentDifficultiesError');
-    const solutionError = document.getElementById('solutionError');
-    const attendError = document.getElementById('attendError');
     const formContainer = document.getElementById('formContainer');
     const thankYouPage = document.getElementById('thankYouPage');
     const thankYouMessage1 = document.getElementById('thankYouMessage1');
     const thankYouMessage2 = document.getElementById('thankYouMessage2');
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       let isValid = true;
-      [nameError, dojoError, purposeError, wantTypeError, learningError,
-       recentDifficultiesError, solutionError, attendError].forEach(el => el.style.display = 'none');
-      if (!document.getElementById('name').value.trim()) {
-        nameError.style.display = 'block';
-        isValid = false;
-      }
-      if (!dojoHidden.value.trim()) {
-        dojoError.style.display = 'block';
-        isValid = false;
-      }
-      if (!document.getElementById('purpose').value.trim()) {
-        purposeError.style.display = 'block';
-        isValid = false;
-      }
-      if (!document.getElementById('wantType').value.trim()) {
-        wantTypeError.style.display = 'block';
-        isValid = false;
-      }
-      if (!learningHidden.value.trim()) {
-        learningError.style.display = 'block';
-        isValid = false;
-      }
-      if (!document.getElementById('recentDifficulties').value.trim()) {
-        recentDifficultiesError.style.display = 'block';
-        isValid = false;
-      }
-      if (!document.getElementById('solution').value.trim()) {
-        solutionError.style.display = 'block';
-        isValid = false;
-      }
-      if (!document.getElementById('attend').value.trim()) {
-        attendError.style.display = 'block';
-        isValid = false;
-      }
+
+      document.querySelectorAll('.error').forEach(el => el.style.display = 'none');
+
+      if (!document.getElementById('name').value.trim()) { document.getElementById('nameError').style.display = 'block'; isValid = false; }
+      if (!dojoHidden.value.trim()) { document.getElementById('dojoError').style.display = 'block'; isValid = false; }
+      if (!document.getElementById('kicking').value.trim()) { document.getElementById('kickingError').style.display = 'block'; isValid = false; }
+      if (!document.getElementById('fightingTech').value.trim()) { document.getElementById('fightingTechError').style.display = 'block'; isValid = false; }
+      if (!document.getElementById('poomsae').value.trim()) { document.getElementById('poomsaeError').style.display = 'block'; isValid = false; }
+      if (!document.getElementById('recentDifficulties').value.trim()) { document.getElementById('recentDifficultiesError').style.display = 'block'; isValid = false; }
+      if (!document.getElementById('solution').value.trim()) { document.getElementById('solutionError').style.display = 'block'; isValid = false; }
+      if (!document.getElementById('attend').value.trim()) { document.getElementById('attendError').style.display = 'block'; isValid = false; }
+
       if (isValid) {
         const attendVal = document.getElementById('attend').value;
         if (attendVal === '是') {
           thankYouMessage1.textContent = '感謝您報名參加教練培訓班（2026年第一期）！';
-          thankYouMessage2.textContent = '您的寶貴意見將幫助我們設計出更優質的課程內容。';
+          thankYouMessage2.textContent = '您的學習需求將幫助我們設計更針對性的課程內容。';
         } else {
-          thankYouMessage1.textContent = '感謝您的寶貴意見，這將幫助我們設計出更優質的課程內容。';
-          thankYouMessage2.textContent = '期待您下次有空參加培訓課程。';
+          thankYouMessage1.textContent = '感謝您的寶貴意見！';
+          thankYouMessage2.textContent = '期待您下次有機會參加培訓課程。';
         }
+
         const formData = new FormData(form);
         try {
-          await fetch('https://docs.google.com/forms/d/e/1FAIpQLScYvNT-0CrOJZM40uJerJCh6U6xyaAHIfma2Z9RaSeZiIpjqQ/formResponse', {
+          await fetch('https://docs.google.com/forms/d/e/1FAIpQLScg7iC6ncaAHyo-HYsnM0WeBGVxp5zmqQkje-egHg6u5iDaKA/formResponse', {
             method: 'POST',
             body: formData,
             mode: 'no-cors'
           });
-          console.log('表單提交成功');
           formContainer.style.display = 'none';
           thankYouPage.style.display = 'block';
         } catch (error) {
-          console.error('提交失敗:', error);
-          alert('表單提交失敗，請稍後再試。');
+          alert('提交失敗，請稍後再試。');
         }
-        resetForm();
       }
     });
+
     function resetForm() {
       form.reset();
       document.querySelectorAll('.error').forEach(el => el.style.display = 'none');
       customDojoInput.style.display = 'none';
-      customPurposeInput.style.display = 'none';
-      customWantTypeInput.style.display = 'none';
-      customLearningInput.style.display = 'none';
-      document.getElementById('fightingValue').textContent = '5';
-      document.getElementById('poomsaeValue').textContent = '5';
-      document.getElementById('fightingLevel').value = 5;
-      document.getElementById('poomsaeLevel').value = 5;
-      updateFightingValue(5);
-      updatePoomsaeValue(5);
-      document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-      document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
-      dojoHidden.value = '';
-      learningHidden.value = '';
+      document.getElementById('attend').value = '';
     }
+
     function restartForm() {
       thankYouPage.style.display = 'none';
       formContainer.style.display = 'block';
       resetForm();
     }
-    // 初始設定 slider 值
-    updateFightingValue(5);
-    updatePoomsaeValue(5);
   </script>
 </body>
 </html>
