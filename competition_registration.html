@@ -18,18 +18,52 @@
     .date-group select { width: 120px; }
     .date-group select#birthYear { width: 160px; }
 
-    .event-list .card { cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease; margin-bottom: 24px; border: 1px solid #d1d9e6; border-radius: 12px; background: linear-gradient(to bottom, #ffffff, #f9fafb); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
+    .event-list .card { 
+      cursor: pointer; 
+      transition: transform 0.3s ease, box-shadow 0.3s ease; 
+      margin-bottom: 24px; 
+      border: 1px solid #d1d9e6; 
+      border-radius: 12px; 
+      background: linear-gradient(to bottom, #ffffff, #f9fafb); 
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+      min-height: 340px;
+    }
     .event-list .card:hover { transform: translateY(-6px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); }
     .event-list .card.selected { border: 2px solid #1976D2; background: linear-gradient(to bottom, #e3f2fd, #d6eaff); }
     .event-list .card-body { padding: 20px; }
     .event-list .card-title { font-size: 18px; font-weight: 700; color: #1a3c5e; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #e0e7ff; }
 
-    /* 卡片內文美化 */
-    .card-text p { margin: 8px 0; color: #555; }
-    .card-text strong { color: #1a3c5e; font-weight: 600; }
-    .field-deadline { color: #D32F2F !important; font-weight: 500; }
+    /* 卡片內容對齊優化 */
+    .card-text .field-group {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    .card-text .field-label {
+      min-width: 70px;
+      font-weight: 600;
+      color: #1a3c5e;
+      flex-shrink: 0;
+    }
+    .card-text .field-content {
+      flex: 1;
+      color: #555;
+      line-height: 1.5;
+    }
+    .field-deadline .field-content { color: #D32F2F; font-weight: 500; }
 
     .category-group { display: flex; flex-direction: column; gap: 16px; padding: 16px; background: #f9fafb; border-radius: 8px; max-height: 400px; overflow-y: auto; }
+    .category-group label {
+      display: flex;
+      align-items: center;
+      font-weight: normal;
+      font-size: 16px;
+      color: #333;
+      padding: 8px 12px;
+      transition: background-color 0.2s;
+    }
+    .category-group label:hover { background: #e0e7ff; border-radius: 6px; }
+    .category-group input[type="checkbox"] { width: auto; margin-right: 12px; accent-color: #1976D2; }
+
     .category-sum { position: sticky; bottom: 0; font-size: 18px; color: #1a3c5e; padding: 8px 16px; margin: 10px 0 16px 12px; line-height: 1.5; border-top: 2px solid #e0e7ff; }
     .error { color: #D32F2F; font-size: 14px; margin-top: 6px; padding: 8px; background: #ffebee; border-radius: 6px; display: none; }
 
@@ -244,12 +278,14 @@
                 <h5 class="card-title">${eventName}</h5>
                 <div class="card-text">
           `;
-          if (date) cardHTML += `<p><strong>日期：</strong><span>${date}</span></p>`;
-          if (location) cardHTML += `<p><strong>地點：</strong><span>${location}</span></p>`;
-          if (eventCategoriesData) cardHTML += `<p><strong>項目：</strong><span>${eventCategoriesData}</span></p>`;
-          if (target) cardHTML += `<p><strong>對象：</strong><span>${target}</span></p>`;
-          if (deadline) cardHTML += `<p class="field-deadline"><strong>截止日期：</strong><span>${deadline}</span></p>`;
-          if (remark) cardHTML += `<p><strong>備註：</strong><span>${remark}</span></p>`;
+
+          if (date) cardHTML += `<div class="field-group"><span class="field-label">日期：</span><span class="field-content">${date.replace(/\n/g, '<br>')}</span></div>`;
+          if (location) cardHTML += `<div class="field-group"><span class="field-label">地點：</span><span class="field-content">${location.replace(/\n/g, '<br>')}</span></div>`;
+          if (eventCategoriesData) cardHTML += `<div class="field-group"><span class="field-label">項目：</span><span class="field-content">${eventCategoriesData.replace(/\n/g, '<br>')}</span></div>`;
+          if (target) cardHTML += `<div class="field-group"><span class="field-label">對象：</span><span class="field-content">${target.replace(/\n/g, '<br>')}</span></div>`;
+          if (deadline) cardHTML += `<div class="field-group field-deadline"><span class="field-label">截止日期：</span><span class="field-content">${deadline.replace(/\n/g, '<br>')}</span></div>`;
+          if (remark) cardHTML += `<div class="field-group"><span class="field-label">備註：</span><span class="field-content">${remark.replace(/\n/g, '<br>')}</span></div>`;
+
           cardHTML += `</div></div></div>`;
           card.innerHTML = cardHTML;
           eventList.appendChild(card);
@@ -276,7 +312,6 @@
       let remaining = [...selectedClean];
       const rules = discountRules[eventName] || [];
 
-      // Fixed 優惠優先（強制價格）
       rules.filter(r => r.type === "fixed").forEach(rule => {
         if (rule.condition.every(cat => selectedClean.includes(cat))) {
           totalPrice += rule.totalPrice;
@@ -286,12 +321,10 @@
         }
       });
 
-      // Group 優惠
       rules.filter(r => r.type === "group").forEach(rule => {
         const groupCats = rule.categories;
         const selectedInGroup = remaining.filter(cat => groupCats.includes(cat));
         const count = selectedInGroup.length;
-
         if (count >= 2) {
           const bestDiscount = rule.discounts.slice().sort((a, b) => b.count - a.count).find(d => count >= d.count);
           if (bestDiscount) {
@@ -303,7 +336,6 @@
         }
       });
 
-      // 剩餘單項
       remaining.forEach(cat => {
         const price = categoryPrices[`${eventName}:${cat}`] || 0;
         totalPrice += price;
@@ -314,61 +346,10 @@
       if (calculateFormula && adminFee > 0) formulaParts.push(`$${adminFee} (行政費)`);
 
       const formula = formulaParts.join(' + ');
-
       return calculateFormula ? { totalPrice, formula, hasDiscount, adminFee } : totalPrice;
     }
 
-    function updateSelectedEvents() {
-      let totalPrice = 0;
-      Object.entries(selectedCategories).forEach(([event, categories]) => {
-        totalPrice += calculateDiscountedPrice(event, categories);
-      });
-
-      document.getElementById('totalPrice').value = totalPrice;
-
-      // 簡化提交格式（去除價格）
-      const selectedText = Object.entries(selectedCategories)
-        .map(([event, categories]) => {
-          const cleanCats = categories.map(cat => cat.match(/(.+?)\s*-\s*\$/)?.[1].trim() || cat);
-          return `${event}, ${cleanCats.join(', ')}`;
-        })
-        .join('; ') || '';
-
-      document.getElementById('selectedEvents').value = selectedText;
-
-      const floatingBtn = document.getElementById('floatingSubmitBtn');
-      const eventCount = Object.keys(selectedCategories).length;
-      floatingBtn.style.display = eventCount > 0 ? 'flex' : 'none';
-      document.getElementById('eventCount').textContent = eventCount;
-    }
-
-    function updateDays() {
-      const yearSelect = document.getElementById('birthYear');
-      const monthSelect = document.getElementById('birthMonth');
-      const daySelect = document.getElementById('birthDay');
-
-      const currentDay = parseInt(daySelect.value) || 0;
-      const year = parseInt(yearSelect.value);
-      const month = parseInt(monthSelect.value);
-
-      daySelect.innerHTML = '<option value="">日</option>';
-
-      if (year && month) {
-        const daysInMonth = new Date(year, month, 0).getDate();
-        for (let day = 1; day <= daysInMonth; day++) {
-          const option = document.createElement('option');
-          option.value = day;
-          option.text = day.toString().padStart(2, '0');
-          daySelect.appendChild(option);
-        }
-
-        // 盡量保留原本的日子
-        if (currentDay > 0 && currentDay <= daysInMonth) {
-          daySelect.value = currentDay;
-        }
-      }
-    }
-
+    // 其餘函數（保持不變）
     window.addEventListener('load', () => {
       document.getElementById('mainForm').style.display = 'block';
       loadEventsFromSheet();
@@ -380,7 +361,6 @@
       const monthSelect = document.getElementById('birthMonth');
       const daySelect = document.getElementById('birthDay');
       const currentYear = new Date().getFullYear();
-
       for (let year = currentYear; year >= 1900; year--) {
         let option = document.createElement('option');
         option.value = year;
@@ -399,6 +379,27 @@
 
       const dojoSelect = document.getElementById('dojo');
       dojoSelect.addEventListener('change', toggleCustomDojo);
+    }
+
+    function updateDays() {
+      const year = parseInt(document.getElementById('birthYear').value);
+      const month = parseInt(document.getElementById('birthMonth').value);
+      const daySelect = document.getElementById('birthDay');
+      const currentDay = parseInt(daySelect.value) || 0;
+
+      daySelect.innerHTML = '<option value="">日</option>';
+      if (year && month) {
+        let daysInMonth = new Date(year, month, 0).getDate();
+        for (let day = 1; day <= daysInMonth; day++) {
+          let option = document.createElement('option');
+          option.value = day;
+          option.text = day.toString().padStart(2, '0');
+          daySelect.appendChild(option);
+        }
+        if (currentDay > 0 && currentDay <= daysInMonth) {
+          daySelect.value = currentDay;
+        }
+      }
     }
 
     function toggleCustomDojo() {
@@ -488,6 +489,29 @@
       });
     }
 
+    function updateSelectedEvents() {
+      let totalPrice = 0;
+      Object.entries(selectedCategories).forEach(([event, categories]) => {
+        totalPrice += calculateDiscountedPrice(event, categories);
+      });
+
+      document.getElementById('totalPrice').value = totalPrice;
+
+      const selectedText = Object.entries(selectedCategories)
+        .map(([event, categories]) => {
+          const cleanCats = categories.map(cat => cat.match(/(.+?)\s*-\s*\$/)?.[1].trim() || cat);
+          return `${event}, ${cleanCats.join(', ')}`;
+        })
+        .join('; ') || '';
+
+      document.getElementById('selectedEvents').value = selectedText;
+
+      const floatingBtn = document.getElementById('floatingSubmitBtn');
+      const eventCount = Object.keys(selectedCategories).length;
+      floatingBtn.style.display = eventCount > 0 ? 'flex' : 'none';
+      document.getElementById('eventCount').textContent = eventCount;
+    }
+
     function submitForm() {
       if (Object.keys(selectedCategories).length === 0) {
         alert('請至少選擇一項比賽項目');
@@ -550,28 +574,21 @@
       confirmModal.style.display = 'flex';
     }
 
-    function goBackToMainForm() {
-      document.getElementById('confirmModal').style.display = 'none';
-    }
-
+    function goBackToMainForm() { document.getElementById('confirmModal').style.display = 'none'; }
     function goBackToPersonalInfo() {
       document.getElementById('confirmModal').style.display = 'none';
       document.getElementById('personalInfoModal').style.display = 'flex';
     }
-
     function nextStep() {
       document.getElementById('confirmModal').style.display = 'none';
       showPersonalInfoModal();
     }
-
     function showPersonalInfoModal() {
       document.getElementById('personalInfoModal').style.display = 'flex';
     }
-
     function closePersonalInfoModal() {
       document.getElementById('personalInfoModal').style.display = 'none';
     }
-
     function submitPersonalInfo() {
       const name = document.getElementById('name').value.trim();
       if (!name) {
@@ -600,13 +617,8 @@
       }
     }
 
-    function restartForm() {
-      location.reload();
-    }
-
-    function goBack() {
-      document.getElementById('confirmModal').style.display = 'none';
-    }
+    function restartForm() { location.reload(); }
+    function goBack() { document.getElementById('confirmModal').style.display = 'none'; }
 
     document.getElementById('floatingSubmitBtn').onclick = submitForm;
   </script>
