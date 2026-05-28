@@ -7,517 +7,40 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <style>
-    body {
-      font-family: 'Noto Sans TC', Arial, sans-serif;
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-      background-color: #f5f5f5;
-      color: #333;
-    }
-    .form-container {
-      background: linear-gradient(to bottom, #ffffff, #f9fafb);
-      padding: 32px;
-      border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-      display: block;
-    }
-    .form-group {
-      margin-bottom: 24px;
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      font-size: 16px;
-      color: #1a3c5e;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #B0BEC5;
-      border-radius: 8px;
-      box-sizing: border-box;
-      font-size: 16px;
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-    input:focus, select:focus, button:focus {
-      outline: none;
-      border-color: #1976D2;
-      box-shadow: 0 0 6px rgba(25, 118, 210, 0.3);
-    }
-    .date-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .date-group select {
-      width: 120px;
-    }
-    .date-group select#birthYear {
-      width: 160px;
-    }
-    .date-group span {
-      font-size: 16px;
-      color: #333;
-    }
-    .event-list .card {
-      cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      margin-bottom: 24px;
-      border: 1px solid #d1d9e6;
-      border-radius: 12px;
-      min-height: 300px;
-      max-height: 450px;
-      overflow-y: auto;
-      background: linear-gradient(to bottom, #ffffff, #f9fafb);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    }
-    .event-list .card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-    }
-    .event-list .card.selected {
-      border: 2px solid #1976D2;
-      background: linear-gradient(to bottom, #e3f2fd, #d6eaff);
-      box-shadow: 0 6px 16px rgba(25, 118, 210, 0.2);
-    }
-    .event-list .card-body {
-      padding: 20px;
-    }
-    .event-list .card-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: #1a3c5e;
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #e0e7ff;
-    }
-    .event-list .card-text {
-      font-size: 14px;
-      color: #666;
-    }
-    .event-list .card-text p {
-      margin: 4px 0;
-      white-space: pre-wrap;
-    }
-    .event-list .card-text .field-group {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 8px;
-    }
-    .event-list .card-text .field-row {
-      display: flex;
-      align-items: flex-start;
-      padding: 2px 0;
-    }
-    .event-list .card-text .field-label {
-      min-width: 0;
-      white-space: nowrap;
-      font-weight: 600;
-      color: #333;
-      margin-right: 4px;
-      display: inline-block;
-    }
-    .event-list .card-text .field-content {
-      flex-grow: 1;
-      white-space: pre-wrap;
-      color: #666;
-    }
-    .event-list .card-text .field-group-deadline .field-content {
-      color: #D32F2F;
-    }
-    .event-list .card-text .field-group-remark .field-content {
-      font-size: 12px;
-      color: #666;
-      font-style: italic;
-    }
-    .category-group {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      padding: 16px;
-      background: #f9fafb;
-      border-radius: 8px;
-      position: relative;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-    .category-group::-webkit-scrollbar {
-      width: 6px;
-    }
-    .category-group::-webkit-scrollbar-track {
-      background: #B0BEC5;
-      border-radius: 3px;
-    }
-    .category-group::-webkit-scrollbar-thumb {
-      background: #1976D2;
-      border-radius: 3px;
-    }
-    .category-group::-webkit-scrollbar-thumb:hover {
-      background: #1565C0;
-    }
-    .category-group label {
-      display: flex;
-      align-items: center;
-      font-weight: normal;
-      font-size: 16px;
-      color: #333;
-      padding: 8px 12px;
-      transition: background-color 0.2s;
-    }
-    .category-group label:hover {
-      background: #e0e7ff;
-      border-radius: 6px;
-    }
-    .category-group input[type="checkbox"] {
-      width: auto;
-      margin-right: 12px;
-      accent-color: #1976D2;
-    }
-    .category-sum {
-      position: sticky;
-      bottom: 0;
-      font-size: 18px;
-      color: #1a3c5e;
-      padding: 8px 16px;
-      margin: 10px 0 16px 12px;
-      line-height: 1.5;
-      border-top: 2px solid #e0e7ff; /* 分隔線 */
-    }
-    .category-sum .formula {
-      font-size: 14px;
-      font-weight: normal;
-      color: #666;
-      display: block;
-      margin-top: 4px;
-    }
-    .category-sum .discount {
-      font-size: 14px;
-      color: #666;
-      margin-top: 4px;
-    }
-    .category-sum .admin-fee {
-      font-size: 14px;
-      color: #666;
-      margin-top: 4px;
-    }
-    .error {
-      color: #D32F2F;
-      font-size: 14px;
-      margin-top: 6px;
-      padding: 8px;
-      background: #ffebee;
-      border-radius: 6px;
-      display: none;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      justify-content: center;
-      align-items: center;
-      z-index: 1100;
-    }
-    .modal-content {
-      background: linear-gradient(to bottom, #ffffff, #f9fafb);
-      padding: calc(32px + env(safe-area-inset-top)) 32px 32px 32px;
-      border-radius: 12px;
-      max-width: 600px;
-      max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-    }
-    .modal-content.full-screen {
-      max-width: 100%;
-      max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-      width: 100%;
-      height: auto;
-    }
-    .modal-content h2 {
-      font-size: 24px;
-      font-weight: 700;
-      color: #1a3c5e;
-      margin-bottom: 16px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #e0e7ff;
-      margin-top: 0;
-      position: relative;
-      z-index: 1;
-    }
-    .modal-scroll {
-      overflow-y: auto;
-      flex-grow: 1;
-      margin-bottom: 20px;
-      padding-top: 0;
-    }
-    .modal-content p {
-      font-size: 16px;
-      margin: 12px 0;
-      color: #333;
-    }
-    .modal-content p strong {
-      color: #1a3c5e;
-    }
-    #categoryModal .modal-content {
-      padding-bottom: 16px;
-    }
-    #confirmModal .modal-content .button-group,
-    #personalInfoModal .modal-content .button-group {
-      display: flex;
-      gap: 10px;
-      padding-top: 10px;
-      padding-bottom: 40px;
-    }
-    #categoryModal .modal-content .button-group {
-      display: flex;
-      gap: 10px;
-      padding-top: 10px;
-      padding-bottom: 0;
-    }
-    .event-item {
-      margin-bottom: 12px;
-      padding-left: 12px;
-      border-left: 3px solid #1976D2;
-    }
-    .event-item strong::before {
-      content: '．';
-      margin-right: 5px;
-      color: #1976D2;
-    }
-    .category-item {
-      margin-left: 20px;
-      margin-top: 4px;
-      color: #555;
-    }
-    .category-item::before {
-      content: '-';
-      margin-right: 5px;
-      color: #1976D2;
-    }
-    .event-total {
-      margin-left: 20px;
-      font-size: 18px;
-      font-weight: bold;
-      margin-top: 8px;
-      color: #1a3c5e;
-      display: inline;
-    }
-    .event-formula {
-      font-size: 14px;
-      font-weight: normal;
-      color: #666;
-      margin-left: 4px;
-      display: inline;
-    }
-    .event-discount, .event-admin-fee {
-      margin-left: 20px;
-      font-size: 14px;
-      color: #666;
-      margin-top: 4px;
-    }
-    .group-total {
-      margin-left: 20px;
-      font-size: 18px;
-      font-weight: bold;
-      margin-top: 8px;
-      color: #1a3c5e;
-      display: inline;
-    }
-    .group-formula {
-      font-size: 14px;
-      font-weight: normal;
-      color: #666;
-      margin-left: 4px;
-      display: inline;
-    }
-    .group-discount {
-      margin-left: 40px;
-      font-size: 14px;
-      color: #666;
-      margin-top: 4px;
-    }
-    .total-sum {
-      position: sticky;
-      bottom: 60px;
-      font-size: 18px;
-      color: #1a3c5e;
-      padding: 8px 16px;
-      margin: 10px 0 16px 12px;
-      background: #f9fafb;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      line-height: 1.5;
-    }
-    .total-sum .formula {
-      font-size: 14px;
-      font-weight: normal;
-      color: #666;
-      display: block;
-      margin-top: 4px;
-    }
-    button.confirm, button.return-button, button.confirm-selection, button.next-step {
-      background-color: #1976D2;
-      color: white;
-      border: none;
-      cursor: pointer;
-      padding: 12px;
-      border-radius: 8px;
-      transition: background-color 0.3s, transform 0.3s;
-    }
-    button.confirm:hover, button.return-button:hover, button.confirm-selection:hover, button.next-step:hover {
-      background-color: #1565C0;
-      transform: translateY(-2px);
-    }
-    button.cancel {
-      background-color: #B0BEC5;
-      color: #333;
-      padding: 12px;
-      border-radius: 8px;
-      transition: background-color 0.3s, transform 0.3s;
-    }
-    button.cancel:hover {
-      background-color: #90A4AE;
-      transform: translateY(-2px);
-    }
-    #customDojo {
-      margin-top: 12px;
-      display: none;
-    }
-    .event-count {
-      position: absolute;
-      top: -10px;
-      right: 10px;
-      background-color: #ff4444;
-      color: white;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: bold;
-      display: none;
-    }
-    #thankYouPage {
-      display: none;
-      background: linear-gradient(to bottom, #ffffff, #f9fafb);
-      padding: calc(32px + env(safe-area-inset-top)) 32px 32px 32px;
-      border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      width: 100%;
-      min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 1100;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-    #thankYouPage h2 {
-      font-size: 28px;
-      font-weight: 700;
-      color: #1a3c5e;
-      margin-bottom: 16px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #e0e7ff;
-      margin-top: 0;
-      position: relative;
-      z-index: 1;
-    }
-    #thankYouPage p {
-      font-size: 18px;
-      margin: 16px 0;
-      color: #155724;
-    }
-    #thankYouPage .button-group {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      padding-bottom: 40px;
-    }
-    #floatingSubmitBtn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      cursor: pointer;
-      transition: background-color 0.3s, transform 0.3s;
-      z-index: 1000;
-      padding: 0;
-      flex-direction: column;
-    }
-    #floatingSubmitBtn:hover {
-      background-color: #45a049;
-      transform: scale(1.1);
-    }
-    #floatingSubmitBtn .event-count {
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      background-color: #ff4444;
-      color: white;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: bold;
-    }
-    @media (max-width: 600px) {
-      .form-container, #thankYouPage {
-        padding: calc(24px + env(safe-area-inset-top)) 24px 24px 24px;
-      }
-      .modal-content {
-        padding: calc(24px + env(safe-area-inset-top)) 24px 24px 24px;
-      }
-      .date-group {
-        gap: 8px;
-      }
-      .date-group select {
-        width: 70px;
-      }
-      .date-group select#birthYear {
-        width: 110px;
-      }
-      .event-list .card {
-        margin-bottom: 15px;
-      }
-      .event-list .col-12 {
-        width: 100%;
-      }
-      .total-sum {
-        bottom: 50px;
-        padding: 6px 12px;
-        margin: 8px 0 12px 10px;
-      }
-      .category-group {
-        padding-bottom: 40px;
-      }
-    }
+    body { font-family: 'Noto Sans TC', Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; background-color: #f5f5f5; color: #333; }
+    .form-container { background: linear-gradient(to bottom, #ffffff, #f9fafb); padding: 32px; border-radius: 12px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); }
+    .form-group { margin-bottom: 24px; }
+    label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 16px; color: #1a3c5e; }
+    input, select, button { width: 100%; padding: 12px; border: 1px solid #B0BEC5; border-radius: 8px; box-sizing: border-box; font-size: 16px; transition: border-color 0.3s, box-shadow 0.3s; }
+    input:focus, select:focus, button:focus { outline: none; border-color: #1976D2; box-shadow: 0 0 6px rgba(25, 118, 210, 0.3); }
+
+    .date-group { display: flex; align-items: center; gap: 8px; }
+    .date-group select { width: 120px; }
+    .date-group select#birthYear { width: 160px; }
+
+    .event-list .card { cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease; margin-bottom: 24px; border: 1px solid #d1d9e6; border-radius: 12px; background: linear-gradient(to bottom, #ffffff, #f9fafb); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
+    .event-list .card:hover { transform: translateY(-6px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); }
+    .event-list .card.selected { border: 2px solid #1976D2; background: linear-gradient(to bottom, #e3f2fd, #d6eaff); }
+    .event-list .card-body { padding: 20px; }
+    .event-list .card-title { font-size: 18px; font-weight: 700; color: #1a3c5e; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #e0e7ff; }
+
+    /* 卡片內文美化 */
+    .card-text p { margin: 8px 0; color: #555; }
+    .card-text strong { color: #1a3c5e; font-weight: 600; }
+    .field-deadline { color: #D32F2F !important; font-weight: 500; }
+
+    .category-group { display: flex; flex-direction: column; gap: 16px; padding: 16px; background: #f9fafb; border-radius: 8px; max-height: 400px; overflow-y: auto; }
+    .category-sum { position: sticky; bottom: 0; font-size: 18px; color: #1a3c5e; padding: 8px 16px; margin: 10px 0 16px 12px; line-height: 1.5; border-top: 2px solid #e0e7ff; }
+    .error { color: #D32F2F; font-size: 14px; margin-top: 6px; padding: 8px; background: #ffebee; border-radius: 6px; display: none; }
+
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 1100; }
+    .modal-content { background: linear-gradient(to bottom, #ffffff, #f9fafb); padding: 32px; border-radius: 12px; max-width: 600px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); }
+
+    button.confirm, button.return-button, button.confirm-selection, button.next-step { background-color: #1976D2; color: white; border: none; cursor: pointer; padding: 12px; border-radius: 8px; }
+    button.cancel { background-color: #B0BEC5; color: #333; padding: 12px; border-radius: 8px; }
+
+    #floatingSubmitBtn { position: fixed; bottom: 20px; right: 20px; background-color: #4CAF50; color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); cursor: pointer; z-index: 1000; }
+    .event-count { position: absolute; top: -5px; right: -5px; background-color: #ff4444; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -525,9 +48,7 @@
     <div class="form-container" id="mainForm">
       <div class="form-group">
         <label>選擇比賽</label>
-        <div class="event-list row" id="eventList">
-          <!-- 卡片將動態生成 -->
-        </div>
+        <div class="event-list row" id="eventList"></div>
         <span id="eventListError" class="error" style="display: none;">無法載入比賽資料，請檢查試算表是否公開</span>
         <input type="hidden" id="selectedEvents" name="entry.1287068960">
         <input type="hidden" id="totalPrice" name="entry.1317768085">
@@ -535,77 +56,65 @@
     </div>
 
     <div id="personalInfoModal" class="modal">
-      <div class="modal-content full-screen">
-        <div class="modal-scroll">
-          <h2>請輸入個人資料</h2>
-          <div class="form-group">
-            <label>學員姓名</label>
-            <input type="text" id="name" name="entry.1702329531" required>
-            <span id="nameError" class="error">請輸入學員姓名</span>
-          </div>
-          <div class="form-group">
-            <label>聯絡電話</label>
-            <input type="tel" id="phone" name="entry.1541580542" pattern="\d{8}">
-            <span id="phoneError" class="error">請輸入有效的8位電話號碼</span>
-          </div>
-          <div class="form-group">
-            <label>出生日期</label>
-            <div class="date-group">
-              <select id="birthYear" name="entry.1919065731_year">
-                <option value="">年</option>
-              </select>
-              <span>/</span>
-              <select id="birthMonth" name="entry.1919065731_month">
-                <option value="">月</option>
-              </select>
-              <span>/</span>
-              <select id="birthDay" name="entry.1919065731_day">
-                <option value="">日</option>
-              </select>
-            </div>
-            <span id="birthdateError" class="error">請選擇有效的出生日期（不得晚於今日）</span>
-          </div>
-          <div class="form-group">
-            <label>所屬道場</label>
-            <select id="dojo" name="entry.1923170591">
-              <option value="">請選擇道場</option>
-              <option value="觀塘總館">觀塘總館</option>
-              <option value="紅磡-培匠道場">紅磡-培匠道場</option>
-              <option value="鰂魚涌體育館">鰂魚涌體育館</option>
-              <option value="北角官立小學">北角官立小學</option>
-              <option value="大角嘴天主教小學">大角嘴天主教小學</option>
-              <option value="佛教林金殿紀念小學">佛教林金殿紀念小學</option>
-              <option value="其他">其他（請手動輸入）</option>
-            </select>
-            <input type="text" id="customDojo" placeholder="請輸入道場名稱" style="display: none;">
-            <span id="dojoError" class="error">請選擇或輸入道場</span>
-          </div>
+      <div class="modal-content">
+        <h2>請輸入個人資料</h2>
+        <div class="form-group">
+          <label>學員姓名</label>
+          <input type="text" id="name" name="entry.1702329531" required>
+          <span id="nameError" class="error">請輸入學員姓名</span>
         </div>
-        <div class="button-group">
+        <div class="form-group">
+          <label>聯絡電話</label>
+          <input type="tel" id="phone" name="entry.1541580542" pattern="\d{8}">
+          <span id="phoneError" class="error">請輸入有效的8位電話號碼</span>
+        </div>
+        <div class="form-group">
+          <label>出生日期</label>
+          <div class="date-group">
+            <select id="birthYear" name="entry.1919065731_year"></select>
+            <span>/</span>
+            <select id="birthMonth" name="entry.1919065731_month"></select>
+            <span>/</span>
+            <select id="birthDay" name="entry.1919065731_day"></select>
+          </div>
+          <span id="birthdateError" class="error">請選擇有效的出生日期（不得晚於今日）</span>
+        </div>
+        <div class="form-group">
+          <label>所屬道場</label>
+          <select id="dojo" name="entry.1923170591">
+            <option value="">請選擇道場</option>
+            <option value="觀塘總館">觀塘總館</option>
+            <option value="紅磡-培匠道場">紅磡-培匠道場</option>
+            <option value="鰂魚涌體育館">鰂魚涌體育館</option>
+            <option value="北角官立小學">北角官立小學</option>
+            <option value="大角嘴天主教小學">大角嘴天主教小學</option>
+            <option value="佛教林金殿紀念小學">佛教林金殿紀念小學</option>
+            <option value="其他">其他（請手動輸入）</option>
+          </select>
+          <input type="text" id="customDojo" placeholder="請輸入道場名稱" style="display: none; margin-top:8px;">
+          <span id="dojoError" class="error">請選擇或輸入道場</span>
+        </div>
+        <div class="button-group" style="margin-top:24px; display:flex; gap:10px;">
           <button type="button" class="cancel" onclick="closePersonalInfoModal()">取消</button>
           <button type="button" class="next-step" onclick="submitPersonalInfo()">確認</button>
         </div>
       </div>
     </div>
-  </form>
 
-  <div id="categoryModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-scroll">
+    <div id="categoryModal" class="modal">
+      <div class="modal-content">
         <h2 id="categoryTitle"></h2>
         <div class="category-group" id="categoryGroup"></div>
         <div id="categorySum" class="category-sum"></div>
-      </div>
-      <div class="button-group">
-        <button type="button" class="cancel" onclick="closeCategoryModal()">取消</button>
-        <button type="button" class="confirm-selection" onclick="confirmCategorySelection()">確定</button>
+        <div class="button-group" style="margin-top:20px; display:flex; gap:10px;">
+          <button type="button" class="cancel" onclick="closeCategoryModal()">取消</button>
+          <button type="button" class="confirm-selection" onclick="confirmCategorySelection()">確定</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div id="confirmModal" class="modal">
-    <div class="modal-content full-screen">
-      <div class="modal-scroll">
+    <div id="confirmModal" class="modal">
+      <div class="modal-content">
         <h2 id="confirmTitle">請確認您的報名資料</h2>
         <div id="personalInfoSection" style="display: none;">
           <p><strong>學員姓名：</strong> <span id="confirmName"></span></p>
@@ -615,30 +124,26 @@
         </div>
         <p><strong>報名賽事與項目：</strong></p>
         <div id="confirmEvents"></div>
-      </div>
-      <div id="totalSum"></div>
-      <div class="button-group">
-        <button type="button" class="next-step" id="backButton" onclick="goBack()">上一步</button>
-        <button type="button" class="next-step" id="nextButton" onclick="nextStep()">下一步</button>
-        <button type="button" class="confirm" id="submitButton" onclick="confirmSubmission()" style="display: none;">確認提交</button>
+        <div id="totalSum"></div>
+        <div class="button-group" style="margin-top:24px; display:flex; gap:10px;">
+          <button type="button" class="next-step" id="backButton" onclick="goBack()">上一步</button>
+          <button type="button" class="next-step" id="nextButton" onclick="nextStep()">下一步</button>
+          <button type="button" class="confirm" id="submitButton" onclick="confirmSubmission()" style="display: none;">確認提交</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div id="thankYouPage">
-    <h2>感謝您的報名！</h2>
-    <p>確認後教練將盡快與您聯繫</p>
-    <div class="button-group">
+    <div id="thankYouPage" style="display: none; text-align:center; padding:40px;">
+      <h2>感謝您的報名！</h2>
+      <p>確認後教練將盡快與您聯繫</p>
       <button type="button" class="return-button" onclick="restartForm()">重新報名</button>
     </div>
-  </div>
 
-  <button type="button" id="floatingSubmitBtn" style="display: none;">
-    <span id="eventCount" class="event-count"></span>
-    結算
-  </button>
+    <button type="button" id="floatingSubmitBtn" style="display: none;">
+      <span id="eventCount" class="event-count"></span> 結算
+    </button>
+  </form>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <script>
     let eventCategories = {};
     let selectedCategories = {};
@@ -648,6 +153,7 @@
     let eventOrder = [];
     let eventDetails = {};
     let isFinalConfirmation = false;
+    let tempCategories = {};
 
     async function loadEventsFromSheet() {
       const eventList = document.getElementById('eventList');
@@ -655,33 +161,6 @@
       const spreadsheetId = '1FFuryD0S4CbOsw4HJKQQHSRtek_JwWlxGx1FmPEER9Y';
       const sheetId = '1485917481';
       const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&gid=${sheetId}&range=A2:I`;
-
-      const labels = {
-        'date': '日期：',
-        'location': '地點：',
-        'categories': '項目：',
-        'target': '對象：',
-        'deadline': '截止日期：'
-      };
-      const style = document.createElement('style');
-      style.id = 'dynamic-label-style';
-      let cssRules = '';
-      for (const [key, label] of Object.entries(labels)) {
-        const labelLength = label.length;
-        cssRules += `
-          .event-list .card-text .field-group-${key} .field-label {
-            width: ${labelLength}em;
-            white-space: nowrap;
-            font-weight: 600;
-            margin-right: 4px;
-            display: inline-block;
-          }
-        `;
-      }
-      style.textContent = cssRules;
-      const existingStyle = document.getElementById('dynamic-label-style');
-      if (existingStyle) existingStyle.remove();
-      document.head.appendChild(style);
 
       try {
         const response = await fetch(url);
@@ -700,7 +179,9 @@
 
         rows.forEach(row => {
           const eventName = row.c[0]?.v;
-          const categories = row.c[1]?.v;
+          if (!eventName) return;
+
+          const categories = row.c[1]?.v || '';
           const discounts = row.c[2]?.v || '{}';
           const date = row.c[3]?.v || '未提供';
           const location = row.c[4]?.v || '未提供';
@@ -709,167 +190,73 @@
           const deadline = row.c[7]?.v || '未提供';
           const remark = row.c[8]?.v || '';
 
-          if (eventName && categories) {
-            eventOrder.push(eventName);
-            eventDetails[eventName] = { date, location, categories: eventCategoriesData, target, deadline, remark };
-            const categoryArray = categories.split(',').map(cat => cat.trim());
-            eventCategories[eventName] = categoryArray;
-            categoryArray.forEach(category => {
-              const match = category.match(/(.+?)\s*-\s*\$(\d+)/);
-              if (match) {
-                const [, categoryName, price] = match;
-                categoryPrices[`${eventName}:${categoryName.trim()}`] = parseInt(price);
-              }
-            });
+          eventOrder.push(eventName);
+          eventDetails[eventName] = { date, location, categories: eventCategoriesData, target, deadline, remark };
 
-            try {
-              const discountData = JSON.parse(discounts);
-              adminFees[eventName] = discountData.adminFee || 0;
-              discountRules[eventName] = [];
-              if (discountData.groups && Array.isArray(discountData.groups)) {
-                discountData.groups.forEach(group => {
-                  if (group.categories && group.discounts) {
-                    group.discounts.forEach(discount => {
-                      if (discount.count && discount.totalPrice !== undefined) {
-                        discountRules[eventName].push({
-                          groupName: group.name || '未命名組',
-                          condition: group.categories.slice(0, discount.count),
-                          totalPrice: discount.totalPrice
-                        });
-                      }
-                    });
-                  }
-                });
-              }
-              if (discountData.discounts && Array.isArray(discountData.discounts)) {
-                discountData.discounts.forEach(discount => {
-                  if (discount.condition && discount.totalPrice !== undefined) {
-                    discountRules[eventName].push({
-                      groupName: '單項或組合優惠',
-                      condition: discount.condition,
-                      totalPrice: discount.totalPrice
-                    });
-                  }
-                });
-              }
-            } catch (error) {
-              console.error(`解析 ${eventName} 的優惠規則或行政費失敗: ${error.message}, JSON 內容: ${discounts}`);
-              discountRules[eventName] = [];
-              adminFees[eventName] = 0;
+          const categoryArray = categories.split(',').map(cat => cat.trim());
+          eventCategories[eventName] = categoryArray;
+
+          categoryArray.forEach(category => {
+            const match = category.match(/(.+?)\s*-\s*\$(\d+)/);
+            if (match) {
+              categoryPrices[`${eventName}:${match[1].trim()}`] = parseInt(match[2]);
+            }
+          });
+
+          try {
+            const discountData = JSON.parse(discounts);
+            adminFees[eventName] = discountData.adminFee || 0;
+            discountRules[eventName] = [];
+
+            if (discountData.groups && Array.isArray(discountData.groups)) {
+              discountData.groups.forEach(group => {
+                if (group.categories && group.discounts) {
+                  discountRules[eventName].push({
+                    type: "group",
+                    groupName: group.name || "組合優惠",
+                    categories: group.categories.map(c => c.trim()),
+                    discounts: group.discounts
+                  });
+                }
+              });
             }
 
-            const card = document.createElement('div');
-            card.className = 'col-md-6 col-12';
-            let dateContent = '';
-            if (date && date !== '未提供') {
-              const dateLines = date.split('\n').map(line => line.trim()).filter(line => line);
-              dateContent = `
-                <div class="field-group field-group-date">
-                  ${dateLines.map((line, index) => `
-                    <div class="field-row">
-                      <span class="field-label">${index === 0 ? '日期：' : ''}</span>
-                      <span class="field-content">${line}</span>
-                    </div>
-                  `).join('')}
-                </div>
-              `;
+            if (discountData.discounts && Array.isArray(discountData.discounts)) {
+              discountData.discounts.forEach(discount => {
+                if (discount.condition && discount.totalPrice !== undefined) {
+                  discountRules[eventName].push({
+                    type: "fixed",
+                    condition: discount.condition.map(c => c.trim()),
+                    totalPrice: discount.totalPrice
+                  });
+                }
+              });
             }
-            let locationContent = '';
-            if (location && location !== '未提供') {
-              const locationLines = location.split('\n').map(line => line.trim()).filter(line => line);
-              locationContent = `
-                <div class="field-group field-group-location">
-                  ${locationLines.map((line, index) => `
-                    <div class="field-row">
-                      <span class="field-label">${index === 0 ? '地點：' : ''}</span>
-                      <span class="field-content">${line}</span>
-                    </div>
-                  `).join('')}
-                </div>
-              `;
-            }
-            let categoriesContent = '';
-            if (eventCategoriesData && eventCategoriesData !== '未提供') {
-              const categoryLines = eventCategoriesData.split('\n').map(line => line.trim()).filter(line => line);
-              categoriesContent = `
-                <div class="field-group field-group-categories">
-                  ${categoryLines.map((line, index) => `
-                    <div class="field-row">
-                      <span class="field-label">${index === 0 ? '項目：' : ''}</span>
-                      <span class="field-content">${line}</span>
-                    </div>
-                  `).join('')}
-                </div>
-              `;
-            }
-            let targetContent = '';
-            if (target && target !== '未提供') {
-              const targetLines = target.split('\n').map(line => line.trim()).filter(line => line);
-              targetContent = `
-                <div class="field-group field-group-target">
-                  ${targetLines.map((line, index) => `
-                    <div class="field-row">
-                      <span class="field-label">${index === 0 ? '對象：' : ''}</span>
-                      <span class="field-content">${line}</span>
-                    </div>
-                  `).join('')}
-                </div>
-              `;
-            }
-            let deadlineContent = '';
-            if (deadline && deadline !== '未提供') {
-              const deadlineLines = deadline.split('\n').map(line => line.trim()).filter(line => line);
-              deadlineContent = `
-                <div class="field-group field-group-deadline">
-                  ${deadlineLines.map((line, index) => `
-                    <div class="field-row">
-                      <span class="field-label">${index === 0 ? '截止日期：' : ''}</span>
-                      <span class="field-content">${line}</span>
-                    </div>
-                  `).join('')}
-                </div>
-              `;
-            }
-            let remarkContent = '';
-            if (remark && remark !== '') {
-              const remarkLines = remark.split('\n').map(line => line.trim()).filter(line => line);
-              remarkContent = `
-                <div class="field-group field-group-remark">
-                  ${remarkLines.map(line => `
-                    <div class="field-row">
-                      <span class="field-label"></span>
-                      <span class="field-content">${line}</span>
-                    </div>
-                  `).join('')}
-                </div>
-              `;
-            }
-
-            const cardContent = `
-              <div class="card${selectedCategories[eventName]?.length > 0 ? ' selected' : ''}" onclick="showCategoriesModal('${eventName}')">
-                <div class="card-body">
-                  <h5 class="card-title">${eventName}</h5>
-                  <div class="card-text">
-                    ${dateContent}
-                    ${locationContent}
-                    ${categoriesContent}
-                    ${targetContent}
-                    ${deadlineContent}
-                    ${remarkContent}
-                  </div>
-                </div>
-              </div>
-            `;
-            card.innerHTML = cardContent;
-            eventList.appendChild(card);
+          } catch (error) {
+            console.error(`解析 ${eventName} 優惠失敗:`, error);
           }
+
+          const card = document.createElement('div');
+          card.className = 'col-md-6 col-12';
+          let cardHTML = `
+            <div class="card" onclick="showCategoriesModal('${eventName}')">
+              <div class="card-body">
+                <h5 class="card-title">${eventName}</h5>
+                <div class="card-text">
+          `;
+          if (date) cardHTML += `<p><strong>日期：</strong><span>${date}</span></p>`;
+          if (location) cardHTML += `<p><strong>地點：</strong><span>${location}</span></p>`;
+          if (eventCategoriesData) cardHTML += `<p><strong>項目：</strong><span>${eventCategoriesData}</span></p>`;
+          if (target) cardHTML += `<p><strong>對象：</strong><span>${target}</span></p>`;
+          if (deadline) cardHTML += `<p class="field-deadline"><strong>截止日期：</strong><span>${deadline}</span></p>`;
+          if (remark) cardHTML += `<p><strong>備註：</strong><span>${remark}</span></p>`;
+          cardHTML += `</div></div></div>`;
+          card.innerHTML = cardHTML;
+          eventList.appendChild(card);
         });
 
-        if (Object.keys(eventCategories).length === 0) {
-          eventListError.style.display = 'block';
-        }
       } catch (error) {
-        console.error('載入比賽資料失敗:', error);
+        console.error('載入失敗:', error);
         eventListError.style.display = 'block';
       }
       updateSelectedEvents();
@@ -881,65 +268,109 @@
 
     function calculateDiscountedPrice(eventName, selected, calculateFormula = false) {
       let totalPrice = 0;
-      const adminFee = adminFees[eventName] || 0;
-      const selectedCategoriesClean = selected.map(category => category.match(/(.+?)\s*-\s*\$/)?.[1].trim() || category);
       let formulaParts = [];
-      let groupFormulas = [];
       let hasDiscount = false;
+      const adminFee = adminFees[eventName] || 0;
+      const selectedClean = selected.map(cat => cat.match(/(.+?)\s*-\s*\$/)?.[1].trim() || cat.trim());
 
-      const rules = (discountRules[eventName] || [])
-        .filter(rule => rule.condition && rule.totalPrice !== undefined)
-        .sort((a, b) => b.condition.length - a.condition.length);
+      let remaining = [...selectedClean];
+      const rules = discountRules[eventName] || [];
 
-      let remainingCategories = [...selectedCategoriesClean];
-
-      rules.forEach(rule => {
-        const ruleCategories = rule.condition;
-        if (ruleCategories.every(cat => remainingCategories.includes(cat)) && 
-            ruleCategories.length === rule.condition.length && 
-            ruleCategories.length <= remainingCategories.length) {
-          remainingCategories = remainingCategories.filter(cat => !ruleCategories.includes(cat));
+      // Fixed 優惠優先（強制價格）
+      rules.filter(r => r.type === "fixed").forEach(rule => {
+        if (rule.condition.every(cat => selectedClean.includes(cat))) {
           totalPrice += rule.totalPrice;
           hasDiscount = true;
-          if (calculateFormula) {
-            groupFormulas.push({
-              formula: `$${formatPrice(rule.totalPrice)} (${rule.groupName})`,
-              hasDiscount: true
-            });
+          if (calculateFormula) formulaParts.push(`$${rule.totalPrice}`);
+          remaining = remaining.filter(cat => !rule.condition.includes(cat));
+        }
+      });
+
+      // Group 優惠
+      rules.filter(r => r.type === "group").forEach(rule => {
+        const groupCats = rule.categories;
+        const selectedInGroup = remaining.filter(cat => groupCats.includes(cat));
+        const count = selectedInGroup.length;
+
+        if (count >= 2) {
+          const bestDiscount = rule.discounts.slice().sort((a, b) => b.count - a.count).find(d => count >= d.count);
+          if (bestDiscount) {
+            totalPrice += bestDiscount.totalPrice;
+            hasDiscount = true;
+            if (calculateFormula) formulaParts.push(`$${bestDiscount.totalPrice} (${rule.groupName} - ${count}項)`);
+            remaining = remaining.filter(cat => !selectedInGroup.includes(cat));
           }
         }
       });
 
-      remainingCategories.forEach(category => {
-        const price = categoryPrices[`${eventName}:${category}`] || 0;
+      // 剩餘單項
+      remaining.forEach(cat => {
+        const price = categoryPrices[`${eventName}:${cat}`] || 0;
         totalPrice += price;
-        if (calculateFormula) {
-          formulaParts.push(`$${formatPrice(price)}`);
-        }
+        if (calculateFormula) formulaParts.push(`$${price}`);
       });
 
       totalPrice += adminFee;
-      if (calculateFormula && adminFee > 0) {
-        formulaParts.push(`$${formatPrice(adminFee)} (行政費)`);
+      if (calculateFormula && adminFee > 0) formulaParts.push(`$${adminFee} (行政費)`);
+
+      const formula = formulaParts.join(' + ');
+
+      return calculateFormula ? { totalPrice, formula, hasDiscount, adminFee } : totalPrice;
+    }
+
+    function updateSelectedEvents() {
+      let totalPrice = 0;
+      Object.entries(selectedCategories).forEach(([event, categories]) => {
+        totalPrice += calculateDiscountedPrice(event, categories);
+      });
+
+      document.getElementById('totalPrice').value = totalPrice;
+
+      // 簡化提交格式（去除價格）
+      const selectedText = Object.entries(selectedCategories)
+        .map(([event, categories]) => {
+          const cleanCats = categories.map(cat => cat.match(/(.+?)\s*-\s*\$/)?.[1].trim() || cat);
+          return `${event}, ${cleanCats.join(', ')}`;
+        })
+        .join('; ') || '';
+
+      document.getElementById('selectedEvents').value = selectedText;
+
+      const floatingBtn = document.getElementById('floatingSubmitBtn');
+      const eventCount = Object.keys(selectedCategories).length;
+      floatingBtn.style.display = eventCount > 0 ? 'flex' : 'none';
+      document.getElementById('eventCount').textContent = eventCount;
+    }
+
+    function updateDays() {
+      const yearSelect = document.getElementById('birthYear');
+      const monthSelect = document.getElementById('birthMonth');
+      const daySelect = document.getElementById('birthDay');
+
+      const currentDay = parseInt(daySelect.value) || 0;
+      const year = parseInt(yearSelect.value);
+      const month = parseInt(monthSelect.value);
+
+      daySelect.innerHTML = '<option value="">日</option>';
+
+      if (year && month) {
+        const daysInMonth = new Date(year, month, 0).getDate();
+        for (let day = 1; day <= daysInMonth; day++) {
+          const option = document.createElement('option');
+          option.value = day;
+          option.text = day.toString().padStart(2, '0');
+          daySelect.appendChild(option);
+        }
+
+        // 盡量保留原本的日子
+        if (currentDay > 0 && currentDay <= daysInMonth) {
+          daySelect.value = currentDay;
+        }
       }
-
-      const showFormula = calculateFormula && (selectedCategoriesClean.length > 1 || adminFee > 0 || hasDiscount);
-
-      return calculateFormula 
-        ? { 
-            totalPrice, 
-            formula: groupFormulas.map(gf => gf.formula).join('+') + (formulaParts.length > 0 ? `+${formulaParts.join('+')}` : ''), 
-            hasDiscount,
-            adminFee,
-            groupFormulas,
-            showFormula
-          }
-        : totalPrice;
     }
 
     window.addEventListener('load', () => {
       document.getElementById('mainForm').style.display = 'block';
-      document.getElementById('thankYouPage').style.display = 'none';
       loadEventsFromSheet();
       initializePersonalInfo();
     });
@@ -956,14 +387,12 @@
         option.text = year;
         yearSelect.appendChild(option);
       }
-
       for (let month = 1; month <= 12; month++) {
         let option = document.createElement('option');
         option.value = month;
         option.text = month.toString().padStart(2, '0');
         monthSelect.appendChild(option);
       }
-
       updateDays();
       yearSelect.addEventListener('change', updateDays);
       monthSelect.addEventListener('change', updateDays);
@@ -972,45 +401,21 @@
       dojoSelect.addEventListener('change', toggleCustomDojo);
     }
 
-    function isLeapYear(year) {
-      return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
-    }
-
-    function updateDays() {
-      const yearSelect = document.getElementById('birthYear');
-      const monthSelect = document.getElementById('birthMonth');
-      const daySelect = document.getElementById('birthDay');
-      const year = parseInt(yearSelect.value);
-      const month = parseInt(monthSelect.value);
-      daySelect.innerHTML = '<option value="">日</option>';
-      if (year && month) {
-        let daysInMonth = month === 2 ? (isLeapYear(year) ? 29 : 28) : [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
-        for (let day = 1; day <= daysInMonth; day++) {
-          let option = document.createElement('option');
-          option.value = day;
-          option.text = day.toString().padStart(2, '0');
-          daySelect.appendChild(option);
-        }
-      }
-    }
-
     function toggleCustomDojo() {
       const dojoSelect = document.getElementById('dojo');
       const customDojoInput = document.getElementById('customDojo');
       if (dojoSelect.value === '其他') {
         customDojoInput.style.display = 'block';
-        customDojoInput.required = true;
       } else {
         customDojoInput.style.display = 'none';
-        customDojoInput.required = false;
         customDojoInput.value = '';
       }
     }
 
     function showCategoriesModal(eventName) {
       const categoryModal = document.getElementById('categoryModal');
-      const categoryGroup = document.getElementById('categoryGroup');
       const categoryTitle = document.getElementById('categoryTitle');
+      const categoryGroup = document.getElementById('categoryGroup');
       const categorySum = document.getElementById('categorySum');
 
       categoryTitle.textContent = `選擇 ${eventName} 的項目`;
@@ -1018,6 +423,7 @@
       categorySum.innerHTML = '';
 
       tempCategories[eventName] = selectedCategories[eventName] ? [...selectedCategories[eventName]] : [];
+
       eventCategories[eventName].forEach(category => {
         const label = document.createElement('label');
         const checkbox = document.createElement('input');
@@ -1033,17 +439,10 @@
         categoryGroup.appendChild(label);
       });
 
-      if (eventCategories[eventName].length >= 4) {
-        categoryGroup.style.overflowY = 'auto';
-      } else {
-        categoryGroup.style.overflowY = 'hidden';
-      }
-
       updateCategorySum(eventName);
       categoryModal.style.display = 'flex';
     }
 
-    let tempCategories = {};
     function updateTempCategories(eventName, checked, category) {
       if (!tempCategories[eventName]) tempCategories[eventName] = [];
       if (checked) {
@@ -1056,39 +455,18 @@
     function updateCategorySum(eventName) {
       const categorySum = document.getElementById('categorySum');
       categorySum.innerHTML = '';
-      if (tempCategories[eventName]?.length > 0) {
-        const { totalPrice, formula, hasDiscount, adminFee, showFormula } = calculateDiscountedPrice(eventName, tempCategories[eventName], true);
-        const sumDiv = document.createElement('div');
-        sumDiv.className = 'category-sum';
-        const totalText = document.createElement('span');
-        totalText.textContent = `總數 $${formatPrice(totalPrice)}`;
-        sumDiv.appendChild(totalText);
-        if (showFormula) {
-          const formulaText = document.createElement('span');
-          formulaText.className = 'formula';
-          formulaText.textContent = `=${formula}`;
-          sumDiv.appendChild(formulaText);
-        }
-        if (hasDiscount) {
-          const discountText = document.createElement('span');
-          discountText.className = 'discount';
-          discountText.textContent = '已應用優惠';
-          sumDiv.appendChild(discountText);
-        }
-        if (adminFee > 0) {
-          const adminFeeText = document.createElement('span');
-          adminFeeText.className = 'admin-fee';
-          adminFeeText.textContent = '已包括行政費';
-          sumDiv.appendChild(adminFeeText);
-        }
-        categorySum.appendChild(sumDiv);
+      if (tempCategories[eventName] && tempCategories[eventName].length > 0) {
+        const { totalPrice, formula, hasDiscount } = calculateDiscountedPrice(eventName, tempCategories[eventName], true);
+        categorySum.innerHTML = `
+          總數 <strong>$${formatPrice(totalPrice)}</strong><br>
+          <small style="color:#666;">=${formula}</small>
+          ${hasDiscount ? '<small style="color:#D32F2F;">（已應用優惠）</small>' : ''}
+        `;
       }
     }
 
     function closeCategoryModal() {
-      const categoryModal = document.getElementById('categoryModal');
-      categoryModal.style.display = 'none';
-      tempCategories = {};
+      document.getElementById('categoryModal').style.display = 'none';
     }
 
     function confirmCategorySelection() {
@@ -1101,43 +479,13 @@
       updateSelectedEvents();
       closeCategoryModal();
 
-      const cards = document.querySelectorAll('#eventList .card');
+      const cards = document.querySelectorAll('.card');
       cards.forEach(card => {
-        const cardEventName = card.getAttribute('onclick').match(/showCategoriesModal\('(.+?)'\)/)?.[1];
-        if (selectedCategories[cardEventName]?.length > 0) {
-          card.classList.add('selected');
-        } else {
-          card.classList.remove('selected');
+        if (card.getAttribute('onclick').includes(`'${eventName}'`)) {
+          if (selectedCategories[eventName]) card.classList.add('selected');
+          else card.classList.remove('selected');
         }
       });
-    }
-
-    function updateSelectedEvents() {
-      const selectedEventsInput = document.getElementById('selectedEvents');
-      const totalPriceInput = document.getElementById('totalPrice');
-      selectedEventsInput.value = Object.entries(selectedCategories)
-        .map(([event, categories]) => {
-          const cleanCategories = categories.map(category => {
-            const match = category.match(/(.+?)\s*-\s*\$/)?.[1].trim() || category;
-            return match;
-          });
-          return `${event}, ${cleanCategories.join(', ')}`;
-        })
-        .join('; ') || '';
-      
-      let totalPrice = 0;
-      Object.entries(selectedCategories).forEach(([event, categories]) => {
-        totalPrice += calculateDiscountedPrice(event, categories);
-      });
-      totalPriceInput.value = totalPrice;
-      
-      const floatingBtn = document.getElementById('floatingSubmitBtn');
-      const eventCount = document.getElementById('eventCount');
-      const eventCountNum = Object.keys(selectedCategories).length;
-
-      floatingBtn.style.display = eventCountNum > 0 ? 'flex' : 'none';
-      eventCount.textContent = eventCountNum;
-      eventCount.style.display = eventCountNum > 0 ? 'flex' : 'none';
     }
 
     function submitForm() {
@@ -1162,87 +510,37 @@
       confirmEvents.innerHTML = '';
       totalSum.innerHTML = '';
       let totalPrice = 0;
-      let totalFormulaParts = [];
 
-      if (Object.keys(selectedCategories).length > 0) {
-        const sortedEvents = Object.keys(selectedCategories).sort((a, b) => {
-          return eventOrder.indexOf(a) - eventOrder.indexOf(b);
+      const sortedEvents = Object.keys(selectedCategories).sort((a, b) => eventOrder.indexOf(a) - eventOrder.indexOf(b));
+
+      sortedEvents.forEach(event => {
+        const categories = selectedCategories[event];
+        const eventDiv = document.createElement('div');
+        eventDiv.style.marginBottom = '16px';
+        eventDiv.innerHTML = `<strong>${event}</strong><br>`;
+        
+        categories.forEach(cat => {
+          eventDiv.innerHTML += `• ${cat}<br>`;
         });
 
-        sortedEvents.forEach(event => {
-          const categories = selectedCategories[event];
-          const sortedCategories = categories.sort((a, b) => {
-            return eventCategories[event].indexOf(a) - eventCategories[event].indexOf(b);
-          });
+        const { totalPrice: eventPrice, formula, hasDiscount } = calculateDiscountedPrice(event, categories, true);
+        totalPrice += eventPrice;
 
-          const eventDiv = document.createElement('div');
-          eventDiv.className = 'event-item';
-          const eventStrong = document.createElement('strong');
-          eventStrong.textContent = event;
-          eventDiv.appendChild(eventStrong);
+        eventDiv.innerHTML += `<strong style="color:#1976D2;">小計 $${formatPrice(eventPrice)}</strong>`;
+        if (formula) eventDiv.innerHTML += `<br><small>${formula}</small>`;
+        if (hasDiscount) eventDiv.innerHTML += `<br><small style="color:#D32F2F;">已應用優惠</small>`;
 
-          sortedCategories.forEach(category => {
-            const categoryDiv = document.createElement('div');
-            categoryDiv.className = 'category-item';
-            categoryDiv.textContent = category;
-            eventDiv.appendChild(categoryDiv);
-          });
+        confirmEvents.appendChild(eventDiv);
+      });
 
-          const { totalPrice: eventPrice, formula, hasDiscount, adminFee, groupFormulas, showFormula } = calculateDiscountedPrice(event, sortedCategories, true);
-          totalPrice += eventPrice;
-          totalFormulaParts.push(`$${formatPrice(eventPrice)}`);
-
-          const totalDiv = document.createElement('div');
-          totalDiv.className = 'event-total';
-          totalDiv.textContent = `$${formatPrice(eventPrice)}`;
-          eventDiv.appendChild(totalDiv);
-
-          if (showFormula) {
-            const formulaDiv = document.createElement('div');
-            formulaDiv.className = 'event-formula';
-            formulaDiv.textContent = `=${formula}`;
-            eventDiv.appendChild(formulaDiv);
-          }
-          if (hasDiscount) {
-            const discountDiv = document.createElement('div');
-            discountDiv.className = 'event-discount';
-            discountDiv.textContent = '已應用優惠';
-            eventDiv.appendChild(discountDiv);
-          }
-          if (adminFee > 0) {
-            const adminFeeDiv = document.createElement('div');
-            adminFeeDiv.className = 'event-admin-fee';
-            adminFeeDiv.textContent = '已包括行政費';
-            eventDiv.appendChild(adminFeeDiv);
-          }
-
-          confirmEvents.appendChild(eventDiv);
-        });
-      } else {
-        confirmEvents.textContent = '無';
-      }
-
-      const totalSumDiv = document.createElement('div');
-      totalSumDiv.className = 'total-sum';
-      const totalText = document.createElement('span');
-      totalText.textContent = `總數 $${formatPrice(totalPrice)}`;
-      totalSumDiv.appendChild(totalText);
-      if (Object.keys(selectedCategories).length > 1 && totalFormulaParts.length > 1) {
-        const formulaText = document.createElement('span');
-        formulaText.className = 'formula';
-        formulaText.textContent = totalFormulaParts.join('+');
-        totalSumDiv.appendChild(formulaText);
-      }
-      totalSum.appendChild(totalSumDiv);
+      totalSum.innerHTML = `<div style="font-size:20px; font-weight:bold; margin-top:20px;">總金額：$${formatPrice(totalPrice)}</div>`;
 
       if (isFinalConfirmation) {
-        confirmTitle.textContent = '請確認您的報名資料';
         personalInfoSection.style.display = 'block';
         nextButton.style.display = 'none';
         submitButton.style.display = 'inline-block';
         backButton.onclick = goBackToPersonalInfo;
       } else {
-        confirmTitle.textContent = '請確認您的報名賽事';
         personalInfoSection.style.display = 'none';
         nextButton.style.display = 'inline-block';
         submitButton.style.display = 'none';
@@ -1253,172 +551,61 @@
     }
 
     function goBackToMainForm() {
-      const confirmModal = document.getElementById('confirmModal');
-      confirmModal.style.display = 'none';
-      document.getElementById('mainForm').style.display = 'block';
+      document.getElementById('confirmModal').style.display = 'none';
     }
 
     function goBackToPersonalInfo() {
-      const confirmModal = document.getElementById('confirmModal');
-      const personalInfoModal = document.getElementById('personalInfoModal');
-      confirmModal.style.display = 'none';
-      personalInfoModal.style.display = 'flex';
+      document.getElementById('confirmModal').style.display = 'none';
+      document.getElementById('personalInfoModal').style.display = 'flex';
     }
 
     function nextStep() {
-      const confirmModal = document.getElementById('confirmModal');
-      confirmModal.style.display = 'none';
+      document.getElementById('confirmModal').style.display = 'none';
       showPersonalInfoModal();
     }
 
     function showPersonalInfoModal() {
-      const personalInfoModal = document.getElementById('personalInfoModal');
-      personalInfoModal.style.display = 'flex';
+      document.getElementById('personalInfoModal').style.display = 'flex';
     }
 
     function closePersonalInfoModal() {
-      const personalInfoModal = document.getElementById('personalInfoModal');
-      personalInfoModal.style.display = 'none';
-      document.getElementById('mainForm').style.display = 'block';
-    }
-
-    function resetPersonalInfo() {
-      const nameInput = document.getElementById('name');
-      const phoneInput = document.getElementById('phone');
-      const yearSelect = document.getElementById('birthYear');
-      const monthSelect = document.getElementById('birthMonth');
-      const daySelect = document.getElementById('birthDay');
-      const dojoSelect = document.getElementById('dojo');
-      const customDojoInput = document.getElementById('customDojo');
-      const nameError = document.getElementById('nameError');
-      const phoneError = document.getElementById('phoneError');
-      const birthdateError = document.getElementById('birthdateError');
-      const dojoError = document.getElementById('dojoError');
-
-      nameInput.value = '';
-      phoneInput.value = '';
-      yearSelect.value = '';
-      monthSelect.value = '';
-      daySelect.value = '';
-      dojoSelect.value = '';
-      customDojoInput.value = '';
-      customDojoInput.style.display = 'none';
-      nameError.style.display = 'none';
-      phoneError.style.display = 'none';
-      birthdateError.style.display = 'none';
-      dojoError.style.display = 'none';
-      updateDays();
+      document.getElementById('personalInfoModal').style.display = 'none';
     }
 
     function submitPersonalInfo() {
-      const nameInput = document.getElementById('name');
-      const phoneInput = document.getElementById('phone');
-      const yearSelect = document.getElementById('birthYear');
-      const monthSelect = document.getElementById('birthMonth');
-      const daySelect = document.getElementById('birthDay');
-      const dojoSelect = document.getElementById('dojo');
-      const customDojoInput = document.getElementById('customDojo');
-      const nameError = document.getElementById('nameError');
-      const phoneError = document.getElementById('phoneError');
-      const birthdateError = document.getElementById('birthdateError');
-      const dojoError = document.getElementById('dojoError');
-
-      let isValid = true;
-      nameError.style.display = 'none';
-      phoneError.style.display = 'none';
-      birthdateError.style.display = 'none';
-      dojoError.style.display = 'none';
-
-      const isTestName = /test/i.test(nameInput.value);
-
-      if (!nameInput.value.trim()) {
-        nameError.style.display = 'block';
-        isValid = false;
+      const name = document.getElementById('name').value.trim();
+      if (!name) {
+        alert('請輸入學員姓名');
+        return;
       }
-
-      if (!isTestName) {
-        if (!phoneInput.value.match(/^\d{8}$/)) {
-          phoneError.style.display = 'block';
-          isValid = false;
-        }
-        const year = parseInt(yearSelect.value);
-        const month = parseInt(monthSelect.value);
-        const day = parseInt(daySelect.value);
-        const selectedDate = new Date(year, month - 1, day);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        if (!year || !month || !day || isNaN(selectedDate) || selectedDate > today) {
-          birthdateError.style.display = 'block';
-          isValid = false;
-        }
-        if (!dojoSelect.value || (dojoSelect.value === '其他' && !customDojoInput.value.trim())) {
-          dojoError.style.display = 'block';
-          isValid = false;
-        }
-      }
-
-      if (isValid) {
-        isFinalConfirmation = true;
-        document.getElementById('personalInfoModal').style.display = 'none';
-        document.getElementById('confirmName').textContent = nameInput.value;
-        document.getElementById('confirmPhone').textContent = phoneInput.value || '未提供';
-        document.getElementById('confirmBirthdate').textContent = yearSelect.value && monthSelect.value && daySelect.value 
-          ? `${yearSelect.value}/${monthSelect.value.padStart(2, '0')}/${daySelect.value.padStart(2, '0')}` 
-          : '未提供';
-        document.getElementById('confirmDojo').textContent = dojoSelect.value === '其他' ? customDojoInput.value : dojoSelect.value || '未提供';
-        showConfirmModal();
-      }
+      isFinalConfirmation = true;
+      document.getElementById('personalInfoModal').style.display = 'none';
+      showConfirmModal();
     }
 
     async function confirmSubmission() {
-      const confirmModal = document.getElementById('confirmModal');
       const form = document.getElementById('registrationForm');
-      const formContainer = document.getElementById('mainForm');
-      const thankYouPage = document.getElementById('thankYouPage');
-      const dojoSelect = document.getElementById('dojo');
-      const customDojoInput = document.getElementById('customDojo');
-
       const formData = new FormData(form);
-      if (dojoSelect.value === '其他') {
-        formData.set('entry.1923170591', customDojoInput.value);
-      }
-
       try {
-        const response = await fetch('https://docs.google.com/forms/d/e/1FAIpQLSd9pOv3srI-e_Pn-zijtiVtZiTwncE3xNbNJjKOMRCcxuu2nQ/formResponse', {
+        await fetch('https://docs.google.com/forms/d/e/1FAIpQLSd9pOv3srI-e_Pn-zijtiVtZiTwncE3xNbNJjKOMRCcxuu2nQ/formResponse', {
           method: 'POST',
           body: formData,
           mode: 'no-cors'
         });
-        console.log('Form submission response:', response);
-        console.log('表單提交成功');
-        confirmModal.style.display = 'none';
-        formContainer.style.display = 'none';
-        thankYouPage.style.display = 'flex';
+        document.getElementById('confirmModal').style.display = 'none';
+        document.getElementById('mainForm').style.display = 'none';
+        document.getElementById('thankYouPage').style.display = 'block';
       } catch (error) {
-        console.error('提交失敗:', error);
-        alert('表單提交失敗，請稍後再試或檢查控制台日誌。');
+        alert('提交失敗，請稍後再試');
       }
     }
 
-    function resetForm() {
-      const form = document.getElementById('registrationForm');
-      form.reset();
-      selectedCategories = {};
-      document.getElementById('selectedEvents').value = '';
-      document.getElementById('totalPrice').value = '';
-      document.getElementById('floatingSubmitBtn').style.display = 'none';
-      document.getElementById('eventCount').style.display = 'none';
-      resetPersonalInfo();
-      isFinalConfirmation = false;
-      loadEventsFromSheet();
+    function restartForm() {
+      location.reload();
     }
 
-    function restartForm() {
-      const thankYouPage = document.getElementById('thankYouPage');
-      const formContainer = document.getElementById('mainForm');
-      thankYouPage.style.display = 'none';
-      formContainer.style.display = 'block';
-      resetForm();
+    function goBack() {
+      document.getElementById('confirmModal').style.display = 'none';
     }
 
     document.getElementById('floatingSubmitBtn').onclick = submitForm;
