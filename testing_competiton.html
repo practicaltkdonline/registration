@@ -27,7 +27,7 @@
   <div class="max-w-7xl mx-auto">
     <!-- Header -->
     <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-orange-500 text-white py-7 px-8 shadow-xl">
-      <h1 class="text-3xl font-bold flex items-center gap-3">🏆 比賽報名系統3</h1>
+      <h1 class="text-3xl font-bold flex items-center gap-3">🏆 比賽報名系統4</h1>
       <p class="text-blue-100">選擇賽事 • 展現實力</p>
     </div>
 
@@ -109,7 +109,7 @@
           <div class="bg-white rounded-3xl shadow p-8">
             <div id="confirmPersonal" class="mb-10 space-y-2 text-lg"></div>
             <div id="confirmEvents" class="mb-10"></div>
-            <div class="text-4xl font-bold text-center py-10 border-t">
+            <div class="text-4xl font-bold text-center py-10 border-t border-dashed">
               總金額：<span id="finalTotal" class="text-orange-600">HK$ 0</span>
             </div>
             <button onclick="confirmSubmission()" 
@@ -437,22 +437,27 @@
       document.getElementById('confirmPersonal').innerHTML = personalHTML;
 
       let eventsHTML = '';
-      let total = 0;
+      let grandTotal = 0;
 
       Object.keys(selectedCategories).forEach(event => {
         const cats = selectedCategories[event];
-        const { totalPrice } = calculateDiscountedPrice(event, cats, false);
-        total += totalPrice;
+        const result = calculateDiscountedPrice(event, cats, true);
+        const subtotal = result.totalPrice || 0;
+        grandTotal += subtotal;
 
         eventsHTML += `
-          <div class="mb-6 p-4 bg-gray-50 rounded-2xl">
-            <div class="font-bold text-lg mb-2">${event}</div>
-            <ul class="list-disc ml-6 text-gray-600">${cats.map(c => `<li>${cleanCategoryName(c)}</li>`).join('')}</ul>
+          <div class="mb-8 p-5 bg-gray-50 rounded-2xl border border-gray-100">
+            <div class="font-bold text-lg mb-3">${event}</div>
+            <ul class="list-disc ml-6 text-gray-600 mb-4">${cats.map(c => `<li>${cleanCategoryName(c)}</li>`).join('')}</ul>
+            <div class="flex justify-between items-center pt-3 border-t">
+              <span class="font-medium">小計</span>
+              <span class="font-bold text-orange-600 text-xl">HK$ ${formatPrice(subtotal)}</span>
+            </div>
           </div>`;
       });
 
       document.getElementById('confirmEvents').innerHTML = eventsHTML || '<p class="text-gray-400">尚未選擇項目</p>';
-      document.getElementById('finalTotal').textContent = `HK$ ${formatPrice(total)}`;
+      document.getElementById('finalTotal').textContent = `HK$ ${formatPrice(grandTotal)}`;
     }
 
     async function confirmSubmission() {
@@ -469,7 +474,6 @@
       
       formData.append('entry.1923170591', document.getElementById('dojo').value);
 
-      // 只提交乾淨的項目名稱（不含價格）
       let selectedText = Object.entries(selectedCategories)
         .map(([event, cats]) => {
           const cleanCats = cats.map(c => cleanCategoryName(c));
@@ -478,7 +482,7 @@
         .join('; ');
 
       formData.append('entry.1287068960', selectedText);
-      formData.append('entry.1317768085', ''); // 清空價格欄位
+      formData.append('entry.1317768085', '');
 
       try {
         await fetch(FORM_URL, { method: 'POST', body: formData, mode: 'no-cors' });
