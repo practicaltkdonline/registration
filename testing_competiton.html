@@ -8,8 +8,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Noto Sans TC', system-ui, sans-serif; }
-    .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-    .card-hover:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+    .card-hover { 
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+      overflow: hidden;
+    }
+    .card-hover:hover { 
+      transform: translateY(-8px) scale(1.02); 
+      box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15); 
+    }
+    .info-hidden {
+      max-height: 0;
+      opacity: 0;
+      transition: all 0.4s ease;
+      overflow: hidden;
+    }
+    .card-hover:hover .info-hidden {
+      max-height: 420px;
+      opacity: 1;
+      padding-top: 16px;
+    }
     .step-active { background: linear-gradient(to right, #1E88E5, #42A5F5); color: white; box-shadow: 0 4px 12px rgba(30,136,229,0.3); }
     .gradient-btn { background: linear-gradient(135deg, #1E88E5, #FF9800); }
     .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); align-items: center; justify-content: center; z-index: 1100; }
@@ -190,7 +207,7 @@
     }
 
     function getOriginalCategoryName(cat) {
-      return cat; // 保留原始含價格的字串
+      return cat;
     }
 
     function formatPrice(price) {
@@ -261,7 +278,16 @@
           if (!eventName) return;
 
           eventOrder.push(eventName);
-          eventDetails[eventName] = { date: row.c[3]?.v || '', location: row.c[4]?.v || '' };
+          
+          // 擴充 eventDetails，包含所有欄位
+          eventDetails[eventName] = {
+            date: row.c[3]?.v || '',
+            location: row.c[4]?.v || '',
+            items: row.c[5]?.v || '',           // F欄 - 項目
+            target: row.c[6]?.v || '',          // G欄 - 對象
+            deadline: row.c[7]?.v || '',        // H欄 - 截止日期
+            notes: row.c[8]?.v || ''            // I欄 - 備註
+          };
 
           const cats = (row.c[1]?.v || '').split(',').map(c => c.trim());
           eventCategories[eventName] = cats;
@@ -281,14 +307,51 @@
 
           const card = document.createElement('div');
           card.className = `bg-white rounded-3xl shadow-xl p-6 card-hover cursor-pointer border-2 ${selectedCategories[eventName] ? 'border-orange-500 bg-orange-50' : 'border-transparent'}`;
+          
+          // 修改後的卡片內容（僅此處有變動）
           card.innerHTML = `
-            <h3 class="text-xl font-bold mb-3">${eventName}</h3>
+            <h3 class="text-xl font-bold mb-2">${eventName}</h3>
             <p class="text-sm text-gray-600">${eventDetails[eventName].date}</p>
+            
+            <!-- Hover 展開區域 -->
+            <div class="info-hidden text-sm border-t pt-4 mt-4 space-y-2.5">
+              ${eventDetails[eventName].location ? `
+              <p class="flex items-start gap-2">
+                <span class="text-blue-600 font-medium w-14">地點</span>
+                <span class="text-gray-700">${eventDetails[eventName].location}</span>
+              </p>` : ''}
+              
+              ${eventDetails[eventName].items ? `
+              <p class="flex items-start gap-2">
+                <span class="text-blue-600 font-medium w-14">項目</span>
+                <span class="text-gray-700">${eventDetails[eventName].items}</span>
+              </p>` : ''}
+              
+              ${eventDetails[eventName].target ? `
+              <p class="flex items-start gap-2">
+                <span class="text-blue-600 font-medium w-14">對象</span>
+                <span class="text-gray-700">${eventDetails[eventName].target}</span>
+              </p>` : ''}
+              
+              ${eventDetails[eventName].deadline ? `
+              <p class="flex items-start gap-2">
+                <span class="text-blue-600 font-medium w-14">截止</span>
+                <span class="text-gray-700">${eventDetails[eventName].deadline}</span>
+              </p>` : ''}
+              
+              ${eventDetails[eventName].notes ? `
+              <p class="flex items-start gap-2">
+                <span class="text-blue-600 font-medium w-14">備註</span>
+                <span class="text-gray-700">${eventDetails[eventName].notes}</span>
+              </p>` : ''}
+            </div>
+
             <button onclick="event.stopImmediatePropagation(); showCategoryModal('${eventName}');" 
                     class="mt-6 w-full py-4 rounded-2xl font-semibold ${selectedCategories[eventName] ? 'bg-orange-500 text-white' : 'bg-blue-100 text-blue-700'}">
               ${selectedCategories[eventName] ? '已選擇 ✓ 修改' : '選擇項目'}
             </button>
           `;
+          
           card.onclick = () => showCategoryModal(eventName);
           document.getElementById('eventList').appendChild(card);
         });
@@ -301,7 +364,6 @@
       updateMobileBottomBar();
     }
 
-    // 其他函數（Modal、Sidebar、Mobile Bar）保持不變...
     function showCategoryModal(eventName) {
       tempCategories[eventName] = selectedCategories[eventName] ? [...selectedCategories[eventName]] : [];
       document.getElementById('categoryTitle').textContent = `${eventName} - 選擇項目`;
@@ -448,7 +510,6 @@
           return `<li class="py-1">${getOriginalCategoryName(cat)}${isDiscounted}</li>`;
         }).join('');
 
-        // 行政費
         if (adminFees[event] > 0) {
           itemsHTML += `<li class="py-1 text-gray-600">行政費 - $${adminFees[event]}</li>`;
         }
@@ -491,7 +552,6 @@
 
       formData.append('entry.1287068960', selectedText);
 
-      // 傳送純數字總金額
       let totalAmount = 0;
       Object.keys(selectedCategories).forEach(event => {
         totalAmount += calculateDiscountedPrice(event, selectedCategories[event]);
