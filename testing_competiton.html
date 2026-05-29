@@ -9,11 +9,12 @@
   <style>
     body { font-family: 'Noto Sans TC', system-ui, sans-serif; }
     .card-hover { 
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+      overflow: hidden;
     }
     .card-hover:hover { 
-      transform: translateY(-4px); 
-      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); 
+      transform: translateY(-8px) scale(1.02); 
+      box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15); 
     }
     .info-content {
       max-height: 0;
@@ -220,6 +221,7 @@
       let formulaParts = [];
       let hasDiscount = false;
       let discountedItems = new Set();
+      let discountBreakdown = [];
       const adminFee = adminFees[eventName] || 0;
       const selectedClean = selected.map(cat => cleanCategoryName(cat));
 
@@ -231,6 +233,10 @@
           totalPrice += rule.totalPrice;
           hasDiscount = true;
           rule.condition.forEach(cat => discountedItems.add(cat));
+          discountBreakdown.push({
+            name: rule.condition.join(" + "),
+            discount: rule.totalPrice
+          });
           if (calculateFormula) formulaParts.push(`$${rule.totalPrice}`);
           remaining = remaining.filter(cat => !rule.condition.includes(cat));
         }
@@ -246,6 +252,10 @@
             totalPrice += bestDiscount.totalPrice;
             hasDiscount = true;
             selectedInGroup.forEach(cat => discountedItems.add(cat));
+            discountBreakdown.push({
+              name: `${rule.groupName} (${count}項)`,
+              discount: bestDiscount.totalPrice
+            });
             if (calculateFormula) formulaParts.push(`$${bestDiscount.totalPrice} (${rule.groupName} - ${count}項)`);
             remaining = remaining.filter(cat => !selectedInGroup.includes(cat));
           }
@@ -263,7 +273,7 @@
 
       const formula = formulaParts.join(' + ');
       return calculateFormula 
-        ? { totalPrice, formula, hasDiscount, adminFee, discountedItems: Array.from(discountedItems) } 
+        ? { totalPrice, formula, hasDiscount, adminFee, discountedItems: Array.from(discountedItems), discountBreakdown } 
         : totalPrice;
     }
 
@@ -311,20 +321,12 @@
           const card = document.createElement('div');
           card.className = `bg-white rounded-3xl shadow-xl p-6 card-hover cursor-pointer border-2 ${selectedCategories[eventName] ? 'border-orange-500 bg-orange-50' : 'border-transparent'}`;
           
-          // 處理換行
           const formatText = (text) => text.replace(/\n/g, '<br>');
           
           card.innerHTML = `
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="text-xl font-bold">${eventName}</h3>
-                <p class="text-sm text-gray-600">${eventDetails[eventName].date}</p>
-              </div>
-              <span onclick="event.stopImmediatePropagation(); toggleInfo(this)" 
-                    class="text-2xl text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">↓</span>
-            </div>
+            <h3 class="text-xl font-bold mb-2">${eventName}</h3>
+            <p class="text-sm text-gray-600">${eventDetails[eventName].date}</p>
             
-            <!-- 點擊展開區域 -->
             <div class="info-content text-sm border-t pt-4 mt-4 space-y-3">
               ${eventDetails[eventName].location ? `
               <div class="flex">
@@ -363,25 +365,15 @@
             </button>
           `;
           
-          card.onclick = () => showCategoryModal(eventName);
+          card.onclick = function(e) {
+            if (e.target.tagName === 'BUTTON') return;
+            this.classList.toggle('expanded');
+          };
+          
           document.getElementById('eventList').appendChild(card);
         });
       } catch(e) {}
       updateAllUI();
-    }
-
-    // 新增：展開/收起功能（手機與桌面皆適用）
-    function toggleInfo(icon) {
-      const card = icon.closest('.card-hover');
-      card.classList.toggle('expanded');
-      
-      // 旋轉箭頭
-      if (card.classList.contains('expanded')) {
-        icon.style.transform = 'rotate(180deg)';
-      } else {
-        icon.style.transform = 'rotate(0deg)';
-      }
-      event.stopImmediatePropagation();
     }
 
     function updateAllUI() {
@@ -532,26 +524,51 @@
 
         let itemsHTML = cats.map(cat => {
           const cleanCat = cleanCategoryName(cat);
-          const hasDiscountOnThisItem = result.discountedItems.includes(cleanCat);
-          const discountTag = hasDiscountOnThisItem ? ' <span class="text-red-500 text-sm">(已套用優惠)</span>' : '';
-          return `<li class="py-1">${getOriginalCategoryName(cat)}${discountTag}</li>`;
+          const price = categoryPrices[`${event}:${cleanCat}`] || 0;
+          return `
+            <div class="flex justify-between py-1.5">
+              <span class="text-gray-700">${getOriginalCategoryName(cat)}</span>
+              <span class="font-medium text-gray-800">HK$ ${formatPrice(price)}</span>
+            </div>`;
         }).join('');
 
+        // 行政費顯示
         if (adminFees[event] > 0) {
-          itemsHTML += `<li class="py-1 text-gray-600">行政費 - $${adminFees[event]}</li>`;
+          itemsHTML += `
+            <div class="flex justify-between py-1.5 text-gray-600">
+              <span>行政費</span>
+              <span class="font-medium">HK$ ${adminFees[event]}</span>
+            </div>`;
+        }
+
+        let discountHTML = '';
+        if (result.discountBreakdown && result.discountBreakdown.length > 0) {
+          discountHTML = result.discountBreakdown.map(d => `
+            <div class="flex justify-between py-1 text-red-600 text-sm">
+              <span>• ${d.name} 優惠</span>
+              <span>HK$ ${formatPrice(d.discount)}</span>
+            </div>
+          `).join('');
         }
 
         eventsHTML += `
-          <div class="mb-8 p-5 bg-gray-50 rounded-2xl border border-gray-100">
-            <div class="font-bold text-lg mb-3">${event}</div>
-            <ul class="list-disc ml-6 text-gray-600">${itemsHTML}</ul>
-            ${result.formula ? `
-            <div class="mt-4 p-3 bg-white rounded-xl text-sm text-gray-600 border">
-              ${result.formula}
+          <div class="mb-10 p-6 bg-gray-50 rounded-3xl border">
+            <div class="font-bold text-lg mb-4">${event}</div>
+            
+            <div class="mb-6">
+              <div class="text-sm font-semibold text-gray-500 mb-3">已選擇項目</div>
+              ${itemsHTML}
+            </div>
+
+            ${discountHTML ? `
+            <div class="mb-6">
+              <div class="text-sm font-semibold text-red-500 mb-3">優惠明細</div>
+              ${discountHTML}
             </div>` : ''}
-            <div class="flex justify-between items-center pt-4 border-t mt-4">
-              <span class="font-medium">小計</span>
-              <span class="font-bold text-orange-600 text-xl">HK$ ${formatPrice(subtotal)}</span>
+
+            <div class="flex justify-between items-center pt-5 border-t border-gray-300 font-bold text-lg">
+              <span>小計</span>
+              <span class="text-orange-600">HK$ ${formatPrice(subtotal)}</span>
             </div>
           </div>`;
       });
