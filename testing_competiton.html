@@ -14,9 +14,11 @@
     .gradient-btn { background: linear-gradient(135deg, #1E88E5, #FF9800); }
     .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); align-items: center; justify-content: center; z-index: 1100; }
     .bottom-bar { display: none; }
+    .main-content { padding-bottom: 100px; }
     @media (max-width: 1024px) {
       .desktop-sidebar { display: none; }
       .bottom-bar { display: flex; }
+      .main-content { padding-bottom: 140px; }
     }
   </style>
 </head>
@@ -25,7 +27,7 @@
   <div class="max-w-7xl mx-auto">
     <!-- Header -->
     <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-orange-500 text-white py-7 px-8 shadow-xl">
-      <h1 class="text-3xl font-bold flex items-center gap-3">🏆 比賽報名系統2</h1>
+      <h1 class="text-3xl font-bold flex items-center gap-3">🏆 比賽報名系統3</h1>
       <p class="text-blue-100">選擇賽事 • 展現實力</p>
     </div>
 
@@ -62,7 +64,7 @@
       </div>
 
       <!-- Main Content -->
-      <div class="flex-1">
+      <div class="flex-1 main-content">
         <!-- Step 1 -->
         <div id="stepContent1">
           <h2 class="text-3xl font-bold mb-8 text-gray-800">🏅 選擇比賽項目</h2>
@@ -105,13 +107,13 @@
         <div id="stepContent3" class="hidden">
           <h2 class="text-3xl font-bold mb-8 text-gray-800">✅ 確認報名資料</h2>
           <div class="bg-white rounded-3xl shadow p-8">
-            <div id="confirmPersonal" class="mb-10 space-y-2"></div>
-            <div id="confirmEvents"></div>
+            <div id="confirmPersonal" class="mb-10 space-y-2 text-lg"></div>
+            <div id="confirmEvents" class="mb-10"></div>
             <div class="text-4xl font-bold text-center py-10 border-t">
-              總金額：<span id="finalTotal" class="text-orange-600"></span>
+              總金額：<span id="finalTotal" class="text-orange-600">HK$ 0</span>
             </div>
             <button onclick="confirmSubmission()" 
-                    class="w-full py-5 gradient-btn text-white text-xl font-bold rounded-3xl mt-6">
+                    class="w-full py-5 gradient-btn text-white text-xl font-bold rounded-3xl mt-4">
               確認提交報名
             </button>
           </div>
@@ -126,7 +128,7 @@
       <div class="flex items-center gap-3">
         <span class="text-2xl">📋</span>
         <div>
-          <div class="font-bold text-lg">已選 <span id="mobileCount" class="text-orange-600">0</span> 項</div>
+          <div class="font-bold text-lg">已選 <span id="mobileCount" class="text-orange-600">0</span> 個比賽</div>
           <div id="mobileTotal" class="text-orange-600 font-bold">HK$ 0</div>
         </div>
       </div>
@@ -170,7 +172,6 @@
   </div>
 
   <script>
-    // ==================== 配置 ====================
     const SPREADSHEET_ID = '1FFuryD0S4CbOsw4HJKQQHSRtek_JwWlxGx1FmPEER9Y';
     const SHEET_ID = '1485917481';
     const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd9pOv3srI-e_Pn-zijtiVtZiTwncE3xNbNJjKOMRCcxuu2nQ/formResponse';
@@ -184,7 +185,6 @@
     let eventOrder = [];
     let eventDetails = {};
 
-    // ==================== 計算函數（完整） ====================
     function formatPrice(price) {
       return Number.isInteger(price) ? price.toString() : price.toFixed(1).replace(/\.0$/, '');
     }
@@ -236,7 +236,6 @@
       return calculateFormula ? { totalPrice, formula, hasDiscount } : totalPrice;
     }
 
-    // ==================== 載入賽事 ====================
     async function loadEvents() {
       const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${SHEET_ID}&range=A2:I`;
       try {
@@ -283,9 +282,7 @@
           card.onclick = () => showCategoryModal(eventName);
           document.getElementById('eventList').appendChild(card);
         });
-      } catch(e) {
-        console.error(e);
-      }
+      } catch(e) {}
       updateAllUI();
     }
 
@@ -294,7 +291,6 @@
       updateMobileBottomBar();
     }
 
-    // ==================== Modal 與選擇 ====================
     function showCategoryModal(eventName) {
       tempCategories[eventName] = selectedCategories[eventName] ? [...selectedCategories[eventName]] : [];
       document.getElementById('categoryTitle').textContent = `${eventName} - 選擇項目`;
@@ -315,8 +311,11 @@
 
     function updateTempCategories(eventName, cat, checked) {
       if (!tempCategories[eventName]) tempCategories[eventName] = [];
-      if (checked) tempCategories[eventName].push(cat);
-      else tempCategories[eventName] = tempCategories[eventName].filter(c => c !== cat);
+      if (checked) {
+        if (!tempCategories[eventName].includes(cat)) tempCategories[eventName].push(cat);
+      } else {
+        tempCategories[eventName] = tempCategories[eventName].filter(c => c !== cat);
+      }
       updateCategorySum(eventName);
     }
 
@@ -350,7 +349,6 @@
       updateAllUI();
     }
 
-    // ==================== Sidebar & Mobile Bar ====================
     function updateSidebar() {
       let total = 0;
       let html = '';
@@ -360,7 +358,7 @@
         html += `
           <div class="bg-white rounded-2xl p-5 shadow border">
             <div class="font-bold">${event}</div>
-            <div class="text-sm text-gray-500">${selectedCategories[event].length} 項目</div>
+            <div class="text-sm text-gray-500">${selectedCategories[event].length} 個項目</div>
             <div class="flex justify-between mt-3">
               <span class="font-bold text-orange-600">HK$ ${formatPrice(price)}</span>
               <button onclick="deleteEvent('${event}')" class="text-red-500 text-sm">移除</button>
@@ -373,8 +371,8 @@
 
     function updateMobileBottomBar() {
       let total = 0;
-      Object.values(selectedCategories).forEach(cats => {
-        total += calculateDiscountedPrice(Object.keys(selectedCategories).find(k => selectedCategories[k] === cats), cats);
+      Object.keys(selectedCategories).forEach(event => {
+        total += calculateDiscountedPrice(event, selectedCategories[event]);
       });
       const count = Object.keys(selectedCategories).length;
       document.getElementById('mobileCount').textContent = count;
@@ -398,11 +396,9 @@
       document.getElementById('mobileSelectedModal').style.display = 'none';
     }
 
-    // ==================== 步驟與驗證 ====================
     function goToStep(step) {
-      if (step === 3) {
-        if (!validatePersonalInfo()) return;
-      }
+      if (step === 3 && !validatePersonalInfo()) return;
+      
       document.querySelectorAll('#stepContent1, #stepContent2, #stepContent3').forEach(el => el.classList.add('hidden'));
       document.getElementById(`stepContent${step}`).classList.remove('hidden');
 
@@ -419,53 +415,59 @@
       const phone = document.getElementById('phone').value.trim();
       const birth = document.getElementById('birthdate').value;
 
-      if (!name) { alert('請填寫學員姓名'); goToStep(2); return false; }
-      if (!phone || phone.length !== 8) { alert('請填寫正確8位電話號碼'); goToStep(2); return false; }
-      if (!birth) { alert('請選擇出生日期'); goToStep(2); return false; }
+      if (!name) { alert('請填寫學員姓名'); return false; }
+      if (!phone || phone.length !== 8) { alert('請填寫正確的8位電話號碼'); return false; }
+      if (!birth) { alert('請選擇出生日期'); return false; }
       return true;
     }
 
     function renderConfirmPage() {
-      let html = `
+      let personalHTML = `
         <p><strong>姓名：</strong> ${document.getElementById('name').value}</p>
         <p><strong>電話：</strong> ${document.getElementById('phone').value}</p>
         <p><strong>出生日期：</strong> ${document.getElementById('birthdate').value}</p>
-        <p><strong>道場：</strong> ${document.getElementById('dojo').value || '未填'}</p>
+        <p><strong>道場：</strong> ${document.getElementById('dojo').value || '未填寫'}</p>
       `;
-      document.getElementById('confirmPersonal').innerHTML = html;
-      // 事件詳情...
+      document.getElementById('confirmPersonal').innerHTML = personalHTML;
+
       let eventsHTML = '';
       let total = 0;
-      Object.keys(selectedCategories).forEach(ev => {
-        const {totalPrice} = calculateDiscountedPrice(ev, selectedCategories[ev], false);
+
+      Object.keys(selectedCategories).forEach(event => {
+        const cats = selectedCategories[event];
+        const { totalPrice } = calculateDiscountedPrice(event, cats, false);
         total += totalPrice;
-        eventsHTML += `<div class="mb-6"><strong>${ev}</strong><br>${selectedCategories[ev].join('<br>')}</div>`;
+
+        eventsHTML += `
+          <div class="mb-6 p-4 bg-gray-50 rounded-2xl">
+            <div class="font-bold text-lg mb-2">${event}</div>
+            <ul class="list-disc ml-6 text-gray-600">${cats.map(c => `<li>${c}</li>`).join('')}</ul>
+          </div>`;
       });
+
       document.getElementById('confirmEvents').innerHTML = eventsHTML;
-      document.getElementById('finalTotal').innerHTML = `HK$ ${formatPrice(total)}`;
+      document.getElementById('finalTotal').textContent = `HK$ ${formatPrice(total)}`;
     }
 
-    // ==================== 提交 ====================
     async function confirmSubmission() {
       if (!validatePersonalInfo()) return;
 
       const formData = new FormData();
       formData.append('entry.1702329531', document.getElementById('name').value);
       formData.append('entry.1541580542', document.getElementById('phone').value);
-      formData.append('entry.1919065731_year', document.getElementById('birthdate').value.split('-')[0]);
-      formData.append('entry.1919065731_month', document.getElementById('birthdate').value.split('-')[1]);
-      formData.append('entry.1919065731_day', document.getElementById('birthdate').value.split('-')[2]);
+      
+      const birth = document.getElementById('birthdate').value.split('-');
+      formData.append('entry.1919065731_year', birth[0]);
+      formData.append('entry.1919065731_month', birth[1]);
+      formData.append('entry.1919065731_day', birth[2]);
+      
       formData.append('entry.1923170591', document.getElementById('dojo').value);
 
+      // 只提交比賽與項目，不含價格
       let selectedText = Object.entries(selectedCategories)
-        .map(([ev, cats]) => `${ev}: ${cats.join(', ')}`).join('; ');
+        .map(([event, cats]) => `${event}: ${cats.join(', ')}`)
+        .join('; ');
       formData.append('entry.1287068960', selectedText);
-
-      let total = 0;
-      Object.keys(selectedCategories).forEach(ev => {
-        total += calculateDiscountedPrice(ev, selectedCategories[ev]);
-      });
-      formData.append('entry.1317768085', total);
 
       try {
         await fetch(FORM_URL, { method: 'POST', body: formData, mode: 'no-cors' });
@@ -479,7 +481,6 @@
       location.reload();
     }
 
-    // ==================== 初始化 ====================
     window.onload = () => {
       loadEvents();
       goToStep(1);
