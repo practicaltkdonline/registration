@@ -12,9 +12,12 @@
     .card-hover:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
     .step-active { background: linear-gradient(to right, #1E88E5, #42A5F5); color: white; box-shadow: 0 4px 12px rgba(30,136,229,0.3); }
     .gradient-btn { background: linear-gradient(135deg, #1E88E5, #FF9800); }
-    .sidebar { background: linear-gradient(to bottom, #f0f9ff, #e0f2fe); }
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000; }
-    .modal-content { max-width: 520px; width: 90%; }
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); align-items: center; justify-content: center; z-index: 1100; }
+    .bottom-bar { display: none; }
+    @media (max-width: 1024px) {
+      .desktop-sidebar { display: none; }
+      .bottom-bar { display: flex; }
+    }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -22,10 +25,8 @@
   <div class="max-w-7xl mx-auto">
     <!-- Header -->
     <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-orange-500 text-white py-7 px-8 shadow-xl">
-      <h1 class="text-3xl font-bold flex items-center gap-3">
-        🏆 比賽報名系統
-      </h1>
-      <p class="text-blue-100">選擇賽事 • 展現實力 • 一起前進</p>
+      <h1 class="text-3xl font-bold flex items-center gap-3">🏆 比賽報名系統</h1>
+      <p class="text-blue-100">選擇賽事 • 展現實力</p>
     </div>
 
     <!-- Stepper -->
@@ -48,24 +49,16 @@
 
     <div class="flex flex-col lg:flex-row gap-8 p-6 md:p-8">
       
-      <!-- Left Sidebar -->
-      <div class="lg:w-96 bg-white rounded-3xl shadow-2xl p-6 sidebar h-fit sticky top-6">
-        <h3 class="text-2xl font-bold text-gray-800 mb-5 flex items-center gap-2">
-          📋 已選項目
-        </h3>
+      <!-- Desktop Sidebar -->
+      <div class="desktop-sidebar lg:w-96 bg-white rounded-3xl shadow-2xl p-6 h-fit sticky top-6">
+        <h3 class="text-2xl font-bold text-gray-800 mb-5">📋 已選項目</h3>
         <div id="selectedList" class="space-y-4 min-h-[320px]"></div>
-        
         <div class="border-t pt-6 mt-6">
           <div class="flex justify-between items-baseline text-2xl font-bold">
             <span class="text-gray-700">總金額</span>
             <span id="sidebarTotal" class="text-orange-600">HK$ 0</span>
           </div>
         </div>
-
-        <button onclick="goToStep(3)" 
-                class="w-full mt-8 gradient-btn text-white py-5 rounded-2xl font-bold text-lg shadow-lg hover:shadow-2xl transition-all active:scale-95">
-          前往結算 →
-        </button>
       </div>
 
       <!-- Main Content -->
@@ -74,7 +67,6 @@
         <div id="stepContent1">
           <h2 class="text-3xl font-bold mb-8 text-gray-800">🏅 選擇比賽項目</h2>
           <div id="eventList" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
-          <div id="eventListError" class="hidden p-6 bg-red-50 text-red-600 rounded-3xl text-center font-medium">無法載入賽事資料，請檢查網路</div>
         </div>
 
         <!-- Step 2 -->
@@ -103,7 +95,7 @@
                 <option value="北角官立小學">北角官立小學</option>
                 <option value="大角嘴天主教小學">大角嘴天主教小學</option>
                 <option value="佛教林金殿紀念小學">佛教林金殿紀念小學</option>
-                <option value="其他">其他（請手動輸入）</option>
+                <option value="其他">其他</option>
               </select>
             </div>
           </div>
@@ -113,38 +105,59 @@
         <div id="stepContent3" class="hidden">
           <h2 class="text-3xl font-bold mb-8 text-gray-800">✅ 確認報名資料</h2>
           <div class="bg-white rounded-3xl shadow p-8">
-            <div id="confirmPersonal" class="mb-10"></div>
+            <div id="confirmPersonal" class="mb-10 space-y-2"></div>
             <div id="confirmEvents"></div>
-            <div class="text-4xl font-bold text-center py-10 border-t border-dashed">
+            <div class="text-4xl font-bold text-center py-10 border-t">
               總金額：<span id="finalTotal" class="text-orange-600"></span>
             </div>
+            <button onclick="confirmSubmission()" 
+                    class="w-full py-5 gradient-btn text-white text-xl font-bold rounded-3xl mt-6">
+              確認提交報名
+            </button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Mobile Bottom Bar -->
+  <div class="bottom-bar fixed bottom-0 left-0 right-0 bg-white border-t shadow-2xl z-50 p-4">
+    <div onclick="showMobileSelectedModal()" class="flex items-center justify-between cursor-pointer">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">📋</span>
+        <div>
+          <div class="font-bold text-lg">已選 <span id="mobileCount" class="text-orange-600">0</span> 項</div>
+          <div id="mobileTotal" class="text-orange-600 font-bold">HK$ 0</div>
+        </div>
+      </div>
+      <button class="gradient-btn text-white px-8 py-3 rounded-2xl font-bold">查看詳情</button>
+    </div>
+  </div>
+
   <!-- Category Modal -->
   <div id="categoryModal" class="modal">
-    <div class="modal-content bg-white rounded-3xl shadow-2xl p-8">
+    <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-lg w-full mx-4">
       <h2 id="categoryTitle" class="text-2xl font-bold mb-6"></h2>
-      <div id="categoryGroup" class="max-h-[420px] overflow-y-auto space-y-2"></div>
+      <div id="categoryGroup" class="max-h-[420px] overflow-y-auto space-y-3"></div>
       <div id="categorySum" class="mt-6 p-5 bg-blue-50 rounded-2xl text-lg font-semibold"></div>
-      
       <div class="flex gap-4 mt-8">
-        <button onclick="closeCategoryModal()" class="flex-1 py-4 bg-gray-200 hover:bg-gray-300 rounded-2xl font-medium">取消</button>
-        <button onclick="confirmCategorySelection()" class="flex-1 py-4 gradient-btn text-white rounded-2xl font-bold">確定選擇</button>
+        <button onclick="closeCategoryModal()" class="flex-1 py-4 bg-gray-200 rounded-2xl font-medium">取消</button>
+        <button onclick="confirmCategorySelection()" class="flex-1 py-4 gradient-btn text-white rounded-2xl font-bold">確定</button>
       </div>
     </div>
   </div>
 
-  <!-- Floating Submit -->
-  <button onclick="goToStep(3)" 
-          class="fixed bottom-8 right-8 w-16 h-16 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-2xl flex items-center justify-center text-3xl transition-all active:scale-95 z-50">
-    ✓
-  </button>
+  <!-- Mobile Selected Modal -->
+  <div id="mobileSelectedModal" class="modal">
+    <div class="bg-white rounded-3xl shadow-2xl p-6 max-w-lg w-full mx-4">
+      <h3 class="text-xl font-bold mb-4">已選項目</h3>
+      <div id="mobileSelectedList" class="max-h-[60vh] overflow-y-auto space-y-4"></div>
+      <div class="text-2xl font-bold text-center py-6 border-t">總金額 <span id="mobileModalTotal" class="text-orange-600"></span></div>
+      <button onclick="closeMobileSelectedModal()" class="w-full py-4 bg-gray-200 rounded-2xl">關閉</button>
+    </div>
+  </div>
 
-  <!-- Thank You -->
+  <!-- Thank You Page -->
   <div id="thankYouPage" class="hidden fixed inset-0 bg-gradient-to-br from-blue-50 to-white flex items-center justify-center z-[2000]">
     <div class="text-center px-6">
       <div class="text-8xl mb-6 animate-bounce">🏆</div>
@@ -157,9 +170,10 @@
   </div>
 
   <script>
-    // ==================== 變數與配置 ====================
+    // ==================== 配置 ====================
     const SPREADSHEET_ID = '1FFuryD0S4CbOsw4HJKQQHSRtek_JwWlxGx1FmPEER9Y';
     const SHEET_ID = '1485917481';
+    const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd9pOv3srI-e_Pn-zijtiVtZiTwncE3xNbNJjKOMRCcxuu2nQ/formResponse';
 
     let selectedCategories = {};
     let tempCategories = {};
@@ -169,9 +183,8 @@
     let adminFees = {};
     let eventOrder = [];
     let eventDetails = {};
-    let currentStep = 1;
 
-    // ==================== 核心計算函數（完整還原） ====================
+    // ==================== 計算函數（完整） ====================
     function formatPrice(price) {
       return Number.isInteger(price) ? price.toString() : price.toFixed(1).replace(/\.0$/, '');
     }
@@ -186,7 +199,6 @@
       let remaining = [...selectedClean];
       const rules = discountRules[eventName] || [];
 
-      // 固定組合價優先
       rules.filter(r => r.type === "fixed").forEach(rule => {
         if (rule.condition.every(cat => selectedClean.includes(cat))) {
           totalPrice += rule.totalPrice;
@@ -196,7 +208,6 @@
         }
       });
 
-      // 群組優惠
       rules.filter(r => r.type === "group").forEach(rule => {
         const groupCats = rule.categories;
         const selectedInGroup = remaining.filter(cat => groupCats.includes(cat));
@@ -212,7 +223,6 @@
         }
       });
 
-      // 剩餘單項
       remaining.forEach(cat => {
         const price = categoryPrices[`${eventName}:${cat}`] || 0;
         totalPrice += price;
@@ -223,108 +233,70 @@
       if (calculateFormula && adminFee > 0) formulaParts.push(`$${adminFee} (行政費)`);
 
       const formula = formulaParts.join(' + ');
-      return calculateFormula ? { totalPrice, formula, hasDiscount, adminFee } : totalPrice;
+      return calculateFormula ? { totalPrice, formula, hasDiscount } : totalPrice;
     }
 
-    // ==================== 載入賽事（完整還原） ====================
+    // ==================== 載入賽事 ====================
     async function loadEvents() {
       const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${SHEET_ID}&range=A2:I`;
       try {
-        const response = await fetch(url);
-        const text = await response.text();
-        const jsonString = text.substring(47, text.length - 2);
-        const data = JSON.parse(jsonString);
+        const res = await fetch(url);
+        const text = await res.text();
+        const data = JSON.parse(text.substring(47, text.length - 2));
         const rows = data.table.rows;
 
-        const eventList = document.getElementById('eventList');
-        eventList.innerHTML = '';
-
-        eventCategories = {};
-        categoryPrices = {};
-        discountRules = {};
-        adminFees = {};
-        eventOrder = [];
-        eventDetails = {};
+        document.getElementById('eventList').innerHTML = '';
 
         rows.forEach(row => {
           const eventName = row.c[0]?.v;
           if (!eventName) return;
 
           eventOrder.push(eventName);
-          eventDetails[eventName] = {
-            date: row.c[3]?.v || '未提供',
-            location: row.c[4]?.v || '未提供',
-            target: row.c[6]?.v || '未提供',
-            deadline: row.c[7]?.v || '未提供',
-            remark: row.c[8]?.v || ''
-          };
+          eventDetails[eventName] = { date: row.c[3]?.v || '', location: row.c[4]?.v || '' };
 
-          const categoryArray = (row.c[1]?.v || '').split(',').map(c => c.trim());
-          eventCategories[eventName] = categoryArray;
+          const cats = (row.c[1]?.v || '').split(',').map(c => c.trim());
+          eventCategories[eventName] = cats;
 
-          categoryArray.forEach(category => {
-            const match = category.match(/(.+?)\s*-\s*\$(\d+)/);
-            if (match) {
-              categoryPrices[`${eventName}:${match[1].trim()}`] = parseInt(match[2]);
-            }
+          cats.forEach(cat => {
+            const m = cat.match(/(.+?)\s*-\s*\$(\d+)/);
+            if (m) categoryPrices[`${eventName}:${m[1].trim()}`] = parseInt(m[2]);
           });
 
-          // 完整優惠解析
           try {
-            const discountData = JSON.parse(row.c[2]?.v || '{}');
-            adminFees[eventName] = discountData.adminFee || 0;
+            const d = JSON.parse(row.c[2]?.v || '{}');
+            adminFees[eventName] = d.adminFee || 0;
             discountRules[eventName] = [];
+            if (d.groups) d.groups.forEach(g => discountRules[eventName].push({type:"group", groupName: g.name||"組合優惠", categories: g.categories.map(c=>c.trim()), discounts: g.discounts||[]}));
+            if (d.discounts) d.discounts.forEach(disc => discountRules[eventName].push({type:"fixed", condition: disc.condition.map(c=>c.trim()), totalPrice: disc.totalPrice}));
+          } catch(e) {}
 
-            if (discountData.groups) {
-              discountData.groups.forEach(group => {
-                discountRules[eventName].push({
-                  type: "group",
-                  groupName: group.name || "組合優惠",
-                  categories: group.categories.map(c => c.trim()),
-                  discounts: group.discounts || []
-                });
-              });
-            }
-
-            if (discountData.discounts) {
-              discountData.discounts.forEach(d => {
-                discountRules[eventName].push({
-                  type: "fixed",
-                  condition: d.condition.map(c => c.trim()),
-                  totalPrice: d.totalPrice
-                });
-              });
-            }
-          } catch (e) {}
-
-          // 卡片
-          const isSelected = !!selectedCategories[eventName];
           const card = document.createElement('div');
-          card.className = `bg-white rounded-3xl shadow-xl p-6 card-hover cursor-pointer border-2 ${isSelected ? 'border-orange-500 bg-orange-50' : 'border-transparent'}`;
+          card.className = `bg-white rounded-3xl shadow-xl p-6 card-hover cursor-pointer border-2 ${selectedCategories[eventName] ? 'border-orange-500 bg-orange-50' : 'border-transparent'}`;
           card.innerHTML = `
-            <h3 class="text-xl font-bold mb-4">${eventName}</h3>
-            <div class="space-y-1.5 text-sm text-gray-600">
-              <p><strong>日期：</strong>${eventDetails[eventName].date}</p>
-              <p><strong>地點：</strong>${eventDetails[eventName].location}</p>
-            </div>
+            <h3 class="text-xl font-bold mb-3">${eventName}</h3>
+            <p class="text-sm text-gray-600">${eventDetails[eventName].date}</p>
             <button onclick="event.stopImmediatePropagation(); showCategoryModal('${eventName}');" 
-                    class="mt-6 w-full py-3.5 rounded-2xl font-semibold ${isSelected ? 'bg-orange-500 text-white' : 'bg-blue-100 hover:bg-blue-200 text-blue-700'}">
-              ${isSelected ? '已選擇 ✓ 修改項目' : '選擇項目'}
+                    class="mt-6 w-full py-4 rounded-2xl font-semibold ${selectedCategories[eventName] ? 'bg-orange-500 text-white' : 'bg-blue-100 text-blue-700'}">
+              ${selectedCategories[eventName] ? '已選擇 ✓ 修改' : '選擇項目'}
             </button>
           `;
           card.onclick = () => showCategoryModal(eventName);
-          eventList.appendChild(card);
+          document.getElementById('eventList').appendChild(card);
         });
-      } catch (err) {
-        document.getElementById('eventListError').classList.remove('hidden');
+      } catch(e) {
+        console.error(e);
       }
-      updateSidebar();
+      updateAllUI();
     }
 
-    // ==================== Modal 相關 ====================
+    function updateAllUI() {
+      updateSidebar();
+      updateMobileBottomBar();
+    }
+
+    // ==================== Modal 與選擇 ====================
     function showCategoryModal(eventName) {
       tempCategories[eventName] = selectedCategories[eventName] ? [...selectedCategories[eventName]] : [];
-      
       document.getElementById('categoryTitle').textContent = `${eventName} - 選擇項目`;
       const group = document.getElementById('categoryGroup');
       group.innerHTML = '';
@@ -333,11 +305,7 @@
         const checked = tempCategories[eventName].includes(cat) ? 'checked' : '';
         const label = document.createElement('label');
         label.className = "flex items-center gap-4 p-4 hover:bg-blue-50 rounded-2xl cursor-pointer";
-        label.innerHTML = `
-          <input type="checkbox" ${checked} class="w-6 h-6 accent-blue-600" 
-                 onchange="updateTempCategories('${eventName}', '${cat}', this.checked)">
-          <span class="text-lg">${cat}</span>
-        `;
+        label.innerHTML = `<input type="checkbox" ${checked} class="w-6 h-6 accent-blue-600" onchange="updateTempCategories('${eventName}', '${cat}', this.checked)"> <span>${cat}</span>`;
         group.appendChild(label);
       });
 
@@ -345,28 +313,21 @@
       document.getElementById('categoryModal').style.display = 'flex';
     }
 
-    function updateTempCategories(eventName, category, checked) {
+    function updateTempCategories(eventName, cat, checked) {
       if (!tempCategories[eventName]) tempCategories[eventName] = [];
-      if (checked) {
-        if (!tempCategories[eventName].includes(category)) tempCategories[eventName].push(category);
-      } else {
-        tempCategories[eventName] = tempCategories[eventName].filter(c => c !== category);
-      }
+      if (checked) tempCategories[eventName].push(cat);
+      else tempCategories[eventName] = tempCategories[eventName].filter(c => c !== cat);
       updateCategorySum(eventName);
     }
 
     function updateCategorySum(eventName) {
-      const sumEl = document.getElementById('categorySum');
-      if (!tempCategories[eventName] || tempCategories[eventName].length === 0) {
-        sumEl.innerHTML = '尚未選擇項目';
+      const el = document.getElementById('categorySum');
+      if (!tempCategories[eventName]?.length) {
+        el.innerHTML = '尚未選擇';
         return;
       }
       const { totalPrice, formula, hasDiscount } = calculateDiscountedPrice(eventName, tempCategories[eventName], true);
-      sumEl.innerHTML = `
-        總金額 <strong class="text-2xl">HK$ ${formatPrice(totalPrice)}</strong><br>
-        <small class="text-gray-500">${formula}</small>
-        ${hasDiscount ? '<small class="text-red-500 block mt-1">（已套用優惠）</small>' : ''}
-      `;
+      el.innerHTML = `總金額 <strong>HK$ ${formatPrice(totalPrice)}</strong><br><small>${formula}</small>${hasDiscount ? '<small class="text-red-500">（已套用優惠）</small>' : ''}`;
     }
 
     function closeCategoryModal() {
@@ -375,102 +336,143 @@
 
     function confirmCategorySelection() {
       const eventName = document.getElementById('categoryTitle').textContent.split(' - ')[0];
-      if (tempCategories[eventName] && tempCategories[eventName].length > 0) {
+      if (tempCategories[eventName]?.length) {
         selectedCategories[eventName] = [...tempCategories[eventName]];
       } else {
         delete selectedCategories[eventName];
       }
       closeCategoryModal();
-      loadEvents();   // 刷新卡片狀態
-      updateSidebar();
-    }
-
-    // ==================== Sidebar ====================
-    function updateSidebar() {
-      let total = 0;
-      let html = '';
-
-      Object.keys(selectedCategories).sort((a,b) => eventOrder.indexOf(a) - eventOrder.indexOf(b)).forEach(event => {
-        const cats = selectedCategories[event];
-        const { totalPrice } = calculateDiscountedPrice(event, cats, false);
-        total += totalPrice;
-
-        html += `
-          <div class="bg-white rounded-2xl p-5 shadow border">
-            <div class="font-bold">${event}</div>
-            <div class="text-sm text-gray-500 mt-1">${cats.length} 個項目</div>
-            <div class="flex justify-between mt-4">
-              <span class="font-bold text-orange-600">HK$ ${formatPrice(totalPrice)}</span>
-              <button onclick="deleteEvent('${event}')" class="text-red-500 hover:text-red-700 text-sm">移除</button>
-            </div>
-          </div>`;
-      });
-
-      document.getElementById('selectedList').innerHTML = html || '<p class="text-gray-400 italic py-12 text-center">尚未選擇任何賽事</p>';
-      document.getElementById('sidebarTotal').textContent = `HK$ ${formatPrice(total)}`;
+      updateAllUI();
     }
 
     function deleteEvent(eventName) {
       delete selectedCategories[eventName];
-      loadEvents();
-      updateSidebar();
+      updateAllUI();
     }
 
-    // ==================== 步驟控制 ====================
+    // ==================== Sidebar & Mobile Bar ====================
+    function updateSidebar() {
+      let total = 0;
+      let html = '';
+      Object.keys(selectedCategories).forEach(event => {
+        const price = calculateDiscountedPrice(event, selectedCategories[event]);
+        total += price;
+        html += `
+          <div class="bg-white rounded-2xl p-5 shadow border">
+            <div class="font-bold">${event}</div>
+            <div class="text-sm text-gray-500">${selectedCategories[event].length} 項目</div>
+            <div class="flex justify-between mt-3">
+              <span class="font-bold text-orange-600">HK$ ${formatPrice(price)}</span>
+              <button onclick="deleteEvent('${event}')" class="text-red-500 text-sm">移除</button>
+            </div>
+          </div>`;
+      });
+      document.getElementById('selectedList').innerHTML = html || '<p class="text-gray-400 py-10 text-center">尚未選擇項目</p>';
+      document.getElementById('sidebarTotal').textContent = `HK$ ${formatPrice(total)}`;
+    }
+
+    function updateMobileBottomBar() {
+      let total = 0;
+      Object.values(selectedCategories).forEach(cats => {
+        total += calculateDiscountedPrice(Object.keys(selectedCategories).find(k => selectedCategories[k] === cats), cats);
+      });
+      const count = Object.keys(selectedCategories).length;
+      document.getElementById('mobileCount').textContent = count;
+      document.getElementById('mobileTotal').textContent = `HK$ ${formatPrice(total)}`;
+    }
+
+    function showMobileSelectedModal() {
+      let html = '';
+      let total = 0;
+      Object.keys(selectedCategories).forEach(event => {
+        const price = calculateDiscountedPrice(event, selectedCategories[event]);
+        total += price;
+        html += `<div class="bg-gray-50 p-4 rounded-2xl"><div class="font-bold">${event}</div><div class="text-orange-600 font-semibold">HK$ ${formatPrice(price)}</div></div>`;
+      });
+      document.getElementById('mobileSelectedList').innerHTML = html || '<p class="text-center text-gray-400 py-8">尚未選擇</p>';
+      document.getElementById('mobileModalTotal').textContent = `HK$ ${formatPrice(total)}`;
+      document.getElementById('mobileSelectedModal').style.display = 'flex';
+    }
+
+    function closeMobileSelectedModal() {
+      document.getElementById('mobileSelectedModal').style.display = 'none';
+    }
+
+    // ==================== 步驟與驗證 ====================
     function goToStep(step) {
-      currentStep = step;
-      document.querySelectorAll('#stepContent1,#stepContent2,#stepContent3').forEach(el => el.classList.add('hidden'));
+      if (step === 3) {
+        if (!validatePersonalInfo()) return;
+      }
+      document.querySelectorAll('#stepContent1, #stepContent2, #stepContent3').forEach(el => el.classList.add('hidden'));
       document.getElementById(`stepContent${step}`).classList.remove('hidden');
 
       for (let i = 1; i <= 3; i++) {
         const el = document.getElementById(`step${i}`);
-        if (i === step) el.classList.add('step-active');
-        else el.classList.remove('step-active');
+        el.classList.toggle('step-active', i === step);
       }
 
-      if (step === 3) showConfirmPage();
+      if (step === 3) renderConfirmPage();
     }
 
-    function showConfirmPage() {
-      let personalHTML = `
-        <p><strong>學員姓名：</strong> ${document.getElementById('name').value || '未填寫'}</p>
-        <p><strong>電話：</strong> ${document.getElementById('phone').value || '未填寫'}</p>
-        <p><strong>出生日期：</strong> ${document.getElementById('birthdate').value || '未填寫'}</p>
-      `;
-      document.getElementById('confirmPersonal').innerHTML = personalHTML;
+    function validatePersonalInfo() {
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const birth = document.getElementById('birthdate').value;
 
+      if (!name) { alert('請填寫學員姓名'); goToStep(2); return false; }
+      if (!phone || phone.length !== 8) { alert('請填寫正確8位電話號碼'); goToStep(2); return false; }
+      if (!birth) { alert('請選擇出生日期'); goToStep(2); return false; }
+      return true;
+    }
+
+    function renderConfirmPage() {
+      let html = `
+        <p><strong>姓名：</strong> ${document.getElementById('name').value}</p>
+        <p><strong>電話：</strong> ${document.getElementById('phone').value}</p>
+        <p><strong>出生日期：</strong> ${document.getElementById('birthdate').value}</p>
+        <p><strong>道場：</strong> ${document.getElementById('dojo').value || '未填'}</p>
+      `;
+      document.getElementById('confirmPersonal').innerHTML = html;
+      // 事件詳情...
       let eventsHTML = '';
       let total = 0;
-
-      Object.keys(selectedCategories).forEach(event => {
-        const cats = selectedCategories[event];
-        const { totalPrice, formula, hasDiscount } = calculateDiscountedPrice(event, cats, true);
+      Object.keys(selectedCategories).forEach(ev => {
+        const {totalPrice} = calculateDiscountedPrice(ev, selectedCategories[ev], false);
         total += totalPrice;
-
-        eventsHTML += `
-          <div class="mb-8">
-            <div class="font-bold text-lg">${event}</div>
-            <ul class="list-disc ml-6 mt-2 text-gray-600">${cats.map(c => `<li>${c}</li>`).join('')}</ul>
-            <div class="mt-3 font-semibold text-blue-600">小計 HK$ ${formatPrice(totalPrice)}</div>
-            ${hasDiscount ? '<div class="text-red-500 text-sm">已套用優惠</div>' : ''}
-          </div>`;
+        eventsHTML += `<div class="mb-6"><strong>${ev}</strong><br>${selectedCategories[ev].join('<br>')}</div>`;
       });
-
       document.getElementById('confirmEvents').innerHTML = eventsHTML;
       document.getElementById('finalTotal').innerHTML = `HK$ ${formatPrice(total)}`;
     }
 
-    async function submitForm() {
-      if (Object.keys(selectedCategories).length === 0) return alert('請至少選擇一項賽事');
-      if (!document.getElementById('name').value.trim()) {
-        alert('請填寫學員姓名');
-        goToStep(2);
-        return;
-      }
+    // ==================== 提交 ====================
+    async function confirmSubmission() {
+      if (!validatePersonalInfo()) return;
 
-      // TODO: 在此加入原本的 Google Form 提交程式碼
-      alert('提交成功！（請在此處替換成你的 Google Form 提交邏輯）');
-      document.getElementById('thankYouPage').classList.remove('hidden');
+      const formData = new FormData();
+      formData.append('entry.1702329531', document.getElementById('name').value);
+      formData.append('entry.1541580542', document.getElementById('phone').value);
+      formData.append('entry.1919065731_year', document.getElementById('birthdate').value.split('-')[0]);
+      formData.append('entry.1919065731_month', document.getElementById('birthdate').value.split('-')[1]);
+      formData.append('entry.1919065731_day', document.getElementById('birthdate').value.split('-')[2]);
+      formData.append('entry.1923170591', document.getElementById('dojo').value);
+
+      let selectedText = Object.entries(selectedCategories)
+        .map(([ev, cats]) => `${ev}: ${cats.join(', ')}`).join('; ');
+      formData.append('entry.1287068960', selectedText);
+
+      let total = 0;
+      Object.keys(selectedCategories).forEach(ev => {
+        total += calculateDiscountedPrice(ev, selectedCategories[ev]);
+      });
+      formData.append('entry.1317768085', total);
+
+      try {
+        await fetch(FORM_URL, { method: 'POST', body: formData, mode: 'no-cors' });
+        document.getElementById('thankYouPage').classList.remove('hidden');
+      } catch (e) {
+        alert('提交失敗，請稍後再試');
+      }
     }
 
     function restartForm() {
