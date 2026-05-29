@@ -27,6 +27,11 @@
       opacity: 1;
       padding-top: 16px;
     }
+    .step {
+      white-space: nowrap !important;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .step-active { background: linear-gradient(to right, #1E88E5, #42A5F5); color: white; box-shadow: 0 4px 12px rgba(30,136,229,0.3); }
     .gradient-btn { background: linear-gradient(135deg, #1E88E5, #FF9800); }
     .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); align-items: center; justify-content: center; z-index: 1100; }
@@ -168,11 +173,11 @@
 
   <!-- Mobile Selected Modal -->
   <div id="mobileSelectedModal" class="modal">
-    <div class="bg-white rounded-3xl shadow-2xl p-6 max-w-lg w-full mx-4">
-      <h3 class="text-xl font-bold mb-4">已選項目</h3>
-      <div id="mobileSelectedList" class="max-h-[60vh] overflow-y-auto space-y-4"></div>
+    <div class="bg-white rounded-3xl shadow-2xl p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <h3 class="text-xl font-bold mb-6 sticky top-0 bg-white pb-4 border-b">已選比賽詳情</h3>
+      <div id="mobileSelectedList" class="space-y-8"></div>
       <div class="text-2xl font-bold text-center py-6 border-t">總金額 <span id="mobileModalTotal" class="text-orange-600"></span></div>
-      <button onclick="closeMobileSelectedModal()" class="w-full py-4 bg-gray-200 rounded-2xl">關閉</button>
+      <button onclick="closeMobileSelectedModal()" class="w-full py-4 bg-gray-200 rounded-2xl mt-4">關閉</button>
     </div>
   </div>
 
@@ -233,10 +238,7 @@
           totalPrice += rule.totalPrice;
           hasDiscount = true;
           rule.condition.forEach(cat => discountedItems.add(cat));
-          discountBreakdown.push({
-            name: rule.condition.join(" + "),
-            discount: rule.totalPrice
-          });
+          discountBreakdown.push({ name: rule.condition.join(" + "), discount: rule.totalPrice });
           if (calculateFormula) formulaParts.push(`$${rule.totalPrice}`);
           remaining = remaining.filter(cat => !rule.condition.includes(cat));
         }
@@ -252,10 +254,7 @@
             totalPrice += bestDiscount.totalPrice;
             hasDiscount = true;
             selectedInGroup.forEach(cat => discountedItems.add(cat));
-            discountBreakdown.push({
-              name: `${rule.groupName} (${count}項)`,
-              discount: bestDiscount.totalPrice
-            });
+            discountBreakdown.push({ name: `${rule.groupName} (${count}項)`, discount: bestDiscount.totalPrice });
             if (calculateFormula) formulaParts.push(`$${bestDiscount.totalPrice} (${rule.groupName} - ${count}項)`);
             remaining = remaining.filter(cat => !selectedInGroup.includes(cat));
           }
@@ -328,35 +327,11 @@
             <p class="text-sm text-gray-600">${eventDetails[eventName].date}</p>
             
             <div class="info-content text-sm border-t pt-4 mt-4 space-y-3">
-              ${eventDetails[eventName].location ? `
-              <div class="flex">
-                <span class="text-blue-600 font-medium w-16 flex-shrink-0">地點</span>
-                <span class="text-gray-700">${formatText(eventDetails[eventName].location)}</span>
-              </div>` : ''}
-              
-              ${eventDetails[eventName].items ? `
-              <div class="flex">
-                <span class="text-blue-600 font-medium w-16 flex-shrink-0">項目</span>
-                <span class="text-gray-700">${formatText(eventDetails[eventName].items)}</span>
-              </div>` : ''}
-              
-              ${eventDetails[eventName].target ? `
-              <div class="flex">
-                <span class="text-blue-600 font-medium w-16 flex-shrink-0">對象</span>
-                <span class="text-gray-700">${formatText(eventDetails[eventName].target)}</span>
-              </div>` : ''}
-              
-              ${eventDetails[eventName].deadline ? `
-              <div class="flex">
-                <span class="text-blue-600 font-medium w-16 flex-shrink-0">截止</span>
-                <span class="text-gray-700">${formatText(eventDetails[eventName].deadline)}</span>
-              </div>` : ''}
-              
-              ${eventDetails[eventName].notes ? `
-              <div class="flex">
-                <span class="text-blue-600 font-medium w-16 flex-shrink-0">備註</span>
-                <span class="text-gray-700">${formatText(eventDetails[eventName].notes)}</span>
-              </div>` : ''}
+              ${eventDetails[eventName].location ? `<div class="flex"><span class="text-blue-600 font-medium w-16 flex-shrink-0">地點</span><span class="text-gray-700">${formatText(eventDetails[eventName].location)}</span></div>` : ''}
+              ${eventDetails[eventName].items ? `<div class="flex"><span class="text-blue-600 font-medium w-16 flex-shrink-0">項目</span><span class="text-gray-700">${formatText(eventDetails[eventName].items)}</span></div>` : ''}
+              ${eventDetails[eventName].target ? `<div class="flex"><span class="text-blue-600 font-medium w-16 flex-shrink-0">對象</span><span class="text-gray-700">${formatText(eventDetails[eventName].target)}</span></div>` : ''}
+              ${eventDetails[eventName].deadline ? `<div class="flex"><span class="text-blue-600 font-medium w-16 flex-shrink-0">截止</span><span class="text-gray-700">${formatText(eventDetails[eventName].deadline)}</span></div>` : ''}
+              ${eventDetails[eventName].notes ? `<div class="flex"><span class="text-blue-600 font-medium w-16 flex-shrink-0">備註</span><span class="text-gray-700">${formatText(eventDetails[eventName].notes)}</span></div>` : ''}
             </div>
 
             <button onclick="event.stopImmediatePropagation(); showCategoryModal('${eventName}');" 
@@ -465,15 +440,68 @@
       document.getElementById('mobileTotal').textContent = `HK$ ${formatPrice(total)}`;
     }
 
+    // 修改後的 Mobile 查看詳情 - 與確認頁面格式一致
     function showMobileSelectedModal() {
       let html = '';
       let total = 0;
+
       Object.keys(selectedCategories).forEach(event => {
-        const price = calculateDiscountedPrice(event, selectedCategories[event]);
-        total += price;
-        html += `<div class="bg-gray-50 p-4 rounded-2xl"><div class="font-bold">${event}</div><div class="text-orange-600 font-semibold">HK$ ${formatPrice(price)}</div></div>`;
+        const cats = selectedCategories[event];
+        const result = calculateDiscountedPrice(event, cats, true);
+        const subtotal = result.totalPrice || 0;
+        total += subtotal;
+
+        let itemsHTML = cats.map(cat => {
+          const cleanCat = cleanCategoryName(cat);
+          const price = categoryPrices[`${event}:${cleanCat}`] || 0;
+          const hasDiscount = result.discountedItems.includes(cleanCat);
+          return `
+            <div class="flex justify-between py-1.5">
+              <span class="text-gray-700">${getOriginalCategoryName(cat)}</span>
+              <span class="${hasDiscount ? 'line-through text-gray-400' : 'font-medium text-gray-800'}">
+                HK$ ${formatPrice(price)}
+              </span>
+            </div>`;
+        }).join('');
+
+        if (adminFees[event] > 0) {
+          itemsHTML += `
+            <div class="flex justify-between py-1.5 text-gray-600">
+              <span>行政費</span>
+              <span class="font-medium">HK$ ${adminFees[event]}</span>
+            </div>`;
+        }
+
+        let discountHTML = '';
+        if (result.discountBreakdown && result.discountBreakdown.length > 0) {
+          discountHTML = result.discountBreakdown.map(d => `
+            <div class="flex justify-between py-1 text-red-600 text-sm">
+              <span>• ${d.name} 優惠</span>
+              <span>HK$ ${formatPrice(d.discount)}</span>
+            </div>
+          `).join('');
+        }
+
+        html += `
+          <div class="p-5 bg-gray-50 rounded-3xl border">
+            <div class="font-bold text-lg mb-4">${event}</div>
+            <div class="mb-6">
+              <div class="text-sm font-semibold text-gray-500 mb-3">已選擇項目</div>
+              ${itemsHTML}
+            </div>
+            ${discountHTML ? `
+            <div class="mb-6">
+              <div class="text-sm font-semibold text-red-500 mb-3">優惠明細</div>
+              ${discountHTML}
+            </div>` : ''}
+            <div class="flex justify-between items-center pt-4 border-t font-bold">
+              <span>小計</span>
+              <span class="text-orange-600">HK$ ${formatPrice(subtotal)}</span>
+            </div>
+          </div>`;
       });
-      document.getElementById('mobileSelectedList').innerHTML = html || '<p class="text-center text-gray-400 py-8">尚未選擇</p>';
+
+      document.getElementById('mobileSelectedList').innerHTML = html || '<p class="text-center text-gray-400 py-8">尚未選擇項目</p>';
       document.getElementById('mobileModalTotal').textContent = `HK$ ${formatPrice(total)}`;
       document.getElementById('mobileSelectedModal').style.display = 'flex';
     }
@@ -526,7 +554,6 @@
           const cleanCat = cleanCategoryName(cat);
           const price = categoryPrices[`${event}:${cleanCat}`] || 0;
           const hasDiscount = result.discountedItems.includes(cleanCat);
-          
           return `
             <div class="flex justify-between py-1.5">
               <span class="text-gray-700">${getOriginalCategoryName(cat)}</span>
@@ -557,18 +584,15 @@
         eventsHTML += `
           <div class="mb-10 p-6 bg-gray-50 rounded-3xl border">
             <div class="font-bold text-lg mb-4">${event}</div>
-            
             <div class="mb-6">
               <div class="text-sm font-semibold text-gray-500 mb-3">已選擇項目</div>
               ${itemsHTML}
             </div>
-
             ${discountHTML ? `
             <div class="mb-6">
               <div class="text-sm font-semibold text-red-500 mb-3">優惠明細</div>
               ${discountHTML}
             </div>` : ''}
-
             <div class="flex justify-between items-center pt-5 border-t border-gray-300 font-bold text-lg">
               <span>小計</span>
               <span class="text-orange-600">HK$ ${formatPrice(subtotal)}</span>
