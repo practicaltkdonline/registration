@@ -9,21 +9,20 @@
   <style>
     body { font-family: 'Noto Sans TC', system-ui, sans-serif; }
     .card-hover { 
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
     }
     .card-hover:hover { 
-      transform: translateY(-8px) scale(1.02); 
-      box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15); 
+      transform: translateY(-4px); 
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); 
     }
-    .info-hidden {
+    .info-content {
       max-height: 0;
       opacity: 0;
       transition: all 0.4s ease;
       overflow: hidden;
     }
-    .card-hover:hover .info-hidden {
-      max-height: 420px;
+    .expanded .info-content {
+      max-height: 520px;
       opacity: 1;
       padding-top: 16px;
     }
@@ -220,6 +219,7 @@
       let totalPrice = 0;
       let formulaParts = [];
       let hasDiscount = false;
+      let discountedItems = new Set();
       const adminFee = adminFees[eventName] || 0;
       const selectedClean = selected.map(cat => cleanCategoryName(cat));
 
@@ -230,6 +230,7 @@
         if (rule.condition.every(cat => selectedClean.includes(cat))) {
           totalPrice += rule.totalPrice;
           hasDiscount = true;
+          rule.condition.forEach(cat => discountedItems.add(cat));
           if (calculateFormula) formulaParts.push(`$${rule.totalPrice}`);
           remaining = remaining.filter(cat => !rule.condition.includes(cat));
         }
@@ -244,6 +245,7 @@
           if (bestDiscount) {
             totalPrice += bestDiscount.totalPrice;
             hasDiscount = true;
+            selectedInGroup.forEach(cat => discountedItems.add(cat));
             if (calculateFormula) formulaParts.push(`$${bestDiscount.totalPrice} (${rule.groupName} - ${count}項)`);
             remaining = remaining.filter(cat => !selectedInGroup.includes(cat));
           }
@@ -260,7 +262,9 @@
       if (calculateFormula && adminFee > 0) formulaParts.push(`$${adminFee} (行政費)`);
 
       const formula = formulaParts.join(' + ');
-      return calculateFormula ? { totalPrice, formula, hasDiscount, adminFee } : totalPrice;
+      return calculateFormula 
+        ? { totalPrice, formula, hasDiscount, adminFee, discountedItems: Array.from(discountedItems) } 
+        : totalPrice;
     }
 
     async function loadEvents() {
@@ -279,14 +283,13 @@
 
           eventOrder.push(eventName);
           
-          // 擴充 eventDetails，包含所有欄位
           eventDetails[eventName] = {
             date: row.c[3]?.v || '',
             location: row.c[4]?.v || '',
-            items: row.c[5]?.v || '',           // F欄 - 項目
-            target: row.c[6]?.v || '',          // G欄 - 對象
-            deadline: row.c[7]?.v || '',        // H欄 - 截止日期
-            notes: row.c[8]?.v || ''            // I欄 - 備註
+            items: row.c[5]?.v || '',
+            target: row.c[6]?.v || '',
+            deadline: row.c[7]?.v || '',
+            notes: row.c[8]?.v || ''
           };
 
           const cats = (row.c[1]?.v || '').split(',').map(c => c.trim());
@@ -308,42 +311,50 @@
           const card = document.createElement('div');
           card.className = `bg-white rounded-3xl shadow-xl p-6 card-hover cursor-pointer border-2 ${selectedCategories[eventName] ? 'border-orange-500 bg-orange-50' : 'border-transparent'}`;
           
-          // 修改後的卡片內容（僅此處有變動）
+          // 處理換行
+          const formatText = (text) => text.replace(/\n/g, '<br>');
+          
           card.innerHTML = `
-            <h3 class="text-xl font-bold mb-2">${eventName}</h3>
-            <p class="text-sm text-gray-600">${eventDetails[eventName].date}</p>
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="text-xl font-bold">${eventName}</h3>
+                <p class="text-sm text-gray-600">${eventDetails[eventName].date}</p>
+              </div>
+              <span onclick="event.stopImmediatePropagation(); toggleInfo(this)" 
+                    class="text-2xl text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">↓</span>
+            </div>
             
-            <!-- Hover 展開區域 -->
-            <div class="info-hidden text-sm border-t pt-4 mt-4 space-y-2.5">
+            <!-- 點擊展開區域 -->
+            <div class="info-content text-sm border-t pt-4 mt-4 space-y-3">
               ${eventDetails[eventName].location ? `
-              <p class="flex items-start gap-2">
-                <span class="text-blue-600 font-medium w-14">地點</span>
-                <span class="text-gray-700">${eventDetails[eventName].location}</span>
-              </p>` : ''}
+              <div class="flex">
+                <span class="text-blue-600 font-medium w-16 flex-shrink-0">地點</span>
+                <span class="text-gray-700">${formatText(eventDetails[eventName].location)}</span>
+              </div>` : ''}
               
               ${eventDetails[eventName].items ? `
-              <p class="flex items-start gap-2">
-                <span class="text-blue-600 font-medium w-14">項目</span>
-                <span class="text-gray-700">${eventDetails[eventName].items}</span>
-              </p>` : ''}
+              <div class="flex">
+                <span class="text-blue-600 font-medium w-16 flex-shrink-0">項目</span>
+                <span class="text-gray-700">${formatText(eventDetails[eventName].items)}</span>
+              </div>` : ''}
               
               ${eventDetails[eventName].target ? `
-              <p class="flex items-start gap-2">
-                <span class="text-blue-600 font-medium w-14">對象</span>
-                <span class="text-gray-700">${eventDetails[eventName].target}</span>
-              </p>` : ''}
+              <div class="flex">
+                <span class="text-blue-600 font-medium w-16 flex-shrink-0">對象</span>
+                <span class="text-gray-700">${formatText(eventDetails[eventName].target)}</span>
+              </div>` : ''}
               
               ${eventDetails[eventName].deadline ? `
-              <p class="flex items-start gap-2">
-                <span class="text-blue-600 font-medium w-14">截止</span>
-                <span class="text-gray-700">${eventDetails[eventName].deadline}</span>
-              </p>` : ''}
+              <div class="flex">
+                <span class="text-blue-600 font-medium w-16 flex-shrink-0">截止</span>
+                <span class="text-gray-700">${formatText(eventDetails[eventName].deadline)}</span>
+              </div>` : ''}
               
               ${eventDetails[eventName].notes ? `
-              <p class="flex items-start gap-2">
-                <span class="text-blue-600 font-medium w-14">備註</span>
-                <span class="text-gray-700">${eventDetails[eventName].notes}</span>
-              </p>` : ''}
+              <div class="flex">
+                <span class="text-blue-600 font-medium w-16 flex-shrink-0">備註</span>
+                <span class="text-gray-700">${formatText(eventDetails[eventName].notes)}</span>
+              </div>` : ''}
             </div>
 
             <button onclick="event.stopImmediatePropagation(); showCategoryModal('${eventName}');" 
@@ -357,6 +368,20 @@
         });
       } catch(e) {}
       updateAllUI();
+    }
+
+    // 新增：展開/收起功能（手機與桌面皆適用）
+    function toggleInfo(icon) {
+      const card = icon.closest('.card-hover');
+      card.classList.toggle('expanded');
+      
+      // 旋轉箭頭
+      if (card.classList.contains('expanded')) {
+        icon.style.transform = 'rotate(180deg)';
+      } else {
+        icon.style.transform = 'rotate(0deg)';
+      }
+      event.stopImmediatePropagation();
     }
 
     function updateAllUI() {
@@ -506,8 +531,10 @@
         grandTotal += subtotal;
 
         let itemsHTML = cats.map(cat => {
-          const isDiscounted = result.hasDiscount ? ' <span class="text-red-500 text-sm">(已套用優惠)</span>' : '';
-          return `<li class="py-1">${getOriginalCategoryName(cat)}${isDiscounted}</li>`;
+          const cleanCat = cleanCategoryName(cat);
+          const hasDiscountOnThisItem = result.discountedItems.includes(cleanCat);
+          const discountTag = hasDiscountOnThisItem ? ' <span class="text-red-500 text-sm">(已套用優惠)</span>' : '';
+          return `<li class="py-1">${getOriginalCategoryName(cat)}${discountTag}</li>`;
         }).join('');
 
         if (adminFees[event] > 0) {
@@ -518,6 +545,10 @@
           <div class="mb-8 p-5 bg-gray-50 rounded-2xl border border-gray-100">
             <div class="font-bold text-lg mb-3">${event}</div>
             <ul class="list-disc ml-6 text-gray-600">${itemsHTML}</ul>
+            ${result.formula ? `
+            <div class="mt-4 p-3 bg-white rounded-xl text-sm text-gray-600 border">
+              ${result.formula}
+            </div>` : ''}
             <div class="flex justify-between items-center pt-4 border-t mt-4">
               <span class="font-medium">小計</span>
               <span class="font-bold text-orange-600 text-xl">HK$ ${formatPrice(subtotal)}</span>
