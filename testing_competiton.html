@@ -27,7 +27,7 @@
   <div class="max-w-7xl mx-auto">
     <!-- Header -->
     <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-orange-500 text-white py-7 px-8 shadow-xl">
-      <h1 class="text-3xl font-bold flex items-center gap-3">🏆 比賽報名系統4</h1>
+      <h1 class="text-3xl font-bold flex items-center gap-3">🏆 比賽報名系統</h1>
       <p class="text-blue-100">選擇賽事 • 展現實力</p>
     </div>
 
@@ -189,6 +189,10 @@
       return cat.split(' - $')[0].trim();
     }
 
+    function getOriginalCategoryName(cat) {
+      return cat; // 保留原始含價格的字串
+    }
+
     function formatPrice(price) {
       return Number.isInteger(price) ? price.toString() : price.toFixed(1).replace(/\.0$/, '');
     }
@@ -239,7 +243,7 @@
       if (calculateFormula && adminFee > 0) formulaParts.push(`$${adminFee} (行政費)`);
 
       const formula = formulaParts.join(' + ');
-      return calculateFormula ? { totalPrice, formula, hasDiscount } : totalPrice;
+      return calculateFormula ? { totalPrice, formula, hasDiscount, adminFee } : totalPrice;
     }
 
     async function loadEvents() {
@@ -297,6 +301,7 @@
       updateMobileBottomBar();
     }
 
+    // 其他函數（Modal、Sidebar、Mobile Bar）保持不變...
     function showCategoryModal(eventName) {
       tempCategories[eventName] = selectedCategories[eventName] ? [...selectedCategories[eventName]] : [];
       document.getElementById('categoryTitle').textContent = `${eventName} - 選擇項目`;
@@ -335,9 +340,7 @@
       el.innerHTML = `總金額 <strong>HK$ ${formatPrice(totalPrice)}</strong><br><small>${formula}</small>${hasDiscount ? '<small class="text-red-500">（已套用優惠）</small>' : ''}`;
     }
 
-    function closeCategoryModal() {
-      document.getElementById('categoryModal').style.display = 'none';
-    }
+    function closeCategoryModal() { document.getElementById('categoryModal').style.display = 'none'; }
 
     function confirmCategorySelection() {
       const eventName = document.getElementById('categoryTitle').textContent.split(' - ')[0];
@@ -377,9 +380,7 @@
 
     function updateMobileBottomBar() {
       let total = 0;
-      Object.keys(selectedCategories).forEach(event => {
-        total += calculateDiscountedPrice(event, selectedCategories[event]);
-      });
+      Object.keys(selectedCategories).forEach(event => total += calculateDiscountedPrice(event, selectedCategories[event]));
       const count = Object.keys(selectedCategories).length;
       document.getElementById('mobileCount').textContent = count;
       document.getElementById('mobileTotal').textContent = `HK$ ${formatPrice(total)}`;
@@ -404,7 +405,6 @@
 
     function goToStep(step) {
       if (step === 3 && !validatePersonalInfo()) return;
-      
       document.querySelectorAll('#stepContent1, #stepContent2, #stepContent3').forEach(el => el.classList.add('hidden'));
       document.getElementById(`stepContent${step}`).classList.remove('hidden');
 
@@ -412,7 +412,6 @@
         const el = document.getElementById(`step${i}`);
         el.classList.toggle('step-active', i === step);
       }
-
       if (step === 3) renderConfirmPage();
     }
 
@@ -420,7 +419,6 @@
       const name = document.getElementById('name').value.trim();
       const phone = document.getElementById('phone').value.trim();
       const birth = document.getElementById('birthdate').value;
-
       if (!name) { alert('請填寫學員姓名'); return false; }
       if (!phone || phone.length !== 8) { alert('請填寫正確的8位電話號碼'); return false; }
       if (!birth) { alert('請選擇出生日期'); return false; }
@@ -445,11 +443,21 @@
         const subtotal = result.totalPrice || 0;
         grandTotal += subtotal;
 
+        let itemsHTML = cats.map(cat => {
+          const isDiscounted = result.hasDiscount ? ' <span class="text-red-500 text-sm">(已套用優惠)</span>' : '';
+          return `<li class="py-1">${getOriginalCategoryName(cat)}${isDiscounted}</li>`;
+        }).join('');
+
+        // 行政費
+        if (adminFees[event] > 0) {
+          itemsHTML += `<li class="py-1 text-gray-600">行政費 - $${adminFees[event]}</li>`;
+        }
+
         eventsHTML += `
           <div class="mb-8 p-5 bg-gray-50 rounded-2xl border border-gray-100">
             <div class="font-bold text-lg mb-3">${event}</div>
-            <ul class="list-disc ml-6 text-gray-600 mb-4">${cats.map(c => `<li>${cleanCategoryName(c)}</li>`).join('')}</ul>
-            <div class="flex justify-between items-center pt-3 border-t">
+            <ul class="list-disc ml-6 text-gray-600">${itemsHTML}</ul>
+            <div class="flex justify-between items-center pt-4 border-t mt-4">
               <span class="font-medium">小計</span>
               <span class="font-bold text-orange-600 text-xl">HK$ ${formatPrice(subtotal)}</span>
             </div>
@@ -482,7 +490,13 @@
         .join('; ');
 
       formData.append('entry.1287068960', selectedText);
-      formData.append('entry.1317768085', '');
+
+      // 傳送純數字總金額
+      let totalAmount = 0;
+      Object.keys(selectedCategories).forEach(event => {
+        totalAmount += calculateDiscountedPrice(event, selectedCategories[event]);
+      });
+      formData.append('entry.1317768085', totalAmount);
 
       try {
         await fetch(FORM_URL, { method: 'POST', body: formData, mode: 'no-cors' });
