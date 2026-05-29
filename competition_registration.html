@@ -3,299 +3,216 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>比賽報名系統</title>
+  <title>比賽報名系統 - 活力登場</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <style>
-    body { font-family: 'Noto Sans TC', Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; background-color: #f5f5f5; color: #333; }
-    .form-container { background: linear-gradient(to bottom, #ffffff, #f9fafb); padding: 32px; border-radius: 12px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); }
-    .form-group { margin-bottom: 24px; }
-    label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 16px; color: #1a3c5e; }
-    input, select, button { width: 100%; padding: 12px; border: 1px solid #B0BEC5; border-radius: 8px; box-sizing: border-box; font-size: 16px; transition: border-color 0.3s, box-shadow 0.3s; }
-    input:focus, select:focus, button:focus { outline: none; border-color: #1976D2; box-shadow: 0 0 6px rgba(25, 118, 210, 0.3); }
-
-    .date-group { display: flex; align-items: center; gap: 8px; }
-    .date-group select { width: 120px; }
-    .date-group select#birthYear { width: 160px; }
-
-    .event-list .card { 
-      cursor: pointer; 
-      transition: transform 0.3s ease, box-shadow 0.3s ease; 
-      margin-bottom: 24px; 
-      border: 1px solid #d1d9e6; 
-      border-radius: 12px; 
-      background: linear-gradient(to bottom, #ffffff, #f9fafb); 
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
-      min-height: 340px;
+    body { font-family: 'Noto Sans TC', system-ui, sans-serif; }
+    .card-hover { 
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+      overflow: hidden;
     }
-    .event-list .card:hover { transform: translateY(-6px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); }
-    .event-list .card.selected { border: 2px solid #1976D2; background: linear-gradient(to bottom, #e3f2fd, #d6eaff); }
-    .event-list .card-body { padding: 20px; }
-    .event-list .card-title { font-size: 18px; font-weight: 700; color: #1a3c5e; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #e0e7ff; }
-
-    /* 卡片內容對齊優化 */
-    .card-text .field-group {
-      display: flex;
-      margin-bottom: 10px;
+    .card-hover:hover { 
+      transform: translateY(-8px) scale(1.02); 
+      box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15); 
     }
-    .card-text .field-label {
-      min-width: 70px;
-      font-weight: 600;
-      color: #1a3c5e;
-      flex-shrink: 0;
+    .info-content {
+      max-height: 0;
+      opacity: 0;
+      transition: all 0.4s ease;
+      overflow: hidden;
     }
-    .card-text .field-content {
-      flex: 1;
-      color: #555;
-      line-height: 1.5;
+    .expanded .info-content {
+      max-height: 520px;
+      opacity: 1;
+      padding-top: 16px;
     }
-    .field-deadline .field-content { color: #D32F2F; font-weight: 500; }
-
-    .category-group { display: flex; flex-direction: column; gap: 16px; padding: 16px; background: #f9fafb; border-radius: 8px; max-height: 400px; overflow-y: auto; }
-    .category-group label {
-      display: flex;
-      align-items: center;
-      font-weight: normal;
-      font-size: 16px;
-      color: #333;
-      padding: 8px 12px;
-      transition: background-color 0.2s;
+    .step {
+      white-space: nowrap !important;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .category-group label:hover { background: #e0e7ff; border-radius: 6px; }
-    .category-group input[type="checkbox"] { width: auto; margin-right: 12px; accent-color: #1976D2; }
-
-    .category-sum { position: sticky; bottom: 0; font-size: 18px; color: #1a3c5e; padding: 8px 16px; margin: 10px 0 16px 12px; line-height: 1.5; border-top: 2px solid #e0e7ff; }
-    .error { color: #D32F2F; font-size: 14px; margin-top: 6px; padding: 8px; background: #ffebee; border-radius: 6px; display: none; }
-
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 1100; }
-    .modal-content { background: linear-gradient(to bottom, #ffffff, #f9fafb); padding: 32px; border-radius: 12px; max-width: 600px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); }
-
-    button.confirm, button.return-button, button.confirm-selection, button.next-step { background-color: #1976D2; color: white; border: none; cursor: pointer; padding: 12px; border-radius: 8px; }
-    button.cancel { background-color: #B0BEC5; color: #333; padding: 12px; border-radius: 8px; }
-
-    #floatingSubmitBtn { position: fixed; bottom: 20px; right: 20px; background-color: #4CAF50; color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); cursor: pointer; z-index: 1000; }
-    .event-count { position: absolute; top: -5px; right: -5px; background-color: #ff4444; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+    .step-active { background: linear-gradient(to right, #1E88E5, #42A5F5); color: white; box-shadow: 0 4px 12px rgba(30,136,229,0.3); }
+    .gradient-btn { background: linear-gradient(135deg, #1E88E5, #FF9800); }
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); align-items: center; justify-content: center; z-index: 1100; }
+    .bottom-bar { display: none; }
+    .main-content { padding-bottom: 100px; }
+    @media (max-width: 1024px) {
+      .desktop-sidebar { display: none; }
+      .bottom-bar { display: flex; }
+      .main-content { padding-bottom: 140px; }
+    }
   </style>
 </head>
-<body>
-  <form id="registrationForm">
-    <div class="form-container" id="mainForm">
-      <div class="form-group">
-        <label>選擇比賽</label>
-        <div class="event-list row" id="eventList"></div>
-        <span id="eventListError" class="error" style="display: none;">無法載入比賽資料，請檢查試算表是否公開</span>
-        <input type="hidden" id="selectedEvents" name="entry.1287068960">
-        <input type="hidden" id="totalPrice" name="entry.1317768085">
+<body class="bg-gray-50 min-h-screen">
+
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-orange-500 text-white py-7 px-8 shadow-xl">
+      <h1 class="text-3xl font-bold flex items-center gap-3">🏆 比賽報名系統</h1>
+      <p class="text-blue-100">選擇賽事 • 展現實力</p>
+    </div>
+
+    <!-- Stepper -->
+    <div class="bg-white py-6 shadow-sm">
+      <div class="flex justify-center gap-6 md:gap-12">
+        <div onclick="goToStep(1)" id="step1" class="step px-7 py-3 rounded-2xl font-medium cursor-pointer step-active flex items-center gap-2 text-sm md:text-base">
+          <span class="w-7 h-7 bg-white text-blue-600 rounded-full flex items-center justify-center font-bold">1</span>
+          選擇賽事
+        </div>
+        <div onclick="goToStep(2)" id="step2" class="step px-7 py-3 rounded-2xl font-medium cursor-pointer flex items-center gap-2 text-gray-500 hover:text-gray-700 text-sm md:text-base">
+          <span class="w-7 h-7 bg-gray-200 rounded-full flex items-center justify-center font-bold">2</span>
+          個人資料
+        </div>
+        <div onclick="goToStep(3)" id="step3" class="step px-7 py-3 rounded-2xl font-medium cursor-pointer flex items-center gap-2 text-gray-500 hover:text-gray-700 text-sm md:text-base">
+          <span class="w-7 h-7 bg-gray-200 rounded-full flex items-center justify-center font-bold">3</span>
+          確認提交
+        </div>
       </div>
     </div>
 
-    <div id="personalInfoModal" class="modal">
-      <div class="modal-content">
-        <h2>請輸入個人資料</h2>
-        <div class="form-group">
-          <label>學員姓名</label>
-          <input type="text" id="name" name="entry.1702329531" required>
-          <span id="nameError" class="error">請輸入學員姓名</span>
-        </div>
-        <div class="form-group">
-          <label>聯絡電話</label>
-          <input type="tel" id="phone" name="entry.1541580542" pattern="\d{8}">
-          <span id="phoneError" class="error">請輸入有效的8位電話號碼</span>
-        </div>
-        <div class="form-group">
-          <label>出生日期</label>
-          <div class="date-group">
-            <select id="birthYear" name="entry.1919065731_year"></select>
-            <span>/</span>
-            <select id="birthMonth" name="entry.1919065731_month"></select>
-            <span>/</span>
-            <select id="birthDay" name="entry.1919065731_day"></select>
+    <div class="flex flex-col lg:flex-row gap-8 p-6 md:p-8">
+      
+      <!-- Desktop Sidebar -->
+      <div class="desktop-sidebar lg:w-96 bg-white rounded-3xl shadow-2xl p-6 h-fit sticky top-6">
+        <h3 class="text-2xl font-bold text-gray-800 mb-5">📋 已選項目</h3>
+        <div id="selectedList" class="space-y-4 min-h-[320px]"></div>
+        <div class="border-t pt-6 mt-6">
+          <div class="flex justify-between items-baseline text-2xl font-bold">
+            <span class="text-gray-700">總金額</span>
+            <span id="sidebarTotal" class="text-orange-600">HK$ 0</span>
           </div>
-          <span id="birthdateError" class="error">請選擇有效的出生日期（不得晚於今日）</span>
         </div>
-        <div class="form-group">
-          <label>所屬道場</label>
-          <select id="dojo" name="entry.1923170591">
-            <option value="">請選擇道場</option>
-            <option value="觀塘總館">觀塘總館</option>
-            <option value="紅磡-培匠道場">紅磡-培匠道場</option>
-            <option value="鰂魚涌體育館">鰂魚涌體育館</option>
-            <option value="北角官立小學">北角官立小學</option>
-            <option value="大角嘴天主教小學">大角嘴天主教小學</option>
-            <option value="佛教林金殿紀念小學">佛教林金殿紀念小學</option>
-            <option value="其他">其他（請手動輸入）</option>
-          </select>
-          <input type="text" id="customDojo" placeholder="請輸入道場名稱" style="display: none; margin-top:8px;">
-          <span id="dojoError" class="error">請選擇或輸入道場</span>
+      </div>
+
+      <!-- Main Content -->
+      <div class="flex-1 main-content">
+        <!-- Step 1 -->
+        <div id="stepContent1">
+          <h2 class="text-3xl font-bold mb-8 text-gray-800">🏅 選擇比賽項目</h2>
+          <div id="eventList" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
         </div>
-        <div class="button-group" style="margin-top:24px; display:flex; gap:10px;">
-          <button type="button" class="cancel" onclick="closePersonalInfoModal()">取消</button>
-          <button type="button" class="next-step" onclick="submitPersonalInfo()">確認</button>
+
+        <!-- Step 2 -->
+        <div id="stepContent2" class="hidden">
+          <h2 class="text-3xl font-bold mb-8 text-gray-800">👤 填寫個人資料</h2>
+          <div class="bg-white rounded-3xl shadow p-8 space-y-8 max-w-2xl">
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">學員姓名 <span class="text-red-500">*</span></label>
+              <input type="text" id="name" class="w-full px-6 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-500 text-lg">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">聯絡電話 <span class="text-red-500">*</span></label>
+              <input type="tel" id="phone" maxlength="8" class="w-full px-6 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-500 text-lg">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">出生日期 <span class="text-red-500">*</span></label>
+              <input type="date" id="birthdate" class="w-full px-6 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-500 text-lg">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">所屬道場</label>
+              <select id="dojo" class="w-full px-6 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-500 text-lg">
+                <option value="">請選擇道場</option>
+                <option value="觀塘總館">觀塘總館</option>
+                <option value="紅磡-培匠道場">紅磡-培匠道場</option>
+                <option value="鰂魚涌體育館">鰂魚涌體育館</option>
+                <option value="北角官立小學">北角官立小學</option>
+                <option value="大角嘴天主教小學">大角嘴天主教小學</option>
+                <option value="佛教林金殿紀念小學">佛教林金殿紀念小學</option>
+                <option value="其他">其他</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div id="stepContent3" class="hidden">
+          <h2 class="text-3xl font-bold mb-8 text-gray-800">✅ 確認報名資料</h2>
+          <div class="bg-white rounded-3xl shadow p-8">
+            <div id="confirmPersonal" class="mb-10 space-y-2 text-lg"></div>
+            <div id="confirmEvents" class="mb-10"></div>
+            <div class="text-4xl font-bold text-center py-10 border-t border-dashed">
+              總金額：<span id="finalTotal" class="text-orange-600">HK$ 0</span>
+            </div>
+            <button onclick="confirmSubmission()" 
+                    class="w-full py-5 gradient-btn text-white text-xl font-bold rounded-3xl mt-4">
+              確認提交報名
+            </button>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div id="categoryModal" class="modal">
-      <div class="modal-content">
-        <h2 id="categoryTitle"></h2>
-        <div class="category-group" id="categoryGroup"></div>
-        <div id="categorySum" class="category-sum"></div>
-        <div class="button-group" style="margin-top:20px; display:flex; gap:10px;">
-          <button type="button" class="cancel" onclick="closeCategoryModal()">取消</button>
-          <button type="button" class="confirm-selection" onclick="confirmCategorySelection()">確定</button>
+  <!-- Mobile Bottom Bar -->
+  <div class="bottom-bar fixed bottom-0 left-0 right-0 bg-white border-t shadow-2xl z-50 p-4">
+    <div onclick="showMobileSelectedModal()" class="flex items-center justify-between cursor-pointer w-full">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">📋</span>
+        <div>
+          <div class="font-bold text-lg">已選 <span id="mobileCount" class="text-orange-600">0</span> 個比賽</div>
+          <div id="mobileTotal" class="text-orange-600 font-bold">HK$ 0</div>
         </div>
       </div>
+      <button class="gradient-btn text-white px-8 py-3 rounded-2xl font-bold whitespace-nowrap">查看詳情</button>
     </div>
+  </div>
 
-    <div id="confirmModal" class="modal">
-      <div class="modal-content">
-        <h2 id="confirmTitle">請確認您的報名資料</h2>
-        <div id="personalInfoSection" style="display: none;">
-          <p><strong>學員姓名：</strong> <span id="confirmName"></span></p>
-          <p><strong>聯絡電話：</strong> <span id="confirmPhone"></span></p>
-          <p><strong>出生日期：</strong> <span id="confirmBirthdate"></span></p>
-          <p><strong>所屬道場：</strong> <span id="confirmDojo"></span></p>
-        </div>
-        <p><strong>報名賽事與項目：</strong></p>
-        <div id="confirmEvents"></div>
-        <div id="totalSum"></div>
-        <div class="button-group" style="margin-top:24px; display:flex; gap:10px;">
-          <button type="button" class="next-step" id="backButton" onclick="goBack()">上一步</button>
-          <button type="button" class="next-step" id="nextButton" onclick="nextStep()">下一步</button>
-          <button type="button" class="confirm" id="submitButton" onclick="confirmSubmission()" style="display: none;">確認提交</button>
-        </div>
+  <!-- Category Modal -->
+  <div id="categoryModal" class="modal">
+    <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-lg w-full mx-4">
+      <h2 id="categoryTitle" class="text-2xl font-bold mb-6"></h2>
+      <div id="categoryGroup" class="max-h-[420px] overflow-y-auto space-y-3"></div>
+      <div id="categorySum" class="mt-6 p-5 bg-blue-50 rounded-2xl text-lg font-semibold"></div>
+      <div class="flex gap-4 mt-8">
+        <button onclick="closeCategoryModal()" class="flex-1 py-4 bg-gray-200 rounded-2xl font-medium">取消</button>
+        <button onclick="confirmCategorySelection()" class="flex-1 py-4 gradient-btn text-white rounded-2xl font-bold">確定</button>
       </div>
     </div>
+  </div>
 
-    <div id="thankYouPage" style="display: none; text-align:center; padding:40px;">
-      <h2>感謝您的報名！</h2>
-      <p>確認後教練將盡快與您聯繫</p>
-      <button type="button" class="return-button" onclick="restartForm()">重新報名</button>
+  <!-- Mobile Selected Modal -->
+  <div id="mobileSelectedModal" class="modal">
+    <div class="bg-white rounded-3xl shadow-2xl p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <h3 class="text-xl font-bold mb-6 sticky top-0 bg-white pb-4 border-b">已選比賽詳情</h3>
+      <div id="mobileSelectedList" class="space-y-8"></div>
+      <div class="text-2xl font-bold text-center py-6 border-t">總金額 <span id="mobileModalTotal" class="text-orange-600"></span></div>
+      <button onclick="closeMobileSelectedModal()" class="w-full py-4 bg-gray-200 rounded-2xl mt-4">關閉</button>
     </div>
+  </div>
 
-    <button type="button" id="floatingSubmitBtn" style="display: none;">
-      <span id="eventCount" class="event-count"></span> 結算
-    </button>
-  </form>
+  <!-- Thank You Page -->
+  <div id="thankYouPage" class="hidden fixed inset-0 bg-gradient-to-br from-blue-50 to-white flex items-center justify-center z-[2000]">
+    <div class="text-center px-6">
+      <div class="text-8xl mb-6 animate-bounce">🏆</div>
+      <h2 class="text-4xl font-bold mb-4">報名成功！</h2>
+      <p class="text-xl text-gray-600 mb-10">教練將盡快與您聯繫確認</p>
+      <button onclick="restartForm()" class="px-12 py-5 bg-gradient-to-r from-blue-600 to-orange-500 text-white rounded-3xl font-bold text-xl shadow-xl">
+        再次報名
+      </button>
+    </div>
+  </div>
 
   <script>
-    let eventCategories = {};
+    const SPREADSHEET_ID = '1FFuryD0S4CbOsw4HJKQQHSRtek_JwWlxGx1FmPEER9Y';
+    const SHEET_ID = '1485917481';
+    const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd9pOv3srI-e_Pn-zijtiVtZiTwncE3xNbNJjKOMRCcxuu2nQ/formResponse';
+
     let selectedCategories = {};
+    let tempCategories = {};
+    let eventCategories = {};
     let categoryPrices = {};
     let discountRules = {};
     let adminFees = {};
     let eventOrder = [];
     let eventDetails = {};
-    let isFinalConfirmation = false;
-    let tempCategories = {};
 
-    async function loadEventsFromSheet() {
-      const eventList = document.getElementById('eventList');
-      const eventListError = document.getElementById('eventListError');
-      const spreadsheetId = '1FFuryD0S4CbOsw4HJKQQHSRtek_JwWlxGx1FmPEER9Y';
-      const sheetId = '1485917481';
-      const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&gid=${sheetId}&range=A2:I`;
+    function cleanCategoryName(cat) {
+      return cat.split(' - $')[0].trim();
+    }
 
-      try {
-        const response = await fetch(url);
-        const text = await response.text();
-        const jsonString = text.substring(47, text.length - 2);
-        const data = JSON.parse(jsonString);
-        const rows = data.table.rows;
-
-        eventList.innerHTML = '';
-        eventCategories = {};
-        categoryPrices = {};
-        discountRules = {};
-        adminFees = {};
-        eventOrder = [];
-        eventDetails = {};
-
-        rows.forEach(row => {
-          const eventName = row.c[0]?.v;
-          if (!eventName) return;
-
-          const categories = row.c[1]?.v || '';
-          const discounts = row.c[2]?.v || '{}';
-          const date = row.c[3]?.v || '未提供';
-          const location = row.c[4]?.v || '未提供';
-          const eventCategoriesData = row.c[5]?.v || '未提供';
-          const target = row.c[6]?.v || '未提供';
-          const deadline = row.c[7]?.v || '未提供';
-          const remark = row.c[8]?.v || '';
-
-          eventOrder.push(eventName);
-          eventDetails[eventName] = { date, location, categories: eventCategoriesData, target, deadline, remark };
-
-          const categoryArray = categories.split(',').map(cat => cat.trim());
-          eventCategories[eventName] = categoryArray;
-
-          categoryArray.forEach(category => {
-            const match = category.match(/(.+?)\s*-\s*\$(\d+)/);
-            if (match) {
-              categoryPrices[`${eventName}:${match[1].trim()}`] = parseInt(match[2]);
-            }
-          });
-
-          try {
-            const discountData = JSON.parse(discounts);
-            adminFees[eventName] = discountData.adminFee || 0;
-            discountRules[eventName] = [];
-
-            if (discountData.groups && Array.isArray(discountData.groups)) {
-              discountData.groups.forEach(group => {
-                if (group.categories && group.discounts) {
-                  discountRules[eventName].push({
-                    type: "group",
-                    groupName: group.name || "組合優惠",
-                    categories: group.categories.map(c => c.trim()),
-                    discounts: group.discounts
-                  });
-                }
-              });
-            }
-
-            if (discountData.discounts && Array.isArray(discountData.discounts)) {
-              discountData.discounts.forEach(discount => {
-                if (discount.condition && discount.totalPrice !== undefined) {
-                  discountRules[eventName].push({
-                    type: "fixed",
-                    condition: discount.condition.map(c => c.trim()),
-                    totalPrice: discount.totalPrice
-                  });
-                }
-              });
-            }
-          } catch (error) {
-            console.error(`解析 ${eventName} 優惠失敗:`, error);
-          }
-
-          const card = document.createElement('div');
-          card.className = 'col-md-6 col-12';
-          let cardHTML = `
-            <div class="card" onclick="showCategoriesModal('${eventName}')">
-              <div class="card-body">
-                <h5 class="card-title">${eventName}</h5>
-                <div class="card-text">
-          `;
-
-          if (date) cardHTML += `<div class="field-group"><span class="field-label">日期：</span><span class="field-content">${date.replace(/\n/g, '<br>')}</span></div>`;
-          if (location) cardHTML += `<div class="field-group"><span class="field-label">地點：</span><span class="field-content">${location.replace(/\n/g, '<br>')}</span></div>`;
-          if (eventCategoriesData) cardHTML += `<div class="field-group"><span class="field-label">項目：</span><span class="field-content">${eventCategoriesData.replace(/\n/g, '<br>')}</span></div>`;
-          if (target) cardHTML += `<div class="field-group"><span class="field-label">對象：</span><span class="field-content">${target.replace(/\n/g, '<br>')}</span></div>`;
-          if (deadline) cardHTML += `<div class="field-group field-deadline"><span class="field-label">截止日期：</span><span class="field-content">${deadline.replace(/\n/g, '<br>')}</span></div>`;
-          if (remark) cardHTML += `<div class="field-group"><span class="field-label">備註：</span><span class="field-content">${remark.replace(/\n/g, '<br>')}</span></div>`;
-
-          cardHTML += `</div></div></div>`;
-          card.innerHTML = cardHTML;
-          eventList.appendChild(card);
-        });
-
-      } catch (error) {
-        console.error('載入失敗:', error);
-        eventListError.style.display = 'block';
-      }
-      updateSelectedEvents();
+    function getOriginalCategoryName(cat) {
+      return cat;
     }
 
     function formatPrice(price) {
@@ -303,11 +220,15 @@
     }
 
     function calculateDiscountedPrice(eventName, selected, calculateFormula = false) {
+      if (!Array.isArray(selected) || selected.length === 0) return 0;
+      
       let totalPrice = 0;
       let formulaParts = [];
       let hasDiscount = false;
+      let discountedItems = new Set();
+      let discountBreakdown = [];
       const adminFee = adminFees[eventName] || 0;
-      const selectedClean = selected.map(cat => cat.match(/(.+?)\s*-\s*\$/)?.[1].trim() || cat.trim());
+      const selectedClean = selected.map(cat => cleanCategoryName(cat));
 
       let remaining = [...selectedClean];
       const rules = discountRules[eventName] || [];
@@ -316,6 +237,8 @@
         if (rule.condition.every(cat => selectedClean.includes(cat))) {
           totalPrice += rule.totalPrice;
           hasDiscount = true;
+          rule.condition.forEach(cat => discountedItems.add(cat));
+          discountBreakdown.push({ name: rule.condition.join(" + "), discount: rule.totalPrice });
           if (calculateFormula) formulaParts.push(`$${rule.totalPrice}`);
           remaining = remaining.filter(cat => !rule.condition.includes(cat));
         }
@@ -330,6 +253,8 @@
           if (bestDiscount) {
             totalPrice += bestDiscount.totalPrice;
             hasDiscount = true;
+            selectedInGroup.forEach(cat => discountedItems.add(cat));
+            discountBreakdown.push({ name: `${rule.groupName} (${count}項)`, discount: bestDiscount.totalPrice });
             if (calculateFormula) formulaParts.push(`$${bestDiscount.totalPrice} (${rule.groupName} - ${count}項)`);
             remaining = remaining.filter(cat => !selectedInGroup.includes(cat));
           }
@@ -346,293 +271,384 @@
       if (calculateFormula && adminFee > 0) formulaParts.push(`$${adminFee} (行政費)`);
 
       const formula = formulaParts.join(' + ');
-      return calculateFormula ? { totalPrice, formula, hasDiscount, adminFee } : totalPrice;
+      return calculateFormula 
+        ? { totalPrice, formula, hasDiscount, adminFee, discountedItems: Array.from(discountedItems), discountBreakdown } 
+        : totalPrice;
     }
 
-    window.addEventListener('load', () => {
-      document.getElementById('mainForm').style.display = 'block';
-      loadEventsFromSheet();
-      initializePersonalInfo();
-    });
+    async function loadEvents() {
+      const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${SHEET_ID}&range=A2:I`;
+      try {
+        const res = await fetch(url);
+        const text = await res.text();
+        const data = JSON.parse(text.substring(47, text.length - 2));
+        const rows = data.table.rows;
 
-    function initializePersonalInfo() {
-      const yearSelect = document.getElementById('birthYear');
-      const monthSelect = document.getElementById('birthMonth');
-      const daySelect = document.getElementById('birthDay');
-      const currentYear = new Date().getFullYear();
-      for (let year = currentYear; year >= 1900; year--) {
-        let option = document.createElement('option');
-        option.value = year;
-        option.text = year;
-        yearSelect.appendChild(option);
-      }
-      for (let month = 1; month <= 12; month++) {
-        let option = document.createElement('option');
-        option.value = month;
-        option.text = month.toString().padStart(2, '0');
-        monthSelect.appendChild(option);
-      }
-      updateDays();
-      yearSelect.addEventListener('change', updateDays);
-      monthSelect.addEventListener('change', updateDays);
+        document.getElementById('eventList').innerHTML = '';
 
-      const dojoSelect = document.getElementById('dojo');
-      dojoSelect.addEventListener('change', toggleCustomDojo);
+        rows.forEach(row => {
+          const eventName = row.c[0]?.v;
+          if (!eventName) return;
+
+          eventOrder.push(eventName);
+          
+          eventDetails[eventName] = {
+            date: row.c[3]?.v || '',
+            location: row.c[4]?.v || '',
+            items: row.c[5]?.v || '',
+            target: row.c[6]?.v || '',
+            deadline: row.c[7]?.v || '',
+            notes: row.c[8]?.v || ''
+          };
+
+          const cats = (row.c[1]?.v || '').split(',').map(c => c.trim());
+          eventCategories[eventName] = cats;
+
+          cats.forEach(cat => {
+            const m = cat.match(/(.+?)\s*-\s*\$(\d+)/);
+            if (m) categoryPrices[`${eventName}:${m[1].trim()}`] = parseInt(m[2]);
+          });
+
+          try {
+            const d = JSON.parse(row.c[2]?.v || '{}');
+            adminFees[eventName] = d.adminFee || 0;
+            discountRules[eventName] = [];
+            if (d.groups) d.groups.forEach(g => discountRules[eventName].push({type:"group", groupName: g.name||"組合優惠", categories: g.categories.map(c=>c.trim()), discounts: g.discounts||[]}));
+            if (d.discounts) d.discounts.forEach(disc => discountRules[eventName].push({type:"fixed", condition: disc.condition.map(c=>c.trim()), totalPrice: disc.totalPrice}));
+          } catch(e) {}
+
+          const card = document.createElement('div');
+          card.className = `bg-white rounded-3xl shadow-xl p-6 card-hover cursor-pointer border-2 ${selectedCategories[eventName] ? 'border-orange-500 bg-orange-50' : 'border-transparent'}`;
+          
+          const formatText = (text) => text.replace(/\n/g, '<br>');
+          
+          card.innerHTML = `
+            <h3 class="text-xl font-bold mb-2">${eventName}</h3>
+            <p class="text-sm text-gray-600">${eventDetails[eventName].date}</p>
+            
+            <div class="info-content text-sm border-t pt-4 mt-4 space-y-3">
+              ${eventDetails[eventName].location ? `<div class="flex"><span class="text-blue-600 font-medium w-16 flex-shrink-0">地點</span><span class="text-gray-700">${formatText(eventDetails[eventName].location)}</span></div>` : ''}
+              ${eventDetails[eventName].items ? `<div class="flex"><span class="text-blue-600 font-medium w-16 flex-shrink-0">項目</span><span class="text-gray-700">${formatText(eventDetails[eventName].items)}</span></div>` : ''}
+              ${eventDetails[eventName].target ? `<div class="flex"><span class="text-blue-600 font-medium w-16 flex-shrink-0">對象</span><span class="text-gray-700">${formatText(eventDetails[eventName].target)}</span></div>` : ''}
+              ${eventDetails[eventName].deadline ? `<div class="flex"><span class="text-blue-600 font-medium w-16 flex-shrink-0">截止</span><span class="text-gray-700">${formatText(eventDetails[eventName].deadline)}</span></div>` : ''}
+              ${eventDetails[eventName].notes ? `<div class="flex"><span class="text-blue-600 font-medium w-16 flex-shrink-0">備註</span><span class="text-gray-700">${formatText(eventDetails[eventName].notes)}</span></div>` : ''}
+            </div>
+
+            <button onclick="event.stopImmediatePropagation(); showCategoryModal('${eventName}');" 
+                    class="mt-6 w-full py-4 rounded-2xl font-semibold ${selectedCategories[eventName] ? 'bg-orange-500 text-white' : 'bg-blue-100 text-blue-700'}">
+              ${selectedCategories[eventName] ? '已選擇 ✓ 修改' : '選擇項目'}
+            </button>
+          `;
+          
+          card.onclick = function(e) {
+            if (e.target.tagName === 'BUTTON') return;
+            this.classList.toggle('expanded');
+          };
+          
+          document.getElementById('eventList').appendChild(card);
+        });
+      } catch(e) {}
+      updateAllUI();
     }
 
-    function updateDays() {
-      const year = parseInt(document.getElementById('birthYear').value);
-      const month = parseInt(document.getElementById('birthMonth').value);
-      const daySelect = document.getElementById('birthDay');
-      const currentDay = parseInt(daySelect.value) || 0;
-
-      daySelect.innerHTML = '<option value="">日</option>';
-      if (year && month) {
-        let daysInMonth = new Date(year, month, 0).getDate();
-        for (let day = 1; day <= daysInMonth; day++) {
-          let option = document.createElement('option');
-          option.value = day;
-          option.text = day.toString().padStart(2, '0');
-          daySelect.appendChild(option);
-        }
-        if (currentDay > 0 && currentDay <= daysInMonth) {
-          daySelect.value = currentDay;
-        }
-      }
+    function updateAllUI() {
+      updateSidebar();
+      updateMobileBottomBar();
     }
 
-    function toggleCustomDojo() {
-      const dojoSelect = document.getElementById('dojo');
-      const customDojoInput = document.getElementById('customDojo');
-      if (dojoSelect.value === '其他') {
-        customDojoInput.style.display = 'block';
-      } else {
-        customDojoInput.style.display = 'none';
-        customDojoInput.value = '';
-      }
-    }
-
-    function showCategoriesModal(eventName) {
-      const categoryModal = document.getElementById('categoryModal');
-      const categoryTitle = document.getElementById('categoryTitle');
-      const categoryGroup = document.getElementById('categoryGroup');
-      const categorySum = document.getElementById('categorySum');
-
-      categoryTitle.textContent = `選擇 ${eventName} 的項目`;
-      categoryGroup.innerHTML = '';
-      categorySum.innerHTML = '';
-
+    function showCategoryModal(eventName) {
       tempCategories[eventName] = selectedCategories[eventName] ? [...selectedCategories[eventName]] : [];
+      document.getElementById('categoryTitle').textContent = `${eventName} - 選擇項目`;
+      const group = document.getElementById('categoryGroup');
+      group.innerHTML = '';
 
-      eventCategories[eventName].forEach(category => {
+      eventCategories[eventName].forEach(cat => {
+        const checked = tempCategories[eventName].includes(cat) ? 'checked' : '';
         const label = document.createElement('label');
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.value = category;
-        checkbox.checked = tempCategories[eventName].includes(category);
-        checkbox.onchange = () => {
-          updateTempCategories(eventName, checkbox.checked, category);
-          updateCategorySum(eventName);
-        };
-        label.appendChild(checkbox);
-        label.appendChild(document.createTextNode(category));
-        categoryGroup.appendChild(label);
+        label.className = "flex items-center gap-4 p-4 hover:bg-blue-50 rounded-2xl cursor-pointer";
+        label.innerHTML = `<input type="checkbox" ${checked} class="w-6 h-6 accent-blue-600" onchange="updateTempCategories('${eventName}', '${cat}', this.checked)"> <span>${cat}</span>`;
+        group.appendChild(label);
       });
 
       updateCategorySum(eventName);
-      categoryModal.style.display = 'flex';
+      document.getElementById('categoryModal').style.display = 'flex';
     }
 
-    function updateTempCategories(eventName, checked, category) {
+    function updateTempCategories(eventName, cat, checked) {
       if (!tempCategories[eventName]) tempCategories[eventName] = [];
       if (checked) {
-        if (!tempCategories[eventName].includes(category)) tempCategories[eventName].push(category);
+        if (!tempCategories[eventName].includes(cat)) tempCategories[eventName].push(cat);
       } else {
-        tempCategories[eventName] = tempCategories[eventName].filter(c => c !== category);
+        tempCategories[eventName] = tempCategories[eventName].filter(c => c !== cat);
       }
+      updateCategorySum(eventName);
     }
 
     function updateCategorySum(eventName) {
-      const categorySum = document.getElementById('categorySum');
-      categorySum.innerHTML = '';
-      if (tempCategories[eventName] && tempCategories[eventName].length > 0) {
-        const { totalPrice, formula, hasDiscount } = calculateDiscountedPrice(eventName, tempCategories[eventName], true);
-        categorySum.innerHTML = `
-          總數 <strong>$${formatPrice(totalPrice)}</strong><br>
-          <small style="color:#666;">=${formula}</small>
-          ${hasDiscount ? '<small style="color:#D32F2F;">（已應用優惠）</small>' : ''}
-        `;
+      const el = document.getElementById('categorySum');
+      if (!tempCategories[eventName]?.length) {
+        el.innerHTML = '尚未選擇';
+        return;
       }
+      const { totalPrice, formula, hasDiscount } = calculateDiscountedPrice(eventName, tempCategories[eventName], true);
+      el.innerHTML = `總金額 <strong>HK$ ${formatPrice(totalPrice)}</strong><br><small>${formula}</small>${hasDiscount ? '<small class="text-red-500">（已套用優惠）</small>' : ''}`;
     }
 
-    function closeCategoryModal() {
-      document.getElementById('categoryModal').style.display = 'none';
-    }
+    function closeCategoryModal() { document.getElementById('categoryModal').style.display = 'none'; }
 
     function confirmCategorySelection() {
-      const eventName = document.getElementById('categoryTitle').textContent.replace('選擇 ', '').replace(' 的項目', '');
-      if (tempCategories[eventName] && tempCategories[eventName].length > 0) {
+      const eventName = document.getElementById('categoryTitle').textContent.split(' - ')[0];
+      if (tempCategories[eventName]?.length) {
         selectedCategories[eventName] = [...tempCategories[eventName]];
       } else {
         delete selectedCategories[eventName];
       }
-      updateSelectedEvents();
       closeCategoryModal();
+      updateAllUI();
+    }
 
-      const cards = document.querySelectorAll('.card');
-      cards.forEach(card => {
-        if (card.getAttribute('onclick').includes(`'${eventName}'`)) {
-          if (selectedCategories[eventName]) card.classList.add('selected');
-          else card.classList.remove('selected');
+    function deleteEvent(eventName) {
+      delete selectedCategories[eventName];
+      updateAllUI();
+    }
+
+    function updateSidebar() {
+      let total = 0;
+      let html = '';
+      Object.keys(selectedCategories).forEach(event => {
+        const price = calculateDiscountedPrice(event, selectedCategories[event]);
+        total += price;
+        html += `
+          <div class="bg-white rounded-2xl p-5 shadow border">
+            <div class="font-bold">${event}</div>
+            <div class="text-sm text-gray-500">${selectedCategories[event].length} 個項目</div>
+            <div class="flex justify-between mt-3">
+              <span class="font-bold text-orange-600">HK$ ${formatPrice(price)}</span>
+              <button onclick="deleteEvent('${event}')" class="text-red-500 text-sm">移除</button>
+            </div>
+          </div>`;
+      });
+      document.getElementById('selectedList').innerHTML = html || '<p class="text-gray-400 py-10 text-center">尚未選擇項目</p>';
+      document.getElementById('sidebarTotal').textContent = `HK$ ${formatPrice(total)}`;
+    }
+
+    function updateMobileBottomBar() {
+      let total = 0;
+      Object.keys(selectedCategories).forEach(event => total += calculateDiscountedPrice(event, selectedCategories[event]));
+      const count = Object.keys(selectedCategories).length;
+      document.getElementById('mobileCount').textContent = count;
+      document.getElementById('mobileTotal').textContent = `HK$ ${formatPrice(total)}`;
+    }
+
+    // 修改後的 Mobile 查看詳情 - 與確認頁面格式一致
+    function showMobileSelectedModal() {
+      let html = '';
+      let total = 0;
+
+      Object.keys(selectedCategories).forEach(event => {
+        const cats = selectedCategories[event];
+        const result = calculateDiscountedPrice(event, cats, true);
+        const subtotal = result.totalPrice || 0;
+        total += subtotal;
+
+        let itemsHTML = cats.map(cat => {
+          const cleanCat = cleanCategoryName(cat);
+          const price = categoryPrices[`${event}:${cleanCat}`] || 0;
+          const hasDiscount = result.discountedItems.includes(cleanCat);
+          return `
+            <div class="flex justify-between py-1.5">
+              <span class="text-gray-700">${getOriginalCategoryName(cat)}</span>
+              <span class="${hasDiscount ? 'line-through text-gray-400' : 'font-medium text-gray-800'}">
+                HK$ ${formatPrice(price)}
+              </span>
+            </div>`;
+        }).join('');
+
+        if (adminFees[event] > 0) {
+          itemsHTML += `
+            <div class="flex justify-between py-1.5 text-gray-600">
+              <span>行政費</span>
+              <span class="font-medium">HK$ ${adminFees[event]}</span>
+            </div>`;
         }
+
+        let discountHTML = '';
+        if (result.discountBreakdown && result.discountBreakdown.length > 0) {
+          discountHTML = result.discountBreakdown.map(d => `
+            <div class="flex justify-between py-1 text-red-600 text-sm">
+              <span>• ${d.name} 優惠</span>
+              <span>HK$ ${formatPrice(d.discount)}</span>
+            </div>
+          `).join('');
+        }
+
+        html += `
+          <div class="p-5 bg-gray-50 rounded-3xl border">
+            <div class="font-bold text-lg mb-4">${event}</div>
+            <div class="mb-6">
+              <div class="text-sm font-semibold text-gray-500 mb-3">已選擇項目</div>
+              ${itemsHTML}
+            </div>
+            ${discountHTML ? `
+            <div class="mb-6">
+              <div class="text-sm font-semibold text-red-500 mb-3">優惠明細</div>
+              ${discountHTML}
+            </div>` : ''}
+            <div class="flex justify-between items-center pt-4 border-t font-bold">
+              <span>小計</span>
+              <span class="text-orange-600">HK$ ${formatPrice(subtotal)}</span>
+            </div>
+          </div>`;
       });
+
+      document.getElementById('mobileSelectedList').innerHTML = html || '<p class="text-center text-gray-400 py-8">尚未選擇項目</p>';
+      document.getElementById('mobileModalTotal').textContent = `HK$ ${formatPrice(total)}`;
+      document.getElementById('mobileSelectedModal').style.display = 'flex';
     }
 
-    function updateSelectedEvents() {
-      let totalPrice = 0;
-      Object.entries(selectedCategories).forEach(([event, categories]) => {
-        totalPrice += calculateDiscountedPrice(event, categories);
-      });
-
-      document.getElementById('totalPrice').value = totalPrice;
-
-      const selectedText = Object.entries(selectedCategories)
-        .map(([event, categories]) => {
-          const cleanCats = categories.map(cat => cat.match(/(.+?)\s*-\s*\$/)?.[1].trim() || cat);
-          return `${event}, ${cleanCats.join(', ')}`;
-        })
-        .join('; ') || '';
-
-      document.getElementById('selectedEvents').value = selectedText;
-
-      const floatingBtn = document.getElementById('floatingSubmitBtn');
-      const eventCount = Object.keys(selectedCategories).length;
-      floatingBtn.style.display = eventCount > 0 ? 'flex' : 'none';
-      document.getElementById('eventCount').textContent = eventCount;
+    function closeMobileSelectedModal() {
+      document.getElementById('mobileSelectedModal').style.display = 'none';
     }
 
-    function submitForm() {
-      if (Object.keys(selectedCategories).length === 0) {
-        alert('請至少選擇一項比賽項目');
-        return;
+    function goToStep(step) {
+      if (step === 3 && !validatePersonalInfo()) return;
+      document.querySelectorAll('#stepContent1, #stepContent2, #stepContent3').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`stepContent${step}`).classList.remove('hidden');
+
+      for (let i = 1; i <= 3; i++) {
+        const el = document.getElementById(`step${i}`);
+        el.classList.toggle('step-active', i === step);
       }
-      isFinalConfirmation = false;
-      showConfirmModal();
+      if (step === 3) renderConfirmPage();
     }
 
-    function showConfirmModal() {
-      const confirmModal = document.getElementById('confirmModal');
-      const confirmTitle = document.getElementById('confirmTitle');
-      const personalInfoSection = document.getElementById('personalInfoSection');
-      const confirmEvents = document.getElementById('confirmEvents');
-      const totalSum = document.getElementById('totalSum');
-      const nextButton = document.getElementById('nextButton');
-      const submitButton = document.getElementById('submitButton');
-      const backButton = document.getElementById('backButton');
-
-      confirmEvents.innerHTML = '';
-      totalSum.innerHTML = '';
-      let totalPrice = 0;
-
-      const sortedEvents = Object.keys(selectedCategories).sort((a, b) => eventOrder.indexOf(a) - eventOrder.indexOf(b));
-
-      sortedEvents.forEach(event => {
-        const categories = selectedCategories[event];
-        const eventDiv = document.createElement('div');
-        eventDiv.style.marginBottom = '16px';
-        eventDiv.innerHTML = `<strong>${event}</strong><br>`;
-        
-        categories.forEach(cat => {
-          eventDiv.innerHTML += `• ${cat}<br>`;
-        });
-
-        const { totalPrice: eventPrice, formula, hasDiscount } = calculateDiscountedPrice(event, categories, true);
-        totalPrice += eventPrice;
-
-        eventDiv.innerHTML += `<strong style="color:#1976D2;">小計 $${formatPrice(eventPrice)}</strong>`;
-        if (formula) eventDiv.innerHTML += `<br><small>${formula}</small>`;
-        if (hasDiscount) eventDiv.innerHTML += `<br><small style="color:#D32F2F;">已應用優惠</small>`;
-
-        confirmEvents.appendChild(eventDiv);
-      });
-
-      totalSum.innerHTML = `<div style="font-size:20px; font-weight:bold; margin-top:20px;">總金額：$${formatPrice(totalPrice)}</div>`;
-
-      if (isFinalConfirmation) {
-        // === 修正重點：填入個人資料 ===
-        document.getElementById('confirmName').textContent = document.getElementById('name').value || '未提供';
-        document.getElementById('confirmPhone').textContent = document.getElementById('phone').value || '未提供';
-        
-        const year = document.getElementById('birthYear').value;
-        const month = document.getElementById('birthMonth').value;
-        const day = document.getElementById('birthDay').value;
-        document.getElementById('confirmBirthdate').textContent = (year && month && day) ? `${year}/${month.padStart(2,'0')}/${day.padStart(2,'0')}` : '未提供';
-
-        const dojoSelect = document.getElementById('dojo');
-        const customDojo = document.getElementById('customDojo').value;
-        document.getElementById('confirmDojo').textContent = (dojoSelect.value === '其他') ? customDojo : (dojoSelect.value || '未提供');
-
-        personalInfoSection.style.display = 'block';
-        nextButton.style.display = 'none';
-        submitButton.style.display = 'inline-block';
-        backButton.onclick = goBackToPersonalInfo;
-      } else {
-        personalInfoSection.style.display = 'none';
-        nextButton.style.display = 'inline-block';
-        submitButton.style.display = 'none';
-        backButton.onclick = goBackToMainForm;
-      }
-
-      confirmModal.style.display = 'flex';
-    }
-
-    function goBackToMainForm() { document.getElementById('confirmModal').style.display = 'none'; }
-    function goBackToPersonalInfo() {
-      document.getElementById('confirmModal').style.display = 'none';
-      document.getElementById('personalInfoModal').style.display = 'flex';
-    }
-    function nextStep() {
-      document.getElementById('confirmModal').style.display = 'none';
-      showPersonalInfoModal();
-    }
-    function showPersonalInfoModal() {
-      document.getElementById('personalInfoModal').style.display = 'flex';
-    }
-    function closePersonalInfoModal() {
-      document.getElementById('personalInfoModal').style.display = 'none';
-    }
-    function submitPersonalInfo() {
+    function validatePersonalInfo() {
       const name = document.getElementById('name').value.trim();
-      if (!name) {
-        alert('請輸入學員姓名');
-        return;
-      }
-      isFinalConfirmation = true;
-      document.getElementById('personalInfoModal').style.display = 'none';
-      showConfirmModal();
+      const phone = document.getElementById('phone').value.trim();
+      const birth = document.getElementById('birthdate').value;
+      if (!name) { alert('請填寫學員姓名'); return false; }
+      if (!phone || phone.length !== 8) { alert('請填寫正確的8位電話號碼'); return false; }
+      if (!birth) { alert('請選擇出生日期'); return false; }
+      return true;
+    }
+
+    function renderConfirmPage() {
+      let personalHTML = `
+        <p><strong>姓名：</strong> ${document.getElementById('name').value}</p>
+        <p><strong>電話：</strong> ${document.getElementById('phone').value}</p>
+        <p><strong>出生日期：</strong> ${document.getElementById('birthdate').value}</p>
+        <p><strong>道場：</strong> ${document.getElementById('dojo').value || '未填寫'}</p>
+      `;
+      document.getElementById('confirmPersonal').innerHTML = personalHTML;
+
+      let eventsHTML = '';
+      let grandTotal = 0;
+
+      Object.keys(selectedCategories).forEach(event => {
+        const cats = selectedCategories[event];
+        const result = calculateDiscountedPrice(event, cats, true);
+        const subtotal = result.totalPrice || 0;
+        grandTotal += subtotal;
+
+        let itemsHTML = cats.map(cat => {
+          const cleanCat = cleanCategoryName(cat);
+          const price = categoryPrices[`${event}:${cleanCat}`] || 0;
+          const hasDiscount = result.discountedItems.includes(cleanCat);
+          return `
+            <div class="flex justify-between py-1.5">
+              <span class="text-gray-700">${getOriginalCategoryName(cat)}</span>
+              <span class="${hasDiscount ? 'line-through text-gray-400' : 'font-medium text-gray-800'}">
+                HK$ ${formatPrice(price)}
+              </span>
+            </div>`;
+        }).join('');
+
+        if (adminFees[event] > 0) {
+          itemsHTML += `
+            <div class="flex justify-between py-1.5 text-gray-600">
+              <span>行政費</span>
+              <span class="font-medium">HK$ ${adminFees[event]}</span>
+            </div>`;
+        }
+
+        let discountHTML = '';
+        if (result.discountBreakdown && result.discountBreakdown.length > 0) {
+          discountHTML = result.discountBreakdown.map(d => `
+            <div class="flex justify-between py-1 text-red-600 text-sm">
+              <span>• ${d.name} 優惠</span>
+              <span>HK$ ${formatPrice(d.discount)}</span>
+            </div>
+          `).join('');
+        }
+
+        eventsHTML += `
+          <div class="mb-10 p-6 bg-gray-50 rounded-3xl border">
+            <div class="font-bold text-lg mb-4">${event}</div>
+            <div class="mb-6">
+              <div class="text-sm font-semibold text-gray-500 mb-3">已選擇項目</div>
+              ${itemsHTML}
+            </div>
+            ${discountHTML ? `
+            <div class="mb-6">
+              <div class="text-sm font-semibold text-red-500 mb-3">優惠明細</div>
+              ${discountHTML}
+            </div>` : ''}
+            <div class="flex justify-between items-center pt-5 border-t border-gray-300 font-bold text-lg">
+              <span>小計</span>
+              <span class="text-orange-600">HK$ ${formatPrice(subtotal)}</span>
+            </div>
+          </div>`;
+      });
+
+      document.getElementById('confirmEvents').innerHTML = eventsHTML || '<p class="text-gray-400">尚未選擇項目</p>';
+      document.getElementById('finalTotal').textContent = `HK$ ${formatPrice(grandTotal)}`;
     }
 
     async function confirmSubmission() {
-      const form = document.getElementById('registrationForm');
-      const formData = new FormData(form);
+      if (!validatePersonalInfo()) return;
+
+      const formData = new FormData();
+      formData.append('entry.1702329531', document.getElementById('name').value);
+      formData.append('entry.1541580542', document.getElementById('phone').value);
+      
+      const birth = document.getElementById('birthdate').value.split('-');
+      formData.append('entry.1919065731_year', birth[0]);
+      formData.append('entry.1919065731_month', birth[1]);
+      formData.append('entry.1919065731_day', birth[2]);
+      
+      formData.append('entry.1923170591', document.getElementById('dojo').value);
+
+      let selectedText = Object.entries(selectedCategories)
+        .map(([event, cats]) => {
+          const cleanCats = cats.map(c => cleanCategoryName(c));
+          return `${event}: ${cleanCats.join(', ')}`;
+        })
+        .join('; ');
+
+      formData.append('entry.1287068960', selectedText);
+
+      let totalAmount = 0;
+      Object.keys(selectedCategories).forEach(event => {
+        totalAmount += calculateDiscountedPrice(event, selectedCategories[event]);
+      });
+      formData.append('entry.1317768085', totalAmount);
+
       try {
-        await fetch('https://docs.google.com/forms/d/e/1FAIpQLSd9pOv3srI-e_Pn-zijtiVtZiTwncE3xNbNJjKOMRCcxuu2nQ/formResponse', {
-          method: 'POST',
-          body: formData,
-          mode: 'no-cors'
-        });
-        document.getElementById('confirmModal').style.display = 'none';
-        document.getElementById('mainForm').style.display = 'none';
-        document.getElementById('thankYouPage').style.display = 'block';
-      } catch (error) {
+        await fetch(FORM_URL, { method: 'POST', body: formData, mode: 'no-cors' });
+        document.getElementById('thankYouPage').classList.remove('hidden');
+      } catch (e) {
         alert('提交失敗，請稍後再試');
       }
     }
 
-    function restartForm() { location.reload(); }
-    function goBack() { document.getElementById('confirmModal').style.display = 'none'; }
+    function restartForm() {
+      location.reload();
+    }
 
-    document.getElementById('floatingSubmitBtn').onclick = submitForm;
+    window.onload = () => {
+      loadEvents();
+      goToStep(1);
+    };
   </script>
 </body>
 </html>
