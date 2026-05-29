@@ -525,14 +525,17 @@
         let itemsHTML = cats.map(cat => {
           const cleanCat = cleanCategoryName(cat);
           const price = categoryPrices[`${event}:${cleanCat}`] || 0;
+          const hasDiscount = result.discountedItems.includes(cleanCat);
+          
           return `
             <div class="flex justify-between py-1.5">
               <span class="text-gray-700">${getOriginalCategoryName(cat)}</span>
-              <span class="font-medium text-gray-800">HK$ ${formatPrice(price)}</span>
+              <span class="${hasDiscount ? 'line-through text-gray-400' : 'font-medium text-gray-800'}">
+                HK$ ${formatPrice(price)}
+              </span>
             </div>`;
         }).join('');
 
-        // 行政費顯示
         if (adminFees[event] > 0) {
           itemsHTML += `
             <div class="flex justify-between py-1.5 text-gray-600">
