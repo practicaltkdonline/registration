@@ -349,7 +349,6 @@
       return calculateFormula ? { totalPrice, formula, hasDiscount, adminFee } : totalPrice;
     }
 
-    // 其餘函數（保持不變）
     window.addEventListener('load', () => {
       document.getElementById('mainForm').style.display = 'block';
       loadEventsFromSheet();
@@ -560,6 +559,19 @@
       totalSum.innerHTML = `<div style="font-size:20px; font-weight:bold; margin-top:20px;">總金額：$${formatPrice(totalPrice)}</div>`;
 
       if (isFinalConfirmation) {
+        // === 修正重點：填入個人資料 ===
+        document.getElementById('confirmName').textContent = document.getElementById('name').value || '未提供';
+        document.getElementById('confirmPhone').textContent = document.getElementById('phone').value || '未提供';
+        
+        const year = document.getElementById('birthYear').value;
+        const month = document.getElementById('birthMonth').value;
+        const day = document.getElementById('birthDay').value;
+        document.getElementById('confirmBirthdate').textContent = (year && month && day) ? `${year}/${month.padStart(2,'0')}/${day.padStart(2,'0')}` : '未提供';
+
+        const dojoSelect = document.getElementById('dojo');
+        const customDojo = document.getElementById('customDojo').value;
+        document.getElementById('confirmDojo').textContent = (dojoSelect.value === '其他') ? customDojo : (dojoSelect.value || '未提供');
+
         personalInfoSection.style.display = 'block';
         nextButton.style.display = 'none';
         submitButton.style.display = 'inline-block';
