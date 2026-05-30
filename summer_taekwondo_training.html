@@ -201,6 +201,9 @@
         </div>
       </div>
 
+      <!-- 課程選擇錯誤提示 -->
+      <p id="course-error" class="error-message hidden text-center">請至少選擇一班整班課程或一堂單堂課程！</p>
+
       <!-- 同意條款 -->
       <div class="mb-8">
         <h3 class="text-lg font-semibold text-gray-700 mb-3">同意條款</h3>
@@ -284,39 +287,25 @@
       let singlePrice = 300;
 
       if (currentCourseCount === 1) {
-        displayPriceForSelected = 750;
-        displayPriceForUnselected = 660;
-        singlePrice = 250;
+        displayPriceForSelected = 750; displayPriceForUnselected = 660; singlePrice = 250;
       } else if (currentCourseCount === 2) {
-        displayPriceForSelected = 660;
-        displayPriceForUnselected = 600;
-        singlePrice = 220;
+        displayPriceForSelected = 660; displayPriceForUnselected = 600; singlePrice = 220;
       } else if (currentCourseCount >= 3) {
-        displayPriceForSelected = 600;
-        displayPriceForUnselected = 600;
-        singlePrice = 220;
+        displayPriceForSelected = 600; displayPriceForUnselected = 600; singlePrice = 220;
       }
 
-      // 更新整班價格
       document.querySelectorAll('input[name="course"]').forEach(checkbox => {
         const row = checkbox.closest('tr');
         const priceCell = row ? row.querySelector('.price-cell') : null;
-        if (priceCell) {
-          priceCell.textContent = checkbox.checked ? `$${displayPriceForSelected}` : `$${displayPriceForUnselected}`;
-        }
+        if (priceCell) priceCell.textContent = checkbox.checked ? `$${displayPriceForSelected}` : `$${displayPriceForUnselected}`;
       });
 
       document.querySelectorAll('#full-course-cards input[name="course"]').forEach(checkbox => {
         const priceEl = checkbox.parentElement.querySelector('.price-display');
-        if (priceEl) {
-          priceEl.textContent = checkbox.checked ? `$${displayPriceForSelected}` : `$${displayPriceForUnselected}`;
-        }
+        if (priceEl) priceEl.textContent = checkbox.checked ? `$${displayPriceForSelected}` : `$${displayPriceForUnselected}`;
       });
 
-      // 更新單堂價格
-      document.querySelectorAll('.single-price').forEach(el => {
-        el.textContent = `$${singlePrice}`;
-      });
+      document.querySelectorAll('.single-price').forEach(el => el.textContent = `$${singlePrice}`);
 
       calculateTotal();
     }
@@ -436,19 +425,9 @@
       let formulaParts = [];
       let singlePrice = 300;
 
-      if (courses.length === 1) { 
-        total += 750; 
-        singlePrice = 250; 
-        formulaParts.push('1班 × $750'); 
-      } else if (courses.length === 2) { 
-        total += 1320; 
-        singlePrice = 220; 
-        formulaParts.push('2班 × $660'); 
-      } else if (courses.length >= 3) { 
-        total += courses.length * 600; 
-        singlePrice = 220; 
-        formulaParts.push(`${courses.length}班 × $600`); 
-      }
+      if (courses.length === 1) { total += 750; singlePrice = 250; formulaParts.push('1班 × $750'); }
+      else if (courses.length === 2) { total += 1320; singlePrice = 220; formulaParts.push('2班 × $660'); }
+      else if (courses.length >= 3) { total += courses.length * 600; singlePrice = 220; formulaParts.push(`${courses.length}班 × $600`); }
 
       if (singles.length > 0) {
         total += singles.length * singlePrice;
@@ -461,6 +440,8 @@
 
     function validateForm() {
       let isValid = true;
+      let firstErrorElement = null;
+
       const name = document.getElementById('student-name').value.trim();
       const year = document.getElementById('birth-year').value;
       const month = document.getElementById('birth-month').value;
@@ -469,13 +450,51 @@
       const phone = document.getElementById('contact-phone').value.trim();
       const agree = document.getElementById('agree-terms').checked;
 
+      const courses = Array.from(document.querySelectorAll('input[name="course"]:checked'));
+      const singles = Array.from(document.querySelectorAll('input[name="single-session"]:checked'));
+
       document.querySelectorAll('.error-message').forEach(el => el.classList.add('hidden'));
 
-      if (!name) { document.getElementById('name-error').classList.remove('hidden'); isValid = false; }
-      if (!year || !month || !day) { document.getElementById('date-error').classList.remove('hidden'); isValid = false; }
-      if (!/^[0-9]{8}$/.test(phone)) { document.getElementById('phone-error').classList.remove('hidden'); isValid = false; }
-      if (!belt) { alert('請選擇現有級別'); isValid = false; }
-      if (!agree) { document.getElementById('terms-error').classList.remove('hidden'); isValid = false; }
+      if (!name) {
+        document.getElementById('name-error').classList.remove('hidden');
+        if (!firstErrorElement) firstErrorElement = document.getElementById('student-name');
+        isValid = false;
+      }
+      if (!year || !month || !day) {
+        document.getElementById('date-error').classList.remove('hidden');
+        if (!firstErrorElement) firstErrorElement = document.getElementById('birth-year');
+        isValid = false;
+      }
+      if (!/^[0-9]{8}$/.test(phone)) {
+        document.getElementById('phone-error').classList.remove('hidden');
+        if (!firstErrorElement) firstErrorElement = document.getElementById('contact-phone');
+        isValid = false;
+      }
+      if (!belt) {
+        alert('請選擇現有級別');
+        if (!firstErrorElement) firstErrorElement = document.getElementById('belt-level');
+        isValid = false;
+      }
+      if (!agree) {
+        document.getElementById('terms-error').classList.remove('hidden');
+        if (!firstErrorElement) firstErrorElement = document.getElementById('agree-terms');
+        isValid = false;
+      }
+
+      // 新增：必須至少選擇一項課程
+      if (courses.length === 0 && singles.length === 0) {
+        document.getElementById('course-error').classList.remove('hidden');
+        if (!firstErrorElement) firstErrorElement = document.getElementById('full-course-cards');
+        isValid = false;
+      }
+
+      // 自動滾動到第一個錯誤位置
+      if (firstErrorElement) {
+        firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (firstErrorElement.tagName === "INPUT" || firstErrorElement.tagName === "SELECT") {
+          firstErrorElement.focus();
+        }
+      }
 
       return isValid;
     }
@@ -524,6 +543,7 @@
       document.getElementById('confirm-section').classList.add('hidden');
       document.getElementById('form-section').classList.remove('hidden');
       document.getElementById('price-bar').style.display = 'block';
+      document.getElementById('course-error').classList.add('hidden');
     }
 
     function submitForm() {
@@ -559,6 +579,7 @@
       document.getElementById('thankyou-section').classList.add('hidden');
       document.getElementById('single-session-section').classList.add('hidden');
       document.getElementById('toggle-icon').textContent = '▼';
+      document.getElementById('course-error').classList.add('hidden');
       
       currentCourseCount = 0;
       updatePrices();
