@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>2026-27年度香港男子青少年跆拳道比賽 | 2026-27 Hong Kong Boy's Taekwondo Competition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body{font-family:'Noto Sans TC',Arial,sans-serif;max-width:900px;margin:1rem auto;padding:1rem;background:linear-gradient(135deg,#e6f0fa,#d9e6f5);color:#2d3748;line-height:1.7;min-height:100vh}
+    .form-container{background:#fff;padding:2rem;border-radius:1.2rem;box-shadow:0 8px 24px rgba(0,0,0,.12);transition:transform .3s,box-shadow .3s}
+    .form-container:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.18)}
+    .form-header{text-align:center;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:2px solid #edf2f7}
+    .form-header h1{font-size:1.75rem;font-weight:700;color:#1a202c;margin:0}
+    .form-header h2{font-size:1.1rem;font-weight:500;color:#718096;margin-top:.5rem}
+    .progress-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;position:relative;height:40px}
+    .progress-bar::before{content:'';position:absolute;top:50%;left:0;right:0;height:4px;background:#e2e8f0;transform:translateY(-50%);z-index:1;border-radius:2px}
+    .progress-line-fill{position:absolute;top:50%;left:0;height:4px;background:linear-gradient(90deg,#3182ce,#63b3ed);transform:translateY(-50%);z-index:1;transition:width .5s ease-in-out;border-radius:2px;box-shadow:0 0 6px rgba(49,130,206,0.4)}
+    .progress-step{width:40px;height:40px;border-radius:50%;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;color:#4a5568;position:relative;z-index:2;transition:all .3s;box-shadow:0 2px 4px rgba(0,0,0,.1)}
+    .progress-step.active{background:linear-gradient(45deg,#3182ce,#63b3ed);color:#fff;transform:scale(1.1);box-shadow:0 4px 12px rgba(49,130,206,.4)}
+    .progress-step.completed{background:linear-gradient(45deg,#3182ce,#63b3ed);color:#fff;box-shadow:0 3px 10px rgba(49,130,206,.3)}
+    .step{display:none}
+    .step.active{display:block}
+    .form-group{margin-bottom:1.5rem;padding:1.2rem;border-radius:1rem;background:#f7fafc;transition:background .3s,transform .2s;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+    .form-group:hover{background:#edf2f7;transform:translateY(-2px)}
+    label{display:block;margin-bottom:.5rem;font-weight:600;font-size:1rem;color:#2d3748}
+    input,select,button{width:100%;padding:.8rem;border:1px solid #e2e8f0;border-radius:.6rem;box-sizing:border-box;font-size:1rem;background:#fff;transition:all .3s;height:2.8rem}
+    input:focus,select:focus{outline:none;border-color:#3182ce;box-shadow:0 0 6px rgba(49,130,206,.4);background:#f8fbff}
+    .date-group{display:flex;align-items:center;gap:.5rem}
+    .date-group select{width:auto;min-width:80px}
+    .copy-group{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+    .copy-group input[type="text"],.copy-group input[type="tel"]{flex:1;min-width:200px}
+    .copy-group label{display:flex;align-items:center;white-space:nowrap;font-weight:500;cursor:pointer}
+    .error{color:#e53e3e;font-size:.85rem;margin-top:.4rem;display:none}
+    .navigation{display:flex;justify-content:space-between;margin-top:2rem;gap:1rem}
+    .navigation button{padding:.8rem 1.5rem;border:none;border-radius:.6rem;cursor:pointer;font-weight:600;min-height:44px;flex:1}
+    .nav-prev{background:#edf2f7;color:#718096}
+    .nav-next,#submitBtn{background:linear-gradient(90deg,#3182ce,#2b6cb0);color:#fff}
+    #thankYouPage{display:none;background:#fff;padding:3rem 2rem;border-radius:1.2rem;box-shadow:0 8px 24px rgba(0,0,0,.12);text-align:center;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:500px;z-index:9999}
+    .confirm-summary p { margin: 0.6rem 0; line-height: 1.6; }
+    .confirm-summary .long-text { white-space: pre-line; word-break: break-all; }
+    .required-star{color:#e53e3e}
+  </style>
+</head>
+<body>
+
+<div class="form-container" id="mainForm">
+  <div class="form-header">
+    <h1>2026-27年度香港男子青少年跆拳道比賽</h1>
+    <h1>2026-27 Hong Kong Boy's Taekwondo Competition</h1>
+    <h2>實用會報名表</h2>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-line-fill" id="progressLineFill"></div>
+    <div class="progress-step active" data-step="1">1</div>
+    <div class="progress-step" data-step="2">2</div>
+    <div class="progress-step" data-step="3">3</div>
+  </div>
+
+  <form id="registrationForm">
+    <!-- 步驟一：個人資料 -->
+    <div class="step active" data-step="1">
+      <h3>步驟一：個人資料</h3>
+      <div class="form-group">
+        <label>中文姓名 <span class="required-star">*</span></label>
+        <input type="text" id="chineseName" required placeholder="如沒有請填寫英文姓名 (請以大寫字母填寫)">
+        <span class="error" id="chineseNameError">請填寫中文或英文姓名</span>
+      </div>
+      <div class="form-group">
+        <label>英文姓名 <span class="required-star">*</span></label>
+        <input type="text" id="englishName" required placeholder="請以大寫字母填寫" oninput="this.value=this.value.toUpperCase()">
+        <span class="error" id="englishNameError">請填寫英文姓名</span>
+      </div>
+      <div class="form-group">
+        <label>出生日期 <span class="required-star">*</span></label>
+        <div class="date-group">
+          <select id="birthYear" required><option value="">年</option></select>
+          <span>/</span>
+          <select id="birthMonth" required><option value="">月</option></select>
+          <span>/</span>
+          <select id="birthDay" required><option value="">日</option></select>
+        </div>
+        <input type="hidden" id="birthDate">
+        <span class="error" id="birthDateError">請選擇出生日期</span>
+      </div>
+      <div class="form-group">
+        <label>聯絡電話 <span class="required-star">*</span></label>
+        <input type="tel" id="phone" pattern="\d{8}" required>
+        <span class="error" id="phoneError">請輸入8位數字電話</span>
+      </div>
+      <div class="form-group">
+        <label>國籍 <span class="required-star">*</span></label>
+        <input type="text" id="nationality" required>
+        <span class="error" id="nationalityError">請填寫國籍</span>
+      </div>
+      <div class="form-group">
+        <label>緊急聯絡人姓名 <span class="required-star">*</span></label>
+        <input type="text" id="emergencyContact" required>
+        <span class="error" id="emergencyContactError">請填寫緊急聯絡人姓名</span>
+      </div>
+      <div class="form-group">
+        <label>緊急聯絡人關係 <span class="required-star">*</span></label>
+        <input type="text" id="emergencyRelation" required>
+        <span class="error" id="emergencyRelationError">請填寫關係</span>
+      </div>
+      <div class="form-group">
+        <label>緊急聯絡人電話 <span class="required-star">*</span></label>
+        <div class="copy-group">
+          <input type="tel" id="emergencyPhone" pattern="\d{8}" required>
+          <label><input type="checkbox" id="copyPhone"> 同上</label>
+        </div>
+        <span class="error" id="emergencyPhoneError">請輸入8位數字電話</span>
+      </div>
+
+      <div class="navigation">
+        <button type="button" class="nav-prev" disabled>上一步</button>
+        <button type="button" class="nav-next" onclick="nextStep()">下一步</button>
+      </div>
+    </div>
+
+    <!-- 步驟二：比賽資料 -->
+    <div class="step" data-step="2">
+      <h3>步驟二：比賽資料</h3>
+      <div class="form-group">
+        <label>屬會名稱 <span class="required-star">*</span></label>
+        <input list="affiliations" id="affiliation" required placeholder="請選擇或輸入">
+        <datalist id="affiliations">
+          <option value="香港實用跆拳道協會 HK Practical TKD Association" selected>
+          <option value="香港仔跆拳道會 Aberdeen TKD Club">
+          <option value="技擊跆拳道會 Advanced TKD Association">
+          <option value="躍駿跆拳道會 Attack TKD Association">
+          <option value="青雲跆拳道會 Ching Wan TKD Association">
+          <option value="精英跆拳道會 Ching Ying TKD Union">
+          <option value="金柏跆拳道協會 Combat TKD Association">
+          <option value="香港跆拳道東龍會 Eastern Dragon TKD Federation HK">
+          <option value="勵志跆拳道總會 Encouragement TKD Association">
+          <option value="香港智道跆拳總會 HK Chido TKD Association">
+          <option value="香港啟聯跆拳道協會 HK Kai Luen TKD Association">
+          <option value="香港尼泊爾跆拳道會 HK Nepalese TKD Club">
+          <option value="香港跆拳道振武館 HK TKD Chun Mo Kwan">
+          <option value="香港跆拳道勵進會 HK TKD Action Association">
+          <option value="香港跆拳道勵誠會 HK TKD Active Association">
+          <option value="香港跆拳道勵輝會 HK TKD Actual Association">
+          <option value="香港中道跆拳道會 HK Chong Do TKD Association">
+          <option value="香港跆拳道青濤館 HK TKD Chung Do Kwan">
+          <option value="香港跆拳道正道館 HK TKD Jung Do Kwan">
+          <option value="香港跆拳道正心館 HK TKD Jung Sim Kwan">
+          <option value="香港聯盟跆拳道協會 HK United TKD Association">
+          <option value="跆拳道明道會 TKD Bright Way Association">
+          <option value="漢道跆拳道館 Hon Do TKD Kwan">
+          <option value="國際跆拳道香港總會 International TKD HK Association">
+          <option value="韓國跆拳道青道館 Korea TKD Cheung Do Kwan">
+          <option value="樂華跆拳道會 Lok Wah TKD Club">
+          <option value="銘英跆拳道會 Main Pioneer TKD Association">
+          <option value="跆拳道武德會 Moo Duk TKD Hae">
+          <option value="伍華跆拳道會 Ng Wah TKD Club">
+          <option value="毅武聯盟跆拳道 Ngai Mo Alliance TKD">
+          <option value="香港警察跆拳道會 HK Police TKD Club">
+          <option value="香港跆拳道國藝會 Potential TKD HK Association">
+          <option value="尚武聯跆拳道會 Sheung Mo Luen TKD Association">
+          <option value="捷擊跆拳道館 TKD Jet Kick Kwan">
+          <option value="跆拳道吾道會體育館 TKD Oh Do Hae Gymnasium">
+          <option value="香港胡氏跆拳道會 Wu’s TKD HK Association">
+          <option value="正武會跆拳道協會 Zheng Wu TKD Association">
+          <option value="香港發景跆拳道會 Hong Kong Greatview TKD Club">
+          <option value="香港跆拳道柏毅會 Hong Kong TKD Pak Ngai Association">
+          <option value="香港跆拳道嚴濤會 Hong Kong TKD Uhm Do Club">
+          <option value="威格跆拳道會 Warrior TKD Club">
+          <option value="金道跆拳道聯盟 The Kimdo TKD Federation">
+          <option value="金道一跆拳道館 Kim Do Yi TKD Kwan">
+          <option value="樂武跆拳道會 Cheerful TKD Association Limited">
+          <option value="世紀跆拳道會 H.K. Taekwondo Cosmopolitan Club">
+          <option value="燊．跆拳道館 Sun Taekwondo Club">
+          <option value="香港進和跆拳道會 Hong Kong Chun Wo Taekwondo Association">
+          <option value="香港賢薈跆拳道會 Hong Kong Ultimate Taekwondo Club">
+        </datalist>
+        <span class="error" id="affiliationError">請選擇屬會名稱</span>
+      </div>
+      <div class="form-group">
+        <label>會員/段証編號 <span class="required-star">*</span></label>
+        <input type="text" id="memberNumber" required>
+        <span class="error" id="memberNumberError">請填寫會員/段証編號</span>
+      </div>
+      <div class="form-group">
+        <label>如品段申請中，請輸入申請日期（非必填）</label>
+        <div class="date-group">
+          <select id="applyYear"><option value="">年</option></select>
+          <span>/</span>
+          <select id="applyMonth"><option value="">月</option></select>
+          <span>/</span>
+          <select id="applyDay"><option value="">日</option></select>
+        </div>
+        <input type="hidden" id="applyDate">
+      </div>
+      <div class="form-group">
+        <label>現有級別 <span class="required-star">*</span></label>
+        <select id="currentLevel" required onchange="updateDivisions()">
+          <option value="">請選擇</option>
+          <option value="綠帶">綠帶</option>
+          <option value="綠藍帶">綠藍帶</option>
+          <option value="藍帶">藍帶</option>
+          <option value="藍紅帶">藍紅帶</option>
+          <option value="紅帶">紅帶</option>
+          <option value="紅黑帶">紅黑帶</option>
+          <option value="品一">品一</option>
+          <option value="品二">品二</option>
+          <option value="品三">品三</option>
+        </select>
+        <span class="error" id="currentLevelError">請選擇現有級別</span>
+      </div>
+      <div class="form-group">
+        <label>身高 (cm) <span class="required-star">*</span></label>
+        <input type="number" id="height" required>
+        <span class="error" id="heightError">請填寫身高</span>
+      </div>
+      <div class="form-group">
+        <label>體重 (kg) <span class="required-star">*</span></label>
+        <input type="number" id="weight" step="0.1" required oninput="updateDivisions()">
+        <span class="error" id="weightError">請填寫體重</span>
+      </div>
+      <div class="form-group">
+        <label>搏擊組別 <span class="required-star">*</span></label>
+        <select id="sparringGroup" required onchange="updateWeightClass()"></select>
+        <span class="error" id="sparringGroupError">請選擇搏擊組別</span>
+      </div>
+      <div class="form-group">
+        <label>重量級別 <span class="required-star">*</span></label>
+        <select id="weightClass" required></select>
+        <span class="error" id="weightClassError">請選擇重量級別</span>
+      </div>
+
+      <div class="navigation">
+        <button type="button" class="nav-prev" onclick="prevStep()">上一步</button>
+        <button type="button" class="nav-next" onclick="nextStep()">下一步</button>
+      </div>
+    </div>
+
+    <!-- 步驟三：確認及提交 -->
+    <div class="step" data-step="3">
+      <h3>步驟三：確認及提交</h3>
+      <div class="confirm-summary" id="finalSummary" style="background:#f8fbff;padding:1.5rem;border-radius:1rem;border-left:5px solid #3182ce;line-height:1.9"></div>
+      <div class="navigation">
+        <button type="button" class="nav-prev" onclick="prevStep()">上一步</button>
+        <button type="button" id="submitBtn" onclick="submitForm()">提交表單</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- 感謝頁 -->
+<div id="thankYouPage">
+  <h2>感謝您的報名！</h2>
+  <p>確認後教練將盡快與您聯繫核對資料。</p>
+  <p>請準備相關文件交給教練。</p>
+  <button class="return-button" onclick="location.reload()">重新報名</button>
+</div>
+
+<script>
+  let currentStep = 1;
+
+  function updateProgress() {
+    const percent = ((currentStep - 1) / 2) * 100;
+    document.getElementById('progressLineFill').style.width = `${percent}%`;
+    document.querySelectorAll('.progress-step').forEach((s, i) => {
+      const n = i + 1;
+      s.classList.toggle('active', n === currentStep);
+      s.classList.toggle('completed', n < currentStep);
+    });
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+    document.querySelector('.nav-prev').disabled = currentStep === 1;
+  }
+
+  function scrollToFirstError() {
+    const firstError = document.querySelector('.error[style*="block"]');
+    if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function validateStep(step) {
+    if (document.getElementById('chineseName').value.trim().toLowerCase() === 'test') return true;
+
+    let valid = true;
+    document.querySelectorAll('.error').forEach(e => e.style.display = 'none');
+
+    if (step === 1) {
+      if (!document.getElementById('chineseName').value.trim() && !document.getElementById('englishName').value.trim()) { document.getElementById('chineseNameError').style.display = 'block'; valid = false; }
+      if (!document.getElementById('englishName').value.trim()) { document.getElementById('englishNameError').style.display = 'block'; valid = false; }
+      if (!document.getElementById('birthDate').value) { document.getElementById('birthDateError').style.display = 'block'; valid = false; }
+      if (!document.getElementById('phone').value.match(/^\d{8}$/)) { document.getElementById('phoneError').style.display = 'block'; valid = false; }
+      if (!document.getElementById('nationality').value.trim()) { document.getElementById('nationalityError').style.display = 'block'; valid = false; }
+      if (!document.getElementById('emergencyContact').value.trim()) { document.getElementById('emergencyContactError').style.display = 'block'; valid = false; }
+      if (!document.getElementById('emergencyRelation').value.trim()) { document.getElementById('emergencyRelationError').style.display = 'block'; valid = false; }
+      if (!document.getElementById('emergencyPhone').value.match(/^\d{8}$/)) { document.getElementById('emergencyPhoneError').style.display = 'block'; valid = false; }
+    }
+
+    if (step === 2) {
+      if (!document.getElementById('affiliation').value.trim()) { document.getElementById('affiliationError').style.display = 'block'; valid = false; }
+      if (!document.getElementById('memberNumber').value.trim()) { document.getElementById('memberNumberError').style.display = 'block'; valid = false; }
+      if (!document.getElementById('currentLevel').value) { document.getElementById('currentLevelError').style.display = 'block'; valid = false; }
+      if (!document.getElementById('height').value) { document.getElementById('heightError').style.display = 'block'; valid = false; }
+      if (!document.getElementById('weight').value) { document.getElementById('weightError').style.display = 'block'; valid = false; }
+      if (!document.getElementById('sparringGroup').value) { document.getElementById('sparringGroupError').style.display = 'block'; valid = false; }
+      if (!document.getElementById('weightClass').value) { document.getElementById('weightClassError').style.display = 'block'; valid = false; }
+    }
+
+    if (!valid) scrollToFirstError();
+    return valid;
+  }
+
+  function nextStep() {
+    if (validateStep(currentStep)) {
+      currentStep++;
+      updateProgress();
+      if (currentStep === 3) updateFinalSummary();
+    }
+  }
+
+  function prevStep() {
+    currentStep--;
+    updateProgress();
+    if (currentStep === 3) updateFinalSummary();
+  }
+
+  function setupDateSelectors() {
+    const birthYear = document.getElementById('birthYear');
+    for (let y = 2018; y >= 2015; y--) {
+      let opt = document.createElement('option'); opt.value = y; opt.text = y; birthYear.appendChild(opt);
+    }
+    const applyYear = document.getElementById('applyYear');
+    for (let y = 2026; y >= 2010; y--) {
+      let opt = document.createElement('option'); opt.value = y; opt.text = y; applyYear.appendChild(opt);
+    }
+    const months = [document.getElementById('birthMonth'), document.getElementById('applyMonth')];
+    months.forEach(sel => {
+      for (let m = 1; m <= 12; m++) {
+        let opt = document.createElement('option'); opt.value = m; opt.text = m; sel.appendChild(opt);
+      }
+    });
+
+    function updateDays(prefix) {
+      const year = parseInt(document.getElementById(prefix + 'Year').value);
+      const month = parseInt(document.getElementById(prefix + 'Month').value);
+      const daySel = document.getElementById(prefix + 'Day');
+      const hidden = document.getElementById(prefix + 'Date');
+      if (!year || !month) {
+        daySel.innerHTML = '<option value="">日</option>';
+        hidden.value = '';
+        return;
+      }
+      const daysInMonth = new Date(year, month, 0).getDate();
+      const prevDay = daySel.value;
+      daySel.innerHTML = '<option value="">日</option>';
+      for (let d = 1; d <= daysInMonth; d++) {
+        let opt = document.createElement('option'); opt.value = d; opt.text = d; daySel.appendChild(opt);
+      }
+      if (prevDay && parseInt(prevDay) <= daysInMonth) daySel.value = prevDay;
+      if (year && month && daySel.value) hidden.value = `${year}-${String(month).padStart(2,'0')}-${String(daySel.value).padStart(2,'0')}`;
+      if (prefix === 'birth') updateDivisions();
+    }
+
+    document.getElementById('birthYear').onchange = document.getElementById('birthMonth').onchange = document.getElementById('birthDay').onchange = () => updateDays('birth');
+    document.getElementById('applyYear').onchange = document.getElementById('applyMonth').onchange = document.getElementById('applyDay').onchange = () => updateDays('apply');
+  }
+
+  function updateDivisions() {
+    const year = parseInt(document.getElementById('birthYear').value);
+    const level = document.getElementById('currentLevel').value;
+    const groupSelect = document.getElementById('sparringGroup');
+    groupSelect.innerHTML = '<option value="">請選擇組別</option>';
+
+    if (!year || !level) return;
+
+    let groupValue = '';
+    if (['綠帶','綠藍帶','藍帶','藍紅帶','紅帶','紅黑帶'].includes(level)) {
+      groupValue = (year >= 2017 && year <= 2018) 
+        ? "男童色帶A組 Boys Color Belt Group A 8歲至9歲 Age: 8 to 9 (2017年至2018年出生者)"
+        : "男童色帶B組 Boys Color Belt Group B 10歲至11歲 Age: 10 to 11 (2015年至2016年出生者)";
+    } else if (['品一','品二','品三'].includes(level)) {
+      if (year >= 2015 && year <= 2016) {
+        groupValue = "男童品段組 Junior Poom Dan Group 10歲至11歲 Age: 10 to 11 (2015年至2016年出生者)";
+      }
+    }
+
+    if (groupValue) {
+      groupSelect.innerHTML += `<option value="${groupValue}" selected>${groupValue}</option>`;
+      updateWeightClass();
+    }
+  }
+
+  function updateWeightClass() {
+    const groupText = document.getElementById('sparringGroup').value;
+    const weight = parseFloat(document.getElementById('weight').value);
+    const wcSelect = document.getElementById('weightClass');
+    wcSelect.innerHTML = '<option value="">請選擇重量級別</option>';
+
+    if (!groupText || !weight) return;
+
+    let options = '';
+    if (groupText.includes('A組')) {
+      options = `<option value="FIN 鰭量級 (25公斤以上而不超過27公斤)">FIN 鰭量級 (25公斤以上而不超過27公斤)</option>
+        <option value="FLY 蠅量級 (27公斤以上而不超過29公斤)">FLY 蠅量級 (27公斤以上而不超過29公斤)</option>
+        <option value="BANTAM 雛量級 (29公斤以上而不超過31公斤)">BANTAM 雛量級 (29公斤以上而不超過31公斤)</option>
+        <option value="FEATHER 羽量級 (31公斤以上而不超過34公斤)">FEATHER 羽量級 (31公斤以上而不超過34公斤)</option>
+        <option value="LIGHT 輕量級 (34公斤以上而不超過37公斤)">LIGHT 輕量級 (34公斤以上而不超過37公斤)</option>
+        <option value="WELTER 沉量級 (37公斤以上而不超過40公斤)">WELTER 沉量級 (37公斤以上而不超過40公斤)</option>
+        <option value="LIGHT MIDDLE 輕中量級 (40公斤以上而不超過43公斤)">LIGHT MIDDLE 輕中量級 (40公斤以上而不超過43公斤)</option>
+        <option value="MIDDLE 中量級 (43公斤以上而不超過46公斤)">MIDDLE 中量級 (43公斤以上而不超過46公斤)</option>
+        <option value="LIGHT HEAVY 輕重量級 (46公斤以上而不超過49公斤)">LIGHT HEAVY 輕重量級 (46公斤以上而不超過49公斤)</option>
+        <option value="HEAVY 重量級 (49公斤以上而不超過57公斤)">HEAVY 重量級 (49公斤以上而不超過57公斤)</option>`;
+    } else if (groupText.includes('B組')) {
+      options = `<option value="FIN 鰭量級 (28公斤以下)">FIN 鰭量級 (28公斤以下)</option>
+        <option value="FLY 蠅量級 (28公斤以上而不超過30公斤)">FLY 蠅量級 (28公斤以上而不超過30公斤)</option>
+        <option value="BANTAM 雛量級 (30公斤以上而不超過32公斤)">BANTAM 雛量級 (30公斤以上而不超過32公斤)</option>
+        <option value="FEATHER 羽量級 (32公斤以上而不超過35公斤)">FEATHER 羽量級 (32公斤以上而不超過35公斤)</option>
+        <option value="LIGHT 輕量級 (35公斤以上而不超過38公斤)">LIGHT 輕量級 (35公斤以上而不超過38公斤)</option>
+        <option value="WELTER 沉量級 (38公斤以上而不超過41公斤)">WELTER 沉量級 (38公斤以上而不超過41公斤)</option>
+        <option value="LIGHT MIDDLE 輕中量級 (41公斤以上而不超過44公斤)">LIGHT MIDDLE 輕中量級 (41公斤以上而不超過44公斤)</option>
+        <option value="MIDDLE 中量級 (44公斤以上而不超過47公斤)">MIDDLE 中量級 (44公斤以上而不超過47公斤)</option>
+        <option value="LIGHT HEAVY 輕重量級 (47公斤以上而不超過50公斤)">LIGHT HEAVY 輕重量級 (47公斤以上而不超過50公斤)</option>
+        <option value="HEAVY 重量級 (50公斤以上而不超過58公斤)">HEAVY 重量級 (50公斤以上而不超過58公斤)</option>`;
+    } else if (groupText.includes('品段組')) {
+      options = `<option value="FIN 鰭量級 (27公斤以上而不超過29公斤)">FIN 鰭量級 (27公斤以上而不超過29公斤)</option>
+        <option value="FLY 蠅量級 (29公斤以上而不超過30公斤)">FLY 蠅量級 (29公斤以上而不超過30公斤)</option>
+        <option value="BANTAM 雛量級 (30公斤以上而不超過33公斤)">BANTAM 雛量級 (30公斤以上而不超過33公斤)</option>
+        <option value="FEATHER 羽量級 (33公斤以上而不超過36公斤)">FEATHER 羽量級 (33公斤以上而不超過36公斤)</option>
+        <option value="LIGHT 輕量級 (36公斤以上而不超過39公斤)">LIGHT 輕量級 (36公斤以上而不超過39公斤)</option>
+        <option value="WELTER 沉量級 (39公斤以上而不超過41公斤)">WELTER 沉量級 (39公斤以上而不超過41公斤)</option>
+        <option value="LIGHT MIDDLE 輕中量級 (41公斤以上而不超過43公斤)">LIGHT MIDDLE 輕中量級 (41公斤以上而不超過43公斤)</option>
+        <option value="MIDDLE 中量級 (43公斤以上而不超過46公斤)">MIDDLE 中量級 (43公斤以上而不超過46公斤)</option>
+        <option value="LIGHT HEAVY 輕重量級 (46公斤以上而不超過49公斤)">LIGHT HEAVY 輕重量級 (46公斤以上而不超過49公斤)</option>
+        <option value="HEAVY 重量級 (49公斤以上而不超過57公斤)">HEAVY 重量級 (49公斤以上而不超過57公斤)</option>`;
+    }
+    wcSelect.innerHTML += options;
+  }
+
+  function updateFinalSummary() {
+    let html = `
+      <p><strong>中文姓名：</strong> ${document.getElementById('chineseName').value || '未填'}</p>
+      <p><strong>英文姓名：</strong> ${document.getElementById('englishName').value || '未填'}</p>
+      <p><strong>出生日期：</strong> ${document.getElementById('birthDate').value || '未選'}</p>
+      <p><strong>聯絡電話：</strong> ${document.getElementById('phone').value || '未填'}</p>
+      <p><strong>國籍：</strong> ${document.getElementById('nationality').value || '未填'}</p>
+      <p><strong>緊急聯絡人：</strong> ${document.getElementById('emergencyContact').value || '未填'}（${document.getElementById('emergencyRelation').value || '未填'}，${document.getElementById('emergencyPhone').value || '未填'}）</p>
+      <p><strong>屬會名稱：</strong> ${document.getElementById('affiliation').value || '未選'}</p>
+      <p><strong>會員/段証編號：</strong> ${document.getElementById('memberNumber').value || '未填'}</p>
+      <p><strong>品段申請日期：</strong> ${document.getElementById('applyDate').value || '未填'}</p>
+      <p><strong>現有級別：</strong> ${document.getElementById('currentLevel').value || '未選'}</p>
+      <p><strong>身高：</strong> ${document.getElementById('height').value || '未填'} cm</p>
+      <p><strong>體重：</strong> ${document.getElementById('weight').value || '未填'} kg</p>
+      <p><strong>搏擊組別：</strong> <span class="long-text">${document.getElementById('sparringGroup').value || '未選'}</span></p>
+      <p><strong>重量級別：</strong> <span class="long-text">${document.getElementById('weightClass').value || '未選'}</span></p>
+    `;
+    document.getElementById('finalSummary').innerHTML = html;
+  }
+
+  function submitForm() {
+    if (!validateStep(3)) return;
+
+    const formData = new FormData();
+    formData.append('entry.1714227241', document.getElementById('chineseName').value);
+    formData.append('entry.1739837016', document.getElementById('englishName').value);
+    formData.append('entry.69039678', document.getElementById('birthDate').value);
+    formData.append('entry.1045318375', document.getElementById('phone').value);
+    formData.append('entry.1347914688', document.getElementById('nationality').value);
+    formData.append('entry.1820097193', document.getElementById('emergencyContact').value);
+    formData.append('entry.269558714', document.getElementById('emergencyRelation').value);
+    formData.append('entry.274850195', document.getElementById('emergencyPhone').value);
+    formData.append('entry.1597491054', document.getElementById('affiliation').value);
+    formData.append('entry.629960054', document.getElementById('memberNumber').value);
+    formData.append('entry.703788026', document.getElementById('applyDate').value);
+    formData.append('entry.1666612578', document.getElementById('currentLevel').value);
+    formData.append('entry.1084612574', document.getElementById('height').value);
+    formData.append('entry.1721761818', document.getElementById('weight').value);
+    formData.append('entry.1596491131', document.getElementById('sparringGroup').value);
+    formData.append('entry.1476459681', document.getElementById('weightClass').value);
+
+    fetch('https://docs.google.com/forms/d/e/1FAIpQLSe5Wm3xgzgDlokOHhwNxcvijdjmSTMCBJIlsGKmevJ2bNgsjg/formResponse', {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData
+    });
+
+    document.getElementById('mainForm').style.display = 'none';
+    document.getElementById('thankYouPage').style.display = 'block';
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    updateProgress();
+    setupDateSelectors();
+
+    document.getElementById('copyPhone').onchange = function() {
+      if (this.checked) document.getElementById('emergencyPhone').value = document.getElementById('phone').value;
+    };
+    document.getElementById('phone').oninput = function() {
+      if (document.getElementById('copyPhone').checked) document.getElementById('emergencyPhone').value = this.value;
+    };
+  });
+</script>
+</body>
+</html>
