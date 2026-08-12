@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>教練培訓班(2026年第三堂)報名表</title>
+  <title>教練培訓班(2026年第四堂)問卷</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -26,16 +26,16 @@
       margin-bottom: 32px;
     }
     .form-header h1 {
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 700;
       color: #1a4971;
       margin-bottom: 12px;
     }
     .form-header p {
-      font-size: 16px;
+      font-size: 15px;
       color: #4a5568;
       line-height: 1.6;
-      max-width: 600px;
+      max-width: 640px;
       margin: 8px auto;
     }
     .progress-bar {
@@ -82,6 +82,11 @@
     .page.active {
       display: block;
     }
+    .page h2 {
+      margin-bottom: 24px;
+      color: #1a4971;
+      font-size: 20px;
+    }
     .form-group {
       margin-bottom: 28px;
     }
@@ -103,7 +108,14 @@
     label.no-asterisk::before {
       content: none;
     }
-    input, select, textarea {
+    .hint {
+      font-size: 13px;
+      color: #718096;
+      margin-top: -6px;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    input[type="text"], select, textarea {
       width: 100%;
       padding: 12px 16px;
       border: 1px solid #cbd5e0;
@@ -119,28 +131,61 @@
     }
     textarea {
       resize: vertical;
-      min-height: 120px;
+      min-height: 100px;
     }
-    .checkbox-group {
+    .checkbox-group, .radio-group {
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      padding: 12px;
+      gap: 12px;
+      padding: 12px 14px;
       background: #f7fafc;
       border-radius: 8px;
     }
-    .checkbox-group label {
+    .checkbox-group label, .radio-group label {
       display: flex;
       align-items: center;
       font-weight: normal;
-      font-size: 16px;
+      font-size: 15px;
       margin-bottom: 0;
     }
     .checkbox-group input[type="checkbox"],
-    .checkbox-group input[type="radio"] {
+    .radio-group input[type="radio"] {
       width: auto;
-      margin-right: 12px;
+      margin-right: 10px;
       accent-color: #3182ce;
+    }
+    .score-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .score-group label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border: 2px solid #cbd5e0;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 18px;
+      cursor: pointer;
+      margin-bottom: 0;
+      background: white;
+      transition: all 0.2s ease;
+    }
+    .score-group label::before {
+      content: none;
+    }
+    .score-group input[type="radio"] {
+      display: none;
+    }
+    .score-group input[type="radio"]:checked + span,
+    .score-group label:has(input:checked) {
+      background: #3182ce;
+      color: white;
+      border-color: #3182ce;
     }
     .error {
       color: #e53e3e;
@@ -148,13 +193,14 @@
       margin-top: 8px;
       display: none;
     }
-    #customDojo, #customDifficulty {
+    #customDojo, #customSenTraining, #customSenExp, #customHoped, #asdFeatures, #adhdFeatures {
       margin-top: 12px;
     }
     .navigation {
       display: flex;
       justify-content: space-between;
       margin-top: 32px;
+      gap: 12px;
     }
     button {
       padding: 14px 28px;
@@ -181,6 +227,11 @@
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(49, 130, 206, 0.4);
     }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
     #thankYouPage {
       display: none;
       background: white;
@@ -190,7 +241,7 @@
       text-align: center;
     }
     #thankYouPage h2 {
-      font-size: 28px;
+      font-size: 26px;
       margin-bottom: 20px;
       color: #1a4971;
     }
@@ -200,12 +251,22 @@
       color: #2d3748;
       line-height: 1.6;
     }
+    .return-button {
+      margin-top: 24px;
+      background-color: #3182ce;
+      color: white;
+    }
     @media (max-width: 600px) {
       .form-container, #thankYouPage {
         padding: 24px;
       }
       .form-header h1 {
-        font-size: 24px;
+        font-size: 22px;
+      }
+      .score-group label {
+        width: 42px;
+        height: 42px;
+        font-size: 16px;
       }
     }
   </style>
@@ -213,9 +274,7 @@
 <body>
   <div class="form-container" id="formContainer">
     <div class="form-header">
-      <h1>教練培訓班(2026年第三堂)報名表</h1>
-      <p>歡迎各位報名參加教練培訓班（2026年第三堂）！</p>
-      <p>本表單旨在收集您的基本資訊及教學經驗，以便我們設計更符合需求的課程內容。</p>
+      <h1>教練培訓班(2026年第四堂)問卷</h1>
     </div>
 
     <!-- Progress Bar -->
@@ -229,9 +288,10 @@
     <form id="registrationForm">
       <!-- Page 1: 個人資料 -->
       <div class="page active" id="page1">
+        <h2>個人資料</h2>
         <div class="form-group">
           <label for="name">姓名</label>
-          <input type="text" id="name" name="entry.214935030" required>
+          <input type="text" id="name" name="entry.214935030" required placeholder="請輸入姓名">
           <span id="nameError" class="error">請輸入姓名</span>
         </div>
 
@@ -256,29 +316,68 @@
         </div>
 
         <div class="navigation">
-          <button type="button" onclick="prevPage()">上一步</button>
+          <button type="button" disabled>上一步</button>
           <button type="button" class="next-btn" onclick="nextPage()">下一步</button>
         </div>
       </div>
 
-      <!-- Page 2: 品勢知識測試 -->
+      <!-- Page 2: SEN 知識與經驗 -->
       <div class="page" id="page2">
-        <h2 style="margin-bottom: 24px; color: #1a4971;">品勢知識測試</h2>
-        
-        <div class="form-group"><label for="q1">1. 品勢比賽中的 6分及4分代表什麼？</label><textarea id="q1" placeholder="請填寫答案" required></textarea></div>
-        <div class="form-group"><label for="q2">2. 動作做錯會如何扣分？</label><textarea id="q2" placeholder="請填寫答案" required></textarea></div>
-        <div class="form-group"><label for="q3">3. 踢腳沒有看目標會如何扣分？</label><textarea id="q3" placeholder="請填寫答案" required></textarea></div>
-        <div class="form-group"><label for="q4">4. 同分如何分勝負？</label><textarea id="q4" placeholder="請填寫答案" required></textarea></div>
-        <div class="form-group"><label for="q5">5. 那幾套品勢有2下叫喊聲？</label><textarea id="q5" placeholder="請填寫答案" required></textarea></div>
-        <div class="form-group"><label for="q6">6. 弓步(大步)有幾步？</label><input type="text" id="q6" placeholder="請填寫答案" required></div>
-        <div class="form-group"><label for="q7">7. 三七步(L stance)有幾步？</label><input type="text" id="q7" placeholder="請填寫答案" required></div>
-        <div class="form-group"><label for="q8">8. 行步(細步)有幾步？</label><input type="text" id="q8" placeholder="請填寫答案" required></div>
-        <div class="form-group"><label for="q9">9. 太極五章 side kick 前手要放那裏？</label><textarea id="q9" placeholder="請填寫答案" required></textarea></div>
-        <div class="form-group"><label for="q10">10. 太極七章的第15品動作(膝撞之後)叫什麼名字？</label><textarea id="q10" placeholder="請填寫答案" required></textarea></div>
-        <div class="form-group"><label for="q11">11. 太極八章第1個及第2個 Double jump snap kick 分別踢幾高？</label><textarea id="q11" placeholder="請填寫答案" required></textarea></div>
-        <div class="form-group"><label for="q12">12. 高麗 Double side kick 分別踢幾高？</label><textarea id="q12" placeholder="請填寫答案" required></textarea></div>
+        <h2>SEN 相關知識與經驗</h2>
 
-        <input type="hidden" id="combinedAnswers" name="entry.991224280">
+        <!-- Q3 -->
+        <div class="form-group">
+          <label class="no-asterisk">1. 你有沒有接受過任何特殊教育的相關培訓？</label>
+          <div class="radio-group" id="senTrainingGroup">
+            <label class="no-asterisk"><input type="radio" name="senTraining" value="有" onchange="toggleSenTraining()"> 有</label>
+            <label class="no-asterisk"><input type="radio" name="senTraining" value="沒有" onchange="toggleSenTraining()"> 沒有</label>
+          </div>
+          <input type="text" id="customSenTraining" placeholder="如有，請簡單說明培訓內容／機構" style="display: none;">
+          <input type="hidden" id="senTraining" name="entry.991224280">
+          <span id="senTrainingError" class="error">請選擇是否接受過相關培訓</span>
+        </div>
+
+        <!-- Q4 ASD -->
+        <div class="form-group">
+          <label class="no-asterisk">2. 你對自閉症譜系障礙 (ASD) 的了解程度如何？（1 = 完全不了解，5 = 非常了解）</label>
+          <div class="score-group" id="asdScoreGroup">
+            <label><input type="radio" name="asdScore" value="1"><span>1</span></label>
+            <label><input type="radio" name="asdScore" value="2"><span>2</span></label>
+            <label><input type="radio" name="asdScore" value="3"><span>3</span></label>
+            <label><input type="radio" name="asdScore" value="4"><span>4</span></label>
+            <label><input type="radio" name="asdScore" value="5"><span>5</span></label>
+          </div>
+          <textarea id="asdFeatures" placeholder="就你所知，ASD 有哪些特徵？可簡述"></textarea>
+          <input type="hidden" id="asdKnowledge" name="entry.100433372">
+          <span id="asdError" class="error">請選擇了解程度</span>
+        </div>
+
+        <!-- Q5 ADHD -->
+        <div class="form-group">
+          <label class="no-asterisk">3. 你對注意力不足過動症 (ADHD) 的了解程度如何？（1 = 完全不了解，5 = 非常了解）</label>
+          <div class="score-group" id="adhdScoreGroup">
+            <label><input type="radio" name="adhdScore" value="1"><span>1</span></label>
+            <label><input type="radio" name="adhdScore" value="2"><span>2</span></label>
+            <label><input type="radio" name="adhdScore" value="3"><span>3</span></label>
+            <label><input type="radio" name="adhdScore" value="4"><span>4</span></label>
+            <label><input type="radio" name="adhdScore" value="5"><span>5</span></label>
+          </div>
+          <textarea id="adhdFeatures" placeholder="就你所知，ADHD 有哪些特徵？可簡述"></textarea>
+          <input type="hidden" id="adhdKnowledge" name="entry.1952138955">
+          <span id="adhdError" class="error">請選擇了解程度</span>
+        </div>
+
+        <!-- Q6 -->
+        <div class="form-group">
+          <label class="no-asterisk">4. 你過去是否有教授過 SEN 學生的經驗？主要遇到什麼類型？</label>
+          <div class="radio-group" id="senExpGroup">
+            <label class="no-asterisk"><input type="radio" name="senExp" value="有" onchange="toggleSenExp()"> 有</label>
+            <label class="no-asterisk"><input type="radio" name="senExp" value="沒有" onchange="toggleSenExp()"> 沒有</label>
+          </div>
+          <input type="text" id="customSenExp" placeholder="如有，請簡單說明主要遇到的 SEN 類型" style="display: none;">
+          <input type="hidden" id="senExperience" name="entry.1515933178">
+          <span id="senExpError" class="error">請選擇是否有相關經驗</span>
+        </div>
 
         <div class="navigation">
           <button type="button" onclick="prevPage()">上一步</button>
@@ -286,33 +385,38 @@
         </div>
       </div>
 
-      <!-- Page 3: 教學困難 -->
+      <!-- Page 3: 處理與期望 -->
       <div class="page" id="page3">
-        <h2 style="margin-bottom: 24px; color: #1a4971;">教學經驗分享</h2>
-        
+        <h2>教學處理與期望</h2>
+
+        <!-- Q7 -->
         <div class="form-group">
-          <label class="no-asterisk">1. 你在教品勢時，最常遇到的困難是什麼？（可複選）</label>
-          <div class="checkbox-group" id="difficultyGroup">
-            <label class="no-asterisk"><input type="checkbox" value="學生姿勢不標準"> 學生姿勢不標準</label>
-            <label class="no-asterisk"><input type="checkbox" value="學生容易忘記動作順序"> 學生容易忘記動作順序</label>
-            <label class="no-asterisk"><input type="checkbox" value="不同年齡/程度學生如何同時教學"> 不同年齡/程度學生如何同時教學</label>
-            <label class="no-asterisk"><input type="checkbox" value="比賽如何準備"> 比賽如何準備</label>
+          <label for="behaviorHandling">5. 在課堂中，你如何處理 SEN 學生的行為突發情況（如情緒崩潰、過動、不聽指令）？</label>
+          <p class="hint">如沒有經驗也可以嘗試作答，分享你認為可行的方法。</p>
+          <textarea id="behaviorHandling" name="entry.597453107" placeholder="請描述你的處理方式或想法" required></textarea>
+          <span id="behaviorError" class="error">請輸入你的處理方法或想法</span>
+        </div>
+
+        <!-- Q8 -->
+        <div class="form-group">
+          <label for="senView">6. 你對 SEN 學生參與跆拳道班的看法如何？跆拳道可以如何幫助到 SEN 學生？</label>
+          <p class="hint">如沒有經驗也可以嘗試作答。</p>
+          <textarea id="senView" name="entry.673172076" placeholder="請分享你的看法" required></textarea>
+          <span id="senViewError" class="error">請輸入你的看法</span>
+        </div>
+
+        <!-- Q9 -->
+        <div class="form-group">
+          <label class="no-asterisk">7. 你最希望這次分享中，學到什麼內容？（可複選）</label>
+          <div class="checkbox-group" id="hopedGroup">
+            <label class="no-asterisk"><input type="checkbox" value="如何預防及處理情緒爆發"> 如何預防及處理情緒爆發</label>
+            <label class="no-asterisk"><input type="checkbox" value="課堂指令與活動調整"> 課堂指令與活動調整</label>
+            <label class="no-asterisk"><input type="checkbox" value="與SEN家長溝通技巧"> 與SEN家長溝通技巧</label>
             <label class="no-asterisk"><input type="checkbox" value="其他"> 其他（請說明）</label>
           </div>
-          <input type="text" id="customDifficulty" placeholder="請說明其他困難" style="display: none;">
-          <span id="difficultyError" class="error">請至少選擇一項</span>
-        </div>
-
-        <div class="form-group">
-          <label for="recentDifficulties">2. 描述一下近期教學上遇到的困難是什麼？</label>
-          <textarea id="recentDifficulties" name="entry.1850722189" placeholder="例如：小朋友唔聽話、家長很擔心等" required></textarea>
-          <span id="recentDifficultiesError" class="error">請輸入您的描述</span>
-        </div>
-
-        <div class="form-group">
-          <label for="solution">3. 你能否處理到呢？並且會如何解決？</label>
-          <textarea id="solution" name="entry.2040322488" required></textarea>
-          <span id="solutionError" class="error">請輸入您的解決方法</span>
+          <input type="text" id="customHoped" placeholder="請說明其他希望學到的內容" style="display: none;">
+          <input type="hidden" id="hopedContent" name="entry.1045925676">
+          <span id="hopedError" class="error">請至少選擇一項</span>
         </div>
 
         <div class="navigation">
@@ -321,13 +425,30 @@
         </div>
       </div>
 
-      <!-- Page 4: 出席確認 -->
+      <!-- Page 4: 近期情況 + 出席 -->
       <div class="page" id="page4">
+        <h2>近期情況與出席確認</h2>
+
+        <!-- Q10 -->
         <div class="form-group">
-          <label class="no-asterisk">4. 你會否出席第3堂培訓班？</label>
-          <div class="checkbox-group">
-            <label class="no-asterisk"><input type="radio" name="attend" value="是" onchange="updateAttend()"> 會</label>
-            <label class="no-asterisk"><input type="radio" name="attend" value="否" onchange="updateAttend()"> 不會</label>
+          <label for="recentSituation">8. 近來教班遇到有那些值得討論的情況？你如何處理？</label>
+          <textarea id="recentSituation" name="entry.1850722189" placeholder="例如：小朋友情緒、家長溝通、課堂管理等" required></textarea>
+          <span id="recentError" class="error">請輸入近期遇到的情況</span>
+        </div>
+
+        <!-- Q11 -->
+        <div class="form-group">
+          <label for="deeperTopic">9. 有那些之前教練班教過的內容想更深入了解？</label>
+          <textarea id="deeperTopic" name="entry.2040322488" placeholder="可填寫想複習或深化的主題" required></textarea>
+          <span id="deeperError" class="error">請輸入想深入了解的內容</span>
+        </div>
+
+        <!-- Q12 -->
+        <div class="form-group">
+          <label class="no-asterisk">10. 今堂會否出席？</label>
+          <div class="radio-group">
+            <label class="no-asterisk"><input type="radio" name="attendRadio" value="會" onchange="updateAttend()"> 會</label>
+            <label class="no-asterisk"><input type="radio" name="attendRadio" value="不會" onchange="updateAttend()"> 不會</label>
           </div>
           <input type="hidden" id="attend" name="entry.326286952">
           <span id="attendError" class="error">請選擇是否出席</span>
@@ -352,7 +473,7 @@
     let currentPage = 1;
     const totalPages = 4;
 
-    // 道場多選
+    // ========== 道場 ==========
     const customDojoInput = document.getElementById('customDojo');
     const dojoHidden = document.getElementById('dojo');
 
@@ -374,45 +495,99 @@
       dojoHidden.value = selected.join(', ');
     }
 
-    // 教學困難多選
-    const customDifficultyInput = document.getElementById('customDifficulty');
-
-    function toggleCustomDifficulty() {
-      const other = document.querySelector('#difficultyGroup input[value="其他"]');
-      if (other && other.checked) {
-        customDifficultyInput.style.display = 'block';
+    // ========== SEN 培訓 ==========
+    function toggleSenTraining() {
+      const selected = document.querySelector('input[name="senTraining"]:checked');
+      const custom = document.getElementById('customSenTraining');
+      if (selected && selected.value === '有') {
+        custom.style.display = 'block';
       } else {
-        customDifficultyInput.style.display = 'none';
-        customDifficultyInput.value = '';
+        custom.style.display = 'none';
+        custom.value = '';
       }
+      updateSenTraining();
     }
 
-    // 合併所有答案（1-12題 + 教學困難）
-    function combineAnswers() {
-      const answers = [];
-      
-      // 品勢 1-12 題
-      for (let i = 1; i <= 12; i++) {
-        const field = document.getElementById(`q${i}`);
-        if (field) answers.push(field.value.trim() || '未填寫');
+    function updateSenTraining() {
+      const selected = document.querySelector('input[name="senTraining"]:checked');
+      const text = document.getElementById('customSenTraining').value.trim();
+      if (!selected) {
+        document.getElementById('senTraining').value = '';
+        return;
       }
-      
-      // 教學困難多選
-      const difficulties = Array.from(document.querySelectorAll('#difficultyGroup input[type="checkbox"]:checked'))
-        .map(cb => cb.value === '其他' ? customDifficultyInput.value.trim() : cb.value)
+      document.getElementById('senTraining').value = selected.value === '有'
+        ? (text ? `有：${text}` : '有')
+        : '沒有';
+    }
+
+    // ========== SEN 經驗 ==========
+    function toggleSenExp() {
+      const selected = document.querySelector('input[name="senExp"]:checked');
+      const custom = document.getElementById('customSenExp');
+      if (selected && selected.value === '有') {
+        custom.style.display = 'block';
+      } else {
+        custom.style.display = 'none';
+        custom.value = '';
+      }
+      updateSenExp();
+    }
+
+    function updateSenExp() {
+      const selected = document.querySelector('input[name="senExp"]:checked');
+      const text = document.getElementById('customSenExp').value.trim();
+      if (!selected) {
+        document.getElementById('senExperience').value = '';
+        return;
+      }
+      document.getElementById('senExperience').value = selected.value === '有'
+        ? (text ? `有：${text}` : '有')
+        : '沒有';
+    }
+
+    // ========== ASD / ADHD ==========
+    function updateAsd() {
+      const score = document.querySelector('input[name="asdScore"]:checked');
+      const features = document.getElementById('asdFeatures').value.trim();
+      document.getElementById('asdKnowledge').value = score
+        ? `${score.value}；${features || '無補充特徵'}`
+        : '';
+    }
+
+    function updateAdhd() {
+      const score = document.querySelector('input[name="adhdScore"]:checked');
+      const features = document.getElementById('adhdFeatures').value.trim();
+      document.getElementById('adhdKnowledge').value = score
+        ? `${score.value}；${features || '無補充特徵'}`
+        : '';
+    }
+
+    // ========== 希望學到 ==========
+    function toggleCustomHoped() {
+      const other = document.querySelector('#hopedGroup input[value="其他"]');
+      if (other && other.checked) {
+        document.getElementById('customHoped').style.display = 'block';
+      } else {
+        document.getElementById('customHoped').style.display = 'none';
+        document.getElementById('customHoped').value = '';
+      }
+      updateHoped();
+    }
+
+    function updateHoped() {
+      const selected = Array.from(document.querySelectorAll('#hopedGroup input[type="checkbox"]:checked'))
+        .map(cb => cb.value === '其他' ? document.getElementById('customHoped').value.trim() : cb.value)
         .filter(Boolean);
-      answers.push(difficulties.length ? difficulties.join('、') : '未填寫');
-
-      document.getElementById('combinedAnswers').value = answers.join('; ');
+      document.getElementById('hopedContent').value = selected.join('、');
     }
 
-    // 是否出席
+    // ========== 出席 ==========
     function updateAttend() {
-      const selected = document.querySelector('input[name="attend"]:checked');
+      const selected = document.querySelector('input[name="attendRadio"]:checked');
       document.getElementById('attend').value = selected ? selected.value : '';
     }
 
-    // 分頁控制
+    // ========== 分頁 ==========
     function showPage(page) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(`page${page}`).classList.add('active');
@@ -424,77 +599,169 @@
         if (n < currentPage) step.classList.add('completed');
         if (n === currentPage) step.classList.add('active');
       });
+
+      // 更新上一步按鈕狀態
+      const prevBtns = document.querySelectorAll('.navigation button[type="button"]:first-child');
+      prevBtns.forEach(btn => {
+        if (btn.textContent.includes('上一步')) {
+          btn.disabled = (currentPage === 1);
+        }
+      });
     }
 
-    function nextPage() { if (currentPage < totalPages) showPage(currentPage + 1); }
-    function prevPage() { if (currentPage > 1) showPage(currentPage - 1); }
+    function clearErrors() {
+      document.querySelectorAll('.error').forEach(el => el.style.display = 'none');
+    }
 
-    // 事件綁定
+    function validatePage(page) {
+      clearErrors();
+      let valid = true;
+
+      if (page === 1) {
+        if (!document.getElementById('name').value.trim()) {
+          document.getElementById('nameError').style.display = 'block';
+          valid = false;
+        }
+        updateDojo();
+        if (!dojoHidden.value.trim()) {
+          document.getElementById('dojoError').style.display = 'block';
+          valid = false;
+        }
+      }
+
+      if (page === 2) {
+        updateSenTraining();
+        if (!document.getElementById('senTraining').value) {
+          document.getElementById('senTrainingError').style.display = 'block';
+          valid = false;
+        }
+        updateAsd();
+        if (!document.getElementById('asdKnowledge').value) {
+          document.getElementById('asdError').style.display = 'block';
+          valid = false;
+        }
+        updateAdhd();
+        if (!document.getElementById('adhdKnowledge').value) {
+          document.getElementById('adhdError').style.display = 'block';
+          valid = false;
+        }
+        updateSenExp();
+        if (!document.getElementById('senExperience').value) {
+          document.getElementById('senExpError').style.display = 'block';
+          valid = false;
+        }
+      }
+
+      if (page === 3) {
+        if (!document.getElementById('behaviorHandling').value.trim()) {
+          document.getElementById('behaviorError').style.display = 'block';
+          valid = false;
+        }
+        if (!document.getElementById('senView').value.trim()) {
+          document.getElementById('senViewError').style.display = 'block';
+          valid = false;
+        }
+        updateHoped();
+        if (!document.getElementById('hopedContent').value.trim()) {
+          document.getElementById('hopedError').style.display = 'block';
+          valid = false;
+        }
+      }
+
+      if (page === 4) {
+        if (!document.getElementById('recentSituation').value.trim()) {
+          document.getElementById('recentError').style.display = 'block';
+          valid = false;
+        }
+        if (!document.getElementById('deeperTopic').value.trim()) {
+          document.getElementById('deeperError').style.display = 'block';
+          valid = false;
+        }
+        updateAttend();
+        if (!document.getElementById('attend').value.trim()) {
+          document.getElementById('attendError').style.display = 'block';
+          valid = false;
+        }
+      }
+
+      return valid;
+    }
+
+    function nextPage() {
+      if (!validatePage(currentPage)) return;
+      if (currentPage < totalPages) showPage(currentPage + 1);
+    }
+
+    function prevPage() {
+      if (currentPage > 1) showPage(currentPage - 1);
+    }
+
+    // ========== 事件綁定 ==========
     document.querySelectorAll('#dojoGroup input[type="checkbox"]').forEach(cb => {
       cb.addEventListener('change', () => { toggleCustomDojo(); updateDojo(); });
     });
     customDojoInput.addEventListener('input', updateDojo);
 
-    document.querySelectorAll('#difficultyGroup input[type="checkbox"]').forEach(cb => {
-      cb.addEventListener('change', () => { toggleCustomDifficulty(); });
-    });
-    customDifficultyInput.addEventListener('input', () => {});
+    document.getElementById('customSenTraining').addEventListener('input', updateSenTraining);
+    document.getElementById('customSenExp').addEventListener('input', updateSenExp);
 
-    // 表單提交
+    document.querySelectorAll('input[name="asdScore"]').forEach(r => r.addEventListener('change', updateAsd));
+    document.getElementById('asdFeatures').addEventListener('input', updateAsd);
+
+    document.querySelectorAll('input[name="adhdScore"]').forEach(r => r.addEventListener('change', updateAdhd));
+    document.getElementById('adhdFeatures').addEventListener('input', updateAdhd);
+
+    document.querySelectorAll('#hopedGroup input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => { toggleCustomHoped(); updateHoped(); });
+    });
+    document.getElementById('customHoped').addEventListener('input', updateHoped);
+
+    // ========== 提交 ==========
     const form = document.getElementById('registrationForm');
     const formContainer = document.getElementById('formContainer');
     const thankYouPage = document.getElementById('thankYouPage');
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      let isValid = true;
-      document.querySelectorAll('.error').forEach(el => el.style.display = 'none');
 
-      // 驗證
-      if (!document.getElementById('name').value.trim()) { document.getElementById('nameError').style.display = 'block'; isValid = false; }
-      if (!dojoHidden.value.trim()) { document.getElementById('dojoError').style.display = 'block'; isValid = false; }
-
-      for (let i = 1; i <= 12; i++) {
-        const field = document.getElementById(`q${i}`);
-        if (field && !field.value.trim()) {
-          const err = document.createElement('span');
-          err.className = 'error';
-          err.style.display = 'block';
-          err.textContent = '請填寫答案';
-          field.parentNode.appendChild(err);
-          isValid = false;
+      // 全表驗證
+      let allValid = true;
+      for (let p = 1; p <= totalPages; p++) {
+        if (!validatePage(p)) {
+          allValid = false;
+          showPage(p);
+          break;
         }
       }
 
-      if (!Array.from(document.querySelectorAll('#difficultyGroup input[type="checkbox"]:checked')).length) {
-        document.getElementById('difficultyError').style.display = 'block'; isValid = false;
+      if (!allValid) {
+        alert('尚有未完成的問題，請檢查後再提交。');
+        return;
       }
-      if (!document.getElementById('recentDifficulties').value.trim()) { document.getElementById('recentDifficultiesError').style.display = 'block'; isValid = false; }
-      if (!document.getElementById('solution').value.trim()) { document.getElementById('solutionError').style.display = 'block'; isValid = false; }
-      if (!document.getElementById('attend').value.trim()) { document.getElementById('attendError').style.display = 'block'; isValid = false; }
 
-      if (isValid) {
-        combineAnswers();   // 合併答案
+      // 最後更新所有 hidden
+      updateDojo();
+      updateSenTraining();
+      updateAsd();
+      updateAdhd();
+      updateSenExp();
+      updateHoped();
+      updateAttend();
 
-        const formData = new FormData(form);
-        try {
-          await fetch('https://docs.google.com/forms/d/e/1FAIpQLSd0BlN9foIHdzh7elx5xwVRfli8Hu-oKtEebMNW_1fsT_LfQg/formResponse', {
-            method: 'POST',
-            body: formData,
-            mode: 'no-cors'
-          });
+      const formData = new FormData(form);
+      try {
+        await fetch('https://docs.google.com/forms/d/e/1FAIpQLSd4XruUXMkivgRUtX5JVK9Zp3Y2TDKoqTbR5yv_1JASSfd-sw/formResponse', {
+          method: 'POST',
+          body: formData,
+          mode: 'no-cors'
+        });
 
-          formContainer.style.display = 'none';
-          thankYouPage.style.display = 'block';
-          document.getElementById('thankYouMessage1').textContent = '感謝您報名參加教練培訓班（2026年第三期）！';
-          document.getElementById('thankYouMessage2').textContent = '您的回覆將幫助我們優化課程內容。';
-        } catch (error) {
-          alert('提交失敗，請稍後再試。');
-        }
-      } else {
-        if (!document.getElementById('name').value.trim() || !dojoHidden.value.trim()) showPage(1);
-        else if (Array.from(document.querySelectorAll('#page2 .error')).some(el => el.style.display === 'block')) showPage(2);
-        else showPage(3);
+        formContainer.style.display = 'none';
+        thankYouPage.style.display = 'block';
+        document.getElementById('thankYouMessage1').textContent = '感謝您回覆教練培訓班（2026年第四堂）問卷！';
+        document.getElementById('thankYouMessage2').textContent = '您的分享對優化 SEN 相關課程內容非常有幫助。';
+      } catch (error) {
+        alert('提交失敗，請稍後再試。');
       }
     });
 
@@ -502,9 +769,11 @@
       thankYouPage.style.display = 'none';
       formContainer.style.display = 'block';
       form.reset();
-      document.querySelectorAll('.error').forEach(el => el.style.display = 'none');
+      clearErrors();
       customDojoInput.style.display = 'none';
-      customDifficultyInput.style.display = 'none';
+      document.getElementById('customSenTraining').style.display = 'none';
+      document.getElementById('customSenExp').style.display = 'none';
+      document.getElementById('customHoped').style.display = 'none';
       showPage(1);
     }
 
