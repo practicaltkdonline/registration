@@ -248,6 +248,7 @@
             <button type="button" class="event-btn" id="btnRound" onclick="toggleSpeed('橫踢')">橫踢</button>
           </div>
           <input type="hidden" id="speedEvents" value="">
+          <p class="hint-text">可選擇兩項</p>          
           <span class="error" id="speedEventsError">請至少選擇一項競速組別</span>
         </div>
       </div>
@@ -626,7 +627,7 @@
 
   function setupDateSelectors() {
     const birthYear = document.getElementById('birthYear');
-    for (let y = 2024; y >= 1990; y--) {
+    for (let y = 2022; y >= 1990; y--) {
       const opt = document.createElement('option');
       opt.value = y; opt.text = y;
       birthYear.appendChild(opt);
