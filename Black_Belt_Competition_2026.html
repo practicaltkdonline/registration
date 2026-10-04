@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>香港跆拳道黑帶比賽2026 | Hong Kong Taekwondo Black Belt Competition 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body{font-family:'Noto Sans TC',Arial,sans-serif;max-width:900px;margin:1rem auto;padding:1rem;background:linear-gradient(135deg,#e6f0fa,#d9e6f5);color:#2d3748;line-height:1.7;min-height:100vh}
+    .form-container{background:#fff;padding:2rem;border-radius:1.2rem;box-shadow:0 8px 24px rgba(0,0,0,.12);transition:transform .3s,box-shadow .3s}
+    .form-container:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.18)}
+    .form-header{text-align:center;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:2px solid #edf2f7}
+    .form-header h1{font-size:1.75rem;font-weight:700;color:#1a202c;margin:0}
+    .form-header h2{font-size:1.1rem;font-weight:500;color:#718096;margin-top:.5rem}
+    .progress-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;position:relative;height:40px}
+    .progress-bar::before{content:'';position:absolute;top:50%;left:0;right:0;height:4px;background:#e2e8f0;transform:translateY(-50%);z-index:1;border-radius:2px}
+    .progress-line-fill{position:absolute;top:50%;left:0;height:4px;background:linear-gradient(90deg,#3182ce,#63b3ed);transform:translateY(-50%);z-index:1;transition:width .5s ease-in-out;border-radius:2px;box-shadow:0 0 6px rgba(49,130,206,0.4)}
+    .progress-step{width:40px;height:40px;border-radius:50%;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;color:#4a5568;position:relative;z-index:2;transition:all .3s;box-shadow:0 2px 4px rgba(0,0,0,.1)}
+    .progress-step.active{background:linear-gradient(45deg,#3182ce,#63b3ed);color:#fff;transform:scale(1.1);box-shadow:0 4px 12px rgba(49,130,206,.4)}
+    .progress-step.completed{background:linear-gradient(45deg,#3182ce,#63b3ed);color:#fff;box-shadow:0 3px 10px rgba(49,130,206,.3)}
+    .step{display:none}
+    .step.active{display:block}
+    .form-group{margin-bottom:1.5rem;padding:1.2rem;border-radius:1rem;background:#f7fafc;transition:background .3s,transform .2s;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+    .form-group:hover{background:#edf2f7;transform:translateY(-2px)}
+    label{display:block;margin-bottom:.5rem;font-weight:600;font-size:1rem;color:#2d3748}
+    input,select,button{width:100%;padding:.8rem;border:1px solid #e2e8f0;border-radius:.6rem;box-sizing:border-box;font-size:1rem;background:#fff;transition:all .3s;height:2.8rem}
+    input:focus,select:focus{outline:none;border-color:#3182ce;box-shadow:0 0 6px rgba(49,130,206,.4);background:#f8fbff}
+    .date-group{display:flex;align-items:center;gap:.5rem}
+    .date-group select{width:auto;min-width:80px}
+    .unit-group{display:flex;align-items:center;gap:.6rem}
+    .unit-group input{flex:1}
+    .unit{font-weight:600;color:#4a5568;min-width:2rem}
+    .error{color:#e53e3e;font-size:.85rem;margin-top:.4rem;display:none}
+    .navigation{display:flex;justify-content:space-between;margin-top:2rem;gap:1rem}
+    .navigation button{padding:.8rem 1.5rem;border:none;border-radius:.6rem;cursor:pointer;font-weight:600;min-height:44px;flex:1}
+    .nav-prev{background:#edf2f7;color:#718096}
+    .nav-next,#submitBtn{background:linear-gradient(90deg,#3182ce,#2b6cb0);color:#fff}
+    #thankYouPage{display:none;background:#fff;padding:3rem 2rem;border-radius:1.2rem;box-shadow:0 8px 24px rgba(0,0,0,.12);text-align:center;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:500px;z-index:9999}
+    .confirm-summary p { margin: 0.6rem 0; line-height: 1.6; }
+    .confirm-summary .long-text { white-space: pre-line; word-break: break-all; }
+    .required-star{color:#e53e3e}
+    .choice-btn-group{display:flex;gap:1rem;flex-wrap:wrap}
+    .choice-btn{flex:1;min-width:140px;height:3.2rem;border:2px solid #e2e8f0;border-radius:.8rem;background:#fff;font-weight:600;font-size:1.05rem;color:#4a5568;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:.5rem}
+    .choice-btn.selected{border-color:#3182ce;background:linear-gradient(135deg,#ebf8ff,#bee3f8);color:#2b6cb0;box-shadow:0 0 0 3px rgba(49,130,206,.2)}
+    .choice-btn:hover{border-color:#63b3ed}
+    .conditional-section{display:none;margin-top:1rem;padding-top:1rem;border-top:1px dashed #cbd5e0}
+    .conditional-section.show{display:block}
+    .hint-text{font-size:0.85rem;color:#718096;margin-top:0.4rem}
+  </style>
+</head>
+<body>
+
+<div class="form-container" id="mainForm">
+  <div class="form-header">
+    <h1>香港跆拳道黑帶比賽2026</h1>
+    <h1>Hong Kong Taekwondo Black Belt Competition 2026</h1>
+    <h2>實用會報名表</h2>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-line-fill" id="progressLineFill"></div>
+    <div class="progress-step active" data-step="1">1</div>
+    <div class="progress-step" data-step="2">2</div>
+    <div class="progress-step" data-step="3">3</div>
+    <div class="progress-step" data-step="4">4</div>
+  </div>
+
+  <form id="registrationForm" onsubmit="return false;">
+    <div class="step active" data-step="1">
+      <h3>步驟一：個人資料</h3>
+      <div class="form-group">
+        <label>中文姓名 <span class="required-star">*</span></label>
+        <input type="text" id="chineseName" required placeholder="如沒有請填寫英文姓名 (請以大寫字母填寫)" oninput="if(/[a-zA-Z]/.test(this.value)) this.value=this.value.toUpperCase()">
+        <span class="error" id="chineseNameError">請填寫中文或英文姓名</span>
+      </div>
+      <div class="form-group">
+        <label>英文姓名 <span class="required-star">*</span></label>
+        <input type="text" id="englishName" required placeholder="請以大寫字母填寫" oninput="this.value=this.value.toUpperCase()">
+        <span class="error" id="englishNameError">請填寫英文姓名</span>
+      </div>
+      <div class="form-group">
+        <label>出生日期 <span class="required-star">*</span></label>
+        <div class="date-group">
+          <select id="birthYear" required><option value="">年</option></select>
+          <span>/</span>
+          <select id="birthMonth" required><option value="">月</option></select>
+          <span>/</span>
+          <select id="birthDay" required><option value="">日</option></select>
+        </div>
+        <input type="hidden" id="birthDate">
+        <span class="hint-text">年份至 2016 年。2017 年或之後出生沒有對應組別。</span>
+        <span class="error" id="birthDateError">請選擇出生日期</span>
+      </div>
+      <div class="form-group">
+        <label>性別 <span class="required-star">*</span></label>
+        <div class="choice-btn-group">
+          <button type="button" class="choice-btn" id="btnMale" onclick="setGender('男')">男</button>
+          <button type="button" class="choice-btn" id="btnFemale" onclick="setGender('女')">女</button>
+        </div>
+        <input type="hidden" id="gender" value="">
+        <span class="hint-text">參賽組別會按性別及出生年份篩選。2005年或之前出生者可同時選擇黑帶 A 組及 B 組。</span>
+        <span class="error" id="genderError">請選擇性別</span>
+      </div>
+      <div class="form-group">
+        <label>聯絡電話 <span class="required-star">*</span></label>
+        <input type="tel" id="phone" pattern="\d{8}" required placeholder="8位數字">
+        <span class="error" id="phoneError">請輸入8位數字電話</span>
+      </div>
+      <div class="form-group">
+        <label>國籍 <span class="required-star">*</span></label>
+        <input type="text" id="nationality" required>
+        <span class="error" id="nationalityError">請填寫國籍</span>
+      </div>
+      <div class="form-group">
+        <label>身高 <span class="required-star">*</span></label>
+        <div class="unit-group">
+          <input type="number" id="height" min="80" max="230" step="0.1" placeholder="小數點後一個位">
+          <span class="unit">cm</span>
+        </div>
+        <span class="error" id="heightError">請填寫身高（可含一位小數）</span>
+      </div>
+      <div class="form-group">
+        <label>體重 <span class="required-star">*</span></label>
+        <div class="unit-group">
+          <input type="number" id="weight" min="15" max="200" step="0.1" placeholder="小數點後一個位">
+          <span class="unit">kg</span>
+        </div>
+        <span class="error" id="weightError">請填寫體重（可含一位小數）</span>
+      </div>
+      <div class="navigation">
+        <button type="button" class="nav-prev" disabled>上一步</button>
+        <button type="button" class="nav-next" onclick="nextStep()">下一步</button>
+      </div>
+    </div>
+
+    <div class="step" data-step="2">
+      <h3>步驟二：會員資料</h3>
+      <div class="form-group">
+        <label>屬會名稱 <span class="required-star">*</span></label>
+        <input list="affiliations" id="affiliation" required placeholder="請選擇或輸入" value="香港實用跆拳道協會 HK Practical TKD Association">
+        <datalist id="affiliations">
+          <option value="香港仔跆拳道會 Aberdeen TKD Club">
+          <option value="技擊跆拳道會 Advanced TKD Association">
+          <option value="躍駿跆拳道會 Attack TKD Association">
+          <option value="青雲跆拳道會 Ching Wan TKD Association">
+          <option value="精英跆拳道會 Ching Ying TKD Union">
+          <option value="金柏跆拳道協會 Combat TKD Association">
+          <option value="香港跆拳道東龍會 Eastern Dragon TKD Federation HK">
+          <option value="勵志跆拳道總會 Encouragement TKD Association">
+          <option value="香港智道跆拳總會 HK Chido TKD Association">
+          <option value="香港啟聯跆拳道協會 HK Kai Luen TKD Association">
+          <option value="香港尼泊爾跆拳道會 HK Nepalese TKD Club">
+          <option value="香港實用跆拳道協會 HK Practical TKD Association">
+          <option value="香港跆拳道振武館 HK TKD Chun Mo Kwan">
+          <option value="香港跆拳道勵進會 HK TKD Action Association">
+          <option value="香港跆拳道勵誠會 HK TKD Active Association">
+          <option value="香港跆拳道勵輝會 HK TKD Actual Association">
+          <option value="香港中道跆拳道會 HK Chong Do TKD Association">
+          <option value="香港跆拳道青濤館 HK TKD Chung Do Kwan">
+          <option value="香港跆拳道正道館 HK TKD Jung Do Kwan">
+          <option value="香港跆拳道正心館 HK TKD Jung Sim Kwan">
+          <option value="香港聯盟跆拳道協會 HK United TKD Association">
+          <option value="跆拳道明道會 TKD Bright Way Association">
+          <option value="漢道跆拳道館 Hon Do TKD Kwan">
+          <option value="國際跆拳道香港總會 International TKD HK Association">
+          <option value="韓國跆拳道青道館 Korea TKD Cheung Do Kwan">
+          <option value="樂華跆拳道會 Lok Wah TKD Club">
+          <option value="銘英跆拳道會 Main Pioneer TKD Association">
+          <option value="跆拳道武德會 Moo Duk TKD Hae">
+          <option value="伍華跆拳道會 Ng Wah TKD Club">
+          <option value="毅武聯盟跆拳道 Ngai Mo Alliance TKD">
+          <option value="香港警察跆拳道會 HK Police TKD Club">
+          <option value="香港跆拳道國藝會 Potential TKD HK Association">
+          <option value="尚武聯跆拳道會 Sheung Mo Luen TKD Association">
+          <option value="捷擊跆拳道館 TKD Jet Kick Kwan">
+          <option value="跆拳道吾道會體育館 TKD Oh Do Hae Gymnasium">
+          <option value="香港胡氏跆拳道會 Wu’s TKD HK Association">
+          <option value="正武會跆拳道協會 Zheng Wu TKD Association">
+          <option value="香港發景跆拳道會 Hong Kong Greatview TKD Club">
+          <option value="香港跆拳道柏毅會 Hong Kong TKD Pak Ngai Association">
+          <option value="香港跆拳道嚴濤會 Hong Kong TKD Uhm Do Club">
+          <option value="威格跆拳道會 Warrior TKD Club">
+          <option value="金道跆拳道聯盟 The Kimdo TKD Federation">
+          <option value="金道一跆拳道館 Kim Do Yi TKD Kwan">
+          <option value="樂武跆拳道會 Cheerful TKD Association Limited">
+          <option value="世紀跆拳道會 H.K. Taekwondo Cosmopolitan Club">
+          <option value="燊．跆拳道館 Sun Taekwondo Club">
+        </datalist>
+        <span class="error" id="affiliationError">請選擇屬會名稱</span>
+      </div>
+      <div class="form-group">
+        <label>段證編號</label>
+        <input type="text" id="danNumber" placeholder="已有段證請填寫；未有段證可留空並填申請日期">
+        <span class="hint-text">已有段證請填編號。未有段證可留空，但必須填寫申請日期（日子可留空）。</span>
+        <span class="error" id="danNumberError">未有段證編號時，請填寫申請日期</span>
+      </div>
+      <div class="form-group">
+        <label>現有段位 <span class="required-star">*</span></label>
+        <input type="text" id="currentLevel" required placeholder="例如：黑帶一段">
+        <span class="error" id="currentLevelError">請填寫現有段位</span>
+      </div>
+      <div class="form-group">
+        <label>如未有段證，申請日期</label>
+        <div class="date-group">
+          <select id="applyYear"><option value="">年</option></select>
+          <span>/</span>
+          <select id="applyMonth"><option value="">月</option></select>
+          <span>/</span>
+          <select id="applyDay"><option value="">日</option></select>
+        </div>
+        <input type="hidden" id="applyDate">
+        <span class="hint-text">已有段證編號可留空。未有段證須填年份及月份，日子可以留空。</span>
+        <span class="error" id="applyDateError">未有段證編號時，請至少選擇申請年份及月份</span>
+      </div>
+      <div class="form-group">
+        <label>有沒有其他段證 <span class="required-star">*</span></label>
+        <div class="choice-btn-group">
+          <button type="button" class="choice-btn" id="btnOtherYes" onclick="setOtherCert('有')">有</button>
+          <button type="button" class="choice-btn" id="btnOtherNo" onclick="setOtherCert('沒有')">沒有</button>
+        </div>
+        <input type="hidden" id="otherCert" value="">
+        <span class="error" id="otherCertError">請選擇有沒有其他段證</span>
+        <div id="otherCertSection" class="conditional-section">
+          <div class="form-group">
+            <label>其他機構的名稱 <span class="required-star">*</span></label>
+            <input type="text" id="otherOrg" placeholder="請註明所屬屬會/韓國國技院/其他">
+            <span class="hint-text">請註明所屬屬會/韓國國技院/其他</span>
+            <span class="error" id="otherOrgError">請填寫其他機構的名稱</span>
+          </div>
+          <div class="form-group">
+            <label>其他機構的段位 <span class="required-star">*</span></label>
+            <input type="text" id="otherRank" placeholder="例如：黑帶一段">
+            <span class="error" id="otherRankError">請填寫其他機構的段位</span>
+          </div>
+          <div class="form-group">
+            <label>其他機構的段證發證日期 <span class="required-star">*</span></label>
+            <div class="date-group">
+              <select id="otherYear"><option value="">年</option></select>
+              <span>/</span>
+              <select id="otherMonth"><option value="">月</option></select>
+              <span>/</span>
+              <select id="otherDay"><option value="">日</option></select>
+            </div>
+            <input type="hidden" id="otherDate">
+            <span class="hint-text">可只填年份及月份，日子可以留空。</span>
+            <span class="error" id="otherDateError">請至少選擇發證年份及月份</span>
+          </div>
+        </div>
+      </div>
+      <div class="navigation">
+        <button type="button" class="nav-prev" onclick="prevStep()">上一步</button>
+        <button type="button" class="nav-next" onclick="nextStep()">下一步</button>
+      </div>
+    </div>
+
+    <div class="step" data-step="3">
+      <h3>步驟三：比賽資料</h3>
+      <div class="form-group">
+        <label>參賽組別 <span class="required-star">*</span></label>
+        <select id="compGroup" onchange="updateWeightClass(true)"></select>
+        <span class="hint-text" id="groupHint">請先完成性別及出生年份。符合兩個組別時可自行選擇。</span>
+        <span class="error" id="compGroupError">請選擇參賽組別</span>
+      </div>
+      <div class="form-group">
+        <label>量級 <span class="required-star">*</span></label>
+        <select id="weightClass"></select>
+        <span class="error" id="weightClassError">請選擇量級</span>
+      </div>
+      <div class="navigation">
+        <button type="button" class="nav-prev" onclick="prevStep()">上一步</button>
+        <button type="button" class="nav-next" onclick="nextStep()">下一步</button>
+      </div>
+    </div>
+
+    <div class="step" data-step="4">
+      <h3>步驟四：確認及提交</h3>
+      <div class="confirm-summary" id="finalSummary" style="background:#f8fbff;padding:1.5rem;border-radius:1rem;border-left:5px solid #3182ce;line-height:1.9"></div>
+      <div class="navigation">
+        <button type="button" class="nav-prev" onclick="prevStep()">上一步</button>
+        <button type="button" id="submitBtn" onclick="submitForm()">提交表單</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div id="thankYouPage">
+  <h2>感謝您的報名！</h2>
+  <p>確認後教練將盡快與您聯繫核對資料。</p>
+  <p>請準備相關文件交給教練。</p>
+  <button class="return-button" style="margin-top:1.5rem;padding:.8rem 2rem;background:linear-gradient(90deg,#3182ce,#2b6cb0);color:#fff;border:none;border-radius:.6rem;font-weight:600;cursor:pointer;" onclick="location.reload()">重新報名</button>
+</div>
+
+<script>
+  let currentStep = 1;
+  let remembered = { compGroup: '', weightClass: '' };
+
+  const FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSdIw3M0LSSUwMFk4Fl2oQDQa6W9v67axujIvoXVdvxkwaTq9w/formResponse';
+  const ENTRY = {
+    chineseName: 'entry.1765832625',
+    englishName: 'entry.216449808',
+    gender: 'entry.1854501309',
+    birthDate: 'entry.279357896',
+    nationality: 'entry.1173530868',
+    phone: 'entry.1182944626',
+    affiliation: 'entry.600589316',
+    danNumber: 'entry.1418708504',
+    currentLevel: 'entry.277172485',
+    applyDate: 'entry.503966002',
+    otherCert: 'entry.941686019',
+    otherRank: 'entry.520097981',
+    otherOrg: 'entry.355688131',
+    otherDate: 'entry.34077198',
+    height: 'entry.221014349',
+    weight: 'entry.1541763782',
+    compGroup: 'entry.1077046336',
+    weightClass: 'entry.185268418'
+  };
+
+  const GIRL_JUNIOR = '女子青少年黑帶組 15歲至17歲 (2009年至2011年出生者)';
+
+  const WEIGHT_TABLES = {
+    '男子黑帶A組 18歲或以上 (2008年或之前出生者)': [
+      'FIN 鰭量級 (不超過54公斤)',
+      'FLY 蠅量級 (54公斤以上而不超過58公斤)',
+      'BANTAM 雛量級 (58公斤以上而不超過63公斤)',
+      'FEATHER 羽量級 (63公斤以上而不超過68公斤)',
+      'LIGHT 輕量級 (68公斤以上而不超過74公斤)',
+      'WELTER 沉量級 (74公斤以上而不超過80公斤)',
+      'MIDDLE 中量級 (80公斤以上而不超過87公斤)',
+      'HEAVY 重量級 (87公斤以上)'
+    ],
+    '男子黑帶B組 21歲或以上 (2005年或以前出生者)': [
+      'UNDER 58KG (不超過58公斤)',
+      'UNDER 68KG (58公斤以上而不超過68公斤)',
+      'UNDER 80KG (68公斤以上而不超過80公斤)',
+      'OVER 80KG (80公斤以上)'
+    ],
+    '男子青少年黑帶組 15歲至17歲 (2009年至2011年出生者)': [
+      'FIN 鰭量級 (30公斤以上而不超過33公斤)',
+      'FLY 蠅量級 (33公斤以上而不超過37公斤)',
+      'BANTAM 雛量級 (37公斤以上而不超過41公斤)',
+      'FEATHER 羽量級 (41公斤以上而不超過45公斤)',
+      'LIGHT 輕量級 (45公斤以上而不超過49公斤)',
+      'WELTER 沉量級 (49公斤以上而不超過53公斤)',
+      'LIGHT MIDDLE 輕中量級 (53公斤以上而不超過57公斤)',
+      'MIDDLE 中量級 (57公斤以上而不超過61公斤)',
+      'LIGHT HEAVY 輕重量級 (61公斤以上而不超過65公斤)',
+      'HEAVY 重量級 (65公斤以上)'
+    ],
+    '男子少年品段組 12至14歲 (2012年至2014年出生者)': [
+      'FIN 鰭量級 (30公斤以上而不超過33公斤)',
+      'FLY 蠅量級 (33公斤以上而不超過37公斤)',
+      'BANTAM 雛量級 (37公斤以上而不超過41公斤)',
+      'FEATHER 羽量級 (41公斤以上而不超過45公斤)',
+      'LIGHT 輕量級 (45公斤以上而不超過49公斤)',
+      'WELTER 沉量級 (49公斤以上而不超過53公斤)',
+      'LIGHT MIDDLE 輕中量級 (53公斤以上而不超過57公斤)',
+      'MIDDLE 中量級 (57公斤以上而不超過61公斤)',
+      'LIGHT HEAVY 輕重量級 (61公斤以上而不超過65公斤)',
+      'HEAVY 重量級 (65公斤以上)'
+    ],
+    '男童品段組 10至11歲 (2015年至2016年出生者)': [
+      'FIN 鰭量級 (27公斤以上而不超過29公斤)',
+      'FLY 蠅量級 (29公斤以上而不超過30公斤)',
+      'BANTAM 雛量級 (30公斤以上而不超過33公斤)',
+      'FEATHER 羽量級 (33公斤以上而不超過36公斤)',
+      'LIGHT 輕量級 (36公斤以上而不超過39公斤)',
+      'WELTER 沉量級 (39公斤以上而不超過41公斤)',
+      'LIGHT MIDDLE輕中量級 (41公斤以上而不超過43公斤)',
+      'MIDDLE 中量級 (43公斤以上而不超過46公斤)',
+      'LIGHT HEAVY輕重量級 (46公斤以上而不超過49公斤)',
+      'HEAVY 重量級 (49公斤以上而不超過57公斤)'
+    ],
+    '女子黑帶A組 18歲或以上 (2008年或之前出生者)': [
+      'FIN 鰭量級 (不超過46公斤)',
+      'FLY 蠅量級 (46公斤以上而不超過49公斤)',
+      'BANTAM 雛量級 (49公斤以上而不超過53公斤)',
+      'FEATHER 羽量級 (53公斤以上而不超過57公斤)',
+      'LIGHT 輕量級 (57公斤以上而不超過62公斤)',
+      'WELTER 沉量級 (62公斤以上而不超過67公斤)',
+      'MIDDLE 中量級 (67公斤以上而不超過73公斤)',
+      'HEAVY 重量級 (73公斤以上)'
+    ],
+    '女子黑帶B組 21歲或以上 (2005年或以前出生者)': [
+      'UNDER 49KG (不超過49公斤)',
+      'UNDER 57KG (49公斤以上而不超過57公斤)',
+      'UNDER 67KG (57公斤以上而不超過67公斤)',
+      'OVER 67KG (67公斤以上)'
+    ],
+    '女子少年品段組 12至14歲 (2012年至2014年出生者)': [
+      'FIN 鰭量級 (26公斤以上而不超過29公斤)',
+      'FLY 蠅量級 (29公斤以上而不超過33公斤)',
+      'BANTAM 雛量級 (33公斤以上而不超過37公斤)',
+      'FEATHER 羽量級 (37公斤以上而不超過41公斤)',
+      'LIGHT 輕量級 (41公斤以上而不超過44公斤)',
+      'WELTER 沉量級 (44公斤以上而不超過47公斤)',
+      'LIGHT MIDDLE 輕中量級 (47公斤以上而不超過51公斤)',
+      'MIDDLE 中量級 (51公斤以上而不超過55公斤)',
+      'LIGHT HEAVY 輕重量級 (55公斤以上而不超過59公斤)',
+      'HEAVY 重量級 (59公斤以上)'
+    ],
+    '女童品段組 10歲至11歲 (2015年至2016年出生者)': [
+      'FIN 鰭量級 (23公斤以上而不超過25公斤)',
+      'FLY 蠅量級 (25公斤以上而不超過27公斤)',
+      'BANTAM 雛量級 (27公斤以上而不超過29公斤)',
+      'FEATHER 羽量級 (29公斤以上而不超過31公斤)',
+      'LIGHT 輕量級 (31公斤以上而不超過33公斤)',
+      'WELTER 沉量級 (33公斤以上而不超過35公斤)',
+      'LIGHT MIDDLE 輕中量級 (35公斤以上而不超過37公斤)',
+      'MIDDLE 中量級 (37公斤以上而不超過39公斤)',
+      'LIGHT HEAVY 輕重量級 (39公斤以上而不超過41公斤)',
+      'HEAVY 重量級 (41公斤以上)'
+    ]
+  };
+  WEIGHT_TABLES[GIRL_JUNIOR] = [
+    'FIN 鰭量級 (不超過42公斤)',
+    'FLY 蠅量級 (42公斤以上而不超過44公斤)',
+    'BANTAM 雛量級 (44公斤以上而不超過46公斤)',
+    'FEATHER 羽量級 (46公斤以上而不超過49公斤)',
+    'LIGHT 輕量級 (49公斤以上而不超過52公斤)',
+    'WELTER 沉量級 (52公斤以上而不超過55公斤)',
+    'LIGHT MIDDLE 輕中量級 (55公斤以上而不超過59公斤)',
+    'MIDDLE 中量級 (59公斤以上而不超過63公斤)',
+    'LIGHT HEAVY 輕重量級 (63公斤以上而不超過68公斤)',
+    'HEAVY 重量級 (68公斤以上)'
+  ];
+
+  function updateProgress() {
+    const percent = ((currentStep - 1) / 3) * 100;
+    document.getElementById('progressLineFill').style.width = percent + '%';
+    document.querySelectorAll('.progress-step').forEach((s, i) => {
+      const n = i + 1;
+      s.classList.toggle('active', n === currentStep);
+      s.classList.toggle('completed', n < currentStep);
+    });
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.querySelector('.step[data-step="' + currentStep + '"]').classList.add('active');
+    document.querySelector('.nav-prev').disabled = currentStep === 1;
+  }
+
+  function scrollToFirstError() {
+    const firstError = document.querySelector('.error[style*="block"]');
+    if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function isTestSkip() {
+    return document.getElementById('chineseName').value.trim().toLowerCase() === 'test';
+  }
+
+  function setGender(value) {
+    document.getElementById('gender').value = value;
+    document.getElementById('btnMale').classList.toggle('selected', value === '男');
+    document.getElementById('btnFemale').classList.toggle('selected', value === '女');
+    if (currentStep >= 3) updateCompGroup(true);
+  }
+
+  function setOtherCert(value) {
+    document.getElementById('otherCert').value = value;
+    document.getElementById('btnOtherYes').classList.toggle('selected', value === '有');
+    document.getElementById('btnOtherNo').classList.toggle('selected', value === '沒有');
+    document.getElementById('otherCertSection').classList.toggle('show', value === '有');
+  }
+
+  function oneDecimalOk(value) {
+    if (value === '' || value == null) return false;
+    if (!/^\d+(\.\d)?$/.test(String(value))) return false;
+    return Number(value) > 0;
+  }
+
+  function validateStep(step) {
+    if (isTestSkip()) return true;
+    let valid = true;
+    document.querySelectorAll('.error').forEach(e => e.style.display = 'none');
+
+    if (step === 1) {
+      if (!document.getElementById('chineseName').value.trim() && !document.getElementById('englishName').value.trim()) {
+        document.getElementById('chineseNameError').style.display = 'block'; valid = false;
+      }
+      if (!document.getElementById('englishName').value.trim()) {
+        document.getElementById('englishNameError').style.display = 'block'; valid = false;
+      }
+      if (!document.getElementById('birthDate').value) {
+        document.getElementById('birthDateError').style.display = 'block'; valid = false;
+      }
+      if (!document.getElementById('gender').value) {
+        document.getElementById('genderError').style.display = 'block'; valid = false;
+      }
+      if (!document.getElementById('phone').value.match(/^\d{8}$/)) {
+        document.getElementById('phoneError').style.display = 'block'; valid = false;
+      }
+      if (!document.getElementById('nationality').value.trim()) {
+        document.getElementById('nationalityError').style.display = 'block'; valid = false;
+      }
+      if (!oneDecimalOk(document.getElementById('height').value)) {
+        document.getElementById('heightError').style.display = 'block'; valid = false;
+      }
+      if (!oneDecimalOk(document.getElementById('weight').value)) {
+        document.getElementById('weightError').style.display = 'block'; valid = false;
+      }
+    }
+
+    if (step === 2) {
+      if (!document.getElementById('affiliation').value.trim()) {
+        document.getElementById('affiliationError').style.display = 'block'; valid = false;
+      }
+      if (!document.getElementById('currentLevel').value.trim()) {
+        document.getElementById('currentLevelError').style.display = 'block'; valid = false;
+      }
+      const hasDan = document.getElementById('danNumber').value.trim();
+      const applyYear = document.getElementById('applyYear').value;
+      const applyMonth = document.getElementById('applyMonth').value;
+      if (!hasDan && !(applyYear && applyMonth)) {
+        document.getElementById('danNumberError').style.display = 'block';
+        document.getElementById('applyDateError').style.display = 'block';
+        valid = false;
+      }
+      if (!document.getElementById('otherCert').value) {
+        document.getElementById('otherCertError').style.display = 'block'; valid = false;
+      }
+      if (document.getElementById('otherCert').value === '有') {
+        if (!document.getElementById('otherOrg').value.trim()) {
+          document.getElementById('otherOrgError').style.display = 'block'; valid = false;
+        }
+        if (!document.getElementById('otherRank').value.trim()) {
+          document.getElementById('otherRankError').style.display = 'block'; valid = false;
+        }
+        if (!(document.getElementById('otherYear').value && document.getElementById('otherMonth').value)) {
+          document.getElementById('otherDateError').style.display = 'block'; valid = false;
+        }
+      }
+    }
+
+    if (step === 3) {
+      if (!document.getElementById('compGroup').value) {
+        document.getElementById('compGroupError').style.display = 'block'; valid = false;
+      }
+      if (!document.getElementById('weightClass').value) {
+        document.getElementById('weightClassError').style.display = 'block'; valid = false;
+      }
+    }
+
+    if (!valid) scrollToFirstError();
+    return valid;
+  }
+
+  function nextStep() {
+    if (!validateStep(currentStep)) return;
+    rememberCurrentValues();
+    currentStep++;
+    updateProgress();
+    if (currentStep === 3) updateCompGroup(false);
+    if (currentStep === 4) updateFinalSummary();
+  }
+
+  function prevStep() {
+    rememberCurrentValues();
+    currentStep--;
+    updateProgress();
+    if (currentStep === 4) updateFinalSummary();
+  }
+
+  function rememberCurrentValues() {
+    remembered.compGroup = document.getElementById('compGroup').value;
+    remembered.weightClass = document.getElementById('weightClass').value;
+  }
+
+  function fillYearSelect(selectId, fromYear, toYear) {
+    const sel = document.getElementById(selectId);
+    for (let y = toYear; y >= fromYear; y--) {
+      const opt = document.createElement('option');
+      opt.value = y;
+      opt.text = y;
+      sel.appendChild(opt);
+    }
+  }
+
+  function fillMonthSelect(selectId) {
+    const sel = document.getElementById(selectId);
+    for (let m = 1; m <= 12; m++) {
+      const opt = document.createElement('option');
+      opt.value = m;
+      opt.text = m;
+      sel.appendChild(opt);
+    }
+  }
+
+  function bindDateTrio(yearId, monthId, dayId, hiddenId, onChange, dayOptional) {
+    function updateDays() {
+      const year = parseInt(document.getElementById(yearId).value, 10);
+      const month = parseInt(document.getElementById(monthId).value, 10);
+      const daySel = document.getElementById(dayId);
+      const hidden = document.getElementById(hiddenId);
+      if (!year || !month) {
+        daySel.innerHTML = '<option value="">日</option>';
+        hidden.value = '';
+        if (onChange) onChange();
+        return;
+      }
+      const daysInMonth = new Date(year, month, 0).getDate();
+      const prevDay = daySel.value;
+      daySel.innerHTML = '<option value="">日</option>';
+      for (let d = 1; d <= daysInMonth; d++) {
+        const opt = document.createElement('option');
+        opt.value = d;
+        opt.text = d;
+        daySel.appendChild(opt);
+      }
+      if (prevDay && parseInt(prevDay, 10) <= daysInMonth) daySel.value = prevDay;
+      if (daySel.value) {
+        hidden.value = year + '-' + String(month).padStart(2, '0') + '-' + String(daySel.value).padStart(2, '0');
+      } else if (dayOptional) {
+        hidden.value = year + '-' + String(month).padStart(2, '0');
+      } else {
+        hidden.value = '';
+      }
+      if (onChange) onChange();
+    }
+    document.getElementById(yearId).onchange = updateDays;
+    document.getElementById(monthId).onchange = updateDays;
+    document.getElementById(dayId).onchange = updateDays;
+  }
+
+  function setupDateSelectors() {
+    fillYearSelect('birthYear', 1960, 2016);
+    fillMonthSelect('birthMonth');
+    bindDateTrio('birthYear', 'birthMonth', 'birthDay', 'birthDate', function () {
+      if (currentStep >= 3) updateCompGroup(true);
+    }, false);
+
+    fillYearSelect('applyYear', 1990, 2026);
+    fillMonthSelect('applyMonth');
+    bindDateTrio('applyYear', 'applyMonth', 'applyDay', 'applyDate', null, true);
+
+    fillYearSelect('otherYear', 1990, 2026);
+    fillMonthSelect('otherMonth');
+    bindDateTrio('otherYear', 'otherMonth', 'otherDay', 'otherDate', null, true);
+  }
+
+  function groupsFor(gender, year) {
+    if (!gender || !year) return [];
+    const male = gender === '男';
+    const list = [];
+    if (year <= 2005) {
+      list.push(male ? '男子黑帶A組 18歲或以上 (2008年或之前出生者)' : '女子黑帶A組 18歲或以上 (2008年或之前出生者)');
+      list.push(male ? '男子黑帶B組 21歲或以上 (2005年或以前出生者)' : '女子黑帶B組 21歲或以上 (2005年或以前出生者)');
+    } else if (year >= 2006 && year <= 2008) {
+      list.push(male ? '男子黑帶A組 18歲或以上 (2008年或之前出生者)' : '女子黑帶A組 18歲或以上 (2008年或之前出生者)');
+    } else if (year >= 2009 && year <= 2011) {
+      list.push(male ? '男子青少年黑帶組 15歲至17歲 (2009年至2011年出生者)' : GIRL_JUNIOR);
+    } else if (year >= 2012 && year <= 2014) {
+      list.push(male ? '男子少年品段組 12至14歲 (2012年至2014年出生者)' : '女子少年品段組 12至14歲 (2012年至2014年出生者)');
+    } else if (year >= 2015 && year <= 2016) {
+      list.push(male ? '男童品段組 10至11歲 (2015年至2016年出生者)' : '女童品段組 10歲至11歲 (2015年至2016年出生者)');
+    }
+    return list;
+  }
+
+  function updateCompGroup(forceRecalc) {
+    const year = parseInt(document.getElementById('birthYear').value, 10);
+    const gender = document.getElementById('gender').value;
+    const groupSelect = document.getElementById('compGroup');
+    const prevValue = forceRecalc ? '' : (remembered.compGroup || groupSelect.value);
+    const hint = document.getElementById('groupHint');
+    const options = groupsFor(gender, year);
+
+    groupSelect.innerHTML = '<option value="">請選擇組別</option>';
+    options.forEach(text => {
+      const opt = document.createElement('option');
+      opt.value = text;
+      opt.text = text;
+      groupSelect.appendChild(opt);
+    });
+
+    if (!gender || !year) hint.textContent = '請先完成性別及出生年份。';
+    else if (!options.length) hint.textContent = '此出生年份沒有對應參賽組別。';
+    else if (options.length > 1) hint.textContent = '2005年或之前出生者可選擇黑帶 A 組或 B 組。';
+    else hint.textContent = '已按性別及出生年份帶出對應組別。';
+
+    if (prevValue && options.indexOf(prevValue) !== -1) groupSelect.value = prevValue;
+    else if (options.length === 1) groupSelect.value = options[0];
+    updateWeightClass(false);
+  }
+
+  function updateWeightClass(forceRecalc) {
+    const group = document.getElementById('compGroup').value;
+    const wcSelect = document.getElementById('weightClass');
+    const prevValue = forceRecalc ? '' : (remembered.weightClass || wcSelect.value);
+    wcSelect.innerHTML = '<option value="">請選擇量級</option>';
+    const list = WEIGHT_TABLES[group] || [];
+    list.forEach(text => {
+      const opt = document.createElement('option');
+      opt.value = text;
+      opt.text = text;
+      wcSelect.appendChild(opt);
+    });
+    if (prevValue && list.indexOf(prevValue) !== -1) wcSelect.value = prevValue;
+  }
+
+  function showOrDash(value) {
+    return value || '未填';
+  }
+
+  function updateFinalSummary() {
+    const other = document.getElementById('otherCert').value;
+    let html = ''
+      + '<p><strong>中文姓名：</strong> ' + showOrDash(document.getElementById('chineseName').value) + '</p>'
+      + '<p><strong>英文姓名：</strong> ' + showOrDash(document.getElementById('englishName').value) + '</p>'
+      + '<p><strong>出生日期：</strong> ' + showOrDash(document.getElementById('birthDate').value) + '</p>'
+      + '<p><strong>性別：</strong> ' + showOrDash(document.getElementById('gender').value) + '</p>'
+      + '<p><strong>聯絡電話：</strong> ' + showOrDash(document.getElementById('phone').value) + '</p>'
+      + '<p><strong>國籍：</strong> ' + showOrDash(document.getElementById('nationality').value) + '</p>'
+      + '<p><strong>身高：</strong> ' + showOrDash(document.getElementById('height').value) + ' cm</p>'
+      + '<p><strong>體重：</strong> ' + showOrDash(document.getElementById('weight').value) + ' kg</p>'
+      + '<p><strong>屬會名稱：</strong> <span class="long-text">' + showOrDash(document.getElementById('affiliation').value) + '</span></p>'
+      + '<p><strong>段證編號：</strong> ' + showOrDash(document.getElementById('danNumber').value) + '</p>'
+      + '<p><strong>現有段位：</strong> ' + showOrDash(document.getElementById('currentLevel').value) + '</p>'
+      + '<p><strong>段證申請日期：</strong> ' + showOrDash(document.getElementById('applyDate').value) + '</p>'
+      + '<p><strong>有沒有其他段證：</strong> ' + showOrDash(other) + '</p>';
+    if (other === '有') {
+      html += '<p><strong>其他機構的名稱：</strong> ' + showOrDash(document.getElementById('otherOrg').value) + '</p>'
+        + '<p><strong>其他機構的段位：</strong> ' + showOrDash(document.getElementById('otherRank').value) + '</p>'
+        + '<p><strong>其他機構的段證發證日期：</strong> ' + showOrDash(document.getElementById('otherDate').value) + '</p>';
+    }
+    html += '<p><strong>參賽組別：</strong> <span class="long-text">' + showOrDash(document.getElementById('compGroup').value) + '</span></p>'
+      + '<p><strong>量級：</strong> <span class="long-text">' + showOrDash(document.getElementById('weightClass').value) + '</span></p>';
+    document.getElementById('finalSummary').innerHTML = html;
+  }
+
+  function submitForm() {
+    if (!validateStep(3)) return;
+    const otherYes = document.getElementById('otherCert').value === '有';
+    const formData = new FormData();
+    formData.append(ENTRY.chineseName, document.getElementById('chineseName').value.trim());
+    formData.append(ENTRY.englishName, document.getElementById('englishName').value.trim());
+    formData.append(ENTRY.gender, document.getElementById('gender').value);
+    formData.append(ENTRY.birthDate, document.getElementById('birthDate').value);
+    formData.append(ENTRY.nationality, document.getElementById('nationality').value.trim());
+    formData.append(ENTRY.phone, document.getElementById('phone').value.trim());
+    formData.append(ENTRY.affiliation, document.getElementById('affiliation').value.trim());
+    formData.append(ENTRY.danNumber, document.getElementById('danNumber').value.trim());
+    formData.append(ENTRY.currentLevel, document.getElementById('currentLevel').value.trim());
+    formData.append(ENTRY.applyDate, document.getElementById('applyDate').value);
+    formData.append(ENTRY.otherCert, document.getElementById('otherCert').value);
+    formData.append(ENTRY.otherRank, otherYes ? document.getElementById('otherRank').value.trim() : '');
+    formData.append(ENTRY.otherOrg, otherYes ? document.getElementById('otherOrg').value.trim() : '');
+    formData.append(ENTRY.otherDate, otherYes ? document.getElementById('otherDate').value : '');
+    formData.append(ENTRY.height, document.getElementById('height').value);
+    formData.append(ENTRY.weight, document.getElementById('weight').value);
+    formData.append(ENTRY.compGroup, document.getElementById('compGroup').value);
+    formData.append(ENTRY.weightClass, document.getElementById('weightClass').value);
+
+    fetch(FORM_ACTION, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData
+    }).then(showThanks).catch(showThanks);
+  }
+
+  function showThanks() {
+    document.getElementById('mainForm').style.display = 'none';
+    document.getElementById('thankYouPage').style.display = 'block';
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    updateProgress();
+    setupDateSelectors();
+  });
+</script>
+</body>
+</html>
